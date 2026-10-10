@@ -1,0 +1,23 @@
+{
+  "name": "IT Field Manual",
+  "short_name": "Field Manual",
+  "description": "Offline-first personal IT field manual: commands, lessons, labs and troubleshooting for A+, Cisco/CCNA, MikroTik, Windows 11, Windows Server and RHEL 10.",
+  "id": "/it-field-manual/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f1115",
+  "theme_color": "#0f1115",
+  "categories": ["education", "productivity", "utilities"],
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Commands", "url": "./index.html#/commands" },
+    { "name": "Scenarios", "url": "./index.html#/scenarios" },
+    { "name": "My progress", "url": "./index.html#/progress" }
+  ]
+}

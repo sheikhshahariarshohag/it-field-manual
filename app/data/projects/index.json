@@ -1,0 +1,174 @@
+[
+  {
+    "id": "proj-small-office",
+    "kind": "project",
+    "tech": "cross",
+    "title": "Build the IT infrastructure for a small office",
+    "summary": "One end-to-end project that touches every subject: segmentation, routing, identity, file services, Linux, backup and recovery.",
+    "verification": "source-checked",
+    "tags": ["project", "infrastructure", "lab", "capstone"],
+    "sections": [
+      {
+        "h": "Requirements and honest assumptions",
+        "p": [
+          "A 12-person office, 2 sites not considered, one floor, budget close to zero, and a team of one. Twenty-five employees' worth of data, all of it replaceable except the accounts and the file share.",
+          "This is a **learning-lab architecture**. It deliberately omits redundancy, clustering and high availability, because a single-admin office genuinely does not need them and pretending otherwise teaches the wrong instinct. Where production would differ, that is stated rather than hidden."
+        ],
+        "table": {
+          "head": ["Requirement", "Decision", "Why"],
+          "rows": [
+            ["Segment user and server traffic", "VLAN 10 users, VLAN 20 servers", "Limits broadcast and makes per-segment firewall policy possible later"],
+            ["Name resolution and addresses", "Windows Server DNS + DHCP", "One identity and one address source rather than two"],
+            ["Identity", "Single forest, single domain", "Simplest thing that supports the accounts and groups actually needed"],
+            ["File sharing with per-group access", "NTFS permissions + AD security groups", "Groups rather than per-user ACLs, so joins and leavers are one change"],
+            ["Linux server presence", "RHEL 10 running an internal web app and DNS-adjacent services", "A real RHEL box, not a toy"],
+            ["Firewalling", "Cisco switch ACLs at the edge + MikroTik for WAN", "Segmentation inside, NAT and untrusted boundary outside"],
+            ["Backup", "Daily, retained off the network", "The backup that stays on the same box is not a backup"],
+            ["Remote administration", "VPN into the router, SSH and RDP inside", "No direct inbound exposure of any server"]
+          ]
+        }
+      },
+      {
+        "h": "Addressing plan",
+        "p": [
+          "Write the plan down before touching a device. Every address below is fixed and reserved for a reason; free-floating addressing is what makes a small network unmaintainable."
+        ],
+        "table": {
+          "head": ["Segment", "Network", "Gateway", "DHCP range", "Purpose"],
+          "rows": [
+            ["USERS (VLAN 10)", "10.10.10.0/24", "10.10.10.1", "10.10.10.100–10.10.10.199", "Workstations"],
+            ["SERVERS (VLAN 20)", "10.10.20.0/24", "10.10.20.1", "static only", "DC, file, Linux — static by design so DNS records never move"],
+            ["GUEST (VLAN 30)", "10.10.30.0/24", "10.10.30.1", "10.10.30.50–10.10.30.150", "Isolated, no internal routes permitted"],
+            ["MANAGEMENT (VLAN 99)", "10.10.99.0/24", "10.10.99.1", "static only", "Switch, router and AP management"]
+          ]
+        },
+        "p": [
+          "The .100–.199 range for users and static addressing for servers is a deliberate choice: servers get reservations so a hostname always maps to the same address, and a DHCP range never collides with them.",
+          "Guest traffic is given a route to the internet and **no** route to 10.10.10.0/24 or 10.10.20.0/24. This is enforced at the router, not by relying on client-side settings."
+        ]
+      },
+      {
+        "h": "Layer 1 and 2 — the Cisco switch",
+        "p": [
+          "Ports follow a naming convention that encodes the segment: access ports, a tagged trunk to the router, and management addressing on VLAN 99.",
+          "**Always write the configuration down before applying it.** Every change is a `copy running-config startup-config` away from being permanent, and every mistake here is visible to every user on that segment."
+        ],
+        "code": "enable\nconfigure terminal\nhostname SW-OFFICE\n\n! management addressing — the switch itself lives on VLAN 99\nvlan 99\n name MANAGEMENT\n exit\ninterface vlan 99\n ip address 10.10.99.2 255.255.255.0\n ip default-gateway 10.10.99.1\nip domain-name office.lan\n\n! segment creation\nvlan 10\n name USERS\nvlan 20\n name SERVERS\nvlan 30\n name GUEST\nexit\n\n! an access port in the user segment\ninterface GigabitEthernet0/1\n description WS-01\n switchport mode access\n switchport access vlan 10\n spanning-tree portfast\n no shutdown\n\n! the tagged uplink to the MikroTik router\na! IOS-class platforms create VLANs in vlan database mode;\n! on Catalyst 9000 / IOS XE use 'configure terminal' + 'vlan N'\ninterface GigabitEthernet0/24\n description TRUNK-TO-ROUTER\n switchport trunk encapsulation dot1q\n switchport mode trunk\n switchport trunk allowed vlan 10,20,30,99\n no shutdown\n\nend\nwrite memory",
+        "where": "Cisco switch",
+        "risk": "caution",
+        "list": [
+          "`switchport trunk encapsulation dot1q` is required on 2960-class platforms and rejected on many IOS XE platforms that only do 802.1Q. If your platform rejects it, remove it — that is not an error, it is a different model.",
+          "`spanning-tree portfast` on an access port skips the normal 30-second STP listening delay. Apply it only to end-host ports; on a trunk to another switch it creates a loop risk.",
+          "Put a `description` on every port. Six months from now the description is the only thing that will tell you what is plugged in."
+        ]
+      },
+      {
+        "h": "Layer 3 — the MikroTik router",
+        "p": [
+          "The router does all inter-VLAN routing, terminates the WAN, and provides the untrusted boundary. It does **not** need a DHCP server — Windows Server provides that — which is a deliberate division of responsibility.",
+          "Routing between segments on the router rather than on the switch means the policy for who may reach what lives in one place, on the device that faces the untrusted side."
+        ],
+        "code": "/interface/bridge/add name=bridge-lan\n/interface/bridge/port/add bridge=bridge-lan interface=ether1 pvid=10\n/interface/bridge/port/add bridge=bridge-lan interface=ether2 pvid=20\n/interface/bridge/port/add bridge=bridge-lan interface=ether3 pvid=30\n\n! one address per segment on the bridge\n/ip/address/add address=10.10.10.1/24 interface=bridge-lan\n/ip/address/add address=10.10.20.1/24 interface=bridge-lan\n/ip/address/add address=10.10.30.1/24 interface=bridge-lan\n/ip/address/add address=10.10.99.1/24 interface=bridge-lan\n\n! gateway of last resort to the ISP\n/ip/route/add dst-address=0.0.0.0/0 gateway=<ISP-GATEWAY>\n\n! translation for internal clients\n/ip/firewall/nat/add chain=srcnat out-interface=ether1 action=masquerade\n\n! guest isolation: allowed to reach the internet, denied from reaching internal networks\n/ip/firewall/filter/add chain=forward in-interface=bridge-lan src-address=10.10.30.0/24 \\\n   out-interface=ether1 action=accept comment=\"guest to internet\"\n/ip/firewall/filter/add chain=forward in-interface=bridge-lan src-address=10.10.30.0/24 \\\n   action=drop comment=\"guest blocked from internal\"\n\n! do not forward services from the internet to the inside\n/ip/firewall/filter/add chain=forward in-interface=ether1 action=drop \\\n   comment=\"no unsolicited inbound\"",
+        "where": "RouterOS",
+        "risk": "caution",
+        "list": [
+          "Order matters and the first match wins. The guest-allow rule must come **before** the guest-drop rule, and the unsolicited-inbound drop must come after any port-forward or established-connection rule.",
+          "Adding a firewall rule while connected through the router can cut your own session. Keep a second path in — WinBox from the LAN, or the serial console — before you touch anything in the filter chain."
+        ]
+      },
+      {
+        "h": "Windows Server — identity, names and addresses",
+        "p": [
+          "One server, four roles. In a lab this is fine. In production these would be separated, and the reason is worth understanding rather than copying blindly.",
+          "**Why they are separate in production:** DNS and DHCP are infrastructure other systems depend on; AD DS is security-critical state. Combining them means a DHCP fault or a patch cycle touches the domain controller. The failure domains overlap, and so do the backup requirements."
+        ],
+        "code": "# --- role installation ---\nInstall-WindowsFeature AD-Domain-Services, DNS, DHCP -IncludeManagementTools\nInstall-WindowsFeature RSAT-AD-Tools\n\n# --- promote to the first domain controller ---\n$pw = ConvertTo-SecureString 'LabPassw0rd!' -AsPlainText -Force\nInstall-ADDSForest -DomainName 'office.lan' -DomainNetbiosName 'OFFICE' \\\n  -SafeModeAdministratorPassword $pw -InstallDns -Force\n\n# --- add the office.lan zone and the A records servers need ---\nAdd-DnsServerResourceRecordA -ZoneName 'office.lan' -Name 'dc01' -IPv4Address '10.10.20.10'\nAdd-DnsServerResourceRecordA -ZoneName 'office.lan' -Name 'files' -IPv4Address '10.10.20.11'\nAdd-DnsServerResourceRecordA -ZoneName 'office.lan' -Name 'app'  -IPv4Address '10.10.20.20'\nAdd-DnsServerResourceRecordPTR -ZoneName '10.20.10.10.in-addr.arpa' -Name '10' -TargetHost 'dc01.office.lan'\n\n# --- DHCP scope for the user segment only ---\nAdd-DhcpServerv4Scope -ScopeAddress 10.10.10.0 -PrefixLength 24 -Name 'USERS' \\\n  -StartRange 10.10.10.100 -EndRange 10.10.10.199 -LeaseDuration '08:00:00'\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.10.10.0 -OptionId 3 -Value '10.10.10.1'\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.10.10.0 -OptionId 6 -Value '10.10.20.10'\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.10.10.0 -OptionId 15 -Value 'office.lan'\nSet-DhcpServerv4Scope -ScopeId 10.10.10.0 -State Active",
+        "where": "PowerShell on the domain controller",
+        "risk": "caution",
+        "list": [
+          "Option 6 is set to the DC, not to the router. DHCP hands out a resolver that knows about internal names — pointing it at the router gets you internet resolution and nothing else.",
+          "Option 15 is the DNS domain suffix. Omit it and every client makes single-label lookups for `files` that fail in confusing ways.",
+          "The gateway (option 3) is the router's VLAN 10 address, 10.10.10.1, because routing is done on the router."
+        ]
+      },
+      {
+        "h": "Users, groups and permissions",
+        "p": [
+          "Create **groups** first and put people in them. Granting a folder to six individuals means six edits when someone joins or leaves; granting it to a group means one.",
+          "The rule of thumb that survives every debate: users get no more rights than they need, and rights are assigned to groups, never to individuals."
+        ],
+        "code": "New-ADGroup -Name 'Accounting' -GroupScope Global -Path 'OU=Groups,DC=office,DC=lan'\nNew-ADGroup -Name 'Sales' -GroupScope Global -Path 'OU=Groups,DC=office,DC=lan'\nNew-ADUser -Name 'Sam Lee' -SamAccountName 'sam.lee' \\\n  -Path 'OU=Users,DC=office,DC=lan' -Enabled $true -ChangePasswordAtLogon $true\nAdd-ADGroupMember -Identity 'Accounting' -Members 'sam.lee'",
+        "where": "PowerShell on the domain controller"
+      },
+      {
+        "h": "RHEL 10 — the application server",
+        "p": [
+          "One RHEL 10 host running an internal service, joined to the domain so identity is consistent, with SELinux and firewalld left in their enforced defaults rather than disabled."
+        ],
+        "code": "# identity from the domain, rather than a second user database\nsudo dnf install -y realmd sssd\nsudo realm join --user=administrator office.lan\nrealm list\n\n# hostname resolution from the domain controller\nsudo nmcli connection modify 'System eth0' ipv4.dns '10.10.20.10' ipv4.dns-search 'office.lan,office.lan'\nsudo nmcli connection up 'System eth0'\n\n# the service itself\nsudo dnf install -y nginx\nsudo systemctl enable --now nginx\nsudo firewall-cmd --add-service=http --permanent\nsudo firewall-cmd --reload\n\n# verify — and verify from another machine, not only from localhost\nnginx -t\nss -lntup | grep :80\ncurl -sS -o /dev/null -w '%{http_code}\\n' http://10.10.20.20/",
+        "where": "RHEL 10",
+        "risk": "caution",
+        "list": [
+          "Do not disable SELinux to make a service work. Read the AVC denial with `ausearch -m avc -ts recent` and fix the label.",
+          "Do not disable firewalld. Add the service and reload.",
+          "The last line matters more than the one before it: `curl` from the server proves almost nothing. Always test from a second machine."
+        ]
+      },
+      {
+        "h": "Backup and recovery",
+        "p": [
+          "One backup that has never been restored from is not a backup. The restore test is part of the backup, not a separate activity."
+        ],
+        "code": "# Windows Server — scheduled system state backup\nwbadmin start backup -backupTarget:E: -include:C: -allCritical -schedule:02:00 -quiet\nwbadmin get versions\n\n# RHEL — what to protect and how\nsudo systemctl list-unit-files --state=enabled > /root/enabled-units.txt\nsudo ss -lntup > /root/listening-ports.txt\nsudo crontab -l > /root/crontab.txt\ntar czf /root/config-$(date +%F).tar.gz /etc",
+        "where": "both servers"
+      },
+      {
+        "h": "Failure injection — the part that proves the design",
+        "p": [
+          "Do these deliberately, on snapshots, in this order. Each one teaches something no amount of reading will."
+        ],
+        "list": [
+          "**Unplug a user port.** Confirm the port goes to err-disabled or simply stops passing traffic, and that no other VLAN is affected.",
+          "**Rename a client PC.** Confirm it still resolves and still joins. This tests DNS registration, not DNS itself.",
+          "**Stop the DHCP service on the DC.** Existing clients keep working until their leases expire, then stop. This teaches lease time — a fact nobody appreciates until it happens.",
+          "**Set a wrong DHCP scope gateway.** Clients get addresses and cannot leave the subnet. The most instructive failure in the whole project, because everything looks configured and nothing works.",
+          "**Remove VLAN 20 from the trunk.** Users in VLAN 10 still work; servers become unreachable. Confirms the segmentation is real and not cosmetic.",
+          "**Restore a backup onto a scratch machine.** The only test that counts.",
+          "**Take the whole stack down and rebuild from your written configuration.** If you cannot do this, the documentation is not finished."
+        ]
+      },
+      {
+        "h": "Validation checklist and acceptance criteria",
+        "p": [
+          "The project is done when every one of these is demonstrably true, not when the configuration looks finished."
+        ],
+        "list": [
+          "A user PC in VLAN 10 receives a lease from 10.10.10.100–199, with gateway 10.10.10.1 and DNS 10.10.20.10.",
+          "A guest PC in VLAN 30 reaches the internet and cannot reach 10.10.10.0/24 or 10.10.20.0/24.",
+          "`Resolve-DnsName dc01.office.lan` from a user PC returns 10.10.20.10.",
+          "A domain user signs in to a user PC and can reach the file share using domain credentials.",
+          "A user not in the Accounting group cannot open the Accounts folder.",
+          "`https://app.office.lan` is reachable from a user PC with a valid certificate, and from no other VLAN except SERVERS.",
+          "The RHEL host resolves `dc01.office.lan` through the domain controller.",
+          "A backup restores onto a separate machine and the file share is intact.",
+          "Every device's configuration is in version control or a written file, and a colleague could rebuild from it."
+        ]
+      },
+      {
+        "h": "Where production differs from this lab",
+        "p": [
+          "Stated explicitly so the lab is not mistaken for a production design."
+        ],
+        "list": [
+          "**Two domain controllers**, on separate hardware, with a replicated DNS zone and DHCP in failover mode. One DC is a single point of failure.",
+          "**No single-person dependency.** The failover should not require the same administrator who built it.",
+          "**Backups off-site and off-network**, with retention and a documented recovery time objective. A backup on the same disk is not a backup.",
+          "**Management interface separated and ACL-restricted**, reachable only from the management VLAN, never from the user segment.",
+          "**No inbound port forwards at all.** Remote access through a VPN with MFA, not through published RDP.",
+          "**Monitoring**: at minimum, a daily check that the DC is reachable, the file share opens, and a backup completed. Unmonitored infrastructure fails silently.",
+          "**Change control**: every change written down with a rollback plan. The rollback plan is the part that matters."
+        ]
+      }
+    ]
+  }
+]

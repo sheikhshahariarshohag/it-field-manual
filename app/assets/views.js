@@ -1,0 +1,848 @@
+/**
+ * views.js — screen rendering.
+ *
+ * Each view is (params, query) -> Node. The shell owns the main element; views
+ * only build and return content.
+ */
+
+import { h, clear, icon, codeBlock, more, sheet, toast, copyText, add } from "./ui.js";
+import * as search from "./search.js";
+import * as db from "./db.js";
+import { href } from "./router.js";
+
+export const TECH = {
+  aplus:    { label: "CompTIA A+",     varName: "--tech-aplus" },
+  cisco:    { label: "Cisco / CCNA",   varName: "--tech-cisco" },
+  mikrotik: { label: "MikroTik",       varName: "--tech-mikrotik" },
+  win11:    { label: "Windows 11",     varName: "--tech-win11" },
+  winserver:{ label: "Windows Server", varName: "--tech-winserver" },
+  rhel:     { label: "RHEL 10",        varName: "--tech-winserver" },
+  cross:    { label: "Cross-domain",   varName: "--tech-cross" },
+};
+
+/** Resolve a subject colour to a CSS variable, never a literal hex inline. */
+export function techColor(id) {
+  const t = TECH[id];
+  return t ? `var(${t.varName})` : "var(--text-faint)";
+}
+
+const RISK = {
+  safe:    { label: "Read-only",  cls: "badge--safe" },
+  caution: { label: "Changes state", cls: "badge--caution" },
+  risk:    { label: "Disruptive / destructive", cls: "badge--risk" },
+};
+
+const VERIFY_LABEL = {
+  "source-checked": "Source-checked",
+  "independently-reviewed": "Independently reviewed",
+  "execution-tested": "Execution-tested",
+  "release-approved": "Release-approved",
+};
+
+export function techBadge(techId) {
+  const t = TECH[techId];
+  if (!t) return null;
+  return h("span.badge", { style: { color: `var(${t.varName})` } }, t.label);
+}
+
+export function verifyBadge(status) {
+  if (!status) return null;
+  const s = String(status);
+  const known = ["execution-tested", "release-approved", "independently-reviewed", "source-checked"];
+  const best = known.find((k) => s.includes(k)) || "source-checked";
+  return h("span.vlevel", {
+    class: `vlevel v-${best}`,
+    title: `Verification: ${s}`,
+  }, VERIFY_LABEL[best]);
+}
+
+/* ================================================================== home */
+
+export function homeView() {
+  const st = search.searchStats();
+  const wrap = h("div");
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Field manual"),
+    h("p", "A working reference for the six subjects, plus labs and troubleshooting you can run in a spare virtual machine. Everything here works offline once the app has been opened once."),
+  ));
+
+  wrap.appendChild(h("div.stat-row",
+    h("div.stat", h("div.stat__n", String(st.commands)), h("div.stat__l", "commands")),
+    h("div.stat", h("div.stat__n", String(st.lessons)), h("div.stat__l", "lessons")),
+    h("div.stat", h("div.stat__n", String(st.scenarios)), h("div.stat__l", "scenarios")),
+    h("div.stat", h("div.stat__n", String(st.quizzes)), h("div.stat__l", "quizzes")),
+    h("div.stat", h("div.stat__n", String(st.projects)), h("div.stat__l", "projects")),
+  ));
+
+  wrap.appendChild(h("div.cards",
+    h("a.card", { href: href("search?q=systemctl") },
+      h("div.card__k", "Quick reference"), h("div.card__t", "Find a command"),
+      h("div.card__d", "Search by command, task or error text. Every entry says where to run it, what it changes, and how to undo it.")),
+    h("a.card", { href: href("subjects") },
+      h("div.card__k", "Learning"), h("div.card__t", "Subjects"),
+      h("div.card__d", "A+ → CCNA → MikroTik → Windows 11 → Windows Server → RHEL 10, with labs and checks along the way.")),
+    h("a.card", { href: href("scenarios") },
+      h("div.card__k", "Practice"), h("div.card__t", "Troubleshooting scenarios"),
+      h("div.card__d", "Real-shaped faults. Gather evidence first; hints and the investigation path stay hidden until you ask.")),
+    h("a.card", { href: href("progress") },
+      h("div.card__k", "You"), h("div.card__t", "Progress and weak areas"),
+      h("div.card__d", "What you have marked done, and which questions you keep getting wrong.")),
+    h("a.card", { href: href("verify") },
+      h("div.card__k", "Honesty"), h("div.card__t", "Verification status"),
+      h("div.card__d", "What has actually been run versus what has only been read in documentation. Source-checked is not execution-tested.")),
+    h("a.card", { href: href("bookmarks") },
+      h("div.card__k", "You"), h("div.card__t", "Bookmarks"),
+      h("div.card__d", "Anything you starred, kept on this device only.")),
+  ));
+
+  wrap.appendChild(h("div.note",
+    h("strong", "How to trust a page here"),
+    h("span", "Each entry carries a verification badge. “Source-checked” means the syntax was compared with current vendor documentation. “Execution-tested” means it was actually run in a lab. Those are not the same claim, and the manual never blurs them."),
+  ));
+
+  return wrap;
+}
+
+/* ================================================================== browse */
+
+export function browseView(params, query) {
+  const kind = params.kind;
+  const pool = (search.CORPUS[kind] || []).slice();
+  const wrap = h("div");
+
+  const titles = {
+    commands: "Commands", lessons: "Lessons", scenarios: "Scenarios",
+    quizzes: "Quizzes", projects: "Projects",
+  };
+  wrap.appendChild(h("header.page-head",
+    h("h1", titles[kind] || "Browse"),
+    h("p", kind === "commands"
+      ? "Filter by subject, risk and verification status."
+      : "Each item opens into its own page."),
+  ));
+
+  // filters
+  const techSel = query.tech || "";
+  const verSel = query.verification || "";
+  const riskSel = query.risk || "";
+
+  const mkChip = (label, value, current, onPick) => {
+    const b = h("button.chip", { type: "button", "aria-pressed": String(value === current) }, label);
+    b.addEventListener("click", () => onPick(value === current ? "" : value));
+    return b;
+  };
+
+  const go = (patch) => {
+    const q = { ...query, ...patch };
+    for (const k of Object.keys(q)) if (!q[k]) delete q[k];
+    const qs = Object.keys(q).length ? "?" + new URLSearchParams(q).toString() : "";
+    location.hash = href(`${kind}`) + qs;
+  };
+
+  const techBar = h("div.filters", h("span.filters__label", "Subject"));
+  const present = [...new Set(pool.map((d) => d.tech))].filter(Boolean);
+  for (const t of present) {
+    techBar.appendChild(mkChip(TECH[t] ? TECH[t].label : t, t, techSel, (v) => go({ tech: v })));
+  }
+
+  const riskBar = h("div.filters", h("span.filters__label", "Risk"));
+  for (const [k, v] of Object.entries(RISK)) riskBar.appendChild(mkChip(v.label, k, riskSel, (x) => go({ risk: x })));
+
+  const verBar = h("div.filters", h("span.filters__label", "Verification"));
+  for (const k of Object.keys(VERIFY_LABEL)) verBar.appendChild(mkChip(VERIFY_LABEL[k], k, verSel, (x) => go({ verification: x })));
+
+  wrap.appendChild(techBar);
+  if (kind === "commands") { wrap.appendChild(riskBar); wrap.appendChild(verBar); }
+
+  const filtered = pool.filter((d) => {
+    if (techSel && d.tech !== techSel) return false;
+    if (riskSel && (d.risk || "safe") !== riskSel) return false;
+    if (verSel && !(d.verification || "").includes(verSel)) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    wrap.appendChild(h("div.empty", h("h2", "Nothing matches these filters"),
+      h("p", "Clear a filter, or search instead — search matches command text, aliases and error messages.")));
+    return wrap;
+  }
+
+  const list = h("div.resultlist");
+  for (const d of filtered) list.appendChild(resultRow(d, kind));
+  wrap.appendChild(list);
+  return wrap;
+}
+
+function resultRow(d, kind) {
+  const a = h("a.result", { href: href(`${kind}/${encodeURIComponent(d.id)}`) },
+    h("div.result__t", d.title, techBadge(d.tech), kind === "commands" ? verifyBadge(d.verification) : null,
+      d.risk && d.risk !== "safe" ? h("span.badge", { class: `badge ${RISK[d.risk].cls}` }, RISK[d.risk].label) : null),
+    d.task ? h("div.result__m", d.task) : null,
+    d.summary ? h("div.result__m", d.summary) : null,
+    d.commands ? h("div.result__x", firstLine(d.commands)) : null,
+  );
+  return a;
+}
+
+function firstLine(cmds) {
+  const t = typeof cmds === "string" ? cmds : cmds.text || "";
+  const l = t.split("\n").map((x) => x.trim()).filter((x) => x && !x.startsWith("#"));
+  return l[0] || "";
+}
+
+/* ================================================================== search page */
+
+export function searchView(params, query) {
+  const q = query.q || "";
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Search"),
+    h("p", "Matches command text, common aliases, task phrasing and error messages. Works with no network."),
+  ));
+
+  if (!q || q.trim().length < 2) {
+    wrap.appendChild(h("div.empty",
+      h("h2", "Type at least two characters"),
+      h("p", "Try a command name, a task like “client can’t get an IP address”, or part of an error message."),
+    ));
+    return wrap;
+  }
+
+  const { results, total, expanded } = search.search(q);
+  wrap.appendChild(h("p.srcref", h("strong", String(total)), " result" + (total === 1 ? "" : "s"),
+    expanded ? " · no exact match, showing partial matches" : ""));
+
+  if (!results.length) {
+    wrap.appendChild(h("div.empty", h("h2", "No matches"),
+      h("p", "Nothing in the packaged library matched. Check the spelling, or try a shorter fragment — “dhcp” finds more than “dhcpd-lease-time” would if it were mistyped.")));
+    return wrap;
+  }
+
+  const list = h("div.resultlist");
+  for (const { doc } of results) list.appendChild(resultRow(doc, doc.kind));
+  wrap.appendChild(list);
+  return wrap;
+}
+
+/* ================================================================== command detail */
+
+export async function commandView(params) {
+  const d = search.docById(params.id);
+  if (!d || d.kind !== "command") return notFound();
+
+  const risk = RISK[d.risk || "safe"];
+  const wrap = h("div");
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", d.title),
+    h("p", d.task || d.summary),
+    h("div.card__meta", techBadge(d.tech),
+      h("span.badge", { class: `badge ${risk.cls}` }, risk.label),
+      verifyBadge(d.verification),
+      d.version ? h("span.badge", d.version) : null),
+  ));
+
+  const facts = [];
+  if (d.where) facts.push(["Run on", d.where]);
+  if (d.privilege) facts.push(["Privilege", d.privilege]);
+  if (d.prereq) facts.push(["Prerequisites", d.prereq]);
+  if (d.changes) facts.push(["Changes state?", d.changes]);
+  if (d.undo) facts.push(["Undo", d.undo]);
+  if (d.risks) facts.push(["Risks", d.risks]);
+  if (facts.length) {
+    const dl = h("dl.facts");
+    for (const [k, v] of facts) { dl.appendChild(h("dt", k)); dl.appendChild(h("dd", v)); }
+    wrap.appendChild(dl);
+  }
+
+  wrap.appendChild(bookmarkBtn(d));
+
+  wrap.appendChild(h("h2", "Command"));
+  wrap.appendChild(codeBlock(d.commands, {
+    where: d.where || "shell",
+    risk: d.risk || "safe",
+    tag: d.platform || "command",
+  }));
+
+  if (d.explain) wrap.appendChild(more("What each part does", h("div.prose", ...d.explain.map((p) => h("p", p)))));
+  if (d.example) add(wrap, h("h2", "Worked example"), h("div.prose", ...d.example.map((p) => h("p", ...paraTokens(p)))));
+  if (d.output) add(wrap, h("h2", "Expected result"), codeBlock(d.output, { where: "output", tag: "expected" }));
+  if (d.verify && d.verify.length) {
+    wrap.appendChild(h("h2", "Confirm it worked"));
+    for (const v of d.verify) wrap.appendChild(codeBlock(v, { where: d.where || "shell", tag: "verify" }));
+  }
+  if (d.errors && d.errors.length) {
+    const wrapE = h("div");
+    for (const e of d.errors) {
+      wrapE.appendChild(h("div.entry",
+        h("div.entry__top", h("h3.entry__title", e.message)),
+        h("p.entry__sum", e.means),
+        e.fix ? codeBlock(e.fix, { where: d.where || "shell", risk: "caution", tag: "fix" }) : null,
+      ));
+    }
+    wrap.appendChild(h("h2", "Common errors"));
+    wrap.appendChild(wrapE);
+  }
+  if (d.sources && d.sources.length) {
+    const ul = h("ul.prose");
+    for (const s of d.sources) ul.appendChild(h("li",
+      s.title ? h("span", h("strong", s.title), " — ") : null,
+      s.url ? h("a", { href: s.url, target: "_blank", rel: "noopener noreferrer" }, s.url) : (s.note || ""),
+      s.checked ? h("span.srcref", ` (checked ${s.checked})`) : null));
+    wrap.appendChild(h("h2", "Sources"));
+    wrap.appendChild(ul);
+  }
+  add(wrap,
+    h("h2", "How much to trust this"),
+    h("p", h("a", { href: href("verify") }, "See what execution-tested actually means →")),
+    h("h2", "Your notes"),
+    noteEditor(d.id));
+
+  return wrap;
+}
+
+/* ================================================================== lesson */
+
+export function lessonView(params) {
+  const d = search.docById(params.id);
+  if (!d || d.kind !== "lesson") return notFound();
+  const wrap = h("div");
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", d.title),
+    h("p", d.summary),
+    h("div.card__meta", techBadge(d.tech),
+      verifyBadge(d.verification),
+      d.time ? h("span.badge", d.time + " read") : null),
+  ));
+
+  wrap.appendChild(progressBar(d.id));
+  wrap.appendChild(noteEditor(d.id));
+
+  if (d.analogy) wrap.appendChild(h("div.note", h("strong", "In one sentence"), h("span", d.analogy)));
+
+  const sections = d.sections || [];
+  if (d.prerequisites && d.prerequisites.length) {
+    const ul = h("ul.prose");
+    for (const p of d.prerequisites) {
+      const target = search.docById(p.id);
+      ul.appendChild(h("li", target ? h("a", { href: href(`lessons/${target.id}`) }, p.label || target.title) : (p.label || String(p))));
+    }
+    add(wrap, h("h2", "Before you start"), ul);
+  }
+
+  for (const s of sections) {
+    wrap.appendChild(h("h2", s.h));
+    const body = h("div.prose");
+    for (const para of (s.p || [])) body.appendChild(h("p", ...paraTokens(para)));
+    if (s.code) body.appendChild(codeBlock(s.code, { where: s.where || d.where || "shell", risk: s.risk || "safe" }));
+    if (s.list) { const ul = h("ul"); for (const li of s.list) ul.appendChild(h("li", ...paraTokens(li))); body.appendChild(ul); }
+    wrap.appendChild(body);
+  }
+
+  if (d.lab) {
+    wrap.appendChild(h("h2", "Lab"));
+    const steps = h("div.prose");
+    d.lab.forEach((step, i) => {
+      steps.appendChild(h("p", h("strong", `${i + 1}. `), ...paraTokens(step.text)));
+      if (step.cmd) steps.appendChild(codeBlock(step.cmd, { where: step.where || d.where || "shell", risk: step.risk || "safe" }));
+      if (step.expect) steps.appendChild(h("p.srcref", "Expected: ", ...paraTokens(step.expect)));
+    });
+    wrap.appendChild(steps);
+  }
+
+  if (d.failures && d.failures.length) {
+    const ul = h("ul.prose");
+    for (const f of d.failures) ul.appendChild(h("li", h("strong", f.why + " "), ...paraTokens(f.fix)));
+    add(wrap, h("h2", "When it goes wrong"), ul);
+  }
+
+  add(wrap, bookmarkBtn(d), noteEditor(d.id));
+  wrap.appendChild(h("div.btnrow",
+    h("button.btn.btn--primary", { onclick: () => markDone(d) }, "Mark this done"),
+    relatedLinks(d),
+  ));
+
+  const quizId = d.quiz;
+  if (quizId && search.docById(quizId)) {
+    wrap.appendChild(h("p.srcref", "Knowledge check: ", h("a", { href: href(`quizzes/${quizId}`) }, search.docById(quizId).title)));
+  }
+  return wrap;
+}
+
+/** `backticks` become <code>, and the text is never interpreted as markup. */
+function paraTokens(text) {
+  const parts = String(text).split(/`([^`]+)`/g);
+  const out = [];
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 2 === 1) out.push(h("code.inline", parts[i]));
+    else out.push(parts[i]);
+  }
+  return out;
+}
+
+function relatedLinks(d) {
+  const ids = (d.related || []).map((r) => ({ ref: search.docById(r.id), label: r.label })).filter((x) => x.ref);
+  if (!ids.length) return null;
+  const box = h("div", h("span.srcref", "Related: "));
+  for (const { ref, label } of ids) {
+    box.appendChild(h("a", { href: href(`${ref.kind}/${ref.id}`), style: { marginRight: "12px" } }, label || ref.title));
+  }
+  return box;
+}
+
+async function markDone(d) {
+  await db.store.setProgress(d.id, { status: "done" });
+  toast(`Marked “${d.title}” done`);
+}
+
+/* ================================================================== scenario */
+
+export function scenarioView(params) {
+  const d = search.docById(params.id);
+  if (!d || d.kind !== "scenario") return notFound();
+  const wrap = h("div");
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", d.title),
+    h("p", d.summary),
+    h("div.card__meta", techBadge(d.tech), h("span.badge", d.difficulty || "Intermediate"),
+      verifyBadge(d.verification)),
+  ));
+
+  wrap.appendChild(h("div.note",
+    h("strong", "The situation"),
+    h("span", d.situation),
+  ));
+  if (d.simulated) {
+    wrap.appendChild(h("div.note", { style: { borderColor: "var(--text-faint)", background: "var(--surface-2)" } },
+      h("strong", "This is a teaching scenario"),
+      h("span", d.simulated)));
+  }
+
+  wrap.appendChild(h("h2", "Work through it in this order"));
+  const steps = h("div.steps");
+  const defs = [
+    { k: "inspect", label: "1 · Inspect the situation", open: true },
+    { k: "hint", label: "2 · Ask for a hint" },
+    { k: "review", label: "3 · Review the relevant commands" },
+    { k: "investigate", label: "4 · Reveal the investigation path" },
+    { k: "solution", label: "5 · Reveal the fix" },
+    { k: "verify", label: "6 · Verify the fix" },
+    { k: "rootcause", label: "7 · Understand the root cause" },
+    { k: "alternatives", label: "8 · Alternative solutions" },
+    { k: "prevent", label: "9 · Prevent a recurrence" },
+  ];
+  for (const def of defs) {
+    const content = d.steps && d.steps[def.k];
+    if (!content) continue;
+    const det = h("details.step");
+    if (def.open) det.setAttribute("open", "");
+    det.appendChild(h("summary", h("span.step__n", String(defs.indexOf(def) + 1)), def.label));
+    const body = h("div.step__body");
+    for (const para of (Array.isArray(content) ? content : [content])) {
+      if (typeof para === "string") body.appendChild(h("p", ...paraTokens(para)));
+      else body.appendChild(codeBlock(para.cmd, { where: para.where || d.where || "shell", risk: para.risk || "safe", tag: para.tag || "" }));
+    }
+    det.appendChild(body);
+    steps.appendChild(det);
+  }
+  wrap.appendChild(steps);
+
+  if (d.teaches) {
+    const ul = h("ul.prose");
+    for (const t of d.teaches) ul.appendChild(h("li", ...paraTokens(t)));
+    add(wrap, h("h2", "What this exercises"), ul);
+  }
+  add(wrap, h("h2", "Keep this one"), bookmarkBtn(d), noteEditor(d.id));
+  return wrap;
+}
+
+/* ================================================================== quiz */
+
+export function quizView(params) {
+  const d = search.docById(params.id);
+  if (!d || d.kind !== "quiz") return notFound();
+  const wrap = h("div");
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", d.title),
+    h("p", d.summary),
+    h("div.card__meta", techBadge(d.tech), h("span.badge", `${(d.questions || []).length} questions`)),
+  ));
+
+  const state = { answers: {}, hints: {}, submitted: false };
+  const host = h("div");
+
+  const render = () => {
+    clear(host);
+    (d.questions || []).forEach((q, i) => {
+      const block = h("div.quiz__q");
+      block.appendChild(h("div.quiz__stem", `${i + 1}. `, ...paraTokens(q.q)));
+
+      if (state.hints[i]) block.appendChild(h("div.quiz__hint", h("strong", "Hint: "), ...paraTokens(state.hints[i])));
+
+      q.options.forEach((opt, oi) => {
+        const inputId = `q${i}_${oi}`;
+        const input = h("input", {
+          type: "radio", name: `q${i}`, id: inputId, value: String(oi),
+          checked: state.answers[i] === oi ? true : null,
+        });
+        const label = h("label.quiz__opt", { for: inputId }, input, h("span", ...paraTokens(opt)));
+        if (state.submitted) {
+          label.dataset.state = "locked";
+          if (q.answer === oi) label.dataset.state = "right";
+          else if (state.answers[i] === oi) label.dataset.state = "wrong";
+        }
+        input.addEventListener("change", () => {
+          state.answers[i] = oi;
+          if (!state.submitted) render();
+        });
+        block.appendChild(label);
+      });
+
+      if (state.submitted) {
+        if (state.answers[i] === q.answer) {
+          block.appendChild(h("p.srcref", { style: { color: "var(--ok)" } }, "Correct."));
+        } else {
+          block.appendChild(h("p.srcref", { style: { color: "var(--danger)" } }, "Not quite."));
+        }
+        if (q.why) block.appendChild(h("p.prose", h("strong", "Why: "), ...paraTokens(q.why)));
+      }
+      host.appendChild(block);
+    });
+
+    const answered = Object.keys(state.answers).length;
+    const total = (d.questions || []).length;
+
+    if (!state.submitted) {
+      host.appendChild(h("div.btnrow",
+        h("button.btn.btn--primary", {
+          disabled: answered < total ? true : null,
+          onclick: async () => {
+            state.submitted = true;
+            let right = 0;
+            const weak = [];
+            (d.questions || []).forEach((q, i) => {
+              if (state.answers[i] === q.answer) right++;
+              else weak.push({ id: q.id || `${d.id}:q${i}`, stem: q.q, topic: q.topic || d.title });
+            });
+            await db.store.saveQuiz(d.id, { answers: state.answers, score: right, submitted_at: Date.now() });
+            for (const w of weak) await db.store.setProgress(w.id, { wrong: (w.count = 1) });
+            toast(`Scored ${right}/${total}`);
+            render();
+            host.scrollIntoView({ behavior: "smooth", block: "start" });
+          },
+        }, answered < total ? `Answer all ${total} questions (${answered}/${total})` : `Check my answers`),
+        h("button.btn", {
+          onclick: async () => {
+            state.submitted = false; state.answers = {};
+            await db.store.saveQuiz(d.id, { answers: {}, score: null, submitted_at: null });
+            render();
+          },
+        }, "Reset"),
+      ));
+    } else {
+      const right = (d.questions || []).filter((q, i) => state.answers[i] === q.answer).length;
+      host.appendChild(h("div.note.note--ok",
+        h("strong", `You scored ${right} of ${(d.questions || []).length}.`),
+        h("span", right === total ? "Full marks. Move on to the next topic, or re-run it later to check it stuck."
+          : "The ones you missed are recorded on your Progress page so you can come back to just those."),
+      ));
+      host.appendChild(h("div.btnrow", h("button.btn", { onclick: () => { state.submitted = false; state.answers = {}; render(); } }, "Try again")));
+    }
+  };
+
+  // staged hint button per question
+  wrap.appendChild(host);
+  render();
+
+  if ((d.questions || []).some((q) => q.hint)) {
+    wrap.appendChild(h("h2", "Need a nudge?"));
+    wrap.appendChild(h("p.srcref", "Hints are staged so you try before you read."));
+    const box = h("div.btnrow");
+    (d.questions || []).forEach((q, i) => {
+      if (!q.hint) return;
+      const b = h("button.btn", {
+        onclick: () => { state.hints[i] = q.hint; render(); b.disabled = true; },
+      }, `Hint for question ${i + 1}`);
+      box.appendChild(b);
+    });
+    wrap.appendChild(box);
+  }
+
+  return wrap;
+}
+
+/* ================================================================== project */
+
+export function projectView(params) {
+  const d = search.docById(params.id);
+  if (!d || d.kind !== "project") return notFound();
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", d.title),
+    h("p", d.summary),
+    h("div.card__meta", techBadge(d.tech), verifyBadge(d.verification)),
+  ));
+  wrap.appendChild(progressBar(d.id));
+
+  for (const s of d.sections || []) {
+    wrap.appendChild(h("h2", s.h));
+    const body = h("div.prose");
+    for (const para of (s.p || [])) body.appendChild(h("p", ...paraTokens(para)));
+    if (s.table) {
+      const t = h("table");
+      const thead = h("thead", h("tr", ...s.table.head.map((x) => h("th", x))));
+      const tbody = h("tbody");
+      for (const row of s.table.rows) tbody.appendChild(h("tr", ...row.map((cell) => h("td", ...paraTokens(String(cell))))));
+      t.appendChild(thead); t.appendChild(tbody);
+      body.appendChild(h("div.tablewrap", t));
+    }
+    if (s.code) body.appendChild(codeBlock(s.code, { where: s.where || "shell", risk: s.risk || "safe" }));
+    if (s.list) { const ul = h("ul"); for (const li of s.list) ul.appendChild(h("li", ...paraTokens(li))); body.appendChild(ul); }
+    wrap.appendChild(body);
+  }
+  wrap.appendChild(h("div.btnrow", h("button.btn.btn--primary", { onclick: () => markDone(d) }, "Mark this done")));
+  return wrap;
+}
+
+/* ================================================================== subjects */
+
+export function subjectsView() {
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Subjects"),
+    h("p", "The order you asked for, with the cross-links that actually matter — DNS on Linux and DNS on Windows Server are the same problem twice."),
+  ));
+
+  const order = ["aplus", "cisco", "mikrotik", "win11", "winserver", "rhel"];
+  for (const t of order) {
+    const lessons = search.CORPUS.lessons.filter((l) => l.tech === t);
+    const cmds = search.CORPUS.commands.filter((c) => c.tech === t);
+    const scen = search.CORPUS.scenarios.filter((s) => s.tech === t);
+    const info = TECH[t];
+    wrap.appendChild(h("h2", info.label));
+    wrap.appendChild(h("p.srcref", `${lessons.length} lessons · ${cmds.length} commands · ${scen.length} scenarios`));
+    if (!lessons.length && !cmds.length) {
+      wrap.appendChild(h("div.note", h("strong", "Not written yet"), h("span", "This subject is mapped in CONTENT_MAP.md but has no content yet. Nothing here is filler — the count stays honest.")));
+      continue;
+    }
+    const cards = h("div.cards");
+    for (const l of lessons) {
+      cards.appendChild(h("a.card", { href: href(`lessons/${l.id}`), style: { "--dot": techColor(t) } },
+        h("div.card__k", "Lesson"), h("div.card__t", l.title),
+        h("div.card__d", l.summary),
+        h("div.card__meta", l.time ? h("span.badge", l.time) : null)));
+    }
+    wrap.appendChild(cards);
+  }
+  return wrap;
+}
+
+/* ================================================================== progress */
+
+export async function progressView() {
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Progress"),
+    h("p", "Stored on this device only. Nothing is uploaded, and clearing your browser data clears this."),
+  ));
+
+  const durable = await db.isDurable();
+  if (!durable) {
+    wrap.appendChild(h("div.errbox", h("strong", "Storage is not available"),
+      h("span", "This browser is blocking IndexedDB, so notes and progress will disappear when you close the tab. The reference content still works. Export before you leave if you need to keep anything.")));
+  }
+
+  const progress = await db.store.progress();
+  const quizzes = await db.store.quizzes();
+  const done = progress.filter((p) => p.status === "done");
+  const lessons = search.CORPUS.lessons;
+  const pct = lessons.length ? Math.round((done.length / lessons.length) * 100) : 0;
+
+  wrap.appendChild(h("div.stat-row",
+    h("div.stat", h("div.stat__n", `${pct}%`), h("div.stat__l", "lessons marked done")),
+    h("div.stat", h("div.stat__n", String(done.length)), h("div.stat__l", "done")),
+    h("div.stat", h("div.stat__n", String(quizzes.filter((q) => q.score !== null && q.score !== undefined).length)), h("div.stat__l", "quizzes attempted")),
+    h("div.stat", h("div.stat__n", String(progress.filter((p) => p.wrong).length)), h("div.stat__l", "weak spots")),
+  ));
+
+  const weak = progress.filter((p) => p.wrong);
+  if (weak.length) {
+    wrap.appendChild(h("h2", "Weak spots"));
+    const ul = h("ul.prose");
+    for (const w of weak) {
+      const doc = search.docById(w.id);
+      ul.appendChild(h("li", doc ? h("a", { href: href(`${doc.kind}/${doc.id}`) }, doc.title) : w.id,
+        " — missed ", String(w.wrong), " time(s). Read the linked page, then retake the quiz."));
+    }
+    wrap.appendChild(ul);
+  } else {
+    wrap.appendChild(h("div.note.note--ok", h("strong", "No weak spots recorded"),
+      h("span", "Take a quiz and any question you get wrong shows up here.")));
+  }
+
+  wrap.appendChild(h("h2", "Done"));
+  if (!done.length) {
+    wrap.appendChild(h("p.srcref", "Nothing marked done yet."));
+  } else {
+    const ul = h("ul.prose");
+    for (const d of done) {
+      const doc = search.docById(d.id);
+      ul.appendChild(h("li", doc ? h("a", { href: href(`${doc.kind}/${doc.id}`) }, doc.title) : d.id,
+        h("button.btn", {
+          style: { marginLeft: "10px", padding: "2px 8px", fontSize: "12px" },
+          onclick: async () => { await db.store.setProgress(d.id, { status: "open" }); render(wrap); },
+        }, "undo")));
+    }
+    wrap.appendChild(ul);
+  }
+  return wrap;
+}
+
+/* ================================================================== bookmarks */
+
+export async function bookmarksView() {
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Bookmarks"),
+    h("p", "Kept on this device. Included in your export file."),
+  ));
+  const ids = await db.store.bookmarks();
+  if (!ids.length) {
+    wrap.appendChild(h("div.empty", h("h2", "No bookmarks yet"),
+      h("p", "Use the ☆ button on any command, lesson or scenario to keep it here.")));
+    return wrap;
+  }
+  const list = h("div.resultlist");
+  for (const id of ids) {
+    const d = search.docById(id);
+    if (!d) continue;
+    const row = h("div.result");
+    row.appendChild(h("a", { href: href(`${d.kind}/${d.id}`), style: { color: "inherit" } },
+      h("div.result__t", d.title, techBadge(d.tech)),
+      d.summary ? h("div.result__m", d.summary) : null));
+    list.appendChild(row);
+  }
+  wrap.appendChild(list);
+  return wrap;
+}
+
+/* ================================================================== verify page */
+
+export function verifyView() {
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Verification status"),
+    h("p", "The manual tells you how far each entry has been taken. These four are not interchangeable, and the strongest claim in this app is “execution-tested”, not “verified”."),
+  ));
+
+  const table = h("table",
+    h("thead", h("tr", h("th", "Status"), h("th", "What it actually means"), h("th", "What it does not mean"))),
+    h("tbody",
+      h("tr", h("td", h("span.vlevel.v-source-checked", "Source-checked")),
+        h("td", "Syntax and parameters were compared against a named, current vendor or upstream document."),
+        h("td", "That anyone ran it. A correct-looking command can still fail on your system because of a missing prerequisite, a firewall, or a version difference.")),
+      h("tr", h("td", h("span.vlevel.v-independently-reviewed", "Independently reviewed")),
+        h("td", "A second, independent source or a separate review agreed on the important details."),
+        h("td", "That it was executed. Two documents can share the same mistake.")),
+      h("tr", h("td", h("span.vlevel.v-execution-tested", "Execution-tested")),
+        h("td", "It was actually run, and the expected output was observed, in a stated environment on a stated date."),
+        h("td", "That it works on your version or your hardware. Lab and production differ.")),
+      h("tr", h("td", h("span.vlevel.v-release-approved", "Release-approved")),
+        h("td", "It passed this project's own validation gates for a release."),
+        h("td", "That it can never break. It is the strongest claim here, not an absolute one.")),
+    ));
+
+  wrap.appendChild(h("div.tablewrap", table));
+
+  const byStatus = { "source-checked": 0, "independently-reviewed": 0, "execution-tested": 0, "release-approved": 0 };
+  for (const d of search.allDocs()) {
+    const v = d.verification || "";
+    if (v.includes("execution-tested")) byStatus["execution-tested"]++;
+    else if (v.includes("independently-reviewed")) byStatus["independently-reviewed"]++;
+    else if (v.includes("source-checked")) byStatus["source-checked"]++;
+  }
+  wrap.appendChild(h("h2", "Current library"));
+  const bars = h("div");
+  for (const [k, v] of Object.entries(byStatus)) {
+    const pct = search.allDocs().length ? Math.round((v / search.allDocs().length) * 100) : 0;
+    bars.appendChild(h("div", { style: { marginBottom: "10px" } },
+      h("div", h("strong", VERIFY_LABEL[k] || k), ` — ${v} entries (${pct}%)`),
+      h("div.progressbar", h("div.progressbar__fill", { style: { width: pct + "%" } }))));
+  }
+  wrap.appendChild(bars);
+
+  add(wrap,
+    h("h2", "The honest limitation"),
+    h("div.note",
+      h("strong", "Where this stops"),
+      h("span", "Most of this library is built from documentation and your own RHEL 10 virtual machines. Where a command could not be run safely here, the entry says so and gives you a manual validation procedure instead. Nothing in this app claims a test that did not happen.")));
+
+  add(wrap,
+    h("h2", "Every reference entry"),
+    h("p", h("a", { href: href("commands?verification=execution-tested") }, "Execution-tested commands only →")));
+
+  return wrap;
+}
+
+/* ================================================================== pieces */
+
+function progressBar(id) {
+  const bar = h("div.progressbar", h("div.progressbar__fill", { style: { width: "0%" } }));
+  db.store.setProgress(id, {}).then(async () => {
+    const rec = await db.store.setProgress(id, {});
+    const pct = rec && rec.status === "done" ? 100 : 0;
+    bar.firstChild.style.width = pct + "%";
+  });
+  return bar;
+}
+
+function bookmarkBtn(d) {
+  const btn = h("button.btn", "☆ Bookmark");
+  const show = (on) => {
+    btn.textContent = on ? "★ Bookmarked" : "☆ Bookmark";
+    btn.setAttribute("aria-pressed", String(on));
+  };
+  // Guard against the initial read landing after a fast click and overwriting
+  // the label with the pre-click state.
+  let current = false;
+  db.store.isBookmarked(d.id).then((on) => {
+    if (btn.dataset.touched) return;
+    current = !!on;
+    show(current);
+  });
+  btn.addEventListener("click", async () => {
+    btn.dataset.touched = "1";
+    current = await db.store.toggleBookmark(d.id);
+    show(current);
+    toast(current ? "Bookmarked" : "Bookmark removed");
+  });
+  return h("div.btnrow", btn);
+}
+
+function noteEditor(id) {
+  const ta = h("textarea", { placeholder: "Your note (private, on this device, included in export)…", rows: 3 });
+  const status = h("span.srcref");
+  db.store.note(id).then((t) => { ta.value = t || ""; });
+  let t = null;
+  ta.addEventListener("input", () => {
+    clearTimeout(t);
+    status.textContent = "Saving…";
+    t = setTimeout(async () => {
+      await db.store.note(id, ta.value.trim());
+      status.textContent = ta.value.trim() ? "Saved on this device" : "";
+    }, 400);
+  });
+  return h("div", { style: { margin: "0 0 18px" } }, ta, h("div", status));
+}
+
+function notFound() {
+  return h("div.empty", h("h2", "Not found"),
+    h("p", "That page does not exist in this build. It may be content that has not been written yet."),
+    h("div.btnrow", h("a.btn", { href: href("") }, "Back to the field manual")));
+}
+
+export { resultRow, paraTokens, notFound };

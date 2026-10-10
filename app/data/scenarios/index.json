@@ -1,0 +1,232 @@
+[
+  {
+    "id": "scn-rhel-service-running-not-working",
+    "kind": "scenario",
+    "tech": "rhel",
+    "title": "The service is active but nobody can reach it",
+    "summary": "A new web server on a lab VM is running, the port is open locally, and every remote client gets a connection refused.",
+    "difficulty": "Intermediate",
+    "verification": "source-checked",
+    "situation": "You have just installed Apache on a RHEL 10 virtual machine. `systemctl status httpd` shows `active (running)`. You can curl `http://127.0.0.1/` from the server itself and get the test page. From your laptop on the same lab network, the browser says `Connection refused`. Nothing else is wrong with the machine.",
+    "simulated": "The hostnames, addresses and outputs in this scenario are realistic but invented for teaching. They were not captured from a live incident, and no output here should be cited as evidence about a real system.",
+    "where": "RHEL shell",
+    "teaches": [
+      "That `running`, `listening` and `reachable` are three different claims, and which command proves each one.",
+      "Reading a refused connection as a firewall problem before ruling out the listen address.",
+      "The order of checks that avoids changing anything before you know what is wrong."
+    ],
+    "steps": {
+      "inspect": [
+        "You have three separate claims to verify and only one of them is confirmed: the process is running.",
+        "Start with the two you have not tested. Do not change anything yet — restarting or reconfiguring destroys the evidence.",
+        "On the **server**, note what the listen address is. On the **client**, note the exact error text and confirm the IP you are actually connecting to."
+      ],
+      "hint": [
+        "What is the exact wording? `Connection refused` and `timed out` come from different places and lead to different faults.",
+        "Then: is Apache listening on every interface, or only on loopback? The `127.0.0.1` in your successful curl is a hint."
+      ],
+      "review": [
+        "ss -lntup | grep :80\nfirewall-cmd --list-all\nip -br address show",
+        "curl -sS -I http://10.0.20.11/\n# on the client:\nping 10.0.20.11\ncurl -v http://10.0.20.11/",
+        "ssh -v 10.0.20.11"
+      ],
+      "investigate": [
+        "**1. Establish what the client actually sees.** `Connection refused` means a TCP RST came back — something answered, and it said no. That already rules out a routing black hole and tells you this is not a 'server is off' problem. A timeout would mean the packet was dropped instead, which points at a firewall and would change everything that follows.",
+        "**2. Check the listen address on the server.** `ss -lntup` shows `0.0.0.0:80` if it is reachable from anywhere, or `127.0.0.1:80` if it is bound to loopback only. Your curl to `127.0.0.1` succeeded either way, so it proved nothing about the second case.",
+        "**3. Test from the server using its own LAN address.** If `curl http://10.0.20.11/` fails while `curl http://127.0.0.1/` works, the bind address is the fault. Nothing about firewalld is involved yet.",
+        "**4. Only if the bind address is fine, look at firewalld.** `firewall-cmd --list-all` shows whether http (80/tcp) is in the service list for the active zone.",
+        "**5. Confirm the client is not the problem.** Try the server's IP from another machine on the same subnet. If it works there and not from your laptop, the fault is between you and the server, not on the server."
+      ],
+      "solution": [
+        "There are two distinct faults this scenario is designed to contain, and you only find one of them by working the order.",
+        "**If `ss` showed `127.0.0.1:80`** — Apache is bound to loopback. Fix the Listen directive rather than the firewall:",
+        "sudo sed -i 's/^Listen 127.0.0.1:80/Listen 80/' /etc/httpd/conf/httpd.conf\nhttpd -t            # always test the config before reloading\nsudo systemctl reload httpd",
+        "**If `ss` showed `0.0.0.0:80` and the server could curl its own LAN address** — the fault is the firewall. Add the service, permanently and live:",
+        "sudo firewall-cmd --add-service=http --permanent\nsudo firewall-cmd --reload\nfirewall-cmd --list-services",
+        "Note that `--permanent` alone changes nothing until the reload. Adding it at runtime only would be lost at the next reboot, which produces a fault that comes back on Monday."
+      ],
+      "verify": [
+        "From the server:",
+        "ss -lntup | grep :80\nsudo firewall-cmd --list-all\ncurl -sS -o /dev/null -w '%{http_code}\\n' http://10.0.20.11/",
+        "From the client:",
+        "curl -sS -o /dev/null -w '%{http_code}\\n' http://10.0.20.11/\nssh -v 10.0.20.11",
+        "A `200` from both proves the end-to-end path. A `200` from the server alone does not — that was the original mistake."
+      ],
+      "rootcause": [
+        "The mental model being tested is the difference between three states that people collapse into one.",
+        "`active (running)` says a process exists under systemd's supervision. It says nothing about which addresses that process opened, or what is permitted to reach them.",
+        "`listening` (from `ss`) says a socket is bound. It says nothing about whether the firewall permits the traffic to arrive.",
+        "`reachable` is the only claim a client can actually make, and it is the only one that matters to the user.",
+        "Binding to `127.0.0.1` is the default in the shipped httpd configuration specifically so that a newly installed server is not exposed to the network by accident. That is a security feature working as designed, and it is the single most common reason a fresh Apache install seems dead."
+      ],
+      "alternatives": [
+        "**Temporarily disable the firewall to prove the diagnosis** — acceptable in a disposable lab VM, never in production, and you must disable the right zone. `sudo firewall-cmd --set-default-zone=trusted` is broader than you want; prefer removing the port rule. Always re-enable it afterwards, and note that `--runtime` changes are forgotten at reload.",
+        "**Change the zone of the interface** if the server legitimately belongs to a different trust level — `sudo firewall-cmd --zone=trusted --change-interface=eth0 --permanent`. Correct when the zoning is wrong, wrong when you are just avoiding thinking about the rule.",
+        "**Use an nftables or iptables rule directly** — works, but bypasses firewalld's own management and is silently discarded when firewalld is restarted. Learn this for diagnosis; do not leave it as the fix.",
+        "**SELinux, not the firewall** — if the bind address and firewall are both correct and it still fails, check `ausearch -m avc -ts recent`. A denial binding to a non-standard port is a SELinux problem, not a firewall one."
+      ],
+      "prevent": [
+        "**Add a verification step to every service deployment**: after starting a service, test it from a second machine, not just from localhost. `curl` from the host proves almost nothing and is the habit that creates this class of bug.",
+        "**Record the intended listen address in the service's own documentation**, so the next person does not have to infer it from `ss` output.",
+        "**Use a change checklist** that includes `ss` and `firewall-cmd --list-all` before declaring a service deployed.",
+        "**In the lab, take a snapshot after each proven-working state.** Then a change that breaks connectivity is a two-minute revert rather than a debugging session."
+      ]
+    },
+    "tags": ["httpd", "firewalld", "listen address", "troubleshooting", "reachability"]
+  },
+  {
+    "id": "scn-dhcp-client-no-lease",
+    "kind": "scenario",
+    "tech": "mikrotik",
+    "title": "The client sees 169.254.x.x",
+    "summary": "One PC on the office network cannot get an address; the rest are fine. The DHCP server is up and has leases from everyone else.",
+    "difficulty": "Beginner",
+    "verification": "source-checked",
+    "situation": "A MikroTik router hands out addresses on 10.10.20.0/24 for the office LAN. Nine of ten PCs have valid leases. One PC, WS11-SALES, shows 169.254.x.x and reports \"Unable to obtain an IP address\". `/ip dhcp-server lease/print` shows nine leases. From the same router, the nine working PCs are fine.",
+    "simulated": "Addresses and outputs here are realistic teaching examples, not captures from a live network.",
+    "where": "RouterOS terminal",
+    "teaches": [
+      "That a client with 169.254.x.x never received an offer at all, which is a different problem from a bad lease.",
+      "Checking bridge membership before DHCP configuration, because the order of the two faults is what makes this confusing.",
+      "How to tell 'the offer never reached the client' from 'the client refused the offer'."
+    ],
+    "steps": {
+      "inspect": [
+        "169.254.x.x is a self-assigned address. Windows assigns it when DHCP has failed entirely. That tells you the offer never arrived — it does not tell you whether the fault is the server, the bridge, the switch port, or the client.",
+        "Note that nine clients work. That rules out the DHCP server configuration as a whole and narrows the fault to something specific to this machine or this port.",
+        "On the router, identify which interface the failing PC is plugged into. On the PC, note the adapter state and whether the link LED is lit."
+      ],
+      "hint": [
+        "Did the PC ever appear in the lease table, even expired? `lease/print` only shows current leases — check whether it was ever there.",
+        "On the router: is the PC's port in the bridge? An access port that is not a bridge member cannot see the DHCP broadcast at all."
+      ],
+      "review": [
+        "/interface/bridge/port/print\n/interface/ethernet/print\n/interface/bridge/print",
+        "/ip/dhcp-server/print\n/ip/dhcp-server/lease/print\n/ip/dhcp-server/network/print detail",
+        "/interface/ethernet/poe/monitor e0-PORT once"
+      ],
+      "investigate": [
+        "**1. Confirm the link is up.** `/interface/ethernet/print` shows `running` or `link-down` per port. A port that is physically down never sends or receives a DHCP request, and this looks identical from the client.",
+        "**2. Check the port's bridge membership.** `/interface/bridge/port/print` lists which physical ports are in `bridge-lan`. A port that is `running` but not in the bridge is running a separate Layer-2 network — the DHCP broadcast goes out `bridge-lan` and the PC's port never sees it.",
+        "**3. Check for an interface filter or VLAN on the port.** `/interface/ethernet/print` will show `vlan-mode=` set to something unexpected, which would also isolate the client.",
+        "**4. Look at the client side too.** `ipconfig /renew` from an elevated prompt, and watch for an APIPA address reappearing immediately. If the renew happens in under a second, something is answering with a refusal; if it times out after 60 seconds, nothing answered at all.",
+        "**5. Only now consider DHCP config.** Because nine clients work, the scope, options and pool are almost certainly correct. Do not edit them."
+      ],
+      "solution": [
+        "The most likely fix, by far, is bridge membership:",
+        "/interface/bridge/port/add bridge=bridge-lan interface=ether5 pvid=20\n/interface/bridge/port/print",
+        "For the other two cases:",
+        "# interface was administratively disabled\n/interface/ethernet/enable ether5\n\n# port was not in the right bridge at all\n/interface/bridge/port/set [find interface=ether5] bridge=bridge-lan",
+        "Change one thing at a time and re-test the client after each. Changing the bridge membership and the DHCP scope together makes it impossible to tell which mattered."
+      ],
+      "verify": [
+        "On the router:",
+        "/interface/bridge/port/print\n/interface/bridge/host/print where interface=bridge-lan",
+        "On the client, after `ipconfig /renew`:",
+        "ipconfig /all | findstr /i \"ipv4 dhcp server\"",
+        "Then confirm the lease actually appears:",
+        "/ip/dhcp-server/lease/print where address~10.10.20."
+      ],
+      "rootcause": [
+        "There are two independent layers here and beginners reliably stop at the wrong one.",
+        "**Layer 2 — the physical network.** A MikroTik bridges ports into one broadcast domain. DHCP uses broadcast, so the offer and the request must be in the same broadcast domain. A port that is physically up but not a member of `bridge-lan` forms its own private Layer-2 island, and the client is alone on it. Nothing at IP layer will ever work.",
+        "**Layer 3 — the DHCP service.** Scope, pool, gateway, DNS, and which interface the server is bound to. This is where most people start, and it is where the fault usually is *not* when other clients work.",
+        "The evidence that points at Layer 2 is simply that nine clients work and one does not. A scope error would affect all of them. A bridge membership error affects exactly the ports left out of the bridge — which is exactly the symptom described.",
+        "The 169.254.x.x address is the client's own final statement that it asked and nobody answered."
+      ],
+      "alternatives": [
+        "**Static address on the client** — proves the network is fine and works around the DHCP fault. Useful as a diagnostic (if a static address works, Layer 3 and the physical link are fine), wrong as a fix, because the client is now permanently exempt from DHCP options such as the DNS server address.",
+        "**Check the switch, not just the router.** If the PC is not directly connected, an intermediate switch port may be in a different VLAN. This is the same Layer 2 fault one hop further away.",
+        "**Look for a duplicate IP on the network** — if two devices share an address the behaviour is intermittent rather than total. `arp -a` on the client, or `/ip arp/print` on the router, will show a MAC flapping between two addresses.",
+        "**Watch for DHCP in real time on the router.** `/ip/dhcp-server/lease/print` after each client renew is crude; a packet capture on the bridge port shows whether the request arrives and whether any offer goes back."
+      ],
+      "prevent": [
+        "**Check lease table membership after any change.** A client silently falling off DHCP is invisible until someone reports it.",
+        "**Never add a physical port without adding it to the bridge too.** That is the habit worth building, and it is the single most common MikroTik beginner error.",
+        "**Document the bridge design.** Which ports are access, which are trunk, which PVID, in which bridge — one table prevents most of these faults.",
+        "**In the lab, build the failure deliberately.** Put a port in the wrong bridge on purpose, watch a client fail to get an address, and then fix it. Remembering the diagnosis is easier than reconstructing it later."
+      ]
+    },
+    "tags": ["dhcp", "bridge", "layer2", "mikrotik", "troubleshooting", "apipa"]
+  },
+  {
+    "id": "scn-ad-dns-resolution-failure",
+    "kind": "scenario",
+    "tech": "winserver",
+    "title": "Domain users cannot resolve any name on the new DC",
+    "summary": "After promoting a second domain controller, half the users lost name resolution. The DC is up, LDAP answers, and the zone is present.",
+    "difficulty": "Advanced",
+    "verification": "source-checked",
+    "situation": "You have promoted dc02 as a second domain controller for example.lan. Existing users on the original subnet are unaffected. Users on the VLAN serviced by dc02 cannot resolve any FQDN, and they cannot reach anything that requires name resolution. Clients on that VLAN can ping dc02 by IP. Clients on that VLAN cannot join the domain.",
+    "simulated": "Names and addresses are realistic teaching examples. The output shown is illustrative and was not captured from a live incident.",
+    "where": "PowerShell on the domain controller",
+    "teaches": [
+      "How to separate a DNS service fault from a DHCP option fault from a registration fault.",
+      "Reading a delegation that points nowhere.",
+      "Why 'the DC answers LDAP' and 'the DC answers DNS' are independent facts."
+    ],
+    "steps": {
+      "inspect": [
+        "Scope the fault precisely before touching anything. Which users? Which subnet? Which service name?",
+        "The most informative fact you already have is that clients on this VLAN **can ping dc02 by IP**. That proves Layer 2 and routing work and narrows the fault to DNS itself.",
+        "Note also that ping by name may fail while ping by IP succeeds — if that is the case, clients are using dc02 as their resolver and dc02 is not answering authoritatively."
+      ],
+      "hint": [
+        "Ask two questions separately: is the DNS *service* running and listening on 53, and does the DNS *server service* believe it holds the example.lan zone?",
+        "Then ask a third: is this VLAN's DHCP handing out dc02 as a DNS server at all, and did you update the scope options when you added the DC?"
+      ],
+      "review": [
+        "Get-Service DNS\nResolve-DnsName -Name example.lan -Server dc02\nResolve-DnsName -Name dc02 -Server dc02",
+        "Get-DnsServerZone -Name example.lan | Select-Object ZoneName,ZoneType,IsAutoCreated\nGet-DnsServerResourceRecord -ZoneName example.lan -Type NS",
+        "Get-DhcpServerv4Scope | Select-Object ScopeId\nGet-DhcpServerv4OptionValue -ScopeId 10.20.30.0 -OptionId 6",
+        "Resolve-DnsName -Name ws11-sales.example.lan -Type A -Server dc02"
+      ],
+      "investigate": [
+        "**1. Is the DNS service even running on dc02?** `Get-Service DNS`. On a freshly promoted DC it normally is, but this takes ten seconds and rules out a whole branch.",
+        "**2. Does dc02 hold the zone?** `Get-DnsServerZone -Name example.lan`. If the zone is absent or is a stub rather than a primary, dc02 cannot answer authoritatively.",
+        "**3. If it is a stub, where does it point?** `Resolve-DnsName -Name example.lan -Server dc02 -Type NS` returns the NS records the stub delegates to. A stub pointing at an IP that no longer exists is the classic cause of this exact symptom, and it is why you must check NS records rather than just whether a zone exists.",
+        "**4. Are clients even using dc02?** `Get-DhcpServerv4OptionValue -ScopeId 10.20.30.0 -OptionId 6`. Adding a second DC does not update existing scopes. If option 6 still lists only the old DC, clients in this VLAN are still asking the old server — and you are looking at the wrong DC entirely.",
+        "**5. Query directly against both servers** and compare. `Resolve-DnsName -Name example.lan -Server dc01` versus `-Server dc02`. If one answers and the other does not, the fault is isolated to one server and the other is your reference point.",
+        "**6. Check the record itself.** Even a correctly configured DC returns NXDOMAIN if `ws11-sales.example.lan` has no A record and the zone is not configured to accept registrations."
+      ],
+      "solution": [
+        "**Case A — the zone is a stub pointing at a dead server.** Convert it to a secondary so it replicates from the primary, or delete the stub entirely if dc02 should hold the primary:",
+        "# inspect first\nResolve-DnsName -Name example.lan -Server dc02 -Type NS\n# if it is a secondary, set the correct master\nSet-DnsServerSecondaryZone -Name 'example.lan' -MasterServers '10.0.0.10'\nRestart-Service DNS",
+        "**Case B — the scope still points clients at dc01.** Update option 6 to list both:",
+        "Set-DhcpServerv4ScopeOptionValue -ScopeId 10.20.30.0 -OptionId 6 -Value @('10.0.0.10','10.0.0.11')\n# or -Value '10.0.0.10,10.0.0.11' depending on the cmdlet version",
+        "Clients will not pick this up until their lease renews. Force it from the client with `ipconfig /release` then `ipconfig /renew`, or shorten the lease temporarily.",
+        "**Case C — the name is genuinely missing.** If the A record does not exist:",
+        "Add-DnsServerResourceRecordA -ZoneName 'example.lan' -Name 'ws11-sales' -IPv4Address '10.20.30.55'\nResolve-DnsName -Name ws11-sales.example.lan -Server dc02"
+      ],
+      "verify": [
+        "On dc02:",
+        "Get-Service DNS\nResolve-DnsName -Name ws11-sales.example.lan -Server dc02 -Type A\nResolve-DnsName -Name example.lan -Type NS -Server dc02",
+        "From an affected client:",
+        "ipconfig /renew\nipconfig /all | findstr /i \"dns\"\nnslookup ws11-sales.example.lan\nTest-NetConnection dc02.example.lan -Port 389",
+        "The domain join succeeding afterwards is the real proof, because it exercises DNS, Kerberos and LDAP together."
+      ],
+      "rootcause": [
+        "DNS in an AD environment has more moving parts than people expect, and they fail independently.",
+        "**The service** can be stopped. **The zone** can be missing. **The zone type** determines where the data comes from: a primary holds it, a secondary copies it from a master, and a stub just points at another server and holds nothing.",
+        "**The delegation** (NS records) is the mechanism that says which servers are authoritative for a name. A delegation to an unreachable address produces a timeout that looks like a server fault.",
+        "**DHCP option 6** is how clients learn any of this. It is a separate system from DNS and does not update itself when you add a server. An out-of-date option 6 is the most common cause of a 'DNS is broken on this subnet only' ticket.",
+        "**Registration** — the client must be able to create its own A record, which requires write access to the zone and the client to be domain-joined.",
+        "The lesson: never diagnose 'DNS is broken' from a single failure. Establish which server the client asked, whether that server has the zone, and what the zone delegates to."
+      ],
+      "alternatives": [
+        "**Add a second DNS server address to DHCP alongside the first**, which is what you should do permanently anyway. Two resolvers is resilience; one is a single point of failure.",
+        "**Use Group Policy for DNS settings** rather than relying on DHCP option 6 alone. `Configure DNS Server` (Client Settings Update) applies at logon and is often more reliable than lease renewal for laptops that roam.",
+        "**Check the event log rather than guessing.** Event IDs 7031/7034 (service control manager) show the DNS service failing to start; `Microsoft-Windows-DNS-Server/Analytical` shows query failures. The log names the fault precisely.",
+        "**Re-promoting is not a fix.** If dc02's DNS database is corrupt, promoting a third DC and decommissioning dc02 is cleaner than repairing in place — but only after you have confirmed corruption rather than guessing at it."
+      ],
+      "prevent": [
+        "**When you add a domain controller, update the DNS option in every DHCP scope in the same change window.** Write it into the runbook. This is the single highest-value prevention step for this scenario.",
+        "**Verify with a query against each DNS server explicitly**, not by ping. Ping proves the host is alive; a query proves the service is answering.",
+        "**Test name resolution from the client network segment, not from the server console.** Every server can always resolve itself.",
+        "**Run `dcdiag /test:dns /v` and read the failure section.** It tests delegation, zone consistency and registration in one pass and names the specific failed test.",
+        "**Monitor the zone on both DCs.** A secondary that silently falls behind is invisible until users notice."
+      ]
+    },
+    "tags": ["active directory", "dns", "dhcp", "windows server", "troubleshooting"]
+  }
+]

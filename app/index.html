@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>IT Field Manual</title>
+<meta name="description" content="Offline-first personal IT field manual: commands, lessons, labs and troubleshooting for A+, Cisco/CCNA, MikroTik, Windows 11, Windows Server and RHEL 10.">
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="light dark">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="topbar">
+  <button class="topbar__menu" id="menuBtn" aria-label="Open navigation" aria-expanded="false" aria-controls="sidenav">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+
+  <div class="topbar__brand">
+    <span class="topbar__mark" aria-hidden="true"></span>
+    <span class="topbar__title">IT Field Manual</span>
+  </div>
+
+  <form class="search" id="searchForm" role="search" autocomplete="off">
+    <label class="visually-hidden" for="q">Search commands, lessons, scenarios and errors</label>
+    <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <input id="q" name="q" type="search" placeholder="Search commands, topics, errors…"
+           aria-describedby="searchHint" enterkeyhint="search" spellcheck="false">
+    <button type="button" class="search__clear" id="searchClear" hidden aria-label="Clear search">&times;</button>
+  </form>
+  <p id="searchHint" class="visually-hidden">Results filter as you type. Press slash to focus, Escape to clear.</p>
+
+  <div class="topbar__actions">
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle colour theme" title="Toggle theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-sun"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" class="icon-moon"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z"/></svg>
+    </button>
+    <button class="icon-btn" id="dataBtn" aria-label="My data: export, import, progress" title="My data">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3z"/><path d="M4 7v10c0 1.7 3.6 3 8 3s8-1.3 8-3V7"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <nav class="sidenav" id="sidenav" aria-label="Sections">
+    <div class="sidenav__scroll">
+      <p class="sidenav__group">Field manual</p>
+      <ul class="sidenav__list" id="navPrimary"></ul>
+
+      <p class="sidenav__group">Subjects</p>
+      <ul class="sidenav__list" id="navSubjects"></ul>
+
+      <p class="sidenav__group">Practice</p>
+      <ul class="sidenav__list" id="navPractice"></ul>
+
+      <p class="sidenav__group">Project</p>
+      <ul class="sidenav__list" id="navProject"></ul>
+
+      <div class="sidenav__foot">
+        <div class="netstat" id="netstat" aria-live="polite"></div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <main id="main" class="main" tabindex="-1"></main>
+
+</div>
+
+<div class="toast-host" id="toastHost" aria-live="polite" aria-atomic="false"></div>
+
+<div class="sheet-host" id="sheetHost" hidden></div>
+
+<footer class="appfoot">
+  <span id="buildInfo"></span>
+  <span class="appfoot__sep">•</span>
+  <span>All personal data stays on this device.</span>
+</footer>
+
+<script type="module" src="assets/app.js"></script>
+</body>
+</html>

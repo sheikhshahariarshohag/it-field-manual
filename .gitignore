@@ -1,0 +1,42 @@
+# ---------------------------------------------------------------------------
+# THE PERSONAL IT FIELD MANUAL — repository rules
+# ---------------------------------------------------------------------------
+# This repository contains ONLY the public, static field-manual application.
+#
+# HARD RULE: the private book library, personal notes, extracted text and any
+# credential never enters this repository. Everything private lives outside the
+# repo (see private/ below and ../private-source-notes/), and is doubly
+# excluded below so that an accidental `git add -A` cannot stage it.
+# ---------------------------------------------------------------------------
+
+# Private research material — extracted book text, probes, working notes.
+private/
+/tools/**/node_modules/
+*.pdf
+*.doc
+*.docx
+*.odt
+*.epub
+*.mobi
+*.iso
+*.vmdk
+*.vmx
+*.nvram
+
+# Local environment
+.env
+.env.*
+!.env.example
+*.local
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+
+# Build/verification output that is regenerable
+/scripts/out/
+*.log
