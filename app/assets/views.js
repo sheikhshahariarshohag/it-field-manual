@@ -352,11 +352,29 @@ export function lessonView(params) {
     wrap.appendChild(steps);
   }
 
+  if (d.trouble && d.trouble.length) {
+    // Converted service profiles carry an investigation chain. Rendered as a
+    // walk-through rather than prose, because that is how it is used.
+    const steps = h("div.prose");
+    d.trouble.forEach((step, i) => {
+      steps.appendChild(h("p", h("strong", `${i + 1}. `), ...paraTokens(step)));
+    });
+    wrap.appendChild(h("h2", "Troubleshooting"));
+    wrap.appendChild(steps);
+  }
+
   if (d.failures && d.failures.length) {
     const ul = h("ul.prose");
     for (const f of d.failures) ul.appendChild(h("li", h("strong", f.why + " "), ...paraTokens(f.fix)));
     add(wrap, h("h2", "When it goes wrong"), ul);
   }
+
+  // Emergency quick reference from the converted service profiles.
+  if (d.quickRef) {
+    add(wrap, h("h2", "Quick reference"),
+      codeBlock(d.quickRef, { where: "RHEL shell", risk: "safe", tag: "cheat sheet" }));
+  }
+  if (d.source) wrap.appendChild(h("p.srcref", d.source));
 
   add(wrap, bookmarkBtn(d), noteEditor(d.id));
   wrap.appendChild(h("div.btnrow",

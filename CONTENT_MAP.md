@@ -4,7 +4,11 @@ The curriculum, how it relates to your existing 146-session Knowledge Map, and
 what exists versus what is planned. Counts are kept honest: an empty subject
 shows zero, not filler.
 
-**Current: 22 commands · 3 lessons · 3 scenarios · 3 quizzes · 1 project**
+**Current: 22 commands · 22 lessons · 3 scenarios · 3 quizzes · 1 project**
+
+The 22 lessons are 3 hand-written plus **19 RHEL 10 service profiles converted
+from your own 25-section notes** — 266 sections, **147 lab exercises** and
+**115 documented mistakes**, all with copyable commands.
 
 ---
 
@@ -68,7 +72,10 @@ deployment, backup, monitoring, certificates, virtualization, hardening.
 Everything in the six-subject brief, plus your 20 service profiles.
 - **8 commands** — systemctl ×2, journalctl, ss, dnf, SELinux/ausearch,
   firewalld, nmcli
-- **2 lessons** — *How a name becomes an address*, plus VLAN cross-link
+- **21 lessons** — 19 converted service profiles (systemd, firewalld, SELinux,
+  sshd, journald, chronyd, auditd, cron, rsyslog, Apache, NFS, Samba, SSSD,
+  BIND, DHCP, autofs, Podman, libvirt/KVM, PostgreSQL) plus *How a name
+  becomes an address*
 - **2 scenarios** — *Service active but unreachable*, *Client sees 169.254.x.x*
 - **2 quizzes**
 - **Three RHEL 10 VMs available** for execution testing.

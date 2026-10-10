@@ -11,8 +11,8 @@ matter.
 |---|---|---|---|
 | A1 | **No Cisco/CCNA source material exists in your library at all** | Cisco content is built from vendor docs, with no local fallback | Install free Packet Tracer / CML Free; add a Cisco reference |
 | A2 | **No CompTIA A+ source material** | A+ must be built from current objectives | Build from CompTIA's published objectives |
-| A3 | **3 commands, 3 lessons, 3 scenarios, 3 quizzes, 1 project** | Far short of the six-subject curriculum | Build systematically per `CONTENT_MAP.md` |
-| A4 | **4 of 6 subjects have zero lessons** | A+, MikroTik, Windows 11, Windows Server | Next build sessions |
+| A3 | ~~3 commands, 3 lessons~~ → now **22 commands, 22 lessons** | RHEL depth closed by importing the 19 service profiles; the other five subjects are still thin | Keep expanding per `CONTENT_MAP.md` |
+| A4 | 4 of 6 subjects still have few or no lessons | A+, Cisco, MikroTik, Windows 11, Windows Server | Next build sessions |
 | A5 | One infrastructure project only | The prompt asks for several | Schedule after the first is completed end-to-end |
 | A6 | Quizzes are 5–6 questions each | Thin assessment | Expand as subjects are built |
 

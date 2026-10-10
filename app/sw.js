@@ -37,6 +37,7 @@ const SHELL = [
 const DATA = [
   "data/commands/index.json",
   "data/lessons/index.json",
+  "data/lessons/services.json",
   "data/scenarios/index.json",
   "data/quizzes/index.json",
   "data/projects/index.json",

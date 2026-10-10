@@ -25,21 +25,25 @@ const SUBJECT_ORDER = ["aplus", "cisco", "mikrotik", "win11", "winserver", "rhel
 async function loadCorpus() {
   const base = "data";
   const groups = {
-    commands: ["commands"],
-    lessons: ["lessons"],
-    scenarios: ["scenarios"],
-    quizzes: ["quizzes"],
-    projects: ["projects"],
+    commands: ["commands/index"],
+    // A kind can be split across several files: hand-written lessons, plus the
+    // RHEL service profiles converted from the 25-section notes.
+    lessons: ["lessons/index", "lessons/services"],
+    scenarios: ["scenarios/index"],
+    quizzes: ["quizzes/index"],
+    projects: ["projects/index"],
   };
   const out = { commands: [], lessons: [], scenarios: [], quizzes: [], projects: [] };
 
   await Promise.all(Object.entries(groups).map(async ([key, files]) => {
     for (const f of files) {
       try {
-        const res = await fetch(`${base}/${f}/index.json`, { cache: "no-cache" });
+        const res = await fetch(`${base}/${f}.json`, { cache: "no-cache" });
         if (!res.ok) throw new Error(String(res.status));
         const list = await res.json();
-        out[key] = Array.isArray(list) ? list : (list.items || []);
+        const items = Array.isArray(list) ? list : (list.items || []);
+        // Merge rather than replace: several files can contribute one kind.
+        out[key] = out[key].concat(items);
       } catch (err) {
         console.warn(`[field-manual] no content for ${f}:`, err.message);
       }

@@ -34,15 +34,40 @@ const warn = (m) => warnings.push(m);
 /* ------------------------------------------------------------- load corpus */
 
 const KINDS = ["commands", "lessons", "scenarios", "quizzes", "projects"];
+
+// A kind may be split across several files under app/data/<kind>/.
+// Mirrors app.js `groups` exactly — see the drift check further down.
+const APP_GROUPS = {
+  commands: ["commands/index"],
+  lessons: ["lessons/index", "lessons/services"],
+  scenarios: ["scenarios/index"],
+  quizzes: ["quizzes/index"],
+  projects: ["projects/index"],
+};
+
+/** "lessons/services" -> "services.json" */
+const fileNameOf = (p) => `${p.split("/").pop()}.json`;
+const FILES = Object.fromEntries(
+  Object.entries(APP_GROUPS).map(([k, paths]) => [k, paths.map(fileNameOf)]),
+);
+
 const corpus = {};
 for (const k of KINDS) {
-  const f = join(DATA, k, "index.json");
-  if (!existsSync(f)) { fail(`missing data file: app/data/${k}/index.json`); continue; }
-  try {
-    corpus[k] = JSON.parse(readFileSync(f, "utf8"));
-  } catch (e) {
-    fail(`app/data/${k}/index.json is not valid JSON: ${e.message}`);
-    corpus[k] = [];
+  corpus[k] = [];
+  for (const file of FILES[k]) {
+    const f = join(DATA, k, file);
+    if (!existsSync(f)) {
+      if (file === "index.json") fail(`missing data file: app/data/${k}/${file}`);
+      continue;
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(readFileSync(f, "utf8"));
+    } catch (e) {
+      fail(`app/data/${k}/${file} is not valid JSON: ${e.message}`);
+      continue;
+    }
+    corpus[k] = corpus[k].concat(Array.isArray(parsed) ? parsed : (parsed.items || []));
   }
 }
 
@@ -184,9 +209,21 @@ if (existsSync(swPath)) {
   // And the reverse: anything in data/ must be precached or search breaks offline.
   if (data) {
     for (const k of KINDS) {
-      const f = `data/${k}/index.json`;
-      if (existsSync(join(DATA, k, "index.json")) && !data.includes(f)) {
-        fail(`sw.js does not precache ${f} — search would break offline`);
+      for (const file of FILES[k] || ["index.json"]) {
+        if (!existsSync(join(DATA, k, file))) continue;
+        const p = `data/${k}/${file}`;
+        if (!data.includes(p)) fail(`sw.js does not precache ${p} — search would break offline`);
+      }
+    }
+    // Catch a data file that exists but is not listed in FILES above.
+    for (const k of KINDS) {
+      const dir = join(DATA, k);
+      if (!existsSync(dir)) continue;
+      for (const f of readdirSync(dir)) {
+        if (!f.endsWith(".json")) continue;
+        if (!(FILES[k] || ["index.json"]).includes(f)) {
+          fail(`app/data/${k}/${f} exists but validate.mjs does not know about it — add it to FILES and to sw.js DATA`);
+        }
       }
     }
   }
@@ -294,6 +331,28 @@ for (const [, sel] of viewportCoverers) {
   const guardedByHiddenRule = new RegExp(`${sel.replace('.', '\\.')}\\[hidden\\]`) || false;
   if (!guardedByHiddenRule) {
     warn(`app.css: ${sel} is position:fixed, covers the viewport and has a high z-index — confirm it is hidden by default or it will block clicks`);
+  }
+}
+
+// Every data file must actually be loaded by the app, and every file the app
+// loads must exist. Drift here means content silently missing from the manual.
+for (const [kind, paths] of Object.entries(APP_GROUPS)) {
+  for (const p of paths) {
+    if (!existsSync(join(DATA, `${p}.json`))) {
+      fail(`app.js will fetch data/${p}.json but that file does not exist`);
+    }
+  }
+}
+
+// And the reverse: a JSON file on disk that nothing loads is dead content.
+for (const k of KINDS) {
+  const dir = join(DATA, k);
+  if (!existsSync(dir)) continue;
+  for (const f of readdirSync(dir)) {
+    if (!f.endsWith(".json")) continue;
+    if (!(FILES[k] || []).includes(f)) {
+      fail(`app/data/${k}/${f} exists but nothing loads it — add it to app.js groups and sw.js DATA, or delete it`);
+    }
   }
 }
 

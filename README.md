@@ -113,11 +113,16 @@ private/                  extracted book text — GITIGNORED, never shipped
 node scripts/serve.mjs 8080     # local server (ES modules + SW need http, not file://)
 node scripts/validate.mjs       # content + privacy gate
 node scripts/make-icons.mjs     # regenerate PWA icons
+node scripts/import-service-profiles.mjs [--dry-run]   # convert the 25-section RHEL notes
 ```
 
 **Adding a command:** append an object to `app/data/commands/index.json`. The
 validator will tell you what is missing — most usefully, it will reject an
 `execution-tested` claim without a `tested_on` record.
+
+**Adding a whole new data file:** `validate.mjs` fails if a JSON file sits in
+`app/data/<kind>/` that nothing loads, and if `app.js` loads a file that does not
+exist. Content cannot silently go missing.
 
 **Testing offline:** kill the server process and reload. Do not simulate it.
 That exact test is what caught the 502 cache-poisoning bug.
@@ -133,7 +138,14 @@ Prefer deleting something to adding something.
 **Phase 4 complete** — a working vertical slice, tested in a real browser.
 **Phase 5 in progress** — content expansion.
 
-Current: **22 commands · 3 lessons · 3 scenarios · 3 quizzes · 1 project**
+Current: **22 commands · 22 lessons · 3 scenarios · 3 quizzes · 1 project**
+
+The 22 lessons include **19 RHEL 10 service profiles** (systemd, firewalld,
+SELinux, sshd, journald, chronyd, auditd, cron, rsyslog, Apache, NFS, Samba,
+SSSD, BIND, DHCP, autofs, Podman, libvirt/KVM, PostgreSQL) converted from the
+author's own 25-section notes — **266 sections, 147 lab exercises, 115 documented
+mistakes**, every one with copyable commands.
+
 Lighthouse: **accessibility 100 · best practices 100 · SEO 100** (both themes).
 
 The two biggest gaps are **Cisco/CCNA** (no source material exists in the
