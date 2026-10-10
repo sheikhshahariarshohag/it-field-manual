@@ -5,7 +5,11 @@
     "tech": "rhel",
     "title": "systemctl status",
     "task": "Check whether a service is running and read its last log lines",
-    "aliases": ["service status", "check if service is running", "is my service up"],
+    "aliases": [
+      "service status",
+      "check if service is running",
+      "is my service up"
+    ],
     "risk": "safe",
     "where": "RHEL shell",
     "privilege": "none for status; `systemctl --failed` needs no privilege",
@@ -21,7 +25,7 @@
     "example": [
       "On a lab VM, `systemctl status sshd --no-pager` normally shows `Active: active (running)` with a `Main PID:` line. If it shows `Active: failed`, scroll up — the last few log lines above the status block are usually the reason."
     ],
-    "output": "# systemctl status sshd --no-pager\n\u25cf sshd.service - OpenSSH server daemon\n   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)\n   Active: active (running) since Sat 2026-10-10 09:14:22 BST; 2min 11s ago\n     Docs: man:sshd(8) man:sshd_config(5)\n   Main PID: 1184 (sshd)\n      Tasks: 1 (limit: 61440)\n   Memory: 5.1M",
+    "output": "# systemctl status sshd --no-pager\n● sshd.service - OpenSSH server daemon\n   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)\n   Active: active (running) since Sat 2026-10-10 09:14:22 BST; 2min 11s ago\n     Docs: man:sshd(8) man:sshd_config(5)\n   Main PID: 1184 (sshd)\n      Tasks: 1 (limit: 61440)\n   Memory: 5.1M",
     "verify": [
       "systemctl is-active sshd && systemctl is-enabled sshd && echo OK"
     ],
@@ -38,10 +42,24 @@
       }
     ],
     "sources": [
-      { "title": "systemd.service(8) / RHEL 10 docs — Using systemd units", "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_systemd_units/", "checked": "2026-10-10" }
+      {
+        "title": "systemd.service(8) / RHEL 10 docs — Using systemd units",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_systemd_units/",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["systemd", "services", "rhq", "beginner"]
+    "tags": [
+      "systemd",
+      "services",
+      "rhq",
+      "beginner"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-7.1"
+      }
+    ]
   },
   {
     "id": "rhel-systemctl-enable-now",
@@ -49,7 +67,12 @@
     "tech": "rhel",
     "title": "systemctl enable --now",
     "task": "Start a service now and make it start at every boot",
-    "aliases": ["enable a service", "persist service", "start on boot", "autostart service"],
+    "aliases": [
+      "enable a service",
+      "persist service",
+      "start on boot",
+      "autostart service"
+    ],
     "risk": "caution",
     "where": "RHEL shell",
     "privilege": "root (sudo)",
@@ -82,10 +105,23 @@
       }
     ],
     "sources": [
-      { "title": "systemctl(1) man page", "checked": "2026-10-10", "url": "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html" }
+      {
+        "title": "systemctl(1) man page",
+        "checked": "2026-10-10",
+        "url": "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["systemd", "boot", "services"]
+    "tags": [
+      "systemd",
+      "boot",
+      "services"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-7.1"
+      }
+    ]
   },
   {
     "id": "rhel-journalctl-unit",
@@ -93,7 +129,12 @@
     "tech": "rhel",
     "title": "journalctl -u UNIT",
     "task": "Read the log messages for one service",
-    "aliases": ["service logs", "read logs", "why is the service failing", "check logs"],
+    "aliases": [
+      "service logs",
+      "read logs",
+      "why is the service failing",
+      "check logs"
+    ],
     "risk": "safe",
     "where": "RHEL shell",
     "privilege": "none for your own units; some messages are root-only",
@@ -125,10 +166,25 @@
       }
     ],
     "sources": [
-      { "title": "RHEL 10 — Configuring system logging", "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_system_logging/", "checked": "2026-10-10" }
+      {
+        "title": "RHEL 10 — Configuring system logging",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_system_logging/",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["journalctl", "logs", "troubleshooting", "systemd"]
+    "tags": [
+      "journalctl",
+      "logs",
+      "troubleshooting",
+      "systemd"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-6.1",
+        "note": "systemd and journald"
+      }
+    ]
   },
   {
     "id": "rhel-ss-lntup",
@@ -136,7 +192,13 @@
     "tech": "rhel",
     "title": "ss -lntup",
     "task": "See what is listening, on which address, and which process owns the port",
-    "aliases": ["what port am i using", "check listening ports", "port in use", "find process on port", "netstat"],
+    "aliases": [
+      "what port am i using",
+      "check listening ports",
+      "port in use",
+      "find process on port",
+      "netstat"
+    ],
     "risk": "safe",
     "where": "RHEL shell",
     "privilege": "root shows process names for sockets you do not own",
@@ -163,11 +225,30 @@
       }
     ],
     "sources": [
-      { "title": "ss(8) man page", "url": "https://man7.org/linux/man-pages/man8/ss.8.html", "checked": "2026-10-10" },
-      { "title": "RHEL 10 — Understanding basic networking", "checked": "2026-10-10" }
+      {
+        "title": "ss(8) man page",
+        "url": "https://man7.org/linux/man-pages/man8/ss.8.html",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "RHEL 10 — Understanding basic networking",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["ss", "netstat", "ports", "troubleshooting", "iproute"]
+    "tags": [
+      "ss",
+      "netstat",
+      "ports",
+      "troubleshooting",
+      "iproute"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-5.1",
+        "note": "Checking listening services"
+      }
+    ]
   },
   {
     "id": "rhel-sudo-dnf",
@@ -175,7 +256,13 @@
     "tech": "rhel",
     "title": "dnf",
     "task": "Install, remove, update and query packages",
-    "aliases": ["install package", "yum", "update system", "patch", "package manager"],
+    "aliases": [
+      "install package",
+      "yum",
+      "update system",
+      "patch",
+      "package manager"
+    ],
     "risk": "caution",
     "where": "RHEL shell",
     "privilege": "root (sudo)",
@@ -208,10 +295,24 @@
       }
     ],
     "sources": [
-      { "title": "RHEL 10 — Working with DNF", "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_packages/advanced-topics_using-dnf", "checked": "2026-10-10" }
+      {
+        "title": "RHEL 10 — Working with DNF",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_packages/advanced-topics_using-dnf",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["dnf", "yum", "packages", "rollback"]
+    "tags": [
+      "dnf",
+      "yum",
+      "packages",
+      "rollback"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-8.1"
+      }
+    ]
   },
   {
     "id": "rhel-getenforce-ausearch",
@@ -219,7 +320,12 @@
     "tech": "rhel",
     "title": "ausearch -m avc",
     "task": "Find out whether SELinux blocked something",
-    "aliases": ["selinux denied", "permission denied selinux", "avc denial", "why is selinux blocking me"],
+    "aliases": [
+      "selinux denied",
+      "permission denied selinux",
+      "avc denial",
+      "why is selinux blocking me"
+    ],
     "risk": "safe",
     "where": "RHEL shell",
     "privilege": "root to see all denials",
@@ -246,10 +352,25 @@
       }
     ],
     "sources": [
-      { "title": "RHEL 10 — Working with SELinux", "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/working_with_selinux/", "checked": "2026-10-10" }
+      {
+        "title": "RHEL 10 — Working with SELinux",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/working_with_selinux/",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["selinux", "ausearch", "permissions", "denied"]
+    "tags": [
+      "selinux",
+      "ausearch",
+      "permissions",
+      "denied"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-6.2",
+        "note": "SELinux"
+      }
+    ]
   },
   {
     "id": "rhel-firewall-cmd-list",
@@ -257,7 +378,13 @@
     "tech": "rhel",
     "title": "firewall-cmd",
     "task": "Inspect and change which ports firewalld allows",
-    "aliases": ["open a port", "firewall", "allow port", "firewalld", "block port"],
+    "aliases": [
+      "open a port",
+      "firewall",
+      "allow port",
+      "firewalld",
+      "block port"
+    ],
     "risk": "caution",
     "where": "RHEL shell",
     "privilege": "root (sudo)",
@@ -290,10 +417,25 @@
       }
     ],
     "sources": [
-      { "title": "RHEL 10 — Configuring and using firewalld", "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_using_firewalld/", "checked": "2026-10-10" }
+      {
+        "title": "RHEL 10 — Configuring and using firewalld",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_using_firewalld/",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["firewalld", "firewall", "ports", "nftables"]
+    "tags": [
+      "firewalld",
+      "firewall",
+      "ports",
+      "nftables"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-2",
+        "note": "Basic security tasks"
+      }
+    ]
   },
   {
     "id": "rhel-nmcli-connection",
@@ -301,7 +443,13 @@
     "tech": "rhel",
     "title": "nmcli connection",
     "task": "Inspect and change network interface configuration",
-    "aliases": ["set static ip", "network configuration", "nmcli", "change ip address", "no ip address"],
+    "aliases": [
+      "set static ip",
+      "network configuration",
+      "nmcli",
+      "change ip address",
+      "no ip address"
+    ],
     "risk": "caution",
     "where": "RHEL shell",
     "privilege": "root (sudo) to modify",
@@ -334,10 +482,24 @@
       }
     ],
     "sources": [
-      { "title": "RHEL 10 — Configuring a basic network", "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_a_basic_network/", "checked": "2026-10-10" }
+      {
+        "title": "RHEL 10 — Configuring a basic network",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_a_basic_network/",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["nmcli", "networkmanager", "static ip", "networking"]
+    "tags": [
+      "nmcli",
+      "networkmanager",
+      "static ip",
+      "networking"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-5.1"
+      }
+    ]
   },
   {
     "id": "cisco-show-ip-interface-brief",
@@ -345,7 +507,13 @@
     "tech": "cisco",
     "title": "show ip interface brief",
     "task": "See every interface, its IP address, status and protocol state",
-    "aliases": ["interface status", "which ports are up", "ip address", "brief", "show ip int brief"],
+    "aliases": [
+      "interface status",
+      "which ports are up",
+      "ip address",
+      "brief",
+      "show ip int brief"
+    ],
     "risk": "safe",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable (privileged EXEC mode)",
@@ -372,10 +540,19 @@
       }
     ],
     "sources": [
-      { "title": "Cisco IOS Command Reference — show ip interface brief", "checked": "2026-10-10" }
+      {
+        "title": "Cisco IOS Command Reference — show ip interface brief",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["cisco", "ios", "interface", "status", "ccna"]
+    "tags": [
+      "cisco",
+      "ios",
+      "interface",
+      "status",
+      "ccna"
+    ]
   },
   {
     "id": "cisco-show-run-interface",
@@ -383,7 +560,12 @@
     "tech": "cisco",
     "title": "show running-config interface",
     "task": "Read the exact configuration of one interface",
-    "aliases": ["interface config", "show int", "read interface config", "why is the port down"],
+    "aliases": [
+      "interface config",
+      "show int",
+      "read interface config",
+      "why is the port down"
+    ],
     "risk": "safe",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable",
@@ -410,10 +592,19 @@
       }
     ],
     "sources": [
-      { "title": "Cisco Catalyst 2960-X Series Switch Command Reference", "checked": "2026-10-10" }
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["cisco", "ios", "interface", "config", "ccna"]
+    "tags": [
+      "cisco",
+      "ios",
+      "interface",
+      "config",
+      "ccna"
+    ]
   },
   {
     "id": "cisco-vlan-database",
@@ -421,7 +612,13 @@
     "tech": "cisco",
     "title": "vlan database / configure terminal",
     "task": "Create a VLAN and put an access port into it",
-    "aliases": ["create vlan", "add vlan", "assign port to vlan", "vlan", "switchport access vlan"],
+    "aliases": [
+      "create vlan",
+      "add vlan",
+      "assign port to vlan",
+      "vlan",
+      "switchport access vlan"
+    ],
     "risk": "caution",
     "where": "Cisco IOS privileged EXEC then config",
     "privilege": "enable",
@@ -454,10 +651,19 @@
       }
     ],
     "sources": [
-      { "title": "Cisco Catalyst 2960-X Series Switch Command Reference", "checked": "2026-10-10" }
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["cisco", "vlan", "switching", "ccna", "ios"]
+    "tags": [
+      "cisco",
+      "vlan",
+      "switching",
+      "ccna",
+      "ios"
+    ]
   },
   {
     "id": "cisco-ping-traceroute",
@@ -465,7 +671,12 @@
     "tech": "cisco",
     "title": "ping / traceroute",
     "task": "Test reachability and find where a path breaks",
-    "aliases": ["test connectivity", "can i reach", "tracert", "where does it stop"],
+    "aliases": [
+      "test connectivity",
+      "can i reach",
+      "tracert",
+      "where does it stop"
+    ],
     "risk": "safe",
     "where": "Cisco IOS privileged EXEC",
     "privilege": "enable",
@@ -497,10 +708,19 @@
       }
     ],
     "sources": [
-      { "title": "Cisco IOS Command Reference — ping", "checked": "2026-10-10" }
+      {
+        "title": "Cisco IOS Command Reference — ping",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["cisco", "ping", "traceroute", "reachability", "ccna"]
+    "tags": [
+      "cisco",
+      "ping",
+      "traceroute",
+      "reachability",
+      "ccna"
+    ]
   },
   {
     "id": "mikrotik-ip-address-print",
@@ -508,7 +728,12 @@
     "tech": "mikrotik",
     "title": "/ip address print",
     "task": "List every IP address assigned to the router",
-    "aliases": ["what ip do i have", "router ip", "ip addresses", "list interfaces"],
+    "aliases": [
+      "what ip do i have",
+      "router ip",
+      "ip addresses",
+      "list interfaces"
+    ],
     "risk": "safe",
     "where": "RouterOS CLI or WinBox terminal",
     "privilege": "none to read",
@@ -540,10 +765,20 @@
       }
     ],
     "sources": [
-      { "title": "MikroTik official documentation — IP Addressing", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328059/IP+Addressing", "checked": "2026-10-10" }
+      {
+        "title": "MikroTik official documentation — IP Addressing",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328059/IP+Addressing",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "ip", "address", "mtcna"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "ip",
+      "address",
+      "mtcna"
+    ]
   },
   {
     "id": "mikrotik-ip-firewall-filter",
@@ -551,7 +786,13 @@
     "tech": "mikrotik",
     "title": "/ip firewall filter",
     "task": "Add a rule that allows or denies traffic and see what is already there",
-    "aliases": ["firewall rule", "block traffic", "allow port", "nat", "drop rule"],
+    "aliases": [
+      "firewall rule",
+      "block traffic",
+      "allow port",
+      "nat",
+      "drop rule"
+    ],
     "risk": "caution",
     "where": "RouterOS CLI",
     "privilege": "admin-level for changes",
@@ -585,10 +826,26 @@
       }
     ],
     "sources": [
-      { "title": "MikroTik official documentation — Firewall", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2465019/Firewall", "checked": "2026-10-10" }
+      {
+        "title": "MikroTik official documentation — Firewall",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2465019/Firewall",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "firewall", "filter", "mtcna", "nat"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "firewall",
+      "filter",
+      "mtcna",
+      "nat"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M6.2"
+      }
+    ]
   },
   {
     "id": "mikrotik-ip-dhcp-server-network",
@@ -596,7 +853,13 @@
     "tech": "mikrotik",
     "title": "/ip dhcp-server network",
     "task": "Define and enable the DHCP scope the router hands out",
-    "aliases": ["dhcp", "clients get no ip", "address pool", "dhcp server", "scope"],
+    "aliases": [
+      "dhcp",
+      "clients get no ip",
+      "address pool",
+      "dhcp server",
+      "scope"
+    ],
     "risk": "caution",
     "where": "RouterOS CLI",
     "privilege": "admin-level",
@@ -630,10 +893,25 @@
       }
     ],
     "sources": [
-      { "title": "MikroTik official documentation — DHCP", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP", "checked": "2026-10-10" }
+      {
+        "title": "MikroTik official documentation — DHCP",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "dhcp", "mtcna", "addressing"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "dhcp",
+      "mtcna",
+      "addressing"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M2.3"
+      }
+    ]
   },
   {
     "id": "win11-ipconfig-all",
@@ -641,7 +919,13 @@
     "tech": "win11",
     "title": "ipconfig /all",
     "task": "See the full network configuration of every adapter",
-    "aliases": ["ip config", "my ip address", "network settings", "adapter config", "dns"],
+    "aliases": [
+      "ip config",
+      "my ip address",
+      "network settings",
+      "adapter config",
+      "dns"
+    ],
     "risk": "safe",
     "where": "Windows 11 Command Prompt or PowerShell",
     "privilege": "none",
@@ -675,10 +959,25 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — ipconfig command", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — ipconfig command",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows", "ipconfig", "networking", "troubleshooting"]
+    "tags": [
+      "windows",
+      "ipconfig",
+      "networking",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-2.1",
+        "note": "IPv4 addressing, gateway, DNS"
+      }
+    ]
   },
   {
     "id": "win11-flags-bcdedit",
@@ -686,7 +985,13 @@
     "tech": "win11",
     "title": "bcdedit",
     "task": "Inspect and change Windows boot options such as safe mode",
-    "aliases": ["safe mode", "boot options", "startup recovery", "bcd", "boot loop"],
+    "aliases": [
+      "safe mode",
+      "boot options",
+      "startup recovery",
+      "bcd",
+      "boot loop"
+    ],
     "risk": "risk",
     "where": "Elevated Command Prompt",
     "privilege": "Administrator",
@@ -720,11 +1025,31 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — bcdedit", "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/bcdedit--boot-configuration-data-editor", "checked": "2026-10-10" },
-      { "title": "Microsoft Learn — Windows Recovery Environment", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — bcdedit",
+        "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/bcdedit--boot-configuration-data-editor",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — Windows Recovery Environment",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows", "boot", "safe mode", "bcdedit", "troubleshooting", "bcd"]
+    "tags": [
+      "windows",
+      "boot",
+      "safe mode",
+      "bcdedit",
+      "troubleshooting",
+      "bcd"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C2-3.2",
+        "note": "Safe mode and boot options"
+      }
+    ]
   },
   {
     "id": "win11-sfc-dism",
@@ -732,7 +1057,14 @@
     "tech": "win11",
     "title": "DISM /Online /Cleanup-Image /RestoreHealth",
     "task": "Repair a corrupted Windows component store, then verify system files",
-    "aliases": ["fix windows", "corrupt system files", "sfc", "dism", "repair windows", "missing dll"],
+    "aliases": [
+      "fix windows",
+      "corrupt system files",
+      "sfc",
+      "dism",
+      "repair windows",
+      "missing dll"
+    ],
     "risk": "caution",
     "where": "Elevated Command Prompt",
     "privilege": "Administrator",
@@ -766,10 +1098,26 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — DISM and SFC", "url": "https://support.microsoft.com/en-us/windows/using-dism-or-sfc-to-repair-corrupted-windows-system-files-09a255d1-0533-42cd-8807-0dd0378f10f8", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — DISM and SFC",
+        "url": "https://support.microsoft.com/en-us/windows/using-dism-or-sfc-to-repair-corrupted-windows-system-files-09a255d1-0533-42cd-8807-0dd0378f10f8",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows", "dism", "sfc", "repair", "troubleshooting"]
+    "tags": [
+      "windows",
+      "dism",
+      "sfc",
+      "repair",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C2-3.2",
+        "note": "Windows recovery and repair"
+      }
+    ]
   },
   {
     "id": "winserver-install-addfeature",
@@ -777,7 +1125,14 @@
     "tech": "winserver",
     "title": "Install-WindowsFeature",
     "task": "Install a Windows Server role or feature from the command line",
-    "aliases": ["install ad ds", "install dcs", "install dhcp", "install dns", "add role", "server manager powershell"],
+    "aliases": [
+      "install ad ds",
+      "install dcs",
+      "install dhcp",
+      "install dns",
+      "add role",
+      "server manager powershell"
+    ],
     "risk": "caution",
     "where": "PowerShell on the server (elevated)",
     "privilege": "Administrator / Domain Admin during promotion",
@@ -812,11 +1167,31 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — Install-WindowsFeature", "url": "https://learn.microsoft.com/en-us/powershell/module/servermanager/install-windowsfeature", "checked": "2026-10-10" },
-      { "title": "Microsoft Learn — AD DS Deployment Overview", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — Install-WindowsFeature",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/servermanager/install-windowsfeature",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — AD DS Deployment Overview",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows server", "powershell", "active directory", "dhcp", "dns", "roles"]
+    "tags": [
+      "windows server",
+      "powershell",
+      "active directory",
+      "dhcp",
+      "dns",
+      "roles"
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.1",
+        "note": "AD DS role installation"
+      }
+    ]
   },
   {
     "id": "winserver-dhcp-scope-create",
@@ -824,7 +1199,12 @@
     "tech": "winserver",
     "title": "Add-DhcpServerv4Scope",
     "task": "Create a DHCP IPv4 scope with a pool, options and a reservation",
-    "aliases": ["dhcp scope", "dhcp pool", "dhcp reservation", "create dhcp"],
+    "aliases": [
+      "dhcp scope",
+      "dhcp pool",
+      "dhcp reservation",
+      "create dhcp"
+    ],
     "risk": "caution",
     "where": "PowerShell on the DHCP server (elevated)",
     "privilege": "Administrator, or a DHCP admin group",
@@ -859,10 +1239,25 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — Add-DhcpServerv4Scope", "url": "https://learn.microsoft.com/en-us/powershell/module/dhcp/add-dhcpserverv4scope", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — Add-DhcpServerv4Scope",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/dhcp/add-dhcpserverv4scope",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows server", "dhcp", "scope", "powershell", "networking"]
+    "tags": [
+      "windows server",
+      "dhcp",
+      "scope",
+      "powershell",
+      "networking"
+    ],
+    "objectives": [
+      {
+        "id": "WS-NET.1"
+      }
+    ]
   },
   {
     "id": "aplus-disk-management",
@@ -870,7 +1265,15 @@
     "tech": "aplus",
     "title": "diskpart",
     "task": "Inspect, initialise, partition and format a disk from the command line",
-    "aliases": ["format a drive", "partition", "storage", "disk not recognised", "init disk", "mbr", "gpt"],
+    "aliases": [
+      "format a drive",
+      "partition",
+      "storage",
+      "disk not recognised",
+      "init disk",
+      "mbr",
+      "gpt"
+    ],
     "risk": "risk",
     "where": "Windows Command Prompt, elevated",
     "privilege": "Administrator",
@@ -906,11 +1309,31 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — DiskPart command reference", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/diskpart", "checked": "2026-10-10" },
-      { "title": "Microsoft Learn — Initialize, format, and partition data disks", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — DiskPart command reference",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/diskpart",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — Initialize, format, and partition data disks",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["aplus", "storage", "diskpart", "partition", "mbr", "gpt"]
+    "tags": [
+      "aplus",
+      "storage",
+      "diskpart",
+      "partition",
+      "mbr",
+      "gpt"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-3.5",
+        "note": "Partitioning, MBR vs GPT"
+      }
+    ]
   },
   {
     "id": "aplus-chkdsk-sfc",
@@ -918,7 +1341,14 @@
     "tech": "aplus",
     "title": "chkdsk",
     "task": "Check a volume for file-system errors and repair it",
-    "aliases": ["fix disk", "bad sectors", "chkdsk", "file system", "ntfs", "repair volume"],
+    "aliases": [
+      "fix disk",
+      "bad sectors",
+      "chkdsk",
+      "file system",
+      "ntfs",
+      "repair volume"
+    ],
     "risk": "risk",
     "where": "Windows Command Prompt, elevated",
     "privilege": "Administrator",
@@ -954,9 +1384,25 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — chkdsk command", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chkdsk", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — chkdsk command",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chkdsk",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["aplus", "storage", "chkdsk", "ntfs", "repair"]
+    "tags": [
+      "aplus",
+      "storage",
+      "chkdsk",
+      "ntfs",
+      "repair"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-3.5",
+        "note": "File system repair"
+      }
+    ]
   }
 ]

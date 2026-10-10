@@ -358,6 +358,92 @@ for (const k of KINDS) {
   }
 }
 
+// Single-object data files loaded outside the per-kind groups.
+const EXTRA_DATA = ["data/exam-objectives.json"];
+
+for (const p of EXTRA_DATA) {
+  const full = join(APP, p);
+  if (!existsSync(full)) {
+    fail(`${p} is missing — the app loads it separately from the per-kind groups`);
+    continue;
+  }
+  try {
+    const parsed = JSON.parse(readFileSync(full, "utf8"));
+    if (!Array.isArray(parsed.exams)) fail(`${p} has no "exams" array`);
+  } catch (e) {
+    fail(`${p} is not valid JSON: ${e.message}`);
+  }
+}
+
+// Every objective code referenced by content must exist in the objectives file,
+// and every objectives file must be precached or the view breaks offline.
+{
+  const objPath = join(APP, "data", "exam-objectives.json");
+  if (existsSync(objPath)) {
+    let known = new Set();
+    try {
+      const o = JSON.parse(readFileSync(objPath, "utf8"));
+      for (const ex of o.exams || []) {
+        for (const d of ex.domains || []) known.add(d.id);
+        for (const s of ex.subtopics || []) known.add(s.id);
+        if (!ex.verified) {
+          warn(`exam objectives: "${ex.title}" is marked unverified — do not quote it as an exam fact`);
+        }
+      }
+    } catch (_) { /* reported above */ }
+
+    for (const [kind, items] of Object.entries(corpus)) {
+      for (const item of items) {
+        for (const o of item.objectives || []) {
+          if (!known.has(o.id)) {
+            fail(`${kind}/${item.id}: objective "${o.id}" is not defined in data/exam-objectives.json`);
+          }
+        }
+      }
+    }
+
+    const swSrc = readFileSync(join(APP, "sw.js"), "utf8");
+    if (!swSrc.includes("data/exam-objectives.json")) {
+      fail("sw.js does not precache data/exam-objectives.json — the objectives view would break offline");
+    }
+  }
+}
+
+/* ------------------------------------- route/link integrity (plural vs singular) */
+
+// Content `kind` is singular ("command"); route segments are plural ("commands").
+// Mixing them produces links that look right and navigate nowhere — which is
+// exactly what happened with bookmarks, progress links and related links.
+const ROUTES = {
+  command: "commands",
+  lesson: "lessons",
+  scenario: "scenarios",
+  quiz: "quizzes",
+  project: "projects",
+};
+
+{
+  const appSrc = readFileSync(join(APP, "assets", "views.js"), "utf8");
+  // No raw `${something.kind}/` may appear inside an href() call.
+  for (const m of appSrc.matchAll(/href\(`\$\{[^}]*\.kind\}/g)) {
+    fail(`views.js builds a link from \`.kind\` (${m[0]}) — kind is singular but routes are plural; use contentHref(doc)`);
+  }
+  if (!/function contentHref/.test(appSrc)) {
+    fail("views.js is missing contentHref() — every content link must go through it");
+  }
+  // Every doc's kind must map to a route the router actually registers.
+  const appJs = readFileSync(join(APP, "assets", "app.js"), "utf8");
+  for (const [kind, seg] of Object.entries(ROUTES)) {
+    // Routes are registered in a loop, so check the segment is referenced at
+    // all rather than looking for a literal `route("x"` call.
+    if (!appJs.includes(`"${seg}"`)) fail(`router never references the "${seg}" route segment (kind "${kind}")`);
+    if (!appJs.includes(`case "${seg}":`)) fail(`render() has no case for "${seg}"`);
+  }
+  for (const item of Object.values(corpus).flat()) {
+    if (item.kind && !ROUTES[item.kind]) fail(`${item.kind}: unknown content kind on "${item.id}"`);
+  }
+}
+
 /* ------------------------------------------------- repo-level privacy guard */
 
 const gi = join(ROOT, ".gitignore");

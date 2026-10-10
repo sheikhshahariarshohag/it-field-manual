@@ -5,7 +5,12 @@
     "tech": "mikrotik",
     "title": "/interface/bridge/port/print",
     "task": "See which physical ports are members of the bridge",
-    "aliases": ["bridge ports", "which ports are in the bridge", "vlan membership routeros", "ports not passing traffic"],
+    "aliases": [
+      "bridge ports",
+      "which ports are in the bridge",
+      "vlan membership routeros",
+      "ports not passing traffic"
+    ],
     "risk": "safe",
     "where": "RouterOS CLI or WinBox terminal",
     "privilege": "none to read",
@@ -37,9 +42,27 @@
         "fix": "Set the bridge IP and DHCP server BEFORE adding the management port, or connect from a different port."
       }
     ],
-    "sources": [{ "title": "MikroTik official documentation — Bridge", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/1573595/Bridge", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — Bridge",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/1573595/Bridge",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "bridge", "layer2", "mtcna", "troubleshooting"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "bridge",
+      "layer2",
+      "mtcna",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M3.1"
+      }
+    ]
   },
   {
     "id": "mikrotik-ip-route-print",
@@ -47,7 +70,13 @@
     "tech": "mikrotik",
     "title": "/ip/route/print",
     "task": "Read the routing table and find how traffic leaves and returns",
-    "aliases": ["routing table", "default route routeros", "gateway", "route not working", "no internet"],
+    "aliases": [
+      "routing table",
+      "default route routeros",
+      "gateway",
+      "route not working",
+      "no internet"
+    ],
     "risk": "safe",
     "where": "RouterOS CLI",
     "privilege": "none to read",
@@ -80,9 +109,27 @@
         "fix": "/ip/firewall/nat/print   # masquerade must exist on the WAN interface\n/ip/firewall/filter/print stats"
       }
     ],
-    "sources": [{ "title": "MikroTik official documentation — IP Routing", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/413262/IP+Routing", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — IP Routing",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/413262/IP+Routing",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "routing", "nat", "troubleshooting", "mtcna"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "routing",
+      "nat",
+      "troubleshooting",
+      "mtcna"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M4.1"
+      }
+    ]
   },
   {
     "id": "mikrotik-ip-firewall-nat",
@@ -90,7 +137,14 @@
     "tech": "mikrotik",
     "title": "/ip firewall nat",
     "task": "Check and set up masquerading and port forwarding",
-    "aliases": ["nat", "masquerade", "port forward", "port forwarding", "internet sharing", "dmz"],
+    "aliases": [
+      "nat",
+      "masquerade",
+      "port forward",
+      "port forwarding",
+      "internet sharing",
+      "dmz"
+    ],
     "risk": "caution",
     "where": "RouterOS CLI",
     "privilege": "admin-level",
@@ -129,9 +183,32 @@
         "fix": "/ip/route/print where dynamic\nMake the default route static rather than accepting the dynamic one."
       }
     ],
-    "sources": [{ "title": "MikroTik official documentation — NAT", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2475629/NAT", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — NAT",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2475629/NAT",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "nat", "masquerade", "port forwarding", "mtcna"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "nat",
+      "masquerade",
+      "port forwarding",
+      "mtcna"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M6.6",
+        "note": "masquerade and src-nat"
+      },
+      {
+        "id": "MTCNA-M6.7",
+        "note": "dst-nat and redirect"
+      }
+    ]
   },
   {
     "id": "mikrotik-system-resource-print",
@@ -139,7 +216,13 @@
     "tech": "mikrotik",
     "title": "/system/resource/print",
     "task": "Check CPU, memory, uptime and whether the router is struggling",
-    "aliases": ["router slow", "cpu load", "memory usage routeros", "is the router overloaded", "uptime routeros"],
+    "aliases": [
+      "router slow",
+      "cpu load",
+      "memory usage routeros",
+      "is the router overloaded",
+      "uptime routeros"
+    ],
     "risk": "safe",
     "where": "RouterOS CLI",
     "privilege": "none to read",
@@ -166,9 +249,28 @@
         "fix": "Connect via the serial console. Then /system/backup/load name=<last good> and reboot."
       }
     ],
-    "sources": [{ "title": "MikroTik official documentation — System resource", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/System", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — System resource",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/System",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "performance", "backup", "troubleshooting", "mtcna"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "performance",
+      "backup",
+      "troubleshooting",
+      "mtcna"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M9",
+        "note": "Support output and logs"
+      }
+    ]
   },
   {
     "id": "mikrotik-system-backup-save",
@@ -176,7 +278,12 @@
     "tech": "mikrotik",
     "title": "/system/backup/save",
     "task": "Save a binary configuration backup you can restore",
-    "aliases": ["backup router", "save config routeros", "restore config", "rollback mikrotik"],
+    "aliases": [
+      "backup router",
+      "save config routeros",
+      "restore config",
+      "rollback mikrotik"
+    ],
     "risk": "safe",
     "where": "RouterOS CLI",
     "privilege": "admin-level",
@@ -204,8 +311,27 @@
         "fix": "/system/backup/print   to list what is actually there"
       }
     ],
-    "sources": [{ "title": "MikroTik official documentation — Backup", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/Backup", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — Backup",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/Backup",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["mikrotik", "routeros", "backup", "export", "import", "rollback", "mtcna"]
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "backup",
+      "export",
+      "import",
+      "rollback",
+      "mtcna"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M1.6"
+      }
+    ]
   }
 ]

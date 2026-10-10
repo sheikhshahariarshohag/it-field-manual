@@ -10,10 +10,23 @@
     "verification": "source-checked",
     "prerequisites": [],
     "related": [
-      { "id": "aplus-reading-post-codes", "label": "Decoding the beeps and codes" },
-      { "id": "win11-flags-bcdedit", "label": "When the failure is after POST" }
+      {
+        "id": "aplus-reading-post-codes",
+        "label": "Decoding the beeps and codes"
+      },
+      {
+        "id": "win11-flags-bcdedit",
+        "label": "When the failure is after POST"
+      }
     ],
-    "tags": ["aplus", "boot", "post", "hardware", "fundamentals", "troubleshooting"],
+    "tags": [
+      "aplus",
+      "boot",
+      "post",
+      "hardware",
+      "fundamentals",
+      "troubleshooting"
+    ],
     "sections": [
       {
         "h": "The order, and where each stage fails visibly",
@@ -75,10 +88,32 @@
       }
     ],
     "failures": [
-      { "why": "Nothing happens at all — no lights, no fans.", "fix": "Not an operating system problem. Test the PSU with a PSU tester or by swapping in a known-good one." },
-      { "why": "Fans run, but the screen stays black.", "fix": "Test the display path first — another monitor, a different cable, a discrete GPU with no display plugged into the wrong port. Then reseat memory." },
-      { "why": "'Reboot and select proper boot device'.", "fix": "The firmware found no bootable device. Check boot order, then whether the drive is detected at all in the firmware storage view." },
-      { "why": "Hangs on the Windows logo with a spinner.", "fix": "Storage. Disconnect the drive and boot to WinRE — Windows will run from RAM and you can inspect the disk." }
+      {
+        "why": "Nothing happens at all — no lights, no fans.",
+        "fix": "Not an operating system problem. Test the PSU with a PSU tester or by swapping in a known-good one."
+      },
+      {
+        "why": "Fans run, but the screen stays black.",
+        "fix": "Test the display path first — another monitor, a different cable, a discrete GPU with no display plugged into the wrong port. Then reseat memory."
+      },
+      {
+        "why": "'Reboot and select proper boot device'.",
+        "fix": "The firmware found no bootable device. Check boot order, then whether the drive is detected at all in the firmware storage view."
+      },
+      {
+        "why": "Hangs on the Windows logo with a spinner.",
+        "fix": "Storage. Disconnect the drive and boot to WinRE — Windows will run from RAM and you can inspect the disk."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C2-3.2",
+        "note": "Boot order, WinRE, recovery"
+      },
+      {
+        "id": "APLUS-C1-5.1",
+        "note": "Apply the troubleshooting process"
+      }
     ]
   },
   {
@@ -91,12 +126,24 @@
     "time": "8 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "aplus-post-boot-sequence", "label": "Where POST fits in the boot order" }
+      {
+        "id": "aplus-post-boot-sequence",
+        "label": "Where POST fits in the boot order"
+      }
     ],
     "related": [
-      { "id": "win11-flags-bcdedit", "label": "Failures after POST look completely different" }
+      {
+        "id": "win11-flags-bcdedit",
+        "label": "Failures after POST look completely different"
+      }
     ],
-    "tags": ["aplus", "post", "beep codes", "hardware", "troubleshooting"],
+    "tags": [
+      "aplus",
+      "post",
+      "beep codes",
+      "hardware",
+      "troubleshooting"
+    ],
     "sections": [
       {
         "h": "The three encodings",
@@ -149,9 +196,27 @@
       }
     ],
     "failures": [
-      { "why": "POST beeps once, long then short.", "fix": "Video subsystem failure. Test with a known-good monitor and cable, and confirm the display is plugged into the GPU rather than the motherboard when a discrete GPU is present." },
-      { "why": "Beeps repeat, no display.", "fix": "Memory. Reseat one module at a time in the slot nearest the CPU. Test each module in a known-good slot before condemning it." },
-      { "why": "Machine POSTs but Windows will not install.", "fix": "The firmware cannot see the drive. Check the storage view, then the cable and the port. Legacy BIOS modes also do not see NVMe drives at all — a real and confusing limitation." }
+      {
+        "why": "POST beeps once, long then short.",
+        "fix": "Video subsystem failure. Test with a known-good monitor and cable, and confirm the display is plugged into the GPU rather than the motherboard when a discrete GPU is present."
+      },
+      {
+        "why": "Beeps repeat, no display.",
+        "fix": "Memory. Reseat one module at a time in the slot nearest the CPU. Test each module in a known-good slot before condemning it."
+      },
+      {
+        "why": "Machine POSTs but Windows will not install.",
+        "fix": "The firmware cannot see the drive. Check the storage view, then the cable and the port. Legacy BIOS modes also do not see NVMe drives at all — a real and confusing limitation."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-3.4",
+        "note": "Motherboard, RAM, CPU, power"
+      },
+      {
+        "id": "APLUS-C1-5.1"
+      }
     ]
   },
   {
@@ -164,13 +229,29 @@
     "time": "13 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "aplus-post-boot-sequence", "label": "Confirm the fault is past POST" }
+      {
+        "id": "aplus-post-boot-sequence",
+        "label": "Confirm the fault is past POST"
+      }
     ],
     "related": [
-      { "id": "win11-flags-bcdedit", "label": "Safe mode and boot options" },
-      { "id": "win11-sfc-dism", "label": "The commands themselves" }
+      {
+        "id": "win11-flags-bcdedit",
+        "label": "Safe mode and boot options"
+      },
+      {
+        "id": "win11-sfc-dism",
+        "label": "The commands themselves"
+      }
     ],
-    "tags": ["windows", "boot", "repair", "dism", "sfc", "troubleshooting"],
+    "tags": [
+      "windows",
+      "boot",
+      "repair",
+      "dism",
+      "sfc",
+      "troubleshooting"
+    ],
     "sections": [
       {
         "h": "The rule that matters most",
@@ -238,9 +319,23 @@
       }
     ],
     "failures": [
-      { "why": "DISM returns 0x800f081f.", "fix": "No usable source. Check the WSUS PolicyURL as shown above, test connectivity to Windows Update, and check the machine clock — an incorrect clock breaks TLS and DISM will report a source failure rather than a certificate one." },
-      { "why": "SFC reports it cannot fix some files.", "fix": "The component store is damaged. Run DISM, then SFC again. Do not keep re-running SFC — it is a symptom, not the fix." },
-      { "why": "Repair succeeds but the machine still fails to boot.", "fix": "The fault is not in the file system. Check the disk for bad sectors and check the event log in WinRE, which survives from before the failure." }
+      {
+        "why": "DISM returns 0x800f081f.",
+        "fix": "No usable source. Check the WSUS PolicyURL as shown above, test connectivity to Windows Update, and check the machine clock — an incorrect clock breaks TLS and DISM will report a source failure rather than a certificate one."
+      },
+      {
+        "why": "SFC reports it cannot fix some files.",
+        "fix": "The component store is damaged. Run DISM, then SFC again. Do not keep re-running SFC — it is a symptom, not the fix."
+      },
+      {
+        "why": "Repair succeeds but the machine still fails to boot.",
+        "fix": "The fault is not in the file system. Check the disk for bad sectors and check the event log in WinRE, which survives from before the failure."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C2-3.2"
+      }
     ]
   },
   {
@@ -253,13 +348,28 @@
     "time": "14 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "winserver-get-adcomputer", "label": "Inspect AD objects" }
+      {
+        "id": "winserver-get-adcomputer",
+        "label": "Inspect AD objects"
+      }
     ],
     "related": [
-      { "id": "win11-domain-join", "label": "Joining a client to a domain" },
-      { "id": "scn-ad-dns-resolution-failure", "label": "DNS failure after adding a DC" }
+      {
+        "id": "win11-domain-join",
+        "label": "Joining a client to a domain"
+      },
+      {
+        "id": "scn-ad-dns-resolution-failure",
+        "label": "DNS failure after adding a DC"
+      }
     ],
-    "tags": ["windows server", "active directory", "forest", "trust", "identity"],
+    "tags": [
+      "windows server",
+      "active directory",
+      "forest",
+      "trust",
+      "identity"
+    ],
     "sections": [
       {
         "h": "The vocabulary, in order",
@@ -323,9 +433,27 @@
       }
     ],
     "failures": [
-      { "why": "A client cannot join although credentials are correct.", "fix": "DNS first, not the credentials. `nslookup dc01.office.lan`, then `Test-NetConnection dc01.office.lan -Port 389`. Most 'credential' problems are DNS problems." },
-      { "why": "You cannot promote a second DC.", "fix": "The functional level. Check `Get-ADDomain | Select DomainMode` and raise it before promoting." },
-      { "why": "Users in another domain cannot log on.", "fix": "Check IsGlobalCatalog on the DC. Also confirm a transitive trust has not been left open in a direction you did not intend." }
+      {
+        "why": "A client cannot join although credentials are correct.",
+        "fix": "DNS first, not the credentials. `nslookup dc01.office.lan`, then `Test-NetConnection dc01.office.lan -Port 389`. Most 'credential' problems are DNS problems."
+      },
+      {
+        "why": "You cannot promote a second DC.",
+        "fix": "The functional level. Check `Get-ADDomain | Select DomainMode` and raise it before promoting."
+      },
+      {
+        "why": "Users in another domain cannot log on.",
+        "fix": "Check IsGlobalCatalog on the DC. Also confirm a transitive trust has not been left open in a direction you did not intend."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.1"
+      },
+      {
+        "id": "WS-NET.2",
+        "note": "AD-integrated DNS and the Global Catalog"
+      }
     ]
   },
   {
@@ -338,13 +466,28 @@
     "time": "12 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "win11-gpresult", "label": "gpresult and klist" }
+      {
+        "id": "win11-gpresult",
+        "label": "gpresult and klist"
+      }
     ],
     "related": [
-      { "id": "winserver-get-adcomputer", "label": "Check the computer account" },
-      { "id": "win11-domain-join", "label": "Domain join prerequisites" }
+      {
+        "id": "winserver-get-adcomputer",
+        "label": "Check the computer account"
+      },
+      {
+        "id": "win11-domain-join",
+        "label": "Domain join prerequisites"
+      }
     ],
-    "tags": ["windows server", "group policy", "active directory", "gpo", "troubleshooting"],
+    "tags": [
+      "windows server",
+      "group policy",
+      "active directory",
+      "gpo",
+      "troubleshooting"
+    ],
     "sections": [
       {
         "h": "Four causes, and the order to check them",
@@ -401,9 +544,23 @@
       }
     ],
     "failures": [
-      { "why": "`gpresult` reports 'Access is denied'.", "fix": "You are not a domain user on that machine, or the account has no domain logon rights. Run it as a domain admin." },
-      { "why": "A GPO shows as applied but its settings are not there.", "fix": "You are looking at User Settings for a computer-side policy, or vice versa. `gpresult /r` separates them clearly — check you are reading the right half." },
-      { "why": "Policy applies on some machines and not others.", "fix": "Filtering, not inheritance. Compare the two computer accounts with Get-ADComputer -Properties *, and check the GPO's Security tab." }
+      {
+        "why": "`gpresult` reports 'Access is denied'.",
+        "fix": "You are not a domain user on that machine, or the account has no domain logon rights. Run it as a domain admin."
+      },
+      {
+        "why": "A GPO shows as applied but its settings are not there.",
+        "fix": "You are looking at User Settings for a computer-side policy, or vice versa. `gpresult /r` separates them clearly — check you are reading the right half."
+      },
+      {
+        "why": "Policy applies on some machines and not others.",
+        "fix": "Filtering, not inheritance. Compare the two computer accounts with Get-ADComputer -Properties *, and check the GPO's Security tab."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.3"
+      }
     ]
   }
 ]

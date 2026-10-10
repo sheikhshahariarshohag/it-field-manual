@@ -1,0 +1,179 @@
+{
+  "note": "Official certification objectives, recorded so every lesson can be traced to a real exam objective. Dates are the day each was checked against the publisher's own material. Anything not confirmed against a primary source is marked verified:false and must not be quoted as an exam fact.",
+  "checked": "2026-10-10",
+  "exams": [
+    {
+      "id": "ccna",
+      "title": "Cisco CCNA 200-301",
+      "code": "200-301 CCNA v2.0",
+      "verified": true,
+      "source": "https://learningcontent.cisco.com/documents/marketing/exam-topics/200-301_CCNA_v2.0_Exam_Topics_PDF.pdf",
+      "sourceNote": "Official Cisco exam topics PDF, published 2026-05-14. Cisco's marketing pages still say v1.1; the PDF is the authority.",
+      "checked": "2026-10-10",
+      "domains": [
+        { "id": "CCNA-1", "name": "Network Fundamentals", "weight": 20 },
+        { "id": "CCNA-2", "name": "Network Access", "weight": 20 },
+        { "id": "CCNA-3", "name": "IP Connectivity", "weight": 25 },
+        { "id": "CCNA-4", "name": "Network Services and Security", "weight": 20 },
+        { "id": "CCNA-5", "name": "AI, and Network Operations and Management", "weight": 10 }
+      ],
+      "subtopics": [
+        { "id": "CCNA-3.1", "domain": "CCNA-3", "text": "Interpret a routing table to identify the next hop (prefix/mask, administrative distance, metric, default route)" },
+        { "id": "CCNA-3.2", "domain": "CCNA-3", "text": "Troubleshoot IPv4 and IPv6 static routing: default, network, host, floating static" },
+        { "id": "CCNA-3.3", "domain": "CCNA-3", "text": "Configure single-area OSPFv2 for IPv4 and OSPFv3 for IPv6" },
+        { "id": "CCNA-3.4", "domain": "CCNA-3", "text": "Interpret the operational status of FHRP (HSRP and VRRP)" },
+        { "id": "CCNA-2.1", "domain": "CCNA-2", "text": "Configure and verify VLANs" },
+        { "id": "CCNA-2.2", "domain": "CCNA-2", "text": "Configure and verify trunking on a switched network" },
+        { "id": "CCNA-2.3", "domain": "CCNA-2", "text": "Configure and verify STP" },
+        { "id": "CCNA-2.6", "domain": "CCNA-2", "text": "Describe the purpose and operation of switch port security, DHCP snooping and DAI" },
+        { "id": "CCNA-4.2", "domain": "CCNA-4", "text": "Manage device configuration and software files using secure file transfer (SFTP/SCP)" },
+        { "id": "CCNA-4.3", "domain": "CCNA-4", "text": "Configure NAT/PAT on IOS XE routers" },
+        { "id": "CCNA-4.4", "domain": "CCNA-4", "text": "Diagnose issues with DNS records (A, AAAA, CNAME, MX, NS, PTR)" },
+        { "id": "CCNA-4.6", "domain": "CCNA-4", "text": "Configure IPv4 ACLs (standard, extended, numbered, named)" },
+        { "id": "CCNA-4.7", "domain": "CCNA-4", "text": "Configure Layer 2 security features: DHCP snooping, DAI, storm control, RA guard, port security" },
+        { "id": "CCNA-1.2", "domain": "CCNA-1", "text": "Describe the interaction of common application layer protocols" },
+        { "id": "CCNA-1.3", "domain": "CCNA-1", "text": "Describe modern network infrastructure and architecture" },
+        { "id": "CCNA-5.4", "domain": "CCNA-5", "text": "Describe network management approaches (device-based, cloud, controller, automation, IaC)" }
+      ]
+    },
+    {
+      "id": "aplus",
+      "title": "CompTIA A+",
+      "code": "Core 1 220-1201 and Core 2 220-1202",
+      "verified": true,
+      "source": "https://www.comptia.org/certifications/a-plus",
+      "sourceNote": "Current exam codes are 220-1201 / 220-1202, live since March 2025 and retiring 2027-2028. Domain weights below are from the published objectives. The 220-1101/220-1102 generation is retired.",
+      "checked": "2026-10-10",
+      "domains": [
+        { "id": "APLUS-C1-1", "name": "Mobile Devices", "weight": 13, "exam": "Core 1 (220-1201)" },
+        { "id": "APLUS-C1-2", "name": "Networking", "weight": 23, "exam": "Core 1 (220-1201)" },
+        { "id": "APLUS-C1-3", "name": "Hardware", "weight": 25, "exam": "Core 1 (220-1201)" },
+        { "id": "APLUS-C1-4", "name": "Virtualization and Cloud Computing", "weight": 11, "exam": "Core 1 (220-1201)" },
+        { "id": "APLUS-C1-5", "name": "Hardware and Network Troubleshooting", "weight": 28, "exam": "Core 1 (220-1201)" },
+        { "id": "APLUS-C2-1", "name": "Operating Systems", "weight": 28, "exam": "Core 2 (220-1202)" },
+        { "id": "APLUS-C2-2", "name": "Security", "weight": 28, "exam": "Core 2 (220-1202)" },
+        { "id": "APLUS-C2-3", "name": "Software Troubleshooting", "weight": 23, "exam": "Core 2 (220-1202)" },
+        { "id": "APLUS-C2-4", "name": "Operational Procedures", "weight": 21, "exam": "Core 2 (220-1202)" }
+      ],
+      "subtopics": [
+        { "id": "APLUS-C1-3.4", "domain": "APLUS-C1-3", "text": "Troubleshoot motherboard, RAM, CPU and power issues" },
+        { "id": "APLUS-C1-3.5", "domain": "APLUS-C1-3", "text": "Storage: HDD, SSD, NVMe, RAID, M.2, and drive partitioning" },
+        { "id": "APLUS-C1-5.1", "domain": "APLUS-C1-5", "text": "Apply the troubleshooting process: identify the problem, establish theory, test, plan, verify" },
+        { "id": "APLUS-C1-2.1", "domain": "APLUS-C1-2", "text": "TCP and UDP ports and protocols; IPv4/IPv6 addressing, subnet mask, gateway" },
+        { "id": "APLUS-C1-4.1", "domain": "APLUS-C1-4", "text": "Virtualization concepts, hypervisors, virtual machine requirements" },
+        { "id": "APLUS-C2-3.2", "domain": "APLUS-C2-3", "text": "Troubleshoot Microsoft Windows: recovery, safe mode, startup repair, bootrec, bcdedit, BSOD" },
+        { "id": "APLUS-C2-1.1", "domain": "APLUS-C2-1", "text": "Windows settings, features and editions; common operating systems" },
+        { "id": "APLUS-C2-2.1", "domain": "APLUS-C2-2", "text": "Security fundamentals: physical security, passwords, MFA, encryption, secure connections" }
+      ]
+    },
+    {
+      "id": "mtcna",
+      "title": "MikroTik Certified Network Associate",
+      "code": "MTCNA training outline (last edited January 2016; syllabus still published)",
+      "verified": true,
+      "source": "https://i.mt.lv/cdn/training_pdf/mtcna_outline_2019181161836.pdf",
+      "sourceNote": "MikroTik's own published training outline. Note it predates RouterOS 7 — the syllabus is still the published one, but every command must be checked against current RouterOS documentation.",
+      "checked": "2026-10-10",
+      "domains": [
+        { "id": "MTCNA-M1", "name": "Module 1 — Introduction: RouterOS, RouterBOARD, CLI, backups vs export" },
+        { "id": "MTCNA-M2", "name": "Module 2 — DHCP: server, client, leases, network config, ARP" },
+        { "id": "MTCNA-M3", "name": "Module 3 — Bridging" },
+        { "id": "MTCNA-M4", "name": "Module 4 — Routing" },
+        { "id": "MTCNA-M5", "name": "Module 5 — Wireless (basic): connect list, WPA-PSK/WPA2-PSK, monitoring" },
+        { "id": "MTCNA-M6", "name": "Module 6 — Firewall: principles, connection tracking, chains, filter, address list, src NAT, masquerade, dst NAT, redirect, FastTrack" },
+        { "id": "MTCNA-M7", "name": "Module 7 — QoS: simple queues, targets, PCQ" },
+        { "id": "MTCNA-M8", "name": "Module 8 — Tunnels: PPP, PPPoE, pools, secure local networking" },
+        { "id": "MTCNA-M9", "name": "Module 9 — Misc: support output, logs, backups, network diagrams" }
+      ],
+      "subtopics": [
+        { "id": "MTCNA-M2.3", "domain": "MTCNA-M2", "text": "DHCP server network configuration and lease management" },
+        { "id": "MTCNA-M2.4", "domain": "MTCNA-M2", "text": "ARP modes and the RouterOS ARP table" },
+        { "id": "MTCNA-M3.1", "domain": "MTCNA-M3", "text": "Bridge concepts; adding and managing bridge ports; restoring configuration from backup" },
+        { "id": "MTCNA-M4.1", "domain": "MTCNA-M4", "text": "Static routing, default routes, route distance and gateway reachability" },
+        { "id": "MTCNA-M6.2", "domain": "MTCNA-M6", "text": "Firewall filter: structure, chains and actions" },
+        { "id": "MTCNA-M6.3", "domain": "MTCNA-M6", "text": "Protecting the router (input chain)" },
+        { "id": "MTCNA-M6.4", "domain": "MTCNA-M6", "text": "Protecting customers (forward chain)" },
+        { "id": "MTCNA-M6.6", "domain": "MTCNA-M6", "text": "Source NAT: masquerade and src-nat actions" },
+        { "id": "MTCNA-M6.7", "domain": "MTCNA-M6", "text": "Destination NAT: dst-nat and redirect actions" },
+        { "id": "MTCNA-M1.6", "domain": "MTCNA-M1", "text": "Managing configuration backups; difference between backup (.backup) and export (.rsc)" },
+        { "id": "MTCNA-M1.2", "domain": "MTCNA-M1", "text": "RouterOS CLI principles and menu navigation" }
+      ]
+    },
+    {
+      "id": "mtcre",
+      "title": "MikroTik Certified Routing Engineer",
+      "code": "MTCRE training outline (last edited July 2015)",
+      "verified": true,
+      "source": "https://i.mt.lv/cdn/training_pdf/mtcre_outline_2019181161836.pdf",
+      "sourceNote": "Prerequisite: MTCNA. Covers static routing in depth, OSPFv2, VPN and VLAN.",
+      "checked": "2026-10-10",
+      "domains": [
+        { "id": "MTCRE-M1", "name": "Module 1 — Static Routing: more specific routes, ECMP, route distance, recursive next-hop" },
+        { "id": "MTCRE-M2", "name": "Module 2 — Point to Point Addressing" },
+        { "id": "MTCRE-M3", "name": "Module 3 — VPN: IPIP, EoIP, PPTP, SSTP, L2TP, PPPoE, VLAN, QinQ" },
+        { "id": "MTCRE-M4", "name": "Module 4 — OSPF: areas, router types, DR/BDR election, LSA types, cost, SPT, stub, NSSA, virtual links" }
+      ],
+      "subtopics": [
+        { "id": "MTCRE-M1.1", "domain": "MTCRE-M1", "text": "More specific routes and ECMP (equal-cost multi-path)" },
+        { "id": "MTCRE-M1.3", "domain": "MTCRE-M1", "text": "Gateway reachability check and route distance" },
+        { "id": "MTCRE-M4.5", "domain": "MTCRE-M4", "text": "OSPF neighbours and neighbour states, DR and BDR election" },
+        { "id": "MTCRE-M3.5", "domain": "MTCRE-M3", "text": "VLAN and its usage; VLAN on managed switches" }
+      ]
+    },
+    {
+      "id": "rhcsa",
+      "title": "Red Hat Certified System Administrator",
+      "code": "RHCSA (exam EX294)",
+      "verified": false,
+      "verifyNote": "NOT yet checked against the current official Red Hat exam objectives PDF. The broad task areas below are the long-standing structure of RHCSA and are almost certainly still accurate, but the wording and any RHEL 10-specific changes must be confirmed at redhat.com/en/certification/rhcsa before any of this is quoted as an exam fact. Treated as unverified until then.",
+      "source": "https://www.redhat.com/en/certification/rhcsa",
+      "checked": "2026-10-10 (existence of the certification page only; objectives not verified)",
+      "domains": [
+        { "id": "RHCSA-1", "name": "Understand the use of automation and scripting" },
+        { "id": "RHCSA-2", "name": "Perform basic security tasks" },
+        { "id": "RHCSA-3", "name": "Manage users and groups" },
+        { "id": "RHCSA-4", "name": "Manage and configure storage" },
+        { "id": "RHCSA-5", "name": "Manage and configure basic networking" },
+        { "id": "RHCSA-6", "name": "Operate running systems" },
+        { "id": "RHCSA-7", "name": "Manage system services" },
+        { "id": "RHCSA-8", "name": "Install and update software" },
+        { "id": "RHCSA-9", "name": "Essential tools" }
+      ],
+      "subtopics": [
+        { "id": "RHCSA-3.1", "domain": "RHCSA-3", "text": "Manage user accounts and groups; permissions and ACLs" },
+        { "id": "RHCSA-5.1", "domain": "RHCSA-5", "text": "Configure networking: NetworkManager, nmcli, name resolution" },
+        { "id": "RHCSA-6.1", "domain": "RHCSA-6", "text": "Boot and shutdown; select a boot target; use systemd and journald" },
+        { "id": "RHCSA-6.2", "domain": "RHCSA-6", "text": "SELinux: enforcing, permissive, disabled, contexts" },
+        { "id": "RHCSA-7.1", "domain": "RHCSA-7", "text": "Manage services with systemctl; start, stop, enable, disable, status" },
+        { "id": "RHCSA-8.1", "domain": "RHCSA-8", "text": "Install and update packages with dnf" },
+        { "id": "RHCSA-4.1", "domain": "RHCSA-4", "text": "Configure storage: local storage, LVM, and mounting" }
+      ]
+    },
+    {
+      "id": "windows-server",
+      "title": "Windows Server / Microsoft platform role-based certifications",
+      "code": "Role-based (for example AZ-800 Windows Server Hybrid; role assessments)",
+      "verified": false,
+      "verifyNote": "NOT verified. Microsoft has retired most of the old MCSA/MCSE Windows Server certifications and moved to role-based credentials, so there is no single 'Windows Server exam' to map against. The task areas below are the standard operational responsibilities an administrator is expected to cover, NOT an extracted official objective list. Treat as a coverage checklist, not as an exam blueprint.",
+      "source": "https://learn.microsoft.com/en-us/credentials/certifications/",
+      "checked": "2026-10-10 (general knowledge; not extracted from an official objectives document)",
+      "domains": [
+        { "id": "WS-AD", "name": "Active Directory Domain Services — forests, domains, OUs, Group Policy, DNS integration" },
+        { "id": "WS-NET", "name": "Networking services — DHCP, DNS, IP configuration" },
+        { "id": "WS-FILE", "name": "File and print services, NTFS and share permissions" },
+        { "id": "WS-ADMIN", "name": "Remote administration, PowerShell, Windows Admin Center" },
+        { "id": "WS-VIRT", "name": "Hyper-V virtualization and containers" },
+        { "id": "WS-SEC", "name": "Security hardening, BitLocker, auditing, least privilege" },
+        { "id": "WS-BACKUP", "name": "Backup, recovery, Windows Backup and Veeam Agent" }
+      ],
+      "subtopics": [
+        { "id": "WS-AD.1", "domain": "WS-AD", "text": "Deploy and manage Active Directory Domain Services; forests, domains, trusts" },
+        { "id": "WS-AD.2", "domain": "WS-AD", "text": "Administer users, groups, computers and OUs with PowerShell (AD cmdlets)" },
+        { "id": "WS-AD.3", "domain": "WS-AD", "text": "Deploy and troubleshoot Group Policy; security filtering" },
+        { "id": "WS-NET.1", "domain": "WS-NET", "text": "Deploy and manage DHCP; scopes, options, reservations, failover" },
+        { "id": "WS-NET.2", "domain": "WS-NET", "text": "Deploy and manage DNS; zones, records, delegation, AD-integrated zones" },
+        { "id": "WS-FILE.1", "domain": "WS-FILE", "text": "Deploy and manage file services; NTFS permissions vs share permissions" }
+      ]
+    }
+  ]
+}

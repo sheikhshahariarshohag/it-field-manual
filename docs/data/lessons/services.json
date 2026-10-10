@@ -1686,7 +1686,12 @@
       "Problem: A newly installed service is unreachable from other hosts."
     ],
     "quickRef": "Service:        firewalld\nPackage:        firewalld\nsystemd unit:   firewalld.service\nDaemon:         /usr/sbin/firewalld\nConfiguration:  /etc/firewalld/firewalld.conf, /etc/firewalld/zones/, /etc/firewalld/services/\nLogs:           journalctl -u firewalld (+ kernel log if LogDenied enabled)\nPorts:          N/A (controls other services' ports)\n\nEssential commands:\n  firewall-cmd --state\n  firewall-cmd --get-active-zones\n  firewall-cmd --zone=ZONE --add-service=SERVICE --permanent\n  firewall-cmd --reload\n\nVerification:\n  firewall-cmd --list-all && ss -lntup\n\nTroubleshooting:\n  firewall-cmd --get-active-zones → --list-all → semanage port -l → test from a remote host\n\nCritical warnings:\n  🔴 --permanent changes are inactive until --reload.\n  🔴 Never `stop` firewalld on an internet-facing production host as a troubleshooting step.\n  🟡 firewalld allowing a port does not override an SELinux port-label denial.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-2"
+      }
+    ]
   },
   {
     "id": "rhel-service-libvirt-kvm-qemu",
@@ -3414,7 +3419,12 @@
       "Never jump straight to `setenforce 0` as the \"fix\" — that's a diagnostic step at most (to confirm SELinux is indeed the cause), never a resolution. If permissive mode makes the symptom disappear, that confirms SELinux was the cause and tells you to go fix labeling/policy — not to leave it permissive."
     ],
     "quickRef": "Service:        SELinux (kernel Mandatory Access Control subsystem)\nPackage:        selinux-policy, selinux-policy-targeted, policycoreutils\nsystemd unit:   none (kernel-resident; optional restorecond.service helper)\nDaemon:         none (kernel LSM)\nConfiguration:  /etc/selinux/config, semanage-managed contexts/booleans\nLogs:           /var/log/audit/audit.log (via auditd), journalctl -t setroubleshoot\nPorts:          N/A (labels other services' ports via semanage port)\n\nEssential commands:\n  getenforce / sestatus\n  ausearch -m avc -ts recent\n  restorecon -Rv PATH\n  semanage fcontext -a -t TYPE \"PATTERN\"\n  setsebool -P BOOLEAN on\n\nVerification:\n  getenforce (Enforcing) && ausearch -m avc -ts today shows nothing new for the tested workflow\n\nTroubleshooting:\n  ausearch -m avc → sealert -a → restorecon or setsebool → re-test\n\nCritical warnings:\n  🔴 Never leave SELINUX=disabled or setenforce 0 as a permanent \"fix.\"\n  🟡 Review any audit2allow-generated module before loading it — it can be broader than intended.\n  🟠 Disabled → Enforcing requires a full relabel — plan a maintenance window.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-6.2"
+      }
+    ]
   },
   {
     "id": "rhel-service-sssd",
@@ -3869,7 +3879,12 @@
       "Common scenario — \"systemctl restart did nothing, it's still using the old config\": Almost always means the unit file was edited but `daemon-reload` was skipped, so systemd restarted the process using its still-cached (old) definition of the unit. Or, the application's own config file was edited but the daemon doesn't reread it on `restart` in the way expected (rare) — verify with `systemctl cat` that the intended unit file is actually what's loaded."
     ],
     "quickRef": "Service:        systemd (PID 1, system & service manager)\nPackage:        systemd\nsystemd unit:   N/A (it is the manager)\nDaemon:         /usr/lib/systemd/systemd\nConfiguration:  /etc/systemd/system/ (admin units/overrides), /etc/systemd/system.conf\nLogs:           journalctl (no separate log file by default)\nPorts:          N/A\n\nEssential commands:\n  systemctl status SERVICE\n  systemctl enable --now SERVICE\n  systemctl daemon-reload\n  systemctl --failed\n\nVerification:\n  systemctl is-active SERVICE && systemctl is-enabled SERVICE\n\nTroubleshooting:\n  journalctl -u SERVICE -b   →   systemd-analyze verify SERVICE.service\n\nCritical warnings:\n  🔴 Never edit /usr/lib/systemd/system/*.service directly — use `systemctl edit`.\n  🟠 Always `daemon-reload` after any unit-file change, before restart.\n  🔴 Keep an out-of-band session open before restarting sshd/network units remotely.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-7.1"
+      }
+    ]
   },
   {
     "id": "rhel-service-systemd-journald",

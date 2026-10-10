@@ -10,14 +10,28 @@
     "verification": "source-checked",
     "time_label": "8",
     "prerequisites": [
-      { "id": "cisco-vlan-database", "label": "Create a VLAN and put an access port into it" }
+      {
+        "id": "cisco-vlan-database",
+        "label": "Create a VLAN and put an access port into it"
+      }
     ],
     "related": [
-      { "id": "mikrotik-ip-dhcp-server-network", "label": "Same fault on MikroTik: bridge membership before DHCP config" },
-      { "id": "winserver-dhcp-scope-create", "label": "When the VLAN is fine and DHCP is not" }
+      {
+        "id": "mikrotik-ip-dhcp-server-network",
+        "label": "Same fault on MikroTik: bridge membership before DHCP config"
+      },
+      {
+        "id": "winserver-dhcp-scope-create",
+        "label": "When the VLAN is fine and DHCP is not"
+      }
     ],
     "quiz": "quiz-switching",
-    "tags": ["vlan", "switching", "troubleshooting", "ccna"],
+    "tags": [
+      "vlan",
+      "switching",
+      "troubleshooting",
+      "ccna"
+    ],
     "sections": [
       {
         "h": "The mental model",
@@ -73,16 +87,47 @@
         "cmd": "enable\nconfigure terminal\nvlan 10\n name LAB\n exit\ninterface gi0/1\n switchport mode access\n switchport access vlan 10\ninterface gi0/2\n switchport mode access\n switchport access vlan 10\nend\nwrite memory",
         "where": "switch"
       },
-      { "text": "Give the PCs addresses in the same subnet and ping each other.", "expect": "Replies. If not, the problem is one of the four above." },
-      { "text": "Now change PC1's port to VLAN 20 and ping again.", "expect": "Fails. Confirm with `show mac address-table interface gi0/1` — PC1's MAC is no longer there, because the frame never left in the right VLAN." },
-      { "text": "Add a second switch with a trunk between them, put PC2 on the far switch, and verify it works.", "expect": "PC1 and PC2 talk across the trunk while in VLAN 10." },
-      { "text": "Break it deliberately: remove VLAN 10 from the trunk on the far switch.", "cmd": "interface gi0/1\n switchport trunk vlan 1,20\nexit\nshow interfaces trunk", "expect": "The trunk allowed list no longer contains 10. PC1 can no longer reach PC2, and nothing reports an error." },
-      { "text": "Confirm the MAC table tells the story.", "cmd": "show mac address-table vlan 10", "expect": "PC1 appears; PC2 does not. That asymmetry is the signature of a trunk that is not carrying the VLAN." }
+      {
+        "text": "Give the PCs addresses in the same subnet and ping each other.",
+        "expect": "Replies. If not, the problem is one of the four above."
+      },
+      {
+        "text": "Now change PC1's port to VLAN 20 and ping again.",
+        "expect": "Fails. Confirm with `show mac address-table interface gi0/1` — PC1's MAC is no longer there, because the frame never left in the right VLAN."
+      },
+      {
+        "text": "Add a second switch with a trunk between them, put PC2 on the far switch, and verify it works.",
+        "expect": "PC1 and PC2 talk across the trunk while in VLAN 10."
+      },
+      {
+        "text": "Break it deliberately: remove VLAN 10 from the trunk on the far switch.",
+        "cmd": "interface gi0/1\n switchport trunk vlan 1,20\nexit\nshow interfaces trunk",
+        "expect": "The trunk allowed list no longer contains 10. PC1 can no longer reach PC2, and nothing reports an error."
+      },
+      {
+        "text": "Confirm the MAC table tells the story.",
+        "cmd": "show mac address-table vlan 10",
+        "expect": "PC1 appears; PC2 does not. That asymmetry is the signature of a trunk that is not carrying the VLAN."
+      }
     ],
     "failures": [
-      { "why": "The port is `access` VLAN 20 but Operational Mode is `down`.", "fix": "Configuration alone will not change this. Check `show interfaces status` for the physical state first, then look for err-disabled or a spanning-tree restriction." },
-      { "why": "Both devices are in the same VLAN but with different subnet masks (e.g. /24 and /16).", "fix": "The hosts treat each other as being on the local link, ARPs instead of sending traffic, and never use the gateway. Compare the masks, not just the addresses." },
-      { "why": "A VLAN with only one member port.", "fix": "That is not inherently wrong, but it means no device can reach any other. Check whether the second port really is in the VLAN." }
+      {
+        "why": "The port is `access` VLAN 20 but Operational Mode is `down`.",
+        "fix": "Configuration alone will not change this. Check `show interfaces status` for the physical state first, then look for err-disabled or a spanning-tree restriction."
+      },
+      {
+        "why": "Both devices are in the same VLAN but with different subnet masks (e.g. /24 and /16).",
+        "fix": "The hosts treat each other as being on the local link, ARPs instead of sending traffic, and never use the gateway. Compare the masks, not just the addresses."
+      },
+      {
+        "why": "A VLAN with only one member port.",
+        "fix": "That is not inherently wrong, but it means no device can reach any other. Check whether the second port really is in the VLAN."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1"
+      }
     ]
   },
   {
@@ -95,13 +140,28 @@
     "time": "10 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "rhel-systemctl-status", "label": "Check a service state" }
+      {
+        "id": "rhel-systemctl-status",
+        "label": "Check a service state"
+      }
     ],
     "related": [
-      { "id": "rhel-nmcli-connection", "label": "Where the DNS server setting actually comes from" },
-      { "id": "winserver-dhcp-scope-create", "label": "Option 6 handing out a DNS server" }
+      {
+        "id": "rhel-nmcli-connection",
+        "label": "Where the DNS server setting actually comes from"
+      },
+      {
+        "id": "winserver-dhcp-scope-create",
+        "label": "Option 6 handing out a DNS server"
+      }
     ],
-    "tags": ["dns", "name resolution", "systemd-resolved", "nsswitch", "networking"],
+    "tags": [
+      "dns",
+      "name resolution",
+      "systemd-resolved",
+      "nsswitch",
+      "networking"
+    ],
     "sections": [
       {
         "h": "The order a name is looked up in",
@@ -143,16 +203,51 @@
       }
     ],
     "lab": [
-      { "text": "Confirm the resolver is running and see what it knows.", "cmd": "systemctl is-active systemd-resolved\nresolvectl status", "expect": "`active` and a DNS Servers line for your active interface." },
-      { "text": "Look up a name you know should work.", "cmd": "resolvectl query example.lab\ndig example.lab\ngetent hosts example.lab", "expect": "An address, or a clear NXDOMAIN/SERVFAIL distinction." },
-      { "text": "Prove that /etc/hosts outranks DNS by pinning a name that does not exist in DNS.", "cmd": "echo '127.0.0.99 nonexistent.lab' | sudo tee -a /etc/hosts\nresolvectl query nonexistent.lab", "expect": "Returns 127.0.0.99 even though no such record exists upstream. This is why stale hosts entries hide real DNS faults." },
-      { "text": "Remove the entry again so it does not confuse you later.", "cmd": "sudo sed -i '/nonexistent.lab/d' /etc/hosts", "expect": "The name stops resolving." },
-      { "text": "Test the resolver with a name that must go to the internet, with the firewall temporarily open.", "cmd": "dig +short example.com\nsudo firewall-cmd --list-ports", "expect": "An answer. If dig times out but the port list shows no DNS service rule, add one — this is the classic local failure." }
+      {
+        "text": "Confirm the resolver is running and see what it knows.",
+        "cmd": "systemctl is-active systemd-resolved\nresolvectl status",
+        "expect": "`active` and a DNS Servers line for your active interface."
+      },
+      {
+        "text": "Look up a name you know should work.",
+        "cmd": "resolvectl query example.lab\ndig example.lab\ngetent hosts example.lab",
+        "expect": "An address, or a clear NXDOMAIN/SERVFAIL distinction."
+      },
+      {
+        "text": "Prove that /etc/hosts outranks DNS by pinning a name that does not exist in DNS.",
+        "cmd": "echo '127.0.0.99 nonexistent.lab' | sudo tee -a /etc/hosts\nresolvectl query nonexistent.lab",
+        "expect": "Returns 127.0.0.99 even though no such record exists upstream. This is why stale hosts entries hide real DNS faults."
+      },
+      {
+        "text": "Remove the entry again so it does not confuse you later.",
+        "cmd": "sudo sed -i '/nonexistent.lab/d' /etc/hosts",
+        "expect": "The name stops resolving."
+      },
+      {
+        "text": "Test the resolver with a name that must go to the internet, with the firewall temporarily open.",
+        "cmd": "dig +short example.com\nsudo firewall-cmd --list-ports",
+        "expect": "An answer. If dig times out but the port list shows no DNS service rule, add one — this is the classic local failure."
+      }
     ],
     "failures": [
-      { "why": "Editing /etc/resolv.conf directly and the change disappears.", "fix": "It is a symlink into `/run`. Configure DNS on the NetworkManager profile or the DHCP scope instead; `nmcli connection modify 'System eth0' ipv4.dns '10.0.0.53' ipv4.dns-search example.lan` survives a reboot." },
-      { "why": "Resolution works for root but not for a service user.", "fix": "Not a DNS problem. Check the service's sandbox: systemd units with `PrivateUsers=`, `ProtectSystem=` or a `ResolvConf=` override can see a different view. Check `systemctl cat <unit>`." },
-      { "why": "`getent hosts` fails but `dig` succeeds.", "fix": "getent consults NSS, not just DNS. Something in the `hosts:` line of nsswitch.conf is failing, or a module is missing. Compare with `getent ahosts`." }
+      {
+        "why": "Editing /etc/resolv.conf directly and the change disappears.",
+        "fix": "It is a symlink into `/run`. Configure DNS on the NetworkManager profile or the DHCP scope instead; `nmcli connection modify 'System eth0' ipv4.dns '10.0.0.53' ipv4.dns-search example.lan` survives a reboot."
+      },
+      {
+        "why": "Resolution works for root but not for a service user.",
+        "fix": "Not a DNS problem. Check the service's sandbox: systemd units with `PrivateUsers=`, `ProtectSystem=` or a `ResolvConf=` override can see a different view. Check `systemctl cat <unit>`."
+      },
+      {
+        "why": "`getent hosts` fails but `dig` succeeds.",
+        "fix": "getent consults NSS, not just DNS. Something in the `hosts:` line of nsswitch.conf is failing, or a module is missing. Compare with `getent ahosts`."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-5.1",
+        "note": "Name resolution"
+      }
     ]
   },
   {
@@ -165,12 +260,23 @@
     "time": "9 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "win11-ipconfig-all", "label": "Read the client's network configuration" }
+      {
+        "id": "win11-ipconfig-all",
+        "label": "Read the client's network configuration"
+      }
     ],
     "related": [
-      { "id": "winserver-install-addfeature", "label": "Install AD DS on the server" }
+      {
+        "id": "winserver-install-addfeature",
+        "label": "Install AD DS on the server"
+      }
     ],
-    "tags": ["active directory", "domain join", "windows", "troubleshooting"],
+    "tags": [
+      "active directory",
+      "domain join",
+      "windows",
+      "troubleshooting"
+    ],
     "sections": [
       {
         "h": "What actually has to be true before the join will work",
@@ -213,14 +319,42 @@
       }
     ],
     "lab": [
-      { "text": "From the client, confirm you can resolve and reach the domain controller.", "cmd": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389", "expect": "Name resolves to the DC's IP, and TcpTestSucceeded is True." },
-      { "text": "Deliberately break DNS and observe the exact error the join produces.", "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 1.1.1.1\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential)", "expect": "`The specified domain either does not exist or could not be contacted` — proving the error text you will see later really does mean DNS." },
-      { "text": "Put DNS back and join for real.", "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 10.0.0.10\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential) -Restart", "expect": "The client restarts, and the user signs in with a domain account." },
-      { "text": "After the restart, confirm the machine account exists and is enabled.", "cmd": "hostname\nnltest /dsgetdc:example.lan\nwhoami /user", "expect": "`nltest` prints a DC name and a GUID with status 0, and `whoami` shows `EXAMPLE\\user`." }
+      {
+        "text": "From the client, confirm you can resolve and reach the domain controller.",
+        "cmd": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389",
+        "expect": "Name resolves to the DC's IP, and TcpTestSucceeded is True."
+      },
+      {
+        "text": "Deliberately break DNS and observe the exact error the join produces.",
+        "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 1.1.1.1\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential)",
+        "expect": "`The specified domain either does not exist or could not be contacted` — proving the error text you will see later really does mean DNS."
+      },
+      {
+        "text": "Put DNS back and join for real.",
+        "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 10.0.0.10\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential) -Restart",
+        "expect": "The client restarts, and the user signs in with a domain account."
+      },
+      {
+        "text": "After the restart, confirm the machine account exists and is enabled.",
+        "cmd": "hostname\nnltest /dsgetdc:example.lan\nwhoami /user",
+        "expect": "`nltest` prints a DC name and a GUID with status 0, and `whoami` shows `EXAMPLE\\user`."
+      }
     ],
     "failures": [
-      { "why": "The join succeeds but Group Policy never applies.", "fix": "The join is not the whole story. Check `gpresult /r` for error codes, and `klist` to confirm the machine account has a Kerberos ticket. A GPO link to a site with no matching subnet is the usual cause." },
-      { "why": "The client can ping the DC but cannot resolve names.", "fix": "ICMP is allowed and LDAP is not, or vice versa. Test the actual port with Test-NetConnection rather than assuming ping tells you anything." }
+      {
+        "why": "The join succeeds but Group Policy never applies.",
+        "fix": "The join is not the whole story. Check `gpresult /r` for error codes, and `klist` to confirm the machine account has a Kerberos ticket. A GPO link to a site with no matching subnet is the usual cause."
+      },
+      {
+        "why": "The client can ping the DC but cannot resolve names.",
+        "fix": "ICMP is allowed and LDAP is not, or vice versa. Test the actual port with Test-NetConnection rather than assuming ping tells you anything."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.1",
+        "note": "Client domain join"
+      }
     ]
   }
 ]

@@ -5,7 +5,12 @@
     "tech": "rhel",
     "title": "RHEL 10 — services, logs and firewall",
     "summary": "Checks the four things beginners most often get wrong: start vs enable, where the logs are, which address a service is listening on, and the firewalld rule set.",
-    "tags": ["rhel", "systemd", "firewalld", "quiz"],
+    "tags": [
+      "rhel",
+      "systemd",
+      "firewalld",
+      "quiz"
+    ],
     "questions": [
       {
         "q": "You run `sudo systemctl restart httpd` after editing its config. Clients still get the old page. What is the most likely cause?",
@@ -93,7 +98,12 @@
     "tech": "cisco",
     "title": "Switching and VLANs",
     "summary": "Reading the evidence a switch gives you before you change anything.",
-    "tags": ["cisco", "vlan", "switching", "quiz"],
+    "tags": [
+      "cisco",
+      "vlan",
+      "switching",
+      "quiz"
+    ],
     "questions": [
       {
         "q": "Two PCs are configured into VLAN 20 on the same switch and cannot reach each other. `show interfaces gi0/3 switchport` shows `Administrative Mode: access`, `Operational Mode: down`. What does that mean?",
@@ -168,7 +178,12 @@
     "tech": "winserver",
     "title": "Windows Server roles and identity",
     "summary": "The practical server-side questions: role installation, DHCP scope options, DNS delegation, and domain join prerequisites.",
-    "tags": ["windows server", "active directory", "dhcp", "quiz"],
+    "tags": [
+      "windows server",
+      "active directory",
+      "dhcp",
+      "quiz"
+    ],
     "questions": [
       {
         "q": "A DHCP scope is created on a fresh Windows Server and clients get addresses but cannot resolve any name. What is missing?",

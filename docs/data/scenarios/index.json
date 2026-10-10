@@ -72,7 +72,13 @@
         "**In the lab, take a snapshot after each proven-working state.** Then a change that breaks connectivity is a two-minute revert rather than a debugging session."
       ]
     },
-    "tags": ["httpd", "firewalld", "listen address", "troubleshooting", "reachability"]
+    "tags": [
+      "httpd",
+      "firewalld",
+      "listen address",
+      "troubleshooting",
+      "reachability"
+    ]
   },
   {
     "id": "scn-dhcp-client-no-lease",
@@ -147,7 +153,20 @@
         "**In the lab, build the failure deliberately.** Put a port in the wrong bridge on purpose, watch a client fail to get an address, and then fix it. Remembering the diagnosis is easier than reconstructing it later."
       ]
     },
-    "tags": ["dhcp", "bridge", "layer2", "mikrotik", "troubleshooting", "apipa"]
+    "tags": [
+      "dhcp",
+      "bridge",
+      "layer2",
+      "mikrotik",
+      "troubleshooting",
+      "apipa"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M2.3",
+        "note": "DHCP failures on a MikroTik router"
+      }
+    ]
   },
   {
     "id": "scn-ad-dns-resolution-failure",
@@ -227,6 +246,18 @@
         "**Monitor the zone on both DCs.** A secondary that silently falls behind is invisible until users notice."
       ]
     },
-    "tags": ["active directory", "dns", "dhcp", "windows server", "troubleshooting"]
+    "tags": [
+      "active directory",
+      "dns",
+      "dhcp",
+      "windows server",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "WS-NET.2",
+        "note": "DNS and DHCP interaction in AD"
+      }
+    ]
   }
 ]

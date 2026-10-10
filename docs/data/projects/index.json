@@ -6,7 +6,12 @@
     "title": "Build the IT infrastructure for a small office",
     "summary": "One end-to-end project that touches every subject: segmentation, routing, identity, file services, Linux, backup and recovery.",
     "verification": "source-checked",
-    "tags": ["project", "infrastructure", "lab", "capstone"],
+    "tags": [
+      "project",
+      "infrastructure",
+      "lab",
+      "capstone"
+    ],
     "sections": [
       {
         "h": "Requirements and honest assumptions",
@@ -15,37 +20,100 @@
           "This is a **learning-lab architecture**. It deliberately omits redundancy, clustering and high availability, because a single-admin office genuinely does not need them and pretending otherwise teaches the wrong instinct. Where production would differ, that is stated rather than hidden."
         ],
         "table": {
-          "head": ["Requirement", "Decision", "Why"],
+          "head": [
+            "Requirement",
+            "Decision",
+            "Why"
+          ],
           "rows": [
-            ["Segment user and server traffic", "VLAN 10 users, VLAN 20 servers", "Limits broadcast and makes per-segment firewall policy possible later"],
-            ["Name resolution and addresses", "Windows Server DNS + DHCP", "One identity and one address source rather than two"],
-            ["Identity", "Single forest, single domain", "Simplest thing that supports the accounts and groups actually needed"],
-            ["File sharing with per-group access", "NTFS permissions + AD security groups", "Groups rather than per-user ACLs, so joins and leavers are one change"],
-            ["Linux server presence", "RHEL 10 running an internal web app and DNS-adjacent services", "A real RHEL box, not a toy"],
-            ["Firewalling", "Cisco switch ACLs at the edge + MikroTik for WAN", "Segmentation inside, NAT and untrusted boundary outside"],
-            ["Backup", "Daily, retained off the network", "The backup that stays on the same box is not a backup"],
-            ["Remote administration", "VPN into the router, SSH and RDP inside", "No direct inbound exposure of any server"]
+            [
+              "Segment user and server traffic",
+              "VLAN 10 users, VLAN 20 servers",
+              "Limits broadcast and makes per-segment firewall policy possible later"
+            ],
+            [
+              "Name resolution and addresses",
+              "Windows Server DNS + DHCP",
+              "One identity and one address source rather than two"
+            ],
+            [
+              "Identity",
+              "Single forest, single domain",
+              "Simplest thing that supports the accounts and groups actually needed"
+            ],
+            [
+              "File sharing with per-group access",
+              "NTFS permissions + AD security groups",
+              "Groups rather than per-user ACLs, so joins and leavers are one change"
+            ],
+            [
+              "Linux server presence",
+              "RHEL 10 running an internal web app and DNS-adjacent services",
+              "A real RHEL box, not a toy"
+            ],
+            [
+              "Firewalling",
+              "Cisco switch ACLs at the edge + MikroTik for WAN",
+              "Segmentation inside, NAT and untrusted boundary outside"
+            ],
+            [
+              "Backup",
+              "Daily, retained off the network",
+              "The backup that stays on the same box is not a backup"
+            ],
+            [
+              "Remote administration",
+              "VPN into the router, SSH and RDP inside",
+              "No direct inbound exposure of any server"
+            ]
           ]
         }
       },
       {
         "h": "Addressing plan",
         "p": [
-          "Write the plan down before touching a device. Every address below is fixed and reserved for a reason; free-floating addressing is what makes a small network unmaintainable."
-        ],
-        "table": {
-          "head": ["Segment", "Network", "Gateway", "DHCP range", "Purpose"],
-          "rows": [
-            ["USERS (VLAN 10)", "10.10.10.0/24", "10.10.10.1", "10.10.10.100–10.10.10.199", "Workstations"],
-            ["SERVERS (VLAN 20)", "10.10.20.0/24", "10.10.20.1", "static only", "DC, file, Linux — static by design so DNS records never move"],
-            ["GUEST (VLAN 30)", "10.10.30.0/24", "10.10.30.1", "10.10.30.50–10.10.30.150", "Isolated, no internal routes permitted"],
-            ["MANAGEMENT (VLAN 99)", "10.10.99.0/24", "10.10.99.1", "static only", "Switch, router and AP management"]
-          ]
-        },
-        "p": [
           "The .100–.199 range for users and static addressing for servers is a deliberate choice: servers get reservations so a hostname always maps to the same address, and a DHCP range never collides with them.",
           "Guest traffic is given a route to the internet and **no** route to 10.10.10.0/24 or 10.10.20.0/24. This is enforced at the router, not by relying on client-side settings."
-        ]
+        ],
+        "table": {
+          "head": [
+            "Segment",
+            "Network",
+            "Gateway",
+            "DHCP range",
+            "Purpose"
+          ],
+          "rows": [
+            [
+              "USERS (VLAN 10)",
+              "10.10.10.0/24",
+              "10.10.10.1",
+              "10.10.10.100–10.10.10.199",
+              "Workstations"
+            ],
+            [
+              "SERVERS (VLAN 20)",
+              "10.10.20.0/24",
+              "10.10.20.1",
+              "static only",
+              "DC, file, Linux — static by design so DNS records never move"
+            ],
+            [
+              "GUEST (VLAN 30)",
+              "10.10.30.0/24",
+              "10.10.30.1",
+              "10.10.30.50–10.10.30.150",
+              "Isolated, no internal routes permitted"
+            ],
+            [
+              "MANAGEMENT (VLAN 99)",
+              "10.10.99.0/24",
+              "10.10.99.1",
+              "static only",
+              "Switch, router and AP management"
+            ]
+          ]
+        }
       },
       {
         "h": "Layer 1 and 2 — the Cisco switch",
@@ -168,6 +236,16 @@
           "**Monitoring**: at minimum, a daily check that the DC is reachable, the file share opens, and a backup completed. Unmonitored infrastructure fails silently.",
           "**Change control**: every change written down with a rollback plan. The rollback plan is the part that matters."
         ]
+      }
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.1",
+        "note": "Bringing the whole design together"
+      },
+      {
+        "id": "CCNA-4.3",
+        "note": "NAT at the edge"
       }
     ]
   }

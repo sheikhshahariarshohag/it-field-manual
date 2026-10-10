@@ -46,6 +46,7 @@ const DATA = [
   "data/scenarios/index.json",
   "data/quizzes/index.json",
   "data/projects/index.json",
+  "data/exam-objectives.json",
 ];
 
 self.addEventListener("install", (event) => {

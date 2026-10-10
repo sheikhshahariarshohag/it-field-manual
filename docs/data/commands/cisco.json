@@ -5,7 +5,13 @@
     "tech": "cisco",
     "title": "show ip route",
     "task": "Read the routing table and find which next hop a destination will use",
-    "aliases": ["routing table", "how does traffic get there", "next hop", "default route", "why no route"],
+    "aliases": [
+      "routing table",
+      "how does traffic get there",
+      "next hop",
+      "default route",
+      "why no route"
+    ],
     "risk": "safe",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable",
@@ -37,9 +43,25 @@
         "fix": "show ip interface <if> | include line protocol\nshow access-lists"
       }
     ],
-    "sources": [{ "title": "Cisco IOS Command Reference — show ip route", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — show ip route",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "routing", "longest prefix", "ccna", "troubleshooting"]
+    "tags": [
+      "cisco",
+      "routing",
+      "longest prefix",
+      "ccna",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1"
+      }
+    ]
   },
   {
     "id": "cisco-ip-route",
@@ -47,7 +69,13 @@
     "tech": "cisco",
     "title": "ip route",
     "task": "Add a static route, a default route, or a floating backup route",
-    "aliases": ["static route", "add a route", "default route", "floating static", "backup route"],
+    "aliases": [
+      "static route",
+      "add a route",
+      "default route",
+      "floating static",
+      "backup route"
+    ],
     "risk": "caution",
     "where": "Cisco IOS / IOS XE global configuration",
     "privilege": "enable",
@@ -80,9 +108,27 @@
         "fix": "Test both directions: ping from the source, then from the destination back to the source."
       }
     ],
-    "sources": [{ "title": "Cisco IOS Command Reference — ip route", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — ip route",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "static route", "default route", "floating", "ccna", "redundancy"]
+    "tags": [
+      "cisco",
+      "static route",
+      "default route",
+      "floating",
+      "ccna",
+      "redundancy"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.2",
+        "note": "Default, network, host and floating static routes"
+      }
+    ]
   },
   {
     "id": "cisco-show-spanning-tree",
@@ -90,7 +136,13 @@
     "tech": "cisco",
     "title": "show spanning-tree",
     "task": "Find which port the spanning tree has blocked, and why",
-    "aliases": ["stp", "loop", "blocking port", "root bridge", "why is this port blocked"],
+    "aliases": [
+      "stp",
+      "loop",
+      "blocking port",
+      "root bridge",
+      "why is this port blocked"
+    ],
     "risk": "safe",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable",
@@ -117,9 +169,25 @@
         "fix": "Compare both ends of the link with show spanning-tree vlan <id> detail"
       }
     ],
-    "sources": [{ "title": "Cisco Catalyst 2960-X Series Switch Command Reference", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "stp", "spanning tree", "loop", "ccna"]
+    "tags": [
+      "cisco",
+      "stp",
+      "spanning tree",
+      "loop",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.3"
+      }
+    ]
   },
   {
     "id": "cisco-ip-access-list",
@@ -127,7 +195,14 @@
     "tech": "cisco",
     "title": "ip access-list",
     "task": "Write an ACL that permits or denies traffic, and place it in the right direction",
-    "aliases": ["acl", "firewall", "block traffic", "permit", "deny", "extended acl"],
+    "aliases": [
+      "acl",
+      "firewall",
+      "block traffic",
+      "permit",
+      "deny",
+      "extended acl"
+    ],
     "risk": "caution",
     "where": "Cisco IOS / IOS XE global configuration",
     "privilege": "enable",
@@ -161,9 +236,26 @@
         "fix": "show ip interface <if> | include access list\nConfirm the address in the ACL is the address on the wire."
       }
     ],
-    "sources": [{ "title": "Cisco IOS Command Reference — ip access-list", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — ip access-list",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "acl", "security", "wildcard mask", "ccna"]
+    "tags": [
+      "cisco",
+      "acl",
+      "security",
+      "wildcard mask",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-4.6",
+        "note": "Standard and extended IPv4 ACLs"
+      }
+    ]
   },
   {
     "id": "cisco-show-interfaces-switchport",
@@ -171,7 +263,13 @@
     "tech": "cisco",
     "title": "show interfaces switchport",
     "task": "See the access or trunk mode, the VLAN, and whether the port is actually forwarding",
-    "aliases": ["port mode", "access vlan", "trunk", "port is down", "vlan not working"],
+    "aliases": [
+      "port mode",
+      "access vlan",
+      "trunk",
+      "port is down",
+      "vlan not working"
+    ],
     "risk": "safe",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable",
@@ -198,9 +296,25 @@
         "fix": "show vlan brief\nRe-apply: switchport access vlan <id>"
       }
     ],
-    "sources": [{ "title": "Cisco Catalyst 2960-X Series Switch Command Reference", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "switchport", "trunk", "access vlan", "ccna"]
+    "tags": [
+      "cisco",
+      "switchport",
+      "trunk",
+      "access vlan",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1"
+      }
+    ]
   },
   {
     "id": "cisco-interface-no-shutdown",
@@ -208,7 +322,12 @@
     "tech": "cisco",
     "title": "interface / no shutdown",
     "task": "Bring a switchport up and give an interface an address",
-    "aliases": ["port is administratively down", "enable the port", "set ip address", "interface is down"],
+    "aliases": [
+      "port is administratively down",
+      "enable the port",
+      "set ip address",
+      "interface is down"
+    ],
     "risk": "caution",
     "where": "Cisco IOS / IOS XE configuration",
     "privilege": "enable",
@@ -241,9 +360,27 @@
         "fix": "no switchport   to return it to Layer 3"
       }
     ],
-    "sources": [{ "title": "Cisco IOS Command Reference — interface", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — interface",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "interface", "shutdown", "ip address", "ccna", "beginner"]
+    "tags": [
+      "cisco",
+      "interface",
+      "shutdown",
+      "ip address",
+      "ccna",
+      "beginner"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1",
+        "note": "Port state"
+      }
+    ]
   },
   {
     "id": "cisco-show-mac-address-table",
@@ -251,7 +388,13 @@
     "tech": "cisco",
     "title": "show mac address-table",
     "task": "See which MAC address the switch learned on which port and VLAN",
-    "aliases": ["mac table", "which port is the pc on", "cam table", "flooding", "where is this device"],
+    "aliases": [
+      "mac table",
+      "which port is the pc on",
+      "cam table",
+      "flooding",
+      "where is this device"
+    ],
     "risk": "safe",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable",
@@ -278,9 +421,26 @@
         "fix": "show spanning-tree   (a loop shows as repeated TCN/ topology changes)\nThen isolate the offending segment"
       }
     ],
-    "sources": [{ "title": "Cisco IOS Command Reference — show mac address-table", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — show mac address-table",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "mac", "switching", "layer2", "ccna", "troubleshooting"]
+    "tags": [
+      "cisco",
+      "mac",
+      "switching",
+      "layer2",
+      "ccna",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.6"
+      }
+    ]
   },
   {
     "id": "cisco-copy-running-config",
@@ -288,7 +448,12 @@
     "tech": "cisco",
     "title": "copy running-config startup-config",
     "task": "Save the running configuration so it survives a reboot",
-    "aliases": ["save config", "write memory", "persist config", "changes disappear after reboot"],
+    "aliases": [
+      "save config",
+      "write memory",
+      "persist config",
+      "changes disappear after reboot"
+    ],
     "risk": "caution",
     "where": "Cisco IOS / IOS XE privileged EXEC",
     "privilege": "enable",
@@ -316,8 +481,25 @@
         "fix": ""
       }
     ],
-    "sources": [{ "title": "Cisco IOS Command Reference — copy", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — copy",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["cisco", "configuration", "save", "startup-config", "ccna"]
+    "tags": [
+      "cisco",
+      "configuration",
+      "save",
+      "startup-config",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-4.2",
+        "note": "Configuration management"
+      }
+    ]
   }
 ]

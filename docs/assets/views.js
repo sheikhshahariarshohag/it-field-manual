@@ -56,6 +56,26 @@ export function verifyBadge(status) {
   }, VERIFY_LABEL[best]);
 }
 
+/**
+ * Content `kind` values are singular ("command", "lesson"); route segments are
+ * plural ("commands", "lessons"). Getting this wrong produces links that look
+ * right and navigate nowhere, so every link goes through here.
+ */
+const ROUTE_FOR_KIND = {
+  command: "commands",
+  lesson: "lessons",
+  scenario: "scenarios",
+  quiz: "quizzes",
+  project: "projects",
+};
+
+/** The canonical URL for any content item. */
+export function contentHref(doc) {
+  if (!doc) return "#/";
+  const seg = ROUTE_FOR_KIND[doc.kind] || doc.kind;
+  return href(`${seg}/${encodeURIComponent(doc.id)}`);
+}
+
 /* ================================================================== home */
 
 export function homeView() {
@@ -241,6 +261,7 @@ export async function commandView(params) {
       h("span.badge", { class: `badge ${risk.cls}` }, risk.label),
       verifyBadge(d.verification),
       d.version ? h("span.badge", d.version) : null),
+    objectiveBadges(d),
   ));
 
   const facts = [];
@@ -315,6 +336,7 @@ export function lessonView(params) {
     h("div.card__meta", techBadge(d.tech),
       verifyBadge(d.verification),
       d.time ? h("span.badge", d.time + " read") : null),
+    objectiveBadges(d),
   ));
 
   wrap.appendChild(progressBar(d.id));
@@ -405,7 +427,7 @@ function relatedLinks(d) {
   if (!ids.length) return null;
   const box = h("div", h("span.srcref", "Related: "));
   for (const { ref, label } of ids) {
-    box.appendChild(h("a", { href: href(`${ref.kind}/${ref.id}`), style: { marginRight: "12px" } }, label || ref.title));
+    box.appendChild(h("a", { href: contentHref(ref), style: { marginRight: "12px" } }, label || ref.title));
   }
   return box;
 }
@@ -693,7 +715,7 @@ export async function progressView() {
     const ul = h("ul.prose");
     for (const w of weak) {
       const doc = search.docById(w.id);
-      ul.appendChild(h("li", doc ? h("a", { href: href(`${doc.kind}/${doc.id}`) }, doc.title) : w.id,
+      ul.appendChild(h("li", doc ? h("a", { href: contentHref(doc) }, doc.title) : w.id,
         " — missed ", String(w.wrong), " time(s). Read the linked page, then retake the quiz."));
     }
     wrap.appendChild(ul);
@@ -709,7 +731,7 @@ export async function progressView() {
     const ul = h("ul.prose");
     for (const d of done) {
       const doc = search.docById(d.id);
-      ul.appendChild(h("li", doc ? h("a", { href: href(`${doc.kind}/${doc.id}`) }, doc.title) : d.id,
+      ul.appendChild(h("li", doc ? h("a", { href: contentHref(doc) }, doc.title) : d.id,
         h("button.btn", {
           style: { marginLeft: "10px", padding: "2px 8px", fontSize: "12px" },
           onclick: async () => { await db.store.setProgress(d.id, { status: "open" }); render(wrap); },
@@ -739,7 +761,7 @@ export async function bookmarksView() {
     const d = search.docById(id);
     if (!d) continue;
     const row = h("div.result");
-    row.appendChild(h("a", { href: href(`${d.kind}/${d.id}`), style: { color: "inherit" } },
+    row.appendChild(h("a", { href: contentHref(d), style: { color: "inherit" } },
       h("div.result__t", d.title, techBadge(d.tech)),
       d.summary ? h("div.result__m", d.summary) : null));
     list.appendChild(row);
@@ -802,6 +824,114 @@ export function verifyView() {
   add(wrap,
     h("h2", "Every reference entry"),
     h("p", h("a", { href: href("commands?verification=execution-tested") }, "Execution-tested commands only →")));
+
+  return wrap;
+}
+
+/* ================================================================== objectives */
+
+/** Exam objectives, verified or explicitly flagged as unverified. */
+export function OBJECTIVES() {
+  return (search.CORPUS.objectives && search.CORPUS.objectives.exams) || [];
+}
+
+function objectiveIndex() {
+  const map = new Map();
+  for (const ex of OBJECTIVES()) {
+    for (const d of ex.domains) map.set(d.id, { ...d, exam: ex });
+    for (const s of ex.subtopics) map.set(s.id, { ...s, exam: ex });
+  }
+  return map;
+}
+
+/** Badges for the objectives a piece of content serves. */
+export function objectiveBadges(item) {
+  if (!item || !item.objectives || !item.objectives.length) return null;
+  const idx = objectiveIndex();
+  const box = h("div.card__meta");
+  for (const o of item.objectives) {
+    const def = idx.get(o.id);
+    box.appendChild(h("span.badge.badge--accent", {
+      title: def ? `${def.exam.title} — ${def.text || def.name}` : o.id,
+    }, def ? `${def.exam.id.toUpperCase()} ${o.id.split(".").slice(1).join(".")}` : o.id));
+  }
+  return box;
+}
+
+export function objectivesView() {
+  const wrap = h("div");
+  const exams = OBJECTIVES();
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Exam objectives"),
+    h("p", "Where each lesson and command sits against a real certification syllabus. Every objective listed here was read from the publisher's own material, with the date it was checked. Anything not confirmed against a primary source is marked UNVERIFIED and should not be quoted as an exam fact."),
+  ));
+
+  if (!exams.length) {
+    wrap.appendChild(h("div.empty", h("h2", "Objectives not loaded"),
+      h("p", "The objectives data file did not load. Everything else in the manual still works.")));
+    return wrap;
+  }
+
+  const idx = objectiveIndex();
+  const tagged = search.allDocs().filter((d) => d.objectives && d.objectives.length);
+
+  wrap.appendChild(h("div.stat-row",
+    h("div.stat", h("div.stat__n", String(exams.length)), h("div.stat__l", "exams mapped")),
+    h("div.stat", h("div.stat__n", String(idx.size)), h("div.stat__l", "objectives recorded")),
+    h("div.stat", h("div.stat__n", String(tagged.length)), h("div.stat__l", "items mapped to an objective")),
+    h("div.stat", h("div.stat__n", String(search.allDocs().length - tagged.length)), h("div.stat__l", "not yet mapped")),
+  ));
+
+  const unverified = exams.filter((e) => !e.verified);
+  if (unverified.length) {
+    wrap.appendChild(h("div.note.note--risk",
+      h("strong", "Unverified objectives"),
+      h("span", unverified.map((e) => e.title).join(", ") + " — the task areas below are plausible and long-standing, but they have NOT been extracted from an official objectives document. Treat them as a coverage checklist, not as an exam blueprint."),
+    ));
+  }
+
+  for (const ex of exams) {
+    wrap.appendChild(h("h2", ex.title,
+      " ",
+      h("span.badge", { class: ex.verified ? "badge--safe" : "badge--risk" },
+        ex.verified ? "Verified" : "Unverified")));
+    wrap.appendChild(h("p.srcref", ex.code));
+
+    if (!ex.verified && ex.verifyNote) {
+      wrap.appendChild(h("div.note", h("strong", "Why this is unverified"), h("span", ex.verifyNote)));
+    }
+
+    const table = h("table",
+      h("thead", h("tr", h("th", "Objective"), h("th", "Weight"), h("th", "Covers in this manual"))),
+      h("tbody"));
+    const rows = [];
+    for (const d of ex.domains) rows.push({ def: d, subs: [] });
+    for (const s of ex.subtopics) {
+      const r = rows.find((x) => x.def.id === s.domain);
+      if (r) r.subs.push(s); else rows.push({ def: s, subs: [] });
+    }
+    for (const r of rows) {
+      const hits = search.allDocs().filter((d) =>
+        (d.objectives || []).some((o) => o.id === r.def.id || r.subs.some((s) => s.id === o.id)));
+      const tr = h("tr",
+        h("td", h("code", r.def.id), " ", r.def.name || r.def.text),
+        h("td", r.def.weight ? r.def.weight + "%" : "—"),
+        h("td", hits.length
+          ? hits.slice(0, 6).map((x) => h("div",
+              h("a", { href: contentHref(x) }, x.title)))
+          : h("span.srcref", "not covered yet")),
+      );
+      if (hits.length > 6) tr.lastChild.appendChild(h("span.srcref", ` +${hits.length - 6} more`));
+      table.querySelector("tbody").appendChild(tr);
+    }
+    wrap.appendChild(h("div.tablewrap", table));
+
+    wrap.appendChild(h("p.srcref", "Source: ",
+      ex.source ? h("a", { href: ex.source, target: "_blank", rel: "noopener noreferrer" }, ex.source) : "—",
+      ex.checked ? ` — checked ${ex.checked}` : "",
+      ex.sourceNote ? h("span", " · " + ex.sourceNote) : null));
+  }
 
   return wrap;
 }

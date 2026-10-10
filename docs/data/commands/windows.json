@@ -5,7 +5,13 @@
     "tech": "win11",
     "title": "Get-NetAdapter / Get-NetIPConfiguration",
     "task": "Read adapter state and IP configuration in structured form",
-    "aliases": ["adapter status", "which adapter", "network config powershell", "is the adapter up", "get ip config"],
+    "aliases": [
+      "adapter status",
+      "which adapter",
+      "network config powershell",
+      "is the adapter up",
+      "get ip config"
+    ],
     "risk": "safe",
     "where": "PowerShell on Windows 11, any privilege level",
     "privilege": "none",
@@ -37,9 +43,30 @@
         "fix": "Get-NetAdapter | Format-Table *\nipconfig /all   for the DHCP-enabled flag"
       }
     ],
-    "sources": [{ "title": "Microsoft Learn — Get-NetAdapter", "url": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Get-NetAdapter",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["windows", "powershell", "networking", "adapter", "ip configuration"]
+    "tags": [
+      "windows",
+      "powershell",
+      "networking",
+      "adapter",
+      "ip configuration"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-2.1",
+        "note": "IP configuration"
+      },
+      {
+        "id": "WS-NET.1"
+      }
+    ]
   },
   {
     "id": "win11-netsh-wlan",
@@ -47,7 +74,13 @@
     "tech": "win11",
     "title": "netsh wlan",
     "task": "List wireless profiles, export a profile, and see the interface state",
-    "aliases": ["wifi profiles", "wireless password", "export wifi", "wlan report", "wifi not connecting"],
+    "aliases": [
+      "wifi profiles",
+      "wireless password",
+      "export wifi",
+      "wlan report",
+      "wifi not connecting"
+    ],
     "risk": "caution",
     "where": "Command Prompt or PowerShell on Windows 11",
     "privilege": "Administrator for most operations",
@@ -80,9 +113,27 @@
         "fix": "Export on the same adapter type, and check the file is UTF-8 with a BOM as netsh requires."
       }
     ],
-    "sources": [{ "title": "Microsoft Learn — netsh wlan", "url": "https://learn.microsoft.com/en-us/windows-server/networking/technologies/wireless/networksh-wlan", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Microsoft Learn — netsh wlan",
+        "url": "https://learn.microsoft.com/en-us/windows-server/networking/technologies/wireless/networksh-wlan",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["windows", "wifi", "wireless", "netsh", "troubleshooting"]
+    "tags": [
+      "windows",
+      "wifi",
+      "wireless",
+      "netsh",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-2.1",
+        "note": "Wireless networking"
+      }
+    ]
   },
   {
     "id": "win11-net-user",
@@ -90,7 +141,13 @@
     "tech": "win11",
     "title": "net user / Get-LocalUser",
     "task": "Create, disable, inspect and unlock local accounts",
-    "aliases": ["local user", "create account", "disable account", "unlock account", "add user"],
+    "aliases": [
+      "local user",
+      "create account",
+      "disable account",
+      "unlock account",
+      "add user"
+    ],
     "risk": "caution",
     "where": "Command Prompt or PowerShell, elevated for changes",
     "privilege": "Administrator",
@@ -123,9 +180,21 @@
         "fix": "net user /domain   to list domain accounts"
       }
     ],
-    "sources": [{ "title": "Microsoft Learn — net user", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/net-user", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Microsoft Learn — net user",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/net-user",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["windows", "users", "accounts", "net user", "security"]
+    "tags": [
+      "windows",
+      "users",
+      "accounts",
+      "net user",
+      "security"
+    ]
   },
   {
     "id": "win11-gpresult",
@@ -133,7 +202,13 @@
     "tech": "win11",
     "title": "gpresult /r and klist",
     "task": "Find out whether Group Policy actually applied, and why not",
-    "aliases": ["group policy not applying", "gpo", "policy not applied", "gpresult", "computer not getting policy"],
+    "aliases": [
+      "group policy not applying",
+      "gpo",
+      "policy not applied",
+      "gpresult",
+      "computer not getting policy"
+    ],
     "risk": "safe",
     "where": "Command Prompt or PowerShell on the client",
     "privilege": "none for gpresult /r; standard user can run it",
@@ -172,11 +247,30 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — gpresult", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpresult", "checked": "2026-10-10" },
-      { "title": "Microsoft Learn — Group Policy troubleshooting overview", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — gpresult",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpresult",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — Group Policy troubleshooting overview",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows", "group policy", "active directory", "gpo", "troubleshooting", "kerberos"]
+    "tags": [
+      "windows",
+      "group policy",
+      "active directory",
+      "gpo",
+      "troubleshooting",
+      "kerberos"
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.3"
+      }
+    ]
   },
   {
     "id": "win11-get-physicaldisk",
@@ -184,7 +278,13 @@
     "tech": "aplus",
     "title": "Get-PhysicalDisk / Get-Disk / Get-Partition",
     "task": "Inspect storage properly before touching diskpart",
-    "aliases": ["check disk health", "storage space", "disk status", "is the disk failing", "smart"],
+    "aliases": [
+      "check disk health",
+      "storage space",
+      "disk status",
+      "is the disk failing",
+      "smart"
+    ],
     "risk": "safe",
     "where": "PowerShell, elevated for full detail",
     "privilege": "none for basic; Administrator for some",
@@ -216,9 +316,27 @@
         "fix": "Use the drive vendor's own tool directly against the drive, or check from a machine with the disk attached internally."
       }
     ],
-    "sources": [{ "title": "Microsoft Learn — Get-Disk", "url": "https://learn.microsoft.com/en-us/powershell/module/storage/get-disk", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Get-Disk",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/storage/get-disk",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["aplus", "storage", "disk", "powershell", "health"]
+    "tags": [
+      "aplus",
+      "storage",
+      "disk",
+      "powershell",
+      "health"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-3.5",
+        "note": "Storage health"
+      }
+    ]
   },
   {
     "id": "winserver-get-adcomputer",
@@ -226,7 +344,13 @@
     "tech": "winserver",
     "title": "Get-ADComputer / Get-ADUser",
     "task": "Inspect Active Directory objects and their attributes",
-    "aliases": ["active directory", "ad commands", "find a computer in ad", "check ad user", "get-adcomputer"],
+    "aliases": [
+      "active directory",
+      "ad commands",
+      "find a computer in ad",
+      "check ad user",
+      "get-adcomputer"
+    ],
     "risk": "safe",
     "where": "PowerShell on a domain controller or a domain-joined machine",
     "privilege": "standard user; elevated in most environments",
@@ -265,11 +389,29 @@
       }
     ],
     "sources": [
-      { "title": "Microsoft Learn — Get-ADComputer", "url": "https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-adcomputer", "checked": "2026-10-10" },
-      { "title": "Microsoft Learn — RSAT-AD-Tools", "checked": "2026-10-10" }
+      {
+        "title": "Microsoft Learn — Get-ADComputer",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-adcomputer",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — RSAT-AD-Tools",
+        "checked": "2026-10-10"
+      }
     ],
     "verification": "source-checked",
-    "tags": ["windows server", "active directory", "powershell", "ad", "rsat"]
+    "tags": [
+      "windows server",
+      "active directory",
+      "powershell",
+      "ad",
+      "rsat"
+    ],
+    "objectives": [
+      {
+        "id": "WS-AD.2"
+      }
+    ]
   },
   {
     "id": "winserver-dcdiag",
@@ -277,7 +419,13 @@
     "tech": "winserver",
     "title": "dcdiag /test:dns",
     "task": "Test Active Directory DNS health and name every failing test",
-    "aliases": ["ad dns health", "dcdiag", "check dns records", "zone not syncing", "dns health"],
+    "aliases": [
+      "ad dns health",
+      "dcdiag",
+      "check dns records",
+      "zone not syncing",
+      "dns health"
+    ],
     "risk": "safe",
     "where": "PowerShell or Command Prompt on a domain controller, elevated",
     "privilege": "Domain Admin for the full test",
@@ -310,9 +458,26 @@
         "fix": "dcdiag /test:dns /e /v"
       }
     ],
-    "sources": [{ "title": "Microsoft Learn — dcdiag", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/dcdiag", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Microsoft Learn — dcdiag",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/dcdiag",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["windows server", "active directory", "dns", "dcdiag", "troubleshooting"]
+    "tags": [
+      "windows server",
+      "active directory",
+      "dns",
+      "dcdiag",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "WS-NET.2"
+      }
+    ]
   },
   {
     "id": "winserver-get-dnsserverscope",
@@ -320,7 +485,13 @@
     "tech": "winserver",
     "title": "Get-DnsServerZone / Get-DnsServerResourceRecord",
     "task": "Inspect AD-integrated DNS zones, records and delegation",
-    "aliases": ["dns zone", "check dns records", "delegation", "primary record", "srv record"],
+    "aliases": [
+      "dns zone",
+      "check dns records",
+      "delegation",
+      "primary record",
+      "srv record"
+    ],
     "risk": "safe",
     "where": "PowerShell on a domain controller, elevated",
     "privilege": "Domain Admin for most inspection of the full zone",
@@ -352,8 +523,25 @@
         "fix": "dcdiag /test:dns /e /v"
       }
     ],
-    "sources": [{ "title": "Microsoft Learn — Get-DnsServerResourceRecord", "url": "https://learn.microsoft.com/en-us/powershell/module/dnsserver/get-dnsserverresourcerecord", "checked": "2026-10-10" }],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Get-DnsServerResourceRecord",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/dnsserver/get-dnsserverresourcerecord",
+        "checked": "2026-10-10"
+      }
+    ],
     "verification": "source-checked",
-    "tags": ["windows server", "dns", "active directory", "srv record", "troubleshooting"]
+    "tags": [
+      "windows server",
+      "dns",
+      "active directory",
+      "srv record",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "WS-NET.2"
+      }
+    ]
   }
 ]

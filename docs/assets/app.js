@@ -50,6 +50,14 @@ async function loadCorpus() {
     }
   }));
 
+    // Exam objectives are one object, not a list, so they are loaded separately.
+  try {
+    const res = await fetch(`${base}/exam-objectives.json`, { cache: "no-cache" });
+    if (res.ok) out.objectives = await res.json();
+  } catch (err) {
+    console.warn("[field-manual] exam objectives unavailable:", err.message);
+  }
+
   search.loadCorpus(out);
   return out;
 }
@@ -86,6 +94,7 @@ function buildNav() {
 
   clear(navProject);
   navProject.appendChild(navLink("Projects", "projects", { count: st.projects }));
+  navProject.appendChild(navLink("Exam objectives", "objectives"));
   navProject.appendChild(navLink("Verification status", "verify"));
 }
 
@@ -372,6 +381,7 @@ async function render() {
     case "bookmarks": node = V.bookmarksView(); break;
     case "progress": node = V.progressView(); break;
     case "verify": node = V.verifyView(); break;
+    case "objectives": node = V.objectivesView(); break;
     default: node = V.homeView();
   }
 
@@ -408,6 +418,7 @@ async function boot() {
   route("bookmarks", () => render());
   route("progress", () => render());
   route("verify", () => render());
+  route("objectives", () => render());
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);

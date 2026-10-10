@@ -9,13 +9,28 @@
     "time": "10 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "cisco-show-ip-route", "label": "show ip route" }
+      {
+        "id": "cisco-show-ip-route",
+        "label": "show ip route"
+      }
     ],
     "related": [
-      { "id": "ccna-subnetting-that-sticks", "label": "The arithmetic behind it" },
-      { "id": "ccna-switch-learns-mac", "label": "The Layer 2 equivalent" }
+      {
+        "id": "ccna-subnetting-that-sticks",
+        "label": "The arithmetic behind it"
+      },
+      {
+        "id": "ccna-switch-learns-mac",
+        "label": "The Layer 2 equivalent"
+      }
     ],
-    "tags": ["cisco", "routing", "subnetting", "ccna", "fundamentals"],
+    "tags": [
+      "cisco",
+      "routing",
+      "subnetting",
+      "ccna",
+      "fundamentals"
+    ],
     "sections": [
       {
         "h": "The rule",
@@ -60,7 +75,11 @@
         "cmd": "interface GigabitEthernet0/1\n ip address 10.1.2.1 255.255.255.0\nexit\ninterface GigabitEthernet1/1\n ip address 10.1.0.1 255.255.0.0\nexit\ninterface GigabitEthernet2/1\n ip address 10.0.0.1 255.0.0.0\nexit\nip route 10.0.0.0 255.0.0.0 192.0.2.1",
         "where": "router"
       },
-      { "text": "Look at the table and confirm all three entries exist.", "cmd": "show ip route 10.1.2.3", "expect": "The /24 connected route is marked first with `*`." },
+      {
+        "text": "Look at the table and confirm all three entries exist.",
+        "cmd": "show ip route 10.1.2.3",
+        "expect": "The /24 connected route is marked first with `*`."
+      },
       {
         "text": "Remove the most specific route and watch the next one take over.",
         "cmd": "no interface GigabitEthernet0/1\nshow ip route 10.1.2.3",
@@ -68,8 +87,24 @@
       }
     ],
     "failures": [
-      { "why": "Traffic goes somewhere you did not expect.", "fix": "List every matching route with `show ip route <destination>` and check the mask lengths. The longest one wins — that is not a bug." },
-      { "why": "A ping from the router works but from a client does not.", "fix": "The router picks its source address from the outgoing interface, which may not be what the destination expects. Use an extended ping with `source`." }
+      {
+        "why": "Traffic goes somewhere you did not expect.",
+        "fix": "List every matching route with `show ip route <destination>` and check the mask lengths. The longest one wins — that is not a bug."
+      },
+      {
+        "why": "A ping from the router works but from a client does not.",
+        "fix": "The router picks its source address from the outgoing interface, which may not be what the destination expects. Use an extended ping with `source`."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1",
+        "note": "Reading a routing table; prefix length beats metric"
+      },
+      {
+        "id": "CCNA-3.2",
+        "note": "Static routing behaviour"
+      }
     ]
   },
   {
@@ -82,13 +117,28 @@
     "time": "14 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "ccna-longest-prefix-match", "label": "Why the most specific mask wins" }
+      {
+        "id": "ccna-longest-prefix-match",
+        "label": "Why the most specific mask wins"
+      }
     ],
     "related": [
-      { "id": "cisco-ip-route", "label": "Static routes need the full mask" },
-      { "id": "mikrotik-ip-dhcp-server-network", "label": "DHCP needs the network address" }
+      {
+        "id": "cisco-ip-route",
+        "label": "Static routes need the full mask"
+      },
+      {
+        "id": "mikrotik-ip-dhcp-server-network",
+        "label": "DHCP needs the network address"
+      }
     ],
-    "tags": ["cisco", "subnetting", "binary", "ccna", "fundamentals"],
+    "tags": [
+      "cisco",
+      "subnetting",
+      "binary",
+      "ccna",
+      "fundamentals"
+    ],
     "sections": [
       {
         "h": "Convert the mask, do not memorise the table",
@@ -130,16 +180,40 @@
       }
     ],
     "lab": [
-      { "text": "Write down five /26 networks inside 192.168.10.0/24 from memory, then check them.", "expect": ".0, .64, .128, .192 — and only four fit in a /24. This is the check people skip and it is where the errors are." },
-      { "text": "Configure two subnets on one router and prove they are isolated.", "cmd": "interface GigabitEthernet0/1\n ip address 192.168.10.1 255.255.255.192\nexit\ninterface GigabitEthernet0/2\n ip address 192.168.10.65 255.255.255.192\nexit\nshow ip interface brief", "where": "router", "expect": "Both addresses appear as connected routes — and the second one is *not* a subnet of the first." },
+      {
+        "text": "Write down five /26 networks inside 192.168.10.0/24 from memory, then check them.",
+        "expect": ".0, .64, .128, .192 — and only four fit in a /24. This is the check people skip and it is where the errors are."
+      },
+      {
+        "text": "Configure two subnets on one router and prove they are isolated.",
+        "cmd": "interface GigabitEthernet0/1\n ip address 192.168.10.1 255.255.255.192\nexit\ninterface GigabitEthernet0/2\n ip address 192.168.10.65 255.255.255.192\nexit\nshow ip interface brief",
+        "where": "router",
+        "expect": "Both addresses appear as connected routes — and the second one is *not* a subnet of the first."
+      },
       {
         "text": "Add a host on each subnet and try to reach the other without routing.",
         "expect": "They fail, because they are different subnets and the router will not route between them without either a static route or an ACL permitting it."
       }
     ],
     "failures": [
-      { "why": "A router refuses an IP address.", "fix": "The address is the network address of the subnet or is duplicated on another interface. `/24` gives 256 addresses; `.0` and `.255` are not usable host addresses." },
-      { "why": "A host cannot reach its own gateway.", "fix": "Wrong mask. The host computes the gateway's address as being outside its own subnet and sends it to the wrong interface." }
+      {
+        "why": "A router refuses an IP address.",
+        "fix": "The address is the network address of the subnet or is duplicated on another interface. `/24` gives 256 addresses; `.0` and `.255` are not usable host addresses."
+      },
+      {
+        "why": "A host cannot reach its own gateway.",
+        "fix": "Wrong mask. The host computes the gateway's address as being outside its own subnet and sends it to the wrong interface."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-1.3",
+        "note": "Network design and addressing"
+      },
+      {
+        "id": "CCNA-3.1",
+        "note": "Prefix length is what makes a route specific"
+      }
     ]
   },
   {
@@ -152,13 +226,29 @@
     "time": "9 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "cisco-show-mac-address-table", "label": "Read the MAC address table" }
+      {
+        "id": "cisco-show-mac-address-table",
+        "label": "Read the MAC address table"
+      }
     ],
     "related": [
-      { "id": "ccna-longest-prefix-match", "label": "The Layer 3 equivalent" },
-      { "id": "mikrotik-bridge-port-print", "label": "The same idea on MikroTik" }
+      {
+        "id": "ccna-longest-prefix-match",
+        "label": "The Layer 3 equivalent"
+      },
+      {
+        "id": "mikrotik-bridge-port-print",
+        "label": "The same idea on MikroTik"
+      }
     ],
-    "tags": ["cisco", "switching", "mac", "layer2", "ccna", "fundamentals"],
+    "tags": [
+      "cisco",
+      "switching",
+      "mac",
+      "layer2",
+      "ccna",
+      "fundamentals"
+    ],
     "sections": [
       {
         "h": "The three rules, in order",
@@ -184,8 +274,17 @@
       }
     ],
     "lab": [
-      { "text": "Ping from PC1 to PC2 on the same switch.", "cmd": "show mac address-table", "where": "switch", "expect": "Both MACs appear, each on its own port, in the same VLAN." },
-      { "text": "Ping from PC1 to a machine on another switch, across the trunk.", "cmd": "show mac address-table vlan 20", "expect": "The remote MAC is learned **on the trunk port** — which is how the switch knows where the far side is." },
+      {
+        "text": "Ping from PC1 to PC2 on the same switch.",
+        "cmd": "show mac address-table",
+        "where": "switch",
+        "expect": "Both MACs appear, each on its own port, in the same VLAN."
+      },
+      {
+        "text": "Ping from PC1 to a machine on another switch, across the trunk.",
+        "cmd": "show mac address-table vlan 20",
+        "expect": "The remote MAC is learned **on the trunk port** — which is how the switch knows where the far side is."
+      },
       {
         "text": "Disconnect PC1, wait, and watch the entry age out.",
         "expect": "After ~5 minutes the entry disappears. Nothing is broken; that is aging working."
@@ -197,8 +296,24 @@
       }
     ],
     "failures": [
-      { "why": "A MAC keeps moving between two ports.", "fix": "Duplicate MAC address or a Layer-2 loop. Check for a switch plugged into itself or two unmanaged switches bridging one segment." },
-      { "why": "One machine gets a DHCP address 30 seconds late.", "fix": "Portfast is missing on that access port. `show spanning-tree interface gi0/5` confirms it." }
+      {
+        "why": "A MAC keeps moving between two ports.",
+        "fix": "Duplicate MAC address or a Layer-2 loop. Check for a switch plugged into itself or two unmanaged switches bridging one segment."
+      },
+      {
+        "why": "One machine gets a DHCP address 30 seconds late.",
+        "fix": "Portfast is missing on that access port. `show spanning-tree interface gi0/5` confirms it."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.3",
+        "note": "STP listening/learning delay; portfast"
+      },
+      {
+        "id": "CCNA-2.6",
+        "note": "MAC flooding and why controls exist"
+      }
     ]
   },
   {
@@ -211,13 +326,29 @@
     "time": "10 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "mikrotik-bridge-port-print", "label": "See bridge membership" }
+      {
+        "id": "mikrotik-bridge-port-print",
+        "label": "See bridge membership"
+      }
     ],
     "related": [
-      { "id": "ccna-switch-learns-mac", "label": "The Cisco equivalent" },
-      { "id": "mikrotik-ip-dhcp-server-network", "label": "Where this shows up as a DHCP fault" }
+      {
+        "id": "ccna-switch-learns-mac",
+        "label": "The Cisco equivalent"
+      },
+      {
+        "id": "mikrotik-ip-dhcp-server-network",
+        "label": "Where this shows up as a DHCP fault"
+      }
     ],
-    "tags": ["mikrotik", "routeros", "bridge", "layer2", "mtcna", "troubleshooting"],
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "bridge",
+      "layer2",
+      "mtcna",
+      "troubleshooting"
+    ],
     "sections": [
       {
         "h": "The idea",
@@ -263,7 +394,12 @@
         "cmd": "/interface/bridge/port/print",
         "expect": "That port is simply absent. This is the whole bug — nothing in the output is flagged as wrong."
       },
-      { "text": "On the client, renew the lease and watch it fail.", "cmd": "ipconfig /renew", "where": "Windows client", "expect": "APIPA address 169.254.x.x — it asked, and the offer never reached a segment it was on." },
+      {
+        "text": "On the client, renew the lease and watch it fail.",
+        "cmd": "ipconfig /renew",
+        "where": "Windows client",
+        "expect": "APIPA address 169.254.x.x — it asked, and the offer never reached a segment it was on."
+      },
       {
         "text": "Add the port and re-test.",
         "cmd": "/interface/bridge/port/add bridge=bridge-lan interface=ether5\n/interface/bridge/port/print",
@@ -272,9 +408,23 @@
       }
     ],
     "failures": [
-      { "why": "Client gets 169.254.x.x.", "fix": "Check bridge membership first, then DHCP configuration, in that order. Nine times in ten it is bridge membership." },
-      { "why": "The interface shows running but no traffic passes.", "fix": "`running` means enabled in the bridge, not that it has a cable. Check `/interface/ethernet/print` for the physical state." },
-      { "why": "You lose your WinBox session when adding ports.", "fix": "You connected through the port you are adding and the bridge has no address yet. Set the address first, or connect from another port." }
+      {
+        "why": "Client gets 169.254.x.x.",
+        "fix": "Check bridge membership first, then DHCP configuration, in that order. Nine times in ten it is bridge membership."
+      },
+      {
+        "why": "The interface shows running but no traffic passes.",
+        "fix": "`running` means enabled in the bridge, not that it has a cable. Check `/interface/ethernet/print` for the physical state."
+      },
+      {
+        "why": "You lose your WinBox session when adding ports.",
+        "fix": "You connected through the port you are adding and the bridge has no address yet. Set the address first, or connect from another port."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M3.1"
+      }
     ]
   },
   {
@@ -287,13 +437,28 @@
     "time": "11 min",
     "verification": "source-checked",
     "prerequisites": [
-      { "id": "mikrotik-ip-firewall-filter", "label": "Add and read firewall rules" }
+      {
+        "id": "mikrotik-ip-firewall-filter",
+        "label": "Add and read firewall rules"
+      }
     ],
     "related": [
-      { "id": "mikrotik-ip-firewall-nat", "label": "NAT is a separate mechanism" },
-      { "id": "scn-dhcp-client-no-lease", "label": "Worked example of the wrong-chain fault" }
+      {
+        "id": "mikrotik-ip-firewall-nat",
+        "label": "NAT is a separate mechanism"
+      },
+      {
+        "id": "scn-dhcp-client-no-lease",
+        "label": "Worked example of the wrong-chain fault"
+      }
     ],
-    "tags": ["mikrotik", "routeros", "firewall", "security", "mtcna"],
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "firewall",
+      "security",
+      "mtcna"
+    ],
     "sections": [
       {
         "h": "The three chains",
@@ -356,9 +521,31 @@
       }
     ],
     "failures": [
-      { "why": "Clients get addresses but no internet.", "fix": "Check `/ip/firewall/nat/print` for a masquerade rule on the WAN interface. Filtering alone drops the replies." },
-      { "why": "A rule appears correct but never matches.", "fix": "Check the chain and the direction, then `print stats`. Zero packets on a rule you have tested means it is in the wrong place." },
-      { "why": "You blocked yourself out.", "fix": "`/system/backup/load` from a known-good backup, or connect from the LAN and remove the rule by comment." }
+      {
+        "why": "Clients get addresses but no internet.",
+        "fix": "Check `/ip/firewall/nat/print` for a masquerade rule on the WAN interface. Filtering alone drops the replies."
+      },
+      {
+        "why": "A rule appears correct but never matches.",
+        "fix": "Check the chain and the direction, then `print stats`. Zero packets on a rule you have tested means it is in the wrong place."
+      },
+      {
+        "why": "You blocked yourself out.",
+        "fix": "`/system/backup/load` from a known-good backup, or connect from the LAN and remove the rule by comment."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M6.2"
+      },
+      {
+        "id": "MTCNA-M6.3",
+        "note": "input chain"
+      },
+      {
+        "id": "MTCNA-M6.4",
+        "note": "forward chain"
+      }
     ]
   }
 ]
