@@ -38,8 +38,8 @@ const KINDS = ["commands", "lessons", "scenarios", "quizzes", "projects"];
 // A kind may be split across several files under app/data/<kind>/.
 // Mirrors app.js `groups` exactly — see the drift check further down.
 const APP_GROUPS = {
-  commands: ["commands/index"],
-  lessons: ["lessons/index", "lessons/services"],
+  commands: ["commands/index", "commands/cisco", "commands/windows", "commands/mikrotik"],
+  lessons: ["lessons/index", "lessons/services", "lessons/networking", "lessons/windows"],
   scenarios: ["scenarios/index"],
   quizzes: ["quizzes/index"],
   projects: ["projects/index"],

@@ -1,0 +1,211 @@
+[
+  {
+    "id": "mikrotik-bridge-port-print",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/interface/bridge/port/print",
+    "task": "See which physical ports are members of the bridge",
+    "aliases": ["bridge ports", "which ports are in the bridge", "vlan membership routeros", "ports not passing traffic"],
+    "risk": "safe",
+    "where": "RouterOS CLI or WinBox terminal",
+    "privilege": "none to read",
+    "platform": "RouterOS 7.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "/interface/bridge/port/print\n/interface/bridge/port/print detail\n/interface/bridge/port/print where interface=ether5\n/interface/bridge/host/print where interface=bridge-lan\n/interface/bridge/vlan/print",
+    "explain": [
+      "**A physical port that is not a member of the bridge forms its own private broadcast domain.** DHCP uses broadcast, DNS uses broadcast, and discovery protocols use broadcast — none of them cross a bridge boundary. This is the number one MikroTik beginner fault.",
+      "`running` in the print output means the port is enabled in the bridge, not that it has a cable. The physical state is separate.",
+      "`pvid` sets the VLAN that untagged traffic on that port belongs to. It matters on a trunk; on an access port it is simply the VLAN that traffic defaults into.",
+      "In RouterOS 7 this menu is `/interface/bridge/port`. In v6 it was `/interface bridge port`. If you cannot find it, check your version first."
+    ],
+    "example": [
+      "A PC on ether5 gets 169.254.x.x while every other PC works. `/interface/bridge/port/print` shows ether5 has no bridge entry. It is physically up and completely alone."
+    ],
+    "verify": [
+      "/interface/bridge/port/print\n/interface/bridge/host/print"
+    ],
+    "errors": [
+      {
+        "message": "no such item (bridge=bridge-lan)",
+        "means": "The bridge does not exist under that name. Bridge names are case-sensitive.",
+        "fix": "/interface/bridge/print   to see the real name"
+      },
+      {
+        "message": "Adding the port drops your management session",
+        "means": "You are connected through that port and the bridge has no address or DHCP yet.",
+        "fix": "Set the bridge IP and DHCP server BEFORE adding the management port, or connect from a different port."
+      }
+    ],
+    "sources": [{ "title": "MikroTik official documentation — Bridge", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/1573595/Bridge", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["mikrotik", "routeros", "bridge", "layer2", "mtcna", "troubleshooting"]
+  },
+  {
+    "id": "mikrotik-ip-route-print",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/ip/route/print",
+    "task": "Read the routing table and find how traffic leaves and returns",
+    "aliases": ["routing table", "default route routeros", "gateway", "route not working", "no internet"],
+    "risk": "safe",
+    "where": "RouterOS CLI",
+    "privilege": "none to read",
+    "platform": "RouterOS 7.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "/ip/route/print\n/ip/route/print where dst-address=0.0.0.0/0\n/ip/route/print detail\n/ip/route/print where gateway=ether1\n/tool/fetch mode=resolve\n/ping 1.1.1.1 count=5\n/ping example.com count=5",
+    "explain": [
+      "RouterOS does **longest-prefix match** here too. `10.0.0.0/8` and `10.1.0.0/16` both matching means the /16 wins, whatever the distance column says.",
+      "Routes marked with `D` are dynamic (from DHCP or PPP). Those come and go with the link — a default route that disappears when the WAN reconnects is usually a dynamic route that was never made static.",
+      "**The single most useful test is the pair of pings**: ping an IP address, then ping a name. IP works + name fails = DNS problem. Both fail = routing, NAT or firewall.",
+      "Check `gateway=` and `distance=` — a static default route with distance 1 competes with a dynamic one, and the dynamic one often wins unexpectedly.",
+      "`/tool/fetch` resolves and downloads in one step and reports the actual nameserver used."
+    ],
+    "example": [
+      "Client can ping 1.1.1.1 but cannot resolve anything. Name resolution and routing are separate systems, and this test separates them in one command."
+    ],
+    "verify": [
+      "/ip/route/print\n/ping 1.1.1.1 count=5\n/ping google.com count=5"
+    ],
+    "errors": [
+      {
+        "message": "ping: cannot resolve google.com",
+        "means": "DNS is not working, but routing may be perfectly fine.",
+        "fix": "/ip/dns/print\nSet a reachable resolver: /ip/dns/set servers=8.8.8.8,1.1.1.1"
+      },
+      {
+        "message": "ping: timeout",
+        "means": "No reply. Could be routing, NAT, or the upstream blocking ICMP — check in that order.",
+        "fix": "/ip/firewall/nat/print   # masquerade must exist on the WAN interface\n/ip/firewall/filter/print stats"
+      }
+    ],
+    "sources": [{ "title": "MikroTik official documentation — IP Routing", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/413262/IP+Routing", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["mikrotik", "routeros", "routing", "nat", "troubleshooting", "mtcna"]
+  },
+  {
+    "id": "mikrotik-ip-firewall-nat",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/ip firewall nat",
+    "task": "Check and set up masquerading and port forwarding",
+    "aliases": ["nat", "masquerade", "port forward", "port forwarding", "internet sharing", "dmz"],
+    "risk": "caution",
+    "where": "RouterOS CLI",
+    "privilege": "admin-level",
+    "platform": "RouterOS 7.x",
+    "changes": "Yes, immediately.",
+    "undo": "/ip/firewall/nat/remove <number>   (or by comment)",
+    "risks": "An `action=accept` masquerade with `to-addresses=0.0.0.0` on a wrong interface can expose internal services to the internet. Always specify the out-interface and the internal network.",
+    "commands": "/ip/firewall/nat/print\n/ip/firewall/nat/add chain=srcnat action=masquerade out-interface=ether1\n/ip/firewall/nat/add chain=dstnat protocol=tcp dst-port=443 \\\n   in-interface=ether1 action=dst-nat to-addresses=10.10.20.20 to-ports=443\n/ip/firewall/nat/print stats",
+    "explain": [
+      "Two chains, two purposes. **`srcnat` makes internal clients work outbound** (masquerade). **`dstnat` makes inbound connections reach an internal host** (port forwarding). Forgetting the NAT is why a client can reach the internet but nothing reaches it.",
+      "`masquerade` rewrites the source to the outgoing interface address; `src-nat` rewrites it to an address you specify. Use masquerade on dynamic links (pppoe-out, DHCP WAN) and src-nat on static ones.",
+      "**The port-forwarding chain is `dstnat` and must be in the `input` chain** for traffic terminating on the router itself, or in `forward` for traffic passing through. Getting the chain wrong is the second most common NAT fault.",
+      "RouterOS 7's address-list approach is cleaner than long chain chains: match an address list, apply a rule. For learning the basics the simple form is fine.",
+      "Add `stats` when diagnosing — a NAT rule with zero hits is not doing what you think."
+    ],
+    "example": [
+      "You add a port forward for an internal web server and nothing happens. `/ip/firewall/nat/print` shows the rule in `forward`, but the destination is this router, which is `input`. Wrong chain."
+    ],
+    "verify": [
+      "/ip/firewall/nat/print stats\n# from a machine outside: curl -I http://<public-ip>:<port>"
+    ],
+    "errors": [
+      {
+        "message": "Client can get an address but has no internet",
+        "means": "No working masquerade, or the client's gateway is not this router.",
+        "fix": "/ip/firewall/nat/print\nCheck the client's gateway with ipconfig."
+      },
+      {
+        "message": "Port forward does nothing",
+        "means": "Wrong chain, no NAT rule at all, or the ISP is blocking inbound on that port.",
+        "fix": "/ip/firewall/nat/print stats  (look for packets on the rule)\nThen /ip/firewall/filter/print stats"
+      },
+      {
+        "message": "It worked, then stopped",
+        "means": "A dynamic default route disappeared after a WAN reconnect, or a dhcp-client lease changed the address.",
+        "fix": "/ip/route/print where dynamic\nMake the default route static rather than accepting the dynamic one."
+      }
+    ],
+    "sources": [{ "title": "MikroTik official documentation — NAT", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2475629/NAT", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["mikrotik", "routeros", "nat", "masquerade", "port forwarding", "mtcna"]
+  },
+  {
+    "id": "mikrotik-system-resource-print",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/system/resource/print",
+    "task": "Check CPU, memory, uptime and whether the router is struggling",
+    "aliases": ["router slow", "cpu load", "memory usage routeros", "is the router overloaded", "uptime routeros"],
+    "risk": "safe",
+    "where": "RouterOS CLI",
+    "privilege": "none to read",
+    "platform": "RouterOS 7.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "/system/resource/print\n/system/resource/print without-paging\n/system/identity/print\n/system/clock/print\n/log/print where topics~\"cpu|memory\"\n/system/backup/save name=before-change\n",
+    "explain": [
+      "`free-memory` and especially `free-hdd-space` matter more than CPU on most boards. A router that has been up for months accumulates log and database bloat.",
+      "High CPU is usually caused by a firewall rule set that scans huge address lists, not by normal forwarding. Look at the counters with `/ip/firewall/filter/print stats`.",
+      "**`/system/backup/save` before any configuration change is the single most valuable habit on RouterOS.** It is instant, tiny, and it is the only reliable rollback.",
+      "`/system/clock/print` matters more than it looks — certificates, TLS and logging all depend on the clock being right, especially after a router has been unpowered."
+    ],
+    "example": [
+      "A router has been up 200 days and clients report intermittent slowness. `free-memory` is low and `/system/backup/save` restores service immediately after a reboot. Backups before changes catch this."
+    ],
+    "verify": [
+      "/system/resource/print\n/system/backup/print"
+    ],
+    "errors": [
+      {
+        "message": "Router is unresponsive and WinBox will not connect",
+        "means": "It may have crashed or run out of memory.",
+        "fix": "Connect via the serial console. Then /system/backup/load name=<last good> and reboot."
+      }
+    ],
+    "sources": [{ "title": "MikroTik official documentation — System resource", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/System", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["mikrotik", "routeros", "performance", "backup", "troubleshooting", "mtcna"]
+  },
+  {
+    "id": "mikrotik-system-backup-save",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/system/backup/save",
+    "task": "Save a binary configuration backup you can restore",
+    "aliases": ["backup router", "save config routeros", "restore config", "rollback mikrotik"],
+    "risk": "safe",
+    "where": "RouterOS CLI",
+    "privilege": "admin-level",
+    "platform": "RouterOS 7.x",
+    "changes": "Writes a .backup file to the router's filesystem. Does not change the running configuration.",
+    "undo": "n/a — a backup does not alter anything",
+    "risks": "Safe by design. The risk is not taking one.",
+    "commands": "/system/backup/save name=before-change\n/system/backup/print\n/export file=before-change.rsc\n/system/backup/load name=before-change\n/file/print\n",
+    "explain": [
+      "**`.backup` is binary and complete** — keys, certificates, passwords, everything. **`/export` is a readable `.rsc` text file** that deliberately omits secrets and is the safer thing to share or paste into a ticket.",
+      "Take a backup before every change. It costs nothing and it is the only rollback that always works.",
+      "To move a config to different hardware, use `/export` and `/import` — a binary backup will not restore onto different hardware or a different RouterOS architecture.",
+      "A backup file on the router's flash is lost when you replace the device. Copy it off with `/file/print` then fetch it from a computer."
+    ],
+    "example": [
+      "You add a firewall rule over WinBox and lose your session. `/system/backup/load name=before-change` restores the router in seconds. Without that backup you are reading the config out of the terminal by hand."
+    ],
+    "verify": [
+      "/system/backup/print\n/file/print"
+    ],
+    "errors": [
+      {
+        "message": "No such file or directory (bad file name)",
+        "means": "The backup name does not exist — probably a different name than you think.",
+        "fix": "/system/backup/print   to list what is actually there"
+      }
+    ],
+    "sources": [{ "title": "MikroTik official documentation — Backup", "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328084/Backup", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["mikrotik", "routeros", "backup", "export", "import", "rollback", "mtcna"]
+  }
+]

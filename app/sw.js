@@ -36,8 +36,13 @@ const SHELL = [
 
 const DATA = [
   "data/commands/index.json",
+  "data/commands/cisco.json",
+  "data/commands/windows.json",
+  "data/commands/mikrotik.json",
   "data/lessons/index.json",
   "data/lessons/services.json",
+  "data/lessons/networking.json",
+  "data/lessons/windows.json",
   "data/scenarios/index.json",
   "data/quizzes/index.json",
   "data/projects/index.json",

@@ -1,0 +1,409 @@
+[
+  {
+    "id": "aplus-post-boot-sequence",
+    "kind": "lesson",
+    "tech": "aplus",
+    "title": "What happens between power-on and a login prompt",
+    "summary": "The POST sequence, in order, with the point at which each failure appears. Knowing the order turns a vague 'it won't start' into a specific fault.",
+    "analogy": "Opening a shop. First the alarm and lights test (POST), then the till checks its own arithmetic, then the manager's logbook loads (bootloader), then the operating system, then the desk is usable (login). A fault at each stage has a different symptom.",
+    "time": "12 min",
+    "verification": "source-checked",
+    "prerequisites": [],
+    "related": [
+      { "id": "aplus-reading-post-codes", "label": "Decoding the beeps and codes" },
+      { "id": "win11-flags-bcdedit", "label": "When the failure is after POST" }
+    ],
+    "tags": ["aplus", "boot", "post", "hardware", "fundamentals", "troubleshooting"],
+    "sections": [
+      {
+        "h": "The order, and where each stage fails visibly",
+        "p": [
+          "Every PC follows roughly this sequence. The order matters because it tells you which layer you are looking at before you start swapping parts."
+        ],
+        "list": [
+          "**1. Power and power-good.** The PSU asserts POWER_GOOD. No fan spin or no lights at all is a power supply, a wall outlet, or a switch, not an operating system problem.",
+          "**2. Firmware (BIOS/UEFI) initialisation.** The firmware configures memory training, PCIe, and the devices it is going to initialise.",
+          "**3. POST.** The firmware tests the essential hardware — CPU, memory, video, keyboard. **Failures here show as beep codes, a code on screen, or diagnostic LEDs.**",
+          "**4. Video initialisation.** Note that on many systems the display shows nothing until this point even though POST is running.",
+          "**5. Device initialisation and device error reporting.**",
+          "**6. Boot device selection.** The firmware looks for a boot device in the UEFI order. **If this finds nothing, you get 'no bootable device' and nothing after it ever runs.**",
+          "**7. Bootloader (Windows Boot Manager).** Reads the boot configuration and loads the kernel. Its own menu appears here.",
+          "**8. Kernel and HAL load.** The Windows kernel loads. **Failure here shows as a blue screen or a stop-and-repair prompt**, not a beep.",
+          "**9. Boot Critical Driver and Boot Services.**",
+          "**10. Registry and service start.** Services begin. **Failure here hangs at the Windows logo**, often on a disk.",
+          "**11. Logon UI.**"
+        ]
+      },
+      {
+        "h": "The dividing line that saves the most time",
+        "p": [
+          "**If the machine never showed a firmware splash screen and never beeped, the problem is before the operating system entirely.** Power, CPU, memory, or the firmware itself.",
+          "**If you saw the Windows logo and it then failed, the hardware passed POST.** Now stop swapping RAM and start thinking about drivers, storage and configuration.",
+          "This one distinction resolves the majority of \"my PC won't boot\" cases and it costs nothing to establish."
+        ]
+      },
+      {
+        "h": "UEFI changed the vocabulary, not the sequence",
+        "p": [
+          "Modern systems have a UEFI *phase* called **Secure Boot** and one called **Recovery Environment (WinRE)**, which can be entered from the firmware boot menu independently of the installed OS.",
+          "WinRE is where `bootrec`, `bcdedit` and offline DISM/SFC run. You do not need a working Windows installation to use it — only access to it."
+        ]
+      }
+    ],
+    "lab": [
+      {
+        "text": "Establish the dividing line before touching anything.",
+        "cmd": "1. Power off completely (not restart).\n2. Power on and watch: did the manufacturer logo appear at all?\n   - No logo, no beeps  -> before POST. Check power, reseat memory.\n   - Logo, then error     -> POST stage. Decode the code.\n   - Logo, then Windows    -> OS stage. Use WinRE.",
+        "where": "observation exercise"
+      },
+      {
+        "text": "Open the firmware setup and record the boot order.",
+        "cmd": "Restart, then press Del / F2 / F10 / Esc as the manufacturer specifies.\nDocument: boot device order, Secure Boot state, and whether the drive is detected in the storage section.",
+        "expect": "If the drive is not listed in the firmware, Windows cannot install or boot from it — that is a hardware, cable or port fault, not an operating system one."
+      },
+      {
+        "text": "In Windows, confirm the boot device and recovery environment are present.",
+        "cmd": "bcdedit /enum {current}\nreagentc /info\nmountvol",
+        "where": "elevated Command Prompt",
+        "expect": "WinRE enabled on C: with a BCD path. If `reagentc /info` says it is disabled, you have no recovery environment to fall back on."
+      },
+      {
+        "text": "Use the Windows Recovery Environment from firmware, not from a running Windows.",
+        "cmd": "Settings > System > Recovery > Advanced startup > Restart now\nThen: Troubleshoot > Advanced options > Command Prompt",
+        "where": "Windows 11",
+        "expect": "A command prompt with X: as the Windows volume and C: as the installer. This is where DISM /Online /Cleanup-Image /RestoreHealth and sfc /scannow must be run for an unbootable system."
+      }
+    ],
+    "failures": [
+      { "why": "Nothing happens at all — no lights, no fans.", "fix": "Not an operating system problem. Test the PSU with a PSU tester or by swapping in a known-good one." },
+      { "why": "Fans run, but the screen stays black.", "fix": "Test the display path first — another monitor, a different cable, a discrete GPU with no display plugged into the wrong port. Then reseat memory." },
+      { "why": "'Reboot and select proper boot device'.", "fix": "The firmware found no bootable device. Check boot order, then whether the drive is detected at all in the firmware storage view." },
+      { "why": "Hangs on the Windows logo with a spinner.", "fix": "Storage. Disconnect the drive and boot to WinRE — Windows will run from RAM and you can inspect the disk." }
+    ]
+  },
+  {
+    "id": "aplus-reading-post-codes",
+    "kind": "lesson",
+    "tech": "aplus",
+    "title": "Reading POST codes, beeps and diagnostic LEDs",
+    "summary": "Different vendors encode the same failure differently. What the codes mean in general, and why you must look up your specific board.",
+    "analogy": "An aircraft cockpit warning. The manufacturer chooses which lights to flash, but a red 'hydraulics' light always means the hydraulics need attention. You have to learn your aircraft's panel.",
+    "time": "8 min",
+    "verification": "source-checked",
+    "prerequisites": [
+      { "id": "aplus-post-boot-sequence", "label": "Where POST fits in the boot order" }
+    ],
+    "related": [
+      { "id": "win11-flags-bcdedit", "label": "Failures after POST look completely different" }
+    ],
+    "tags": ["aplus", "post", "beep codes", "hardware", "troubleshooting"],
+    "sections": [
+      {
+        "h": "The three encodings",
+        "list": [
+          "**Beep codes** — legacy. Short and long beeps: one long then N short is a video failure, N short beeps is a memory failure on most legacy BIOSes.",
+          "**Numeric POST codes** — written to port 0x80 and shown on a motherboard LED or a diagnostic card. Two-digit hexadecimal. The table is vendor-specific.",
+          " **Diagnostic LEDs** — Q-LED (power), CPU-LED (CPU), RAM-LED (memory), VGA-LED (video) on the board. The lit LED names the failing stage directly."
+        ],
+        "p2": []
+      },
+      {
+        "h": "The honest limitation",
+        "p": [
+          "**There is no universal POST code table.** The same code means different things on ASUS, Gigabyte, MSI, Dell, HP and Lenovo. Anyone presenting you a single generic code list as authoritative is wrong.",
+          "What *is* universal is the **stage** the fault occurs in, and that maps to a short list of suspects. Narrow the stage first, then look up the specific code for your board model."
+        ]
+      },
+      {
+        "h": "Fault stage to suspect",
+        "list": [
+          "**No power / power-good fail** — PSU, wall socket, power switch, or the board's 24-pin connector.",
+          "**CPU not detected** — CPU not seated, cooler mounting pressure distorting the socket, bent pins, or an incompatible BIOS version.",
+          "**Memory not detected** — memory not seated, mixed incompatible modules, or memory slots damaged. **This is by far the most common POST failure.**",
+          "**Video not detected** — no discrete GPU in a multi-GPU system, wrong display cable port, or a dead GPU.",
+          "**Storage not detected** — drive, SATA/NVMe cable, or the port. **Check this in the firmware's storage view, not in Windows.**",
+          "**Boot device missing after successful POST** — boot order, or a drive the firmware cannot see."
+        ]
+      }
+    ],
+    "lab": [
+      {
+        "text": "Find the diagnostic LEDs on the board before you need them.",
+        "cmd": "Look along the right-hand edge of the motherboard for small LEDs labelled Q-LED, CPU-LED, RAM-LED, VGA-LED.\nNote which ones exist on YOUR board — the labels and positions vary.",
+        "expect": "Knowing where they are when everything works is worth more than trying to find them during a failure."
+      },
+      {
+        "text": "Prove the RAM stage is healthy by isolating memory.",
+        "cmd": "1. Power down, unplug, discharge.\n2. Remove all memory modules.\n3. Reseat ONE module into the slot nearest the CPU (slot A2 or A1).\n4. Power on.",
+        "expect": "POST completes. If it now fails, the fault is in the removed modules or their slots, not the rest of the system."
+      },
+      {
+        "text": "Confirm the storage device is visible to the firmware.",
+        "cmd": "Enter firmware setup and open the storage/device list.\nNote: does the drive appear?",
+        "expect": "If it does not appear here, no operating system fix will help. This check is above the operating system and above every tool in Windows."
+      },
+      {
+        "text": "Read any numeric code from port 0x80 if your board supports it.",
+        "cmd": "Insert a POST diagnostic card into the LPC debug header, or read the two-digit display beside the LEDs.\nLook the code up in the manual for YOUR board model, not a generic list.",
+        "expect": "A code that means something specific to that board. Document the board model and the code together, because that pair is what makes it useful later."
+      }
+    ],
+    "failures": [
+      { "why": "POST beeps once, long then short.", "fix": "Video subsystem failure. Test with a known-good monitor and cable, and confirm the display is plugged into the GPU rather than the motherboard when a discrete GPU is present." },
+      { "why": "Beeps repeat, no display.", "fix": "Memory. Reseat one module at a time in the slot nearest the CPU. Test each module in a known-good slot before condemning it." },
+      { "why": "Machine POSTs but Windows will not install.", "fix": "The firmware cannot see the drive. Check the storage view, then the cable and the port. Legacy BIOS modes also do not see NVMe drives at all — a real and confusing limitation." }
+    ]
+  },
+  {
+    "id": "win11-boot-repair-decision",
+    "kind": "lesson",
+    "tech": "win11",
+    "title": "Fixing a Windows 11 machine that will not boot",
+    "summary": "An ordered decision tree. The order matters because DISM before SFC is not a preference, it is a dependency.",
+    "analogy": "Repairing a wall that has fallen. You fix the load-bearing structure first — the source of the materials — before you touch the plaster. Skipping ahead wastes a morning and teaches you nothing.",
+    "time": "13 min",
+    "verification": "source-checked",
+    "prerequisites": [
+      { "id": "aplus-post-boot-sequence", "label": "Confirm the fault is past POST" }
+    ],
+    "related": [
+      { "id": "win11-flags-bcdedit", "label": "Safe mode and boot options" },
+      { "id": "win11-sfc-dism", "label": "The commands themselves" }
+    ],
+    "tags": ["windows", "boot", "repair", "dism", "sfc", "troubleshooting"],
+    "sections": [
+      {
+        "h": "The rule that matters most",
+        "p": [
+          "**DISM first, then SFC. Always.** `sfc /scannow` copies replacement files out of the component store. If that store is itself corrupt, SFC has nothing valid to copy from and fails with *'found corrupt files but was unable to fix some of them'*. Running SFC first wastes a long operation and produces a message that looks like a different problem.",
+          "DISM repairs the component store from a known-good source — normally Windows Update — and SFC then has good material to work with."
+        ]
+      },
+      {
+        "h": "The ordered path",
+        "list": [
+          "**1. Confirm you are past POST.** If the firmware never appeared, this chapter does not apply. Go to the hardware section.",
+          "**2. Try the automatic repair.** Settings → System → Recovery → Advanced startup → Restart now → Troubleshoot → Advanced options → Startup Repair. Cheap, and it fixes a surprising share of cases.",
+          "**3. Boot to WinRE.** From the firmware boot menu (usually F12 / Esc / F8) or by interrupting three boot attempts. This works even when Windows will not load.",
+          "**4. Check the free space and the disk.** A full system drive and a failing disk present identically — a machine that will not boot.",
+          "**5. `DISM /Online /Cleanup-Image /RestoreHealth`.** Record the exit code.",
+          "**6. `sfc /scannow`.** Now, and only now.",
+          "**7. Startup Repair again**, or boot normally.",
+          "**8. If it still fails, look at what actually changed** — a driver, an update, or a disk with a failing sector."
+        ]
+      },
+      {
+        "h": "Reading DISM's exit code — it is the honest signal",
+        "list": [
+          "**0** — success.",
+          "**3010** — success, but a reboot is required. This is **not** a failure. Many people treat it as one and go looking for a problem that does not exist.",
+          "**0x800f081f** — the source files could not be found. Usually no working connection to Windows Update, a broken certificate store, or a hard-coded WSUS PolicyURL pointing at a dead server."
+        ],
+        "p2": []
+      },
+      {
+        "h": "When DISM cannot reach Windows Update",
+        "p": [
+          "This is the most common DISM failure and it has a specific cause worth checking before anything else: a machine configured to install updates from a Windows Server Update Services server that no longer exists. The policy key below decides where DISM and Windows Update look for source files."
+        ],
+        "code": "reg query \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\" /v WUServer\nreg query \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\" /v UseWUServer\nnetsh winhttp show proxy",
+        "where": "WinRE Command Prompt",
+        "risk": "safe"
+      }
+    ],
+    "lab": [
+      {
+        "text": "Before you need it, record what a healthy system looks like.",
+        "cmd": "sfc /verifyonly\nDISM /Online /Cleanup-Image /CheckHealth",
+        "where": "running Windows, elevated",
+        "expect": "'No integrity violations' and 'No component store corruption detected'. Without a known-good baseline you cannot tell whether you fixed anything."
+      },
+      {
+        "text": "Confirm a recovery environment exists at all.",
+        "cmd": "reagentc /info",
+        "where": "elevated Command Prompt",
+        "expect": "`Windows RE on this device is enabled`. If it is disabled, you have no WinRE to work in when the machine stops booting."
+      },
+      {
+        "text": "Walk the ordered path on a healthy machine so the commands are familiar.",
+        "cmd": "DISM /Online /Cleanup-Image /CheckHealth\nDISM /Online /Cleanup-Image /RestoreHealth\nsfc /scannow",
+        "where": "elevated Command Prompt",
+        "expect": "All three complete. Get-Help is not a substitute for having done it once before you need it."
+      },
+      {
+        "text": "Break it deliberately in a VM snapshot, then fix it.",
+        "cmd": "Take a snapshot first.\nBoot to WinRE, open a Command Prompt.\nDISM /Online /Cleanup-Image /RestoreHealth\nsfc /scannow",
+        "where": "WinRE",
+        "expect": "Repeat as many times as it takes. The lab is the point, not the reading."
+      }
+    ],
+    "failures": [
+      { "why": "DISM returns 0x800f081f.", "fix": "No usable source. Check the WSUS PolicyURL as shown above, test connectivity to Windows Update, and check the machine clock — an incorrect clock breaks TLS and DISM will report a source failure rather than a certificate one." },
+      { "why": "SFC reports it cannot fix some files.", "fix": "The component store is damaged. Run DISM, then SFC again. Do not keep re-running SFC — it is a symptom, not the fix." },
+      { "why": "Repair succeeds but the machine still fails to boot.", "fix": "The fault is not in the file system. Check the disk for bad sectors and check the event log in WinRE, which survives from before the failure." }
+    ]
+  },
+  {
+    "id": "winserver-ad-forests-and-trusts",
+    "kind": "lesson",
+    "tech": "winserver",
+    "title": "Forests, domains, trees and trusts",
+    "summary": "The structure you are joining to, and what actually happens when a client authenticates.",
+    "analogy": "A city with boroughs. A domain is a borough with its own street names and its own post office. Two boroughs that need to accept each other's post formalise that with a trust — and until they do, a resident of one cannot be recognised in the other at all.",
+    "time": "14 min",
+    "verification": "source-checked",
+    "prerequisites": [
+      { "id": "winserver-get-adcomputer", "label": "Inspect AD objects" }
+    ],
+    "related": [
+      { "id": "win11-domain-join", "label": "Joining a client to a domain" },
+      { "id": "scn-ad-dns-resolution-failure", "label": "DNS failure after adding a DC" }
+    ],
+    "tags": ["windows server", "active directory", "forest", "trust", "identity"],
+    "sections": [
+      {
+        "h": "The vocabulary, in order",
+        "list": [
+          "**Object** — one thing in the directory: a user, a computer, a group, an OU.",
+          "**Organisational Unit (OU)** — a container for objects, and the unit Group Policy links to. **OU is a container, not a security boundary** — permissions come from the domain, not from the OU.",
+          "**Domain** — a set of objects sharing one database (NTDS.dit) and one naming suffix. One forest can contain several domains.",
+          "**Tree** — multiple domains sharing a contiguous namespace, like `example.lan` and `example.com`.",
+          "**Forest** — the top of the hierarchy. **One forest, one schema, one set of Global Catalogs, one set of trust.** This is why two forests are genuinely separate."
+        ],
+        "p2": []
+      },
+      {
+        "h": "What a trust does",
+        "p": [
+          "A trust lets users in one domain authenticate to resources in another. **A two-way trust lets both directions; a one-way trust does not.**",
+          "The important warning: a transitive trust is honoured end to end. Domain A trusting B, and B trusting C, means users in **A can reach C** unless that transitive trust is disabled. In an environment where a third domain must not be reachable, this is a real design decision, not a detail."
+        ]
+      },
+      {
+        "h": "The Global Catalog",
+        "p": [
+          "Every domain has a **Global Catalog**: a partial, read-only copy of the whole forest, holding every object but only the small attributes. This is how a user in `example.com` can log on to a DC in `example.lan` without contacting a domain that may be down.",
+          "**If a DC is not a Global Catalog server, clients in other domains cannot use it to authenticate.** That is a genuine, non-obvious cause of 'I can't log on'."
+        ]
+      },
+      {
+        "h": "Functional levels, briefly",
+        "p": [
+          "A domain and forest have a **functional level** that must meet or exceed that of every DC in it. Raising the level is one-way and cannot be lowered.",
+          "This is the rule behind the most common promotion error: you cannot add a 2016-level domain controller to a 2008-functional-level forest."
+        ],
+        "code": "Get-ADForest | Select-Object Name, ForestMode, RootDomain\nGet-ADDomain | Select-Object DNSRoot, NetBIOSName, DomainMode\nGet-ADDomainController -Filter * | Select-Object Name, IsGlobalCatalog, OperatingSystemVersion",
+        "where": "PowerShell on a domain controller"
+      }
+    ],
+    "lab": [
+      {
+        "text": "Record the structure of your lab domain before changing anything.",
+        "cmd": "Get-ADForest | Format-List *\nGet-ADDomain | Format-List *\nGet-ADDomainController -Filter * | Select-Object Name, IsGlobalCatalog, Site",
+        "where": "PowerShell on the DC",
+        "expect": "One forest, one domain, one DC, and IsGlobalCatalog True on a single-DC domain — which is always a Global Catalog."
+      },
+      {
+        "text": "Confirm the client actually trusts the domain.",
+        "cmd": "nltest /dsgetdc:office.lan\nklist\nwhoami /user",
+        "where": "client",
+        "expect": "A DC name and GUID with status 0, and a krbtgt ticket. Both are required before any domain operation works."
+      },
+      {
+        "text": "Break the secure channel deliberately and repair it.",
+        "cmd": "# on the client\nklist purge\n# observe the failure, then\nklist",
+        "where": "client",
+        "expect": "After a purge, a fresh krbtgt ticket appears once the secure channel rebuilds. If it does not, the machine account password has expired — that is the stale-credential failure mode."
+      },
+      {
+        "text": "Check the DNS the client is actually using.",
+        "cmd": "Get-DnsClientServerAddress -AddressFamily IPv4\nResolve-DnsName -Name _ldap._tcp.dc._msdcs.office.lan -Type SRV",
+        "where": "client",
+        "expect": "A domain controller address, and an SRV record pointing at it. If the resolver is not a DC, nothing domain-related will work regardless of credentials."
+      }
+    ],
+    "failures": [
+      { "why": "A client cannot join although credentials are correct.", "fix": "DNS first, not the credentials. `nslookup dc01.office.lan`, then `Test-NetConnection dc01.office.lan -Port 389`. Most 'credential' problems are DNS problems." },
+      { "why": "You cannot promote a second DC.", "fix": "The functional level. Check `Get-ADDomain | Select DomainMode` and raise it before promoting." },
+      { "why": "Users in another domain cannot log on.", "fix": "Check IsGlobalCatalog on the DC. Also confirm a transitive trust has not been left open in a direction you did not intend." }
+    ]
+  },
+  {
+    "id": "winserver-group-policy-troubleshooting",
+    "kind": "lesson",
+    "tech": "winserver",
+    "title": "Group Policy that does not apply",
+    "summary": "The four causes, in the order they should be checked, and the one command that answers most of it.",
+    "analogy": "A memo sent to an office. Policy is not applied when the memo went to the wrong room, the room's printer is broken, nobody in the room can read it, or it was never picked up off the desk. Checking the address before the printer is the entire lesson.",
+    "time": "12 min",
+    "verification": "source-checked",
+    "prerequisites": [
+      { "id": "win11-gpresult", "label": "gpresult and klist" }
+    ],
+    "related": [
+      { "id": "winserver-get-adcomputer", "label": "Check the computer account" },
+      { "id": "win11-domain-join", "label": "Domain join prerequisites" }
+    ],
+    "tags": ["windows server", "group policy", "active directory", "gpo", "troubleshooting"],
+    "sections": [
+      {
+        "h": "Four causes, and the order to check them",
+        "list": [
+          "**1. The client cannot reach a domain controller.** No DC, no policy — regardless of credentials. Check DNS first, every time.",
+          "**2. The secure channel is broken.** The machine account password has expired or the trust relationship has failed. `klist` shows no `krbtgt` ticket.",
+          "**3. The object is in the wrong place.** Group Policy applies by OU link. If the computer moved and the GPO did not, nothing applies — and nothing errors.",
+          "**4. Security filtering excludes the account.** The GPO's Security tab does not include the computer or user. **This is the quietest failure of the four, because the GPO looks perfectly configured.**"
+        ],
+        "p2": []
+      },
+      {
+        "h": "One command answers most of it",
+        "p": [
+          "`gpresult /r` prints the Resultant Set of Policy for both computer and user. Read it top to bottom. The first error usually explains everything after it, and the *Computer Settings* / *User Settings* split tells you immediately whether the problem is computer-side or user-side."
+        ],
+        "code": "gpresult /r\ngpresult /h C:\\temp\\gp.html\nklist\nnltest /dsgetdc:office.lan",
+        "where": "client Command Prompt"
+      },
+      {
+        "h": "Security filtering, in detail",
+        "p": [
+          "Every GPO has a **Security** tab listing the principals the policy applies **to**. It defaults to the creator plus **Authenticated Users**. Removing that entry and adding a narrower group is normal and correct.",
+          "The failure happens when a machine is moved to a new OU, the link exists, but the account is not in the filtering group. The GPO *shows* as linked in the Group Policy Results wizard, which is exactly why people get stuck."
+        ],
+        "code": "gprresult /h\nGet-ADComputer -Identity WS11-001 -Properties * | Select-Object DistinguishedName, Enabled, OperatingSystem\nGet-ADGroup -Identity 'OU-Workstations-Policy' | Get-ADGroupMember",
+        "where": "domain controller, PowerShell"
+      }
+    ],
+    "lab": [
+      {
+        "text": "Create a GPO that writes a distinctive value, so you can tell whether it applied.",
+        "cmd": "Group Policy Management -> Edit Policy -> Computer Configuration\n -> Administrative Templates -> Windows Components -> Windows Update\n -> 'Configure Automatic Maintenance and Scheduled Updates' -> Disabled\nThen: gpupdate /force",
+        "where": "lab",
+        "expect": "`gpresult /r` shows the GPO applied with no error. Prove it by writing a file or a registry value you can actually check."
+      },
+      {
+        "text": "Break the link and watch it stop silently.",
+        "cmd": "Disable the GPO link at the OU.\ngpupdate /force\ngpresult /r",
+        "where": "client",
+        "expect": "The GPO disappears from the resultant set with **no error message at all**. That silence is the lesson."
+      },
+      {
+        "text": "Break the secure channel and observe the difference.",
+        "cmd": "klist purge\n# if no fresh ticket appears, the machine account has drifted\nklist",
+        "where": "client",
+        "expect": "No krbtgt ticket. Now `gpresult /r` will report the GPO could not be applied — a *different* error text than the link-disabled case, which is how you tell them apart."
+      },
+      {
+        "text": "Use the Results wizard, which is the tool built for exactly this.",
+        "cmd": "gpresult /h C:\\temp\\gp.html\nGroup Policy Management -> right-click the OU -> Group Policy Results Wizard\nRun as: computer account",
+        "where": "domain controller",
+        "expect": "A per-GPO report showing, for each policy, whether it applied, was filtered, or errored — with the reason."
+      }
+    ],
+    "failures": [
+      { "why": "`gpresult` reports 'Access is denied'.", "fix": "You are not a domain user on that machine, or the account has no domain logon rights. Run it as a domain admin." },
+      { "why": "A GPO shows as applied but its settings are not there.", "fix": "You are looking at User Settings for a computer-side policy, or vice versa. `gpresult /r` separates them clearly — check you are reading the right half." },
+      { "why": "Policy applies on some machines and not others.", "fix": "Filtering, not inheritance. Compare the two computer accounts with Get-ADComputer -Properties *, and check the GPO's Security tab." }
+    ]
+  }
+]

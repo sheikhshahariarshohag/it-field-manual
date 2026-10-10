@@ -138,13 +138,19 @@ Prefer deleting something to adding something.
 **Phase 4 complete** — a working vertical slice, tested in a real browser.
 **Phase 5 in progress** — content expansion.
 
-Current: **22 commands · 22 lessons · 3 scenarios · 3 quizzes · 1 project**
+Current: **43 commands · 32 lessons · 3 scenarios · 3 quizzes · 1 project**
 
-The 22 lessons include **19 RHEL 10 service profiles** (systemd, firewalld,
-SELinux, sshd, journald, chronyd, auditd, cron, rsyslog, Apache, NFS, Samba,
-SSSD, BIND, DHCP, autofs, Podman, libvirt/KVM, PostgreSQL) converted from the
-author's own 25-section notes — **266 sections, 147 lab exercises, 115 documented
-mistakes**, every one with copyable commands.
+The 32 lessons include:
+- **19 RHEL 10 service profiles** (systemd, firewalld, SELinux, sshd, journald,
+  chronyd, auditd, cron, rsyslog, Apache, NFS, Samba, SSSD, BIND, DHCP, autofs,
+  Podman, libvirt/KVM, PostgreSQL) converted from the author's own 25-section
+  notes — **266 sections, 147 lab exercises, 115 documented mistakes**.
+- **10 subject lessons**: longest-prefix match, subnetting, switch MAC learning,
+  MikroTik bridge ports, RouterOS firewall chains, the POST boot sequence, POST
+  code reading, Windows boot repair, AD forests and trusts, Group Policy
+  troubleshooting.
+
+Every one of the six subjects now has real content.
 
 Lighthouse: **accessibility 100 · best practices 100 · SEO 100** (both themes).
 

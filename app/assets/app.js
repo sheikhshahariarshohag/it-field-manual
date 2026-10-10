@@ -25,10 +25,10 @@ const SUBJECT_ORDER = ["aplus", "cisco", "mikrotik", "win11", "winserver", "rhel
 async function loadCorpus() {
   const base = "data";
   const groups = {
-    commands: ["commands/index"],
-    // A kind can be split across several files: hand-written lessons, plus the
-    // RHEL service profiles converted from the 25-section notes.
-    lessons: ["lessons/index", "lessons/services"],
+    commands: ["commands/index", "commands/cisco", "commands/windows", "commands/mikrotik"],
+    // A kind can be split across several files: hand-written lessons, the
+    // converted RHEL service profiles, and the networking / Windows lessons.
+    lessons: ["lessons/index", "lessons/services", "lessons/networking", "lessons/windows"],
     scenarios: ["scenarios/index"],
     quizzes: ["quizzes/index"],
     projects: ["projects/index"],

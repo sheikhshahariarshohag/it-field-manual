@@ -1,0 +1,359 @@
+[
+  {
+    "id": "win11-get-netadapter",
+    "kind": "command",
+    "tech": "win11",
+    "title": "Get-NetAdapter / Get-NetIPConfiguration",
+    "task": "Read adapter state and IP configuration in structured form",
+    "aliases": ["adapter status", "which adapter", "network config powershell", "is the adapter up", "get ip config"],
+    "risk": "safe",
+    "where": "PowerShell on Windows 11, any privilege level",
+    "privilege": "none",
+    "platform": "Windows 10 / 11",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "Get-NetAdapter\nGet-NetAdapter -IncludeHidden\nGet-NetIPConfiguration\nGet-NetIPAddress -AddressFamily IPv4\nGet-NetRoute -DestinationPrefix '0.0.0.0/0'\nGet-DnsClientServerAddress -AddressFamily IPv4",
+    "explain": [
+      "These are the PowerShell equivalents of `ipconfig /all`, but they return **objects**, so you can filter, sort and pipe them. That matters when you have dozens of virtual adapters.",
+      "`Get-NetAdapter` reports `Status Up/Down/Disabled` and `LinkSpeed`. `Get-NetIPConfiguration` reports addresses, gateway and DNS per interface.",
+      "`Get-NetAdapter -IncludeHidden` is how you find the Hyper-V, VPN and Windows Mobile Hotspot adapters that `ipconfig` shows and people still forget about.",
+      "Use `-ErrorAction SilentlyContinue` when a machine has no DNS servers configured, or the command throws and stops a script."
+    ],
+    "example": [
+      "On a laptop with Hyper-V enabled there can be a dozen adapters. `Get-NetAdapter | Where-Object Status -eq 'Up'` instantly shows which one actually has a live link."
+    ],
+    "verify": [
+      "Get-NetAdapter | Format-Table Name, Status, LinkSpeed, MacAddress"
+    ],
+    "errors": [
+      {
+        "message": "The term 'Get-NetAdapter' is not recognized",
+        "means": "An old PowerShell or Windows PowerShell 2.0 on a Windows 8-era machine.",
+        "fix": "Import-Module NetAdapter   (on Windows 8/8.1); on Windows 10/11 it is already present"
+      },
+      {
+        "message": "Returns nothing for IPv4",
+        "means": "The adapter has no IPv4 address — it is DHCP-less or it is a virtual adapter with no host address.",
+        "fix": "Get-NetAdapter | Format-Table *\nipconfig /all   for the DHCP-enabled flag"
+      }
+    ],
+    "sources": [{ "title": "Microsoft Learn — Get-NetAdapter", "url": "https://learn.microsoft.com/en-us/powershell/module/netadapter/get-netadapter", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["windows", "powershell", "networking", "adapter", "ip configuration"]
+  },
+  {
+    "id": "win11-netsh-wlan",
+    "kind": "command",
+    "tech": "win11",
+    "title": "netsh wlan",
+    "task": "List wireless profiles, export a profile, and see the interface state",
+    "aliases": ["wifi profiles", "wireless password", "export wifi", "wlan report", "wifi not connecting"],
+    "risk": "caution",
+    "where": "Command Prompt or PowerShell on Windows 11",
+    "privilege": "Administrator for most operations",
+    "platform": "Windows 10 / 11",
+    "changes": "Yes for `set` and `delete`; `show` is read-only.",
+    "undo": "netsh wlan delete profile name=\"<name>\"",
+    "risks": "**`netsh wlan show profile key=clear` prints stored Wi-Fi passwords in clear text.** Do not paste that output into a ticket, a chat, or a screenshot.",
+    "commands": "netsh wlan show interfaces\nnetsh wlan show profiles\nnetsh wlan show profile name=\"HomeNet\" key=clear\nnetsh wlan add profile filename=\"C:\\path\\wifi.xml\" user=all\nnetsh wlan report",
+    "explain": [
+      "`show interfaces` gives the SSID you are joined to, the channel, the signal, and the **authentication and cipher** actually in use — the first thing to check when a client will not associate.",
+      "`show profiles` lists every profile the machine has ever joined. A profile can exist for a network you are not on, which is why 'it worked at the office' can fail elsewhere.",
+      "Exporting a profile to XML and re-importing it is the standard way to move a network to a new machine or to automate deployment.",
+      "`netsh wlan report` generates a diagnostic HTML report. It is slow but it contains the association timeline, which is often the only evidence of a driver-level failure."
+    ],
+    "example": [
+      "A laptop sees the SSID but will not connect. `netsh wlan show interfaces` shows the current state; `show profiles` shows a stored profile whose security type no longer matches what the AP advertises. The stale profile must be deleted and rejoined."
+    ],
+    "verify": [
+      "netsh wlan show interfaces\nnetsh wlan show profiles"
+    ],
+    "errors": [
+      {
+        "message": "There is no wireless interface on the system",
+        "means": "No Wi-Fi radio, the driver is missing, or the adapter is disabled in Device Manager.",
+        "fix": "Get-PnpDevice -Class Net | Where-Object FriendlyName -match 'Wireless|Wi-Fi'\nGet-NetAdapter -IncludeHidden | Where-Object NdisPhysicalMedium -eq 9"
+      },
+      {
+        "message": "Profile could not be parsed",
+        "means": "The XML is from a different radio or has a mismatched encoding.",
+        "fix": "Export on the same adapter type, and check the file is UTF-8 with a BOM as netsh requires."
+      }
+    ],
+    "sources": [{ "title": "Microsoft Learn — netsh wlan", "url": "https://learn.microsoft.com/en-us/windows-server/networking/technologies/wireless/networksh-wlan", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["windows", "wifi", "wireless", "netsh", "troubleshooting"]
+  },
+  {
+    "id": "win11-net-user",
+    "kind": "command",
+    "tech": "win11",
+    "title": "net user / Get-LocalUser",
+    "task": "Create, disable, inspect and unlock local accounts",
+    "aliases": ["local user", "create account", "disable account", "unlock account", "add user"],
+    "risk": "caution",
+    "where": "Command Prompt or PowerShell, elevated for changes",
+    "privilege": "Administrator",
+    "platform": "Windows 10 / 11",
+    "changes": "Yes for create/set/disable.",
+    "undo": "net user <name> /delete",
+    "risks": "Disabling or deleting an account that a scheduled task or service runs under breaks it silently.",
+    "commands": "net user\nnet user <name> /add /active:yes\nnet user <name> /active:no\nnet user <name> /expires:never\nnet user <name> times:all\nnet user <name> /add localgroup Administrators\nGet-LocalUser | Format-Table Name, Enabled, LastLogon\nGet-LocalGroupMember Administrators\nnet accounts",
+    "explain": [
+      "`net user` with no arguments lists every local account. It does **not** show domain accounts — a common source of confusion on a domain-joined machine.",
+      "`/expires:never` is what stops a new account expiring. Without it the default policy may apply.",
+      "`net accounts` shows the password-policy settings and, importantly, **domain-lockout policy**. Zero failed attempts before lockout is a real security problem.",
+      "`Get-LocalUser` gives structured output including `LastLogon`, which `net user` does not show usefully."
+    ],
+    "example": [
+      "Creating a local break-glass account on a domain-joined PC: create it, add to Administrators, and confirm it can actually log on. A local admin can still be blocked by User Account Control policies."
+    ],
+    "verify": [
+      "net user <name>\nGet-LocalGroupMember Administrators"
+    ],
+    "errors": [
+      {
+        "message": "The system is in the process of shutting down",
+        "means": "An incidental error you can safely ignore on some commands.",
+        "fix": "Retry; if it persists, check the Local Security Policy settings."
+      },
+      {
+        "message": "User name does not exist",
+        "means": "You are looking at a local command for a domain account.",
+        "fix": "net user /domain   to list domain accounts"
+      }
+    ],
+    "sources": [{ "title": "Microsoft Learn — net user", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/net-user", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["windows", "users", "accounts", "net user", "security"]
+  },
+  {
+    "id": "win11-gpresult",
+    "kind": "command",
+    "tech": "win11",
+    "title": "gpresult /r and klist",
+    "task": "Find out whether Group Policy actually applied, and why not",
+    "aliases": ["group policy not applying", "gpo", "policy not applied", "gpresult", "computer not getting policy"],
+    "risk": "safe",
+    "where": "Command Prompt or PowerShell on the client",
+    "privilege": "none for gpresult /r; standard user can run it",
+    "platform": "Windows 10 / 11, domain-joined",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "gpresult /r\ngpresult /h C:\\temp\\gp.html\nklist\nklist purge\nnltest /dsgetdc:example.lan\nwhoami /user\nwmic computersystem get domain",
+    "explain": [
+      "`gpresult /r` prints the **Resultant Set of Policy** — which GPOs were applied, and any error. Read it top to bottom; the first `Error:` line usually explains everything after it.",
+      "The four usual causes of 'policy is not applying': the machine account password is stale, the machine is in the wrong OU, the GPO is not linked to that OU, or the client has never refreshed.",
+      "`klist` shows the Kerberos tickets the machine holds. If there is **no ticket for the domain**, the machine account is broken and no policy will ever apply. `klist purge` forces a fresh one.",
+      "`nltest /dsgetdc:<domain>` confirms a domain controller is reachable. Status 0 and a GUID means success.",
+      "Refresh interval is 90 minutes by default, plus at logon. In a lab, `gpupdate /force` saves the wait — but do not conclude from `gpupdate /force` alone in production, because it hides the real problem."
+    ],
+    "example": [
+      "You just moved a PC to a new OU and moved the GPO link with it. Policy still is not applying. `gpresult /r` shows the old GPO applied and the new one not, and `klist` shows no ticket because the machine password has expired. `klist purge` then a rejoin, or a manual `netdom resetpwd`, fixes it."
+    ],
+    "verify": [
+      "gpresult /r\nklist"
+    ],
+    "errors": [
+      {
+        "message": "ERROR: The specified domain either does not exist or could not be contacted",
+        "means": "The client cannot reach a domain controller. This is DNS or connectivity, not policy.",
+        "fix": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389"
+      },
+      {
+        "message": "The following GPOs could not be applied",
+        "means": "Security filtering denied the computer account, or the WMI/RSAT components needed by the GPO are missing or damaged.",
+        "fix": "Check the GPO's Security Filtering tab includes the computer.\nThen run gpresult /h and open the HTML report for the per-GPO error text."
+      },
+      {
+        "message": "klist shows no krbtgt ticket",
+        "means": "The machine account has lost secure channel trust with the domain.",
+        "fix": "klist purge   then reboot. If it persists, rejoin the domain or reset the machine account password."
+      }
+    ],
+    "sources": [
+      { "title": "Microsoft Learn — gpresult", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/gpresult", "checked": "2026-10-10" },
+      { "title": "Microsoft Learn — Group Policy troubleshooting overview", "checked": "2026-10-10" }
+    ],
+    "verification": "source-checked",
+    "tags": ["windows", "group policy", "active directory", "gpo", "troubleshooting", "kerberos"]
+  },
+  {
+    "id": "win11-get-physicaldisk",
+    "kind": "command",
+    "tech": "aplus",
+    "title": "Get-PhysicalDisk / Get-Disk / Get-Partition",
+    "task": "Inspect storage properly before touching diskpart",
+    "aliases": ["check disk health", "storage space", "disk status", "is the disk failing", "smart"],
+    "risk": "safe",
+    "where": "PowerShell, elevated for full detail",
+    "privilege": "none for basic; Administrator for some",
+    "platform": "Windows 10 / 11",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "Get-PhysicalDisk | Format-Table FriendlyName, MediaType, Size, HealthStatus, OperationalStatus\nGet-Disk | Format-Table Number, FriendlyName, PartitionStyle, OperationalStatus, IsOffline, IsReadOnly\nGet-Partition -DiskNumber 2 | Format-Table PartitionNumber, DriveLetter, Size, Type\nGet-Volume | Format-Table DriveLetter, FileSystemLabel, FileSystem, HealthStatus\nGet-PhysicalDisk -FriendlyName 'Samsung SSD 990 PRO' | Get-StorageReliabilityCounter",
+    "explain": [
+      "**Run this before `diskpart`, not after.** `Get-Disk` tells you the partition style, whether the disk is offline or read-only, and its health — information `diskpart` makes you work for.",
+      "`OperationalStatus` of `Missing Media` means the drive disappeared; `Read-only` means Windows has marked it read-only, which is a protection mechanism, not a fault to fight.",
+      "`Get-StorageReliabilityCounter` gives temperature, wear and read/write error counts where the drive supports SMART passthrough. On many USB bridges it returns nothing — that is a hardware limitation, not an error.",
+      "`MediaType` of `HDD` vs `SSD` changes how you interpret wear and fragmentation. `Get-PhysicalDisk` on NVMe reports `NVMe`."
+    ],
+    "example": [
+      "A new 2 TB drive does not appear in File Explorer. `Get-Disk` shows it as `RAW` partition style with no partitions. `Get-Partition` returns nothing for that disk number — it has no partition table at all."
+    ],
+    "verify": [
+      "Get-Disk | Format-List Number, FriendlyName, PartitionStyle, Size"
+    ],
+    "errors": [
+      {
+        "message": "Get-PhysicalDisk returns nothing",
+        "means": "The Storage service is not running, or there are no physical disks visible (common in a VM).",
+        "fix": "Get-Service WSearch\nIn a virtual machine there is no physical disk passthrough by default — this is expected."
+      },
+      {
+        "message": "Get-StorageReliabilityCounter returns nothing",
+        "means": "The drive or the USB-to-SATA bridge does not pass SMART through.",
+        "fix": "Use the drive vendor's own tool directly against the drive, or check from a machine with the disk attached internally."
+      }
+    ],
+    "sources": [{ "title": "Microsoft Learn — Get-Disk", "url": "https://learn.microsoft.com/en-us/powershell/module/storage/get-disk", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["aplus", "storage", "disk", "powershell", "health"]
+  },
+  {
+    "id": "winserver-get-adcomputer",
+    "kind": "command",
+    "tech": "winserver",
+    "title": "Get-ADComputer / Get-ADUser",
+    "task": "Inspect Active Directory objects and their attributes",
+    "aliases": ["active directory", "ad commands", "find a computer in ad", "check ad user", "get-adcomputer"],
+    "risk": "safe",
+    "where": "PowerShell on a domain controller or a domain-joined machine",
+    "privilege": "standard user; elevated in most environments",
+    "platform": "Windows Server 2019 / 2022 / 2025",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "Get-ADComputer -Identity WS11-001 | Format-List *\nGet-ADComputer -Filter { Enabled -eq $true } -SearchBase 'OU=Workstations,DC=example,DC=lan'\nGet-ADUser -Identity sam.lee -Properties *\nGet-ADOrganizationalUnit -Filter *\nGet-ADGroup -Filter * -Properties Member\nGet-ADPrincipalGroupMembership -Identity WS11-001\nSet-Location AD:\\DC=example,DC=lan",
+    "explain": [
+      "The AD PowerShell module comes from the `RSAT-AD-Tools` feature. Without it every one of these commands fails with *not recognized*.",
+      "**Always set the location before querying**, or add `-SearchBase` / `-Server`. The default searches the default naming context, which is often not what you want and can be slow.",
+      "`-Filter` is server-side and fast; piping `Get-ADComputer` into `Where-Object` is client-side and pulls every object first. On a large domain this is the difference between instant and a timeout.",
+      "A **computer object that is disabled** is the single most common cause of a domain join failing with *The account is not authorized to log on*. Check it before anything else.",
+      "The `AD:` PowerShell drive lets you browse the directory as a filesystem, which is excellent for exploration and terrible for scripts — prefer the cmdlets."
+    ],
+    "example": [
+      "`Get-ADComputer -Identity WS11-001 | Select Enabled, OperatingSystem, LastLogonDate` answers three separate 'why will this not join' questions in one command."
+    ],
+    "verify": [
+      "Get-ADComputer -Identity <name> | Select-Object Enabled, OperatingSystem, LastLogonDate\nGet-ADPrincipalGroupMembership -Identity <name>"
+    ],
+    "errors": [
+      {
+        "message": "The term 'Get-ADComputer' is not recognized",
+        "means": "The RSAT-AD-Tools feature is not installed.",
+        "fix": "Install-WindowsFeature RSAT-AD-Tools"
+      },
+      {
+        "message": "The user name or password is incorrect",
+        "means": "Your own cached credentials are stale. The machine account may still be fine — the two are independent.",
+        "fix": "klist purge   then retry, or run from the DC where your own auth is current"
+      },
+      {
+        "message": "An unspecified error has occurred",
+        "means": "Usually a broken secure channel to the domain, not an AD object problem.",
+        "fix": "Test-NetConnection dc01.example.lan -Port 389\nklist"
+      }
+    ],
+    "sources": [
+      { "title": "Microsoft Learn — Get-ADComputer", "url": "https://learn.microsoft.com/en-us/powershell/module/activedirectory/get-adcomputer", "checked": "2026-10-10" },
+      { "title": "Microsoft Learn — RSAT-AD-Tools", "checked": "2026-10-10" }
+    ],
+    "verification": "source-checked",
+    "tags": ["windows server", "active directory", "powershell", "ad", "rsat"]
+  },
+  {
+    "id": "winserver-dcdiag",
+    "kind": "command",
+    "tech": "winserver",
+    "title": "dcdiag /test:dns",
+    "task": "Test Active Directory DNS health and name every failing test",
+    "aliases": ["ad dns health", "dcdiag", "check dns records", "zone not syncing", "dns health"],
+    "risk": "safe",
+    "where": "PowerShell or Command Prompt on a domain controller, elevated",
+    "privilege": "Domain Admin for the full test",
+    "platform": "Windows Server 2019 / 2022 / 2025",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "dcdiag /v\ndcdiag /test:dns /v\ndcdiag /test:dns /e /v\ndcdiag /test:replicationserver\ndcdiag /test:net /v",
+    "explain": [
+      "Run the **whole test first** (`dcdiag /v`), then narrow. The full run names every failing check at once; guessing which test to run wastes more time than it saves.",
+      "`/e` runs it against every DC in the forest. Without it, a test run from one server can pass while the other server is the broken one.",
+      "The failures worth memorising: **DNS / DCW** (delegations), **DNS / Register** (the server cannot register its own records), **DNS / non-Domain Controller DNS Servers** (a rogue DNS server on the network), and **Serverschema**.",
+      "**A non-domain-controller DNS server found inside the `example.lan` zone is a genuine misconfiguration**, not a warning to ignore. Clients will randomly hit it and get wrong answers.",
+      "Read the failure section, not the summary line. `dcdiag` exits 0 on many degraded runs."
+    ],
+    "example": [
+      "Half the users cannot resolve names. `dcdiag /test:dns /e /v` reports `DNS Server not available on 10.0.0.20` — someone has put a router or an old box in the domain DNS. Clients hitting it get SERVFAIL."
+    ],
+    "verify": [
+      "dcdiag /test:dns /v | Select-String -Pattern 'Failed|warning'\nResolve-DnsName -Name example.lan -Type NS -Server dc02"
+    ],
+    "errors": [
+      {
+        "message": "Directory Server could not be contacted",
+        "means": "Not running as a DC, or no usable credentials.",
+        "fix": "Run from the domain controller itself, elevated."
+      },
+      {
+        "message": "Test failed because the zone is not hosted by this server",
+        "means": "This DC does not hold the zone. Use `/e` to test against all DCs.",
+        "fix": "dcdiag /test:dns /e /v"
+      }
+    ],
+    "sources": [{ "title": "Microsoft Learn — dcdiag", "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/dcdiag", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["windows server", "active directory", "dns", "dcdiag", "troubleshooting"]
+  },
+  {
+    "id": "winserver-get-dnsserverscope",
+    "kind": "command",
+    "tech": "winserver",
+    "title": "Get-DnsServerZone / Get-DnsServerResourceRecord",
+    "task": "Inspect AD-integrated DNS zones, records and delegation",
+    "aliases": ["dns zone", "check dns records", "delegation", "primary record", "srv record"],
+    "risk": "safe",
+    "where": "PowerShell on a domain controller, elevated",
+    "privilege": "Domain Admin for most inspection of the full zone",
+    "platform": "Windows Server 2019 / 2022 / 2025",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "Get-DnsServerZone -Name 'example.lan' | Format-List *\nGet-DnsServerResourceRecord -ZoneName 'example.lan' -Type A\nGet-DnsServerResourceRecord -ZoneName '_ldap._tcp.dc._msdcs.example.lan' -Type SRV\nResolve-DnsName -Name dc01.example.lan -Type SRV\nGet-DnsServerResourceRecord -ZoneName 'example.lan' -Type NS",
+    "explain": [
+      "AD-integrated zones store their data in the AD database, so DNS replicates through AD replication rather than zone transfer. That is why DNS records can lag when AD replication is broken.",
+      "The `_ldap._tcp.dc._msdcs.<domain>` SRV record is how a client finds a domain controller. If it is missing, nothing domain-related works, and the client falls back to a cached answer or fails.",
+      "A **delegation** (`NS` records plus glue `A` records) is a separate mechanism from the zone itself. A child zone with no glue record is one of the most common DNS faults and produces *no error* at the parent.",
+      "Always inspect against the specific server with `-Server`. Querying your own resolver tells you what the resolver cached, not what the authoritative server says."
+    ],
+    "example": [
+      "A client cannot join the domain. `Resolve-DnsName -Type SRV '_ldap._tcp.dc._msdcs.example.lan' -Server dc02` returns nothing, while the same query against dc01 works. dc02's SRV record was never created."
+    ],
+    "verify": [
+      "Resolve-DnsName -Name example.lan -Type NS -Server dc01\nResolve-DnsName -Name dc02.example.lan -Server dc02"
+    ],
+    "errors": [
+      {
+        "message": "No matching MSFT_DNSZone object was found",
+        "means": "That zone is not on this server.",
+        "fix": "Get-DnsServerZone -Server dc02 -Name 'example.lan'"
+      },
+      {
+        "message": "DNS server unable to answer the query / SERVFAIL",
+        "means": "The server holds the zone but cannot read it — usually the AD-integrated store is unhealthy.",
+        "fix": "dcdiag /test:dns /e /v"
+      }
+    ],
+    "sources": [{ "title": "Microsoft Learn — Get-DnsServerResourceRecord", "url": "https://learn.microsoft.com/en-us/powershell/module/dnsserver/get-dnsserverresourcerecord", "checked": "2026-10-10" }],
+    "verification": "source-checked",
+    "tags": ["windows server", "dns", "active directory", "srv record", "troubleshooting"]
+  }
+]

@@ -4,11 +4,12 @@ The curriculum, how it relates to your existing 146-session Knowledge Map, and
 what exists versus what is planned. Counts are kept honest: an empty subject
 shows zero, not filler.
 
-**Current: 22 commands · 22 lessons · 3 scenarios · 3 quizzes · 1 project**
+**Current: 43 commands · 32 lessons · 3 scenarios · 3 quizzes · 1 project**
 
-The 22 lessons are 3 hand-written plus **19 RHEL 10 service profiles converted
-from your own 25-section notes** — 266 sections, **147 lab exercises** and
-**115 documented mistakes**, all with copyable commands.
+The 32 lessons are 3 hand-written, **19 RHEL 10 service profiles converted from
+your own 25-section notes** (266 sections, **147 lab exercises**, **115
+documented mistakes**), plus **10 subject lessons** built for Cisco, MikroTik,
+CompTIA A+ and Windows Server.
 
 ---
 
