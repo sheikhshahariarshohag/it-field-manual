@@ -94,7 +94,7 @@ is no `html` property and no `innerHTML` anywhere.
 structurally impossible removes a whole class of bug and one whole class of
 attack, instead of relying on remembering to escape strings.
 
-**Enforced by:** `validate.mjs` fails the build if `innerHTML` appears in `app/`.
+**Enforced by:** `validate.mjs` fails the build if `innerHTML` appears in `docs/`.
 
 ---
 

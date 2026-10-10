@@ -16,7 +16,7 @@ import { deflateSync } from "node:zlib";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const OUT_DIR = resolve(fileURLToPath(new URL("../app/assets", import.meta.url)));
+const OUT_DIR = resolve(fileURLToPath(new URL("../docs/assets", import.meta.url)));
 
 /* ------------------------------------------------------------- PNG writer */
 

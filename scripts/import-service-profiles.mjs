@@ -40,7 +40,7 @@ const HERE = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const ARGS = process.argv.slice(2);
 const SRC = ARGS.find((a) => !a.startsWith("--")) || process.env.FIELD_MANUAL_SOURCE || "";
 const DRY = ARGS.includes("--dry-run");
-const OUT = join(HERE, "..", "app", "data", "lessons", "services.json");
+const OUT = join(HERE, "..", "docs", "data", "lessons", "services.json");
 
 /* ------------------------------------------------------------------ parse */
 

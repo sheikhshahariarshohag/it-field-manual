@@ -34,7 +34,7 @@ node scripts/validate.mjs
 | 1.17 | Every `data/` file is precached (else offline search breaks) | ✅ |
 | 1.18 | No hardcoded credentials, private keys or API tokens | ✅ |
 | 1.19 | No absolute user paths from other machines | ✅ |
-| 1.20 | **No `innerHTML` or `document.write` anywhere in `app/`** | ✅ |
+| 1.20 | **No `innerHTML` or `document.write` anywhere in `docs/`** | ✅ |
 | 1.21 | No third-party CDN or web font references | ✅ |
 | 1.22 | No book filenames or private-material references | ✅ |
 | 1.23 | `.gitignore` exists and covers `private/`, `*.pdf`, `.env`, `node_modules` | ✅ |
@@ -157,6 +157,6 @@ A release is acceptable only when:
 - [ ] Lighthouse accessibility is 100 in **both** themes
 - [ ] Manual checks M1–M4 done
 - [ ] `git status` reviewed; no book, note, `.pdf` or credential in the diff
-- [ ] The deployed artifact contains only `app/`
+- [ ] The deployed artifact contains only `docs/`
 - [ ] `VERSION_POLICY.md` re-checked against vendor sites
 - [ ] No entry claims a test that did not happen

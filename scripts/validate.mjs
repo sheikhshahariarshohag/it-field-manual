@@ -23,8 +23,8 @@ import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const DATA = join(ROOT, "app", "data");
-const APP = join(ROOT, "app");
+const DATA = join(ROOT, "docs", "data");
+const APP = join(ROOT, "docs");
 
 const errors = [];
 const warnings = [];
@@ -35,7 +35,7 @@ const warn = (m) => warnings.push(m);
 
 const KINDS = ["commands", "lessons", "scenarios", "quizzes", "projects"];
 
-// A kind may be split across several files under app/data/<kind>/.
+// A kind may be split across several files under docs/data/<kind>/.
 // Mirrors app.js `groups` exactly — see the drift check further down.
 const APP_GROUPS = {
   commands: ["commands/index", "commands/cisco", "commands/windows", "commands/mikrotik"],
@@ -57,14 +57,14 @@ for (const k of KINDS) {
   for (const file of FILES[k]) {
     const f = join(DATA, k, file);
     if (!existsSync(f)) {
-      if (file === "index.json") fail(`missing data file: app/data/${k}/${file}`);
+      if (file === "index.json") fail(`missing data file: docs/data/${k}/${file}`);
       continue;
     }
     let parsed;
     try {
       parsed = JSON.parse(readFileSync(f, "utf8"));
     } catch (e) {
-      fail(`app/data/${k}/${file} is not valid JSON: ${e.message}`);
+      fail(`docs/data/${k}/${file} is not valid JSON: ${e.message}`);
       continue;
     }
     corpus[k] = corpus[k].concat(Array.isArray(parsed) ? parsed : (parsed.items || []));
@@ -222,13 +222,13 @@ if (existsSync(swPath)) {
       for (const f of readdirSync(dir)) {
         if (!f.endsWith(".json")) continue;
         if (!(FILES[k] || ["index.json"]).includes(f)) {
-          fail(`app/data/${k}/${f} exists but validate.mjs does not know about it — add it to FILES and to sw.js DATA`);
+          fail(`docs/data/${k}/${f} exists but validate.mjs does not know about it — add it to FILES and to sw.js DATA`);
         }
       }
     }
   }
 } else {
-  fail("app/sw.js is missing — the app would have no offline support");
+  fail("docs/sw.js is missing — the app would have no offline support");
 }
 
 /* ---------------------------------------------------------- privacy checks */
@@ -314,7 +314,7 @@ if (!hasGlobalHiddenGuard) {
     for (const cls of m[1].split(/\s+/)) {
       const rule = css.match(new RegExp(`\\.${cls}\\s*\\{([^}]*)\\}`));
       if (rule && /(^|;)\s*display\s*:/.test(rule[1]) && /position:\s*fixed|inset:\s*0|z-index/.test(rule[1])) {
-        warn(`index.html: .${cls} carries \`hidden\` and has a display plus overlay properties — currently safe because of the global [hidden] rule, but fragile if that rule is ever removed`);
+        warn(`docs/index.html: .${cls} carries \`hidden\` and has a display plus overlay properties — currently safe because of the global [hidden] rule, but fragile if that rule is ever removed`);
       }
     }
   }
@@ -353,7 +353,7 @@ for (const k of KINDS) {
   for (const f of readdirSync(dir)) {
     if (!f.endsWith(".json")) continue;
     if (!(FILES[k] || []).includes(f)) {
-      fail(`app/data/${k}/${f} exists but nothing loads it — add it to app.js groups and sw.js DATA, or delete it`);
+      fail(`docs/data/${k}/${f} exists but nothing loads it — add it to app.js groups and sw.js DATA, or delete it`);
     }
   }
 }

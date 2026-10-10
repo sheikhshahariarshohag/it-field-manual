@@ -66,7 +66,7 @@ page in the app, and in `VERIFICATION_REGISTER.md`.
 - **Export/import is plain JSON.** Validated on import; a malformed or foreign
   file is rejected with an explanation, never half-applied.
 - **The private book library is not in this repository.** Extracted text lives in
-  the gitignored `private/` directory. The build greps `app/` for book filenames
+  the gitignored `private/` directory. The build greps `docs/` for book filenames
   and personal-material references and fails if any appear.
 
 > ⚠ **Never run `git add` at `C:\Users\<your-name>`.** Your Windows profile is a git
@@ -78,7 +78,7 @@ page in the app, and in `VERIFICATION_REGISTER.md`.
 ## Repository layout
 
 ```
-app/                      the deployable static site (Pages source)
+docs/                     the deployable static site (GitHub Pages source)
   index.html  sw.js  manifest.webmanifest
   assets/                 app · router · views · search · ui · db · css · icons
   data/                   public reference content, one index.json per kind
@@ -116,12 +116,12 @@ node scripts/make-icons.mjs     # regenerate PWA icons
 node scripts/import-service-profiles.mjs [--dry-run]   # convert the 25-section RHEL notes
 ```
 
-**Adding a command:** append an object to `app/data/commands/index.json`. The
+**Adding a command:** append an object to `docs/data/commands/index.json`. The
 validator will tell you what is missing — most usefully, it will reject an
 `execution-tested` claim without a `tested_on` record.
 
 **Adding a whole new data file:** `validate.mjs` fails if a JSON file sits in
-`app/data/<kind>/` that nothing loads, and if `app.js` loads a file that does not
+`docs/data/<kind>/` that nothing loads, and if `app.js` loads a file that does not
 exist. Content cannot silently go missing.
 
 **Testing offline:** kill the server process and reload. Do not simulate it.

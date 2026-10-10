@@ -14,7 +14,13 @@ import { readFile, stat } from "node:fs/promises";
 import { join, extname, resolve, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = resolve(fileURLToPath(new URL("../app", import.meta.url)));
+/**
+ * The static site lives in `docs/` because GitHub Pages (branch-based
+ * publishing) only accepts `/` or `/docs` as a source path. Everything inside
+ * uses relative URLs, so the same files run unchanged from a local server and
+ * from https://<user>.github.io/<repo>/
+ */
+const ROOT = resolve(fileURLToPath(new URL("../docs", import.meta.url)));
 const PORT = Number(process.argv[2] || process.env.PORT || 8080);
 
 const TYPES = {

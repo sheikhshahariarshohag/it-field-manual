@@ -16,7 +16,7 @@ with no paid service, no account, and no network.
 ```
 Static PWA, zero runtime dependencies, no build step
 ┌──────────────────────────────────────────────────────┐
-│ app/                                                 │
+│ docs/                                                │
 │   index.html · manifest.webmanifest · sw.js          │
 │   assets/  app.js router.js views.js search.js        │
 │            ui.js db.js app.css icons                 │
@@ -98,7 +98,7 @@ Accuracy and honesty:
 
 Privacy:
 - [x] `.gitignore` protects the profile-root repo
-- [x] No private material in `app/` *(enforced by build)*
+- [x] No private material in `docs/` *(enforced by build)*
 - [x] Personal data never committed *(enforced)*
 - [x] No external requests at runtime *(enforced)*
 
