@@ -216,7 +216,13 @@
       "Problem: Site returns 403/500, or is unreachable."
     ],
     "quickRef": "Service:        Apache HTTP Server\nPackage:        httpd (+ mod_ssl for TLS)\nsystemd unit:   httpd.service\nDaemon:         /usr/sbin/httpd\nConfiguration:  /etc/httpd/conf/httpd.conf, /etc/httpd/conf.d/\nLogs:           /var/log/httpd/access_log, /var/log/httpd/error_log\nPorts:          TCP 80 (HTTP), TCP 443 (HTTPS)\n\nEssential commands:\n  httpd -t\n  systemctl reload httpd\n  curl -I http://SERVER/\n\nVerification:\n  httpd -t && systemctl is-active httpd && curl -I from a remote host\n\nTroubleshooting:\n  httpd -t → ss -lntup → firewall-cmd --list-all → ls -Z / getsebool → tail error_log\n\nCritical warnings:\n  🔴 Always `httpd -t` before every reload/restart.\n  🟡 403 with correct Unix permissions is almost always an SELinux content-label issue.\n  🟡 Reverse proxy/database connectivity almost always needs an explicit SELinux boolean.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-7.2",
+        "note": "Start and stop services; start automatically at boot"
+      }
+    ]
   },
   {
     "id": "rhel-service-auditd",
@@ -426,7 +432,13 @@
       "Problem: Expected events aren't appearing in the audit log."
     ],
     "quickRef": "Service:        auditd (Linux Audit daemon)\nPackage:        audit\nsystemd unit:   auditd.service\nDaemon:         /sbin/auditd\nConfiguration:  /etc/audit/auditd.conf, /etc/audit/rules.d/\nLogs:           /var/log/audit/audit.log\nPorts:          none (local only; remote forwarding is a separate plugin/config)\n\nEssential commands:\n  auditctl -l\n  auditctl -s\n  ausearch -k KEYNAME -ts recent\n  aureport --summary\n\nVerification:\n  auditctl -s shows enabled, lost counter stable\n\nTroubleshooting:\n  auditctl -l → augenrules --load → auditctl -s (lost counter, space) → ausearch test\n\nCritical warnings:\n  🔴 Do not `systemctl restart auditd` — use `service auditd reload` per Red Hat guidance.\n  🔴 admin_space_left_action = halt will halt the system by design when the audit partition fills.\n  🟡 Never delete audit logs outside documented retention/compliance policy.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-10",
+        "note": "Security auditing — audit rules and logs"
+      }
+    ]
   },
   {
     "id": "rhel-service-autofs",
@@ -615,7 +627,13 @@
       "Problem: Accessing a path under an autofs mount point doesn't trigger the expected mount."
     ],
     "quickRef": "Service:        autofs\nPackage:        autofs\nsystemd unit:   autofs.service\nDaemon:         /usr/sbin/automount\nConfiguration:  /etc/auto.master, /etc/auto.master.d/, map files (e.g., /etc/auto.home)\nLogs:           journalctl -u autofs\nPorts:          N/A (inherits whatever the mounted filesystem uses, e.g., NFS)\n\nEssential commands:\n  systemctl reload autofs\n  mount | grep autofs\n\nVerification:\n  access a managed path → mount | grep TARGET confirms it mounted\n\nTroubleshooting:\n  systemctl is-active autofs → check map syntax → check underlying filesystem (e.g., NFS) health → journalctl -u autofs\n\nCritical warnings:\n  🟡 Most \"autofs failures\" are actually underlying-filesystem (NFS) failures — check that layer first.\n  🟡 Map syntax errors fail silently from the end user's perspective (\"path doesn't exist\").\n  🟡 Tune idle timeout to actual usage — too short causes mount/unmount churn.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-6.3",
+        "note": "Configure autofs"
+      }
+    ]
   },
   {
     "id": "rhel-service-bind-named",
@@ -825,7 +843,13 @@
       "Problem: A zone/record isn't resolving as expected."
     ],
     "quickRef": "Service:        BIND (named)\nPackage:        bind, bind-utils\nsystemd unit:   named.service\nDaemon:         /usr/sbin/named\nConfiguration:  /etc/named.conf, /var/named/*.zone\nLogs:           journalctl -u named\nPorts:          UDP/TCP 53\n\nEssential commands:\n  named-checkconf\n  named-checkzone ZONE FILE\n  rndc reload [ZONE]\n  dig @localhost ZONE\n\nVerification:\n  named-checkconf && rndc status && dig @localhost ZONE\n\nTroubleshooting:\n  named-checkconf → named-checkzone → rndc status → dig from actual client network → journalctl -u named\n\nCritical warnings:\n  🔴 Never leave allow-recursion open to the internet — a serious DDoS-amplification abuse vector.\n  🟡 Always increment the SOA serial after any zone file edit.\n  🟡 Restrict allow-transfer to known secondary servers only.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-8.2",
+        "note": "Configure hostname resolution"
+      }
+    ]
   },
   {
     "id": "rhel-service-chronyd",
@@ -1034,7 +1058,13 @@
       "Problem: Clock is not synchronizing / large offset persists."
     ],
     "quickRef": "Service:        chronyd\nPackage:        chrony\nsystemd unit:   chronyd.service\nDaemon:         /usr/sbin/chronyd\nConfiguration:  /etc/chrony.conf, /etc/chrony.keys (optional)\nLogs:           journalctl -u chronyd\nPorts:          UDP 123\n\nEssential commands:\n  chronyc tracking\n  chronyc sources -v\n  timedatectl\n\nVerification:\n  timedatectl shows \"System clock synchronized: yes\"\n\nTroubleshooting:\n  chronyc sources -v → getent hosts POOL → check firewall/network → journalctl -u chronyd -b\n\nCritical warnings:\n  🟡 Never run ntpd and chronyd simultaneously.\n  🟡 In VMs, decide whether chronyd or hypervisor time-sync is authoritative — not both.\n  🟠 Undetected drift silently breaks Kerberos/TLS far from the actual root cause.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-7.4",
+        "note": "Configure time service clients"
+      }
+    ]
   },
   {
     "id": "rhel-service-cron-crond",
@@ -1241,7 +1271,13 @@
       "Problem: A cron job isn't running as expected."
     ],
     "quickRef": "Service:        cron (crond, provided by cronie)\nPackage:        cronie, crontabs, cronie-anacron (optional)\nsystemd unit:   crond.service\nDaemon:         /usr/sbin/crond\nConfiguration:  /etc/crontab, /etc/cron.d/, /var/spool/cron/USERNAME\nLogs:           journalctl -u crond, /var/log/cron\nPorts:          N/A\n\nEssential commands:\n  crontab -e\n  crontab -l\n  systemctl status crond\n\nVerification:\n  crontab -l && journalctl -u crond --since \"1 hour ago\"\n\nTroubleshooting:\n  journalctl -u crond → check syntax → check user's minimal cron environment → ausearch -m avc\n\nCritical warnings:\n  🔴 `crontab -r` deletes a user's entire crontab instantly, with no confirmation.\n  🟡 Cron jobs run with a minimal environment — use absolute paths.\n  🟡 Job output is silently lost unless MAILTO/a working MTA or explicit redirection is configured.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-7.1",
+        "note": "Schedule tasks using cron and systemd timer units"
+      }
+    ]
   },
   {
     "id": "rhel-service-dhcp",
@@ -1450,7 +1486,13 @@
       "Problem: Clients aren't receiving DHCP leases."
     ],
     "quickRef": "Service:        DHCP (Kea DHCP — RHEL 10's replacement for ISC dhcpd)\nPackage:        kea\nsystemd unit:   kea-dhcp4.service / kea-dhcp6.service (VERIFY exact names on your install)\nDaemon:         kea-dhcp4 / kea-dhcp6\nConfiguration:  /etc/kea/kea-dhcp4.conf (JSON format — verify exact path)\nLogs:           journalctl -u kea-dhcp4 (verify unit name)\nPorts:          UDP 67 (server), UDP 68 (client), UDP 547 (DHCPv6 server)\n\nEssential commands:\n  systemctl status kea-dhcp4  (verify unit name first: systemctl list-unit-files | grep kea)\n  journalctl -u kea-dhcp4 -b\n\nVerification:\n  journalctl shows clean subnet load + an actual client obtains a lease from the expected pool\n\nTroubleshooting:\n  service status → journalctl → firewall-cmd --list-all → check pool utilization → check for rogue DHCP servers\n\nCritical warnings:\n  🔴 RHEL 10 has NO ISC dhcp-server/dhcp-client — do not follow RHEL 8/9 tutorials verbatim.\n  🟡 Use `keama` to assist (not fully automate) migration from legacy dhcpd.conf.\n  🟡 Rogue DHCP servers on the same broadcast domain are a real, confusing failure mode — coordinate with network/switch-level DHCP snooping.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-8.3",
+        "note": "Configure network services to start at boot"
+      }
+    ]
   },
   {
     "id": "rhel-service-firewalld",
@@ -1689,7 +1731,12 @@
     "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
     "objectives": [
       {
-        "id": "RHCSA-2"
+        "id": "RHCSA-10.1",
+        "note": "Configure firewall settings using firewall-cmd"
+      },
+      {
+        "id": "RHCSA-8.4",
+        "note": "Restrict network access"
       }
     ]
   },
@@ -1910,7 +1957,13 @@
       "Problem: A VM fails to start."
     ],
     "quickRef": "Service:        libvirt / KVM / QEMU (virtualization stack)\nPackage:        qemu-kvm, libvirt, virt-install, virt-viewer\nsystemd unit:   virtqemud.service (+ virtnetworkd, virtstoraged, etc. — VERIFY exact names: systemctl list-unit-files | grep virt)\nDaemon:         virtqemud (or legacy libvirtd) + per-VM qemu-kvm/qemu-system-* processes\nConfiguration:  /etc/libvirt/ (per-VM XML via `virsh edit`, not direct file editing)\nLogs:           /var/log/libvirt/qemu/VMNAME.log, journalctl -u virtqemud\nPorts:          none by default (local socket); SSH (qemu+ssh://) or TCP 16514 (qemu+tls://) for remote management\n\nEssential commands:\n  virt-host-validate\n  virsh list --all\n  virsh start/shutdown/destroy VMNAME\n  virsh dumpxml VMNAME\n\nVerification:\n  virt-host-validate passes && virsh list --all shows expected VM states\n\nTroubleshooting:\n  virt-host-validate → systemctl is-active virtqemud → virsh dumpxml (validate) → ausearch -m avc (image labeling) → /var/log/libvirt/qemu/VMNAME.log\n\nCritical warnings:\n  🔴 `virsh undefine --remove-all-storage` permanently deletes the VM's disk images.\n  🟠 `virsh destroy` is a hard power-off (guest filesystem corruption risk) — prefer `virsh shutdown`.\n  🟡 Manually copied disk images need `restorecon` — libvirt-created ones are labeled automatically.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-7.2",
+        "note": "Virtualisation is not a named EX200 objective; only service management applies"
+      }
+    ]
   },
   {
     "id": "rhel-service-nfs",
@@ -2128,7 +2181,13 @@
       "Problem: A client cannot mount an NFS export."
     ],
     "quickRef": "Service:        NFS (Network File System)\nPackage:        nfs-utils\nsystemd unit:   nfs-server.service (server), nfs-client.target (client support units)\nDaemon:         kernel nfsd threads + rpc.mountd/rpc.idmapd/rpc.statd\nConfiguration:  /etc/exports, /etc/nfs.conf, /etc/idmapd.conf\nLogs:           journalctl -u nfs-server, journalctl -k\nPorts:          TCP/UDP 2049 (NFSv4); TCP/UDP 111 + ancillary ports (NFSv3)\n\nEssential commands:\n  exportfs -ra\n  exportfs -v\n  showmount -e SERVER\n  mount -t nfs SERVER:/export /mnt/point\n\nVerification:\n  exportfs -v (server) && mount | grep nfs (client) && a real read-write test\n\nTroubleshooting:\n  exportfs -v → firewall-cmd --list-all → ausearch -m avc → rpcinfo -p → journalctl -u nfs-server\n\nCritical warnings:\n  🔴 Never use no_root_squash without a specific, well-understood reason.\n  🟡 NFS is unencrypted by default — use Kerberos sec=krb5p across untrusted networks.\n  🟡 hard vs. soft mount choice materially affects client behavior during a server outage — choose deliberately.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-6.2",
+        "note": "Mount and unmount network file systems using NFS"
+      }
+    ]
   },
   {
     "id": "rhel-service-openssh-sshd",
@@ -2359,7 +2418,21 @@
       "Problem: Cannot SSH into a host after a configuration change."
     ],
     "quickRef": "Service:        OpenSSH server\nPackage:        openssh-server\nsystemd unit:   sshd.service\nDaemon:         /usr/sbin/sshd\nConfiguration:  /etc/ssh/sshd_config, /etc/ssh/sshd_config.d/\nLogs:           journalctl -u sshd, /var/log/secure\nPorts:          TCP 22 (default; configurable)\n\nEssential commands:\n  sshd -t\n  systemctl reload sshd\n  ssh-copy-id user@host\n\nVerification:\n  sshd -t && systemctl is-active sshd && ss -lntup | grep sshd\n\nTroubleshooting:\n  sshd -t → ss -lntup → firewall-cmd --list-all → semanage port -l → ausearch -m avc → journalctl -u sshd\n\nCritical warnings:\n  🔴 Always keep your current session open and test a NEW connection before trusting a config change.\n  🔴 Never remove the ssh firewalld rule on a remote-managed host without another access path.\n  🔴 Validate with `sshd -t` before every restart/reload.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-1.4",
+        "note": "Access remote systems using SSH"
+      },
+      {
+        "id": "RHCSA-10.3",
+        "note": "Configure key-based authentication for SSH"
+      },
+      {
+        "id": "RHCSA-8.3",
+        "note": "Configure network services to start at boot"
+      }
+    ]
   },
   {
     "id": "rhel-service-podman",
@@ -2566,7 +2639,13 @@
       "Problem: A container fails to start after a RHEL 9 → RHEL 10 upgrade."
     ],
     "quickRef": "Service:        Podman (daemonless container engine)\nPackage:        podman, crun, netavark, aardvark-dns\nsystemd unit:   none persistent by default; per-container units via Quadlet (/etc/containers/systemd/*.container)\nDaemon:         none (podman is a CLI; conmon supervises running containers)\nConfiguration:  /etc/containers/containers.conf, storage.conf, registries.conf\nLogs:           podman logs CONTAINER; journalctl -u UNIT (if systemd-managed)\nPorts:          none owned by Podman itself; individual containers may publish host ports\n\nEssential commands:\n  podman info\n  podman ps / podman ps -a\n  podman logs CONTAINER\n  podman run -v HOST:CONTAINER:Z ...\n\nVerification:\n  podman info shows runtime=crun, networkBackend=netavark\n\nTroubleshooting:\n  podman info → check containers.conf for stale runc/cni refs → podman system migrate --new-runtime=crun → ausearch -m avc (volume labeling) → podman logs\n\nCritical warnings:\n  🔴 RHEL 10 removed runc and CNI — default is crun + netavark; migrate before assuming RHEL 9 config works unchanged.\n  🟡 Bind-mounted volumes need :z/:Z for SELinux — don't disable labeling instead.\n  🔴 `podman rmi --all --force` / `podman system reset` remove substantial local state — understand scope before running.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-2",
+        "note": "Containers are not a named EX200 objective; package/container management overlap only"
+      }
+    ]
   },
   {
     "id": "rhel-service-postgresql",
@@ -2781,7 +2860,13 @@
       "Problem: A client can't connect to PostgreSQL."
     ],
     "quickRef": "Service:        PostgreSQL\nPackage:        postgresql-server, postgresql\nsystemd unit:   postgresql.service (verify exact name for module-based installs)\nDaemon:         /usr/bin/postgres (postmaster)\nConfiguration:  <data_directory>/postgresql.conf, <data_directory>/pg_hba.conf (commonly /var/lib/pgsql/data/)\nLogs:           <data_directory>/log/, journalctl -u postgresql\nPorts:          TCP 5432\n\nEssential commands:\n  postgresql-setup --initdb   (one-time)\n  systemctl restart postgresql\n  sudo -u postgres psql\n\nVerification:\n  sudo -u postgres psql -c \"SELECT version();\" && ss -lntup | grep postgres\n\nTroubleshooting:\n  systemctl status → check listen_addresses AND pg_hba.conf together → firewall-cmd --list-all → ausearch -m avc → tail log directory\n\nCritical warnings:\n  🔴 Both listen_addresses AND a matching pg_hba.conf rule are required for remote access — fixing only one isn't enough.\n  🔴 Never use `trust` authentication for network-reachable connections.\n  🟡 shared_buffers/max_connections changes need a full restart, not just reload.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-2",
+        "note": "Installing and running a server package; database packages are not named in EX200"
+      }
+    ]
   },
   {
     "id": "rhel-service-rsyslog",
@@ -2994,7 +3079,13 @@
       "Problem: Expected log entries aren't appearing in a file or at the remote collector."
     ],
     "quickRef": "Service:        rsyslog\nPackage:        rsyslog\nsystemd unit:   rsyslog.service\nDaemon:         /usr/sbin/rsyslogd\nConfiguration:  /etc/rsyslog.conf, /etc/rsyslog.d/\nLogs:           /var/log/messages, /var/log/secure, and other facility-specific files\nPorts:          UDP/TCP 514 (traditional), TCP 6514 (TLS-wrapped, common convention)\n\nEssential commands:\n  rsyslogd -N1\n  systemctl restart rsyslog\n  logger \"test message\"\n\nVerification:\n  logger \"test\" && grep \"test\" /var/log/messages\n\nTroubleshooting:\n  rsyslogd -N1 → check selector rules → logger test → ss -tnp (forwarding) → journalctl -u rsyslog\n\nCritical warnings:\n  🔴 Always run `rsyslogd -N1` before restarting after any config change.\n  🟡 Prefer TLS-wrapped forwarding over plaintext syslog across untrusted networks.\n  🟠 Only the collector needs an inbound firewalld rule — not forwarding clients.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-4.5",
+        "note": "Locate and interpret system log files"
+      }
+    ]
   },
   {
     "id": "rhel-service-samba-smb",
@@ -3198,7 +3289,13 @@
       "Problem: A client can't connect to or authenticate against a share."
     ],
     "quickRef": "Service:        Samba (SMB/CIFS file & print sharing)\nPackage:        samba, samba-client, samba-winbind (if domain-joined)\nsystemd unit:   smb.service (+ winbind.service if domain-joined)\nDaemon:         /usr/sbin/smbd (+ /usr/sbin/winbindd)\nConfiguration:  /etc/samba/smb.conf\nLogs:           /var/log/samba/, journalctl -u smb\nPorts:          TCP 445 (modern SMB); legacy 137-139 (avoid unless required)\n\nEssential commands:\n  testparm\n  systemctl reload smb\n  smbclient -L localhost -U USER\n\nVerification:\n  testparm && smbstatus && smbclient -L localhost\n\nTroubleshooting:\n  testparm → firewall-cmd --list-all → ls -Z → smbstatus → tail log.smbd\n\nCritical warnings:\n  🔴 Never expose SMB (445) directly to the open internet.\n  🟡 Disable SMB1 — it is deprecated and insecure.\n  🟡 Always `testparm` before reload/restart.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-6",
+        "note": "File systems — Samba is assessed indirectly, not by name"
+      }
+    ]
   },
   {
     "id": "rhel-service-selinux",
@@ -3422,7 +3519,20 @@
     "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
     "objectives": [
       {
-        "id": "RHCSA-6.2"
+        "id": "RHCSA-10.4",
+        "note": "Enforcing and permissive modes"
+      },
+      {
+        "id": "RHCSA-10.5",
+        "note": "File and process context; restorecon"
+      },
+      {
+        "id": "RHCSA-10.6",
+        "note": "Manage SELinux port labels"
+      },
+      {
+        "id": "RHCSA-10.7",
+        "note": "Boolean settings"
       }
     ]
   },
@@ -3636,7 +3746,17 @@
       "Problem: Domain user lookups/authentication fail."
     ],
     "quickRef": "Service:        SSSD (System Security Services Daemon)\nPackage:        sssd, realmd, adcli\nsystemd unit:   sssd.service\nDaemon:         /usr/sbin/sssd\nConfiguration:  /etc/sssd/sssd.conf (MUST be 0600, root-owned), /etc/krb5.conf\nLogs:           /var/log/sssd/, journalctl -u sssd\nPorts:          outbound client only — LDAP 389/636, Kerberos 88, GC 3268/3269\n\nEssential commands:\n  realm join DOMAIN -U administrator\n  realm list\n  id user@DOMAIN\n  getent passwd user@DOMAIN\n\nVerification:\n  realm list && id user@DOMAIN succeeds\n\nTroubleshooting:\n  ls -l sssd.conf (0600?) → realm discover → chronyc tracking → tail sssd_DOMAIN.log\n\nCritical warnings:\n  🔴 sssd.conf MUST be 0600, root-owned, or SSSD refuses to start.\n  🟡 Kerberos auth is time-sync sensitive — check chronyd (Profile 7) first for fleet-wide login failures.\n  🟡 `realm leave` is a significant action — diagnose before leaving a domain.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-9.1",
+        "note": "User accounts from an identity provider"
+      },
+      {
+        "id": "RHCSA-9.3",
+        "note": "Groups and group membership"
+      }
+    ]
   },
   {
     "id": "rhel-service-systemd-systemctl",
@@ -3882,7 +4002,16 @@
     "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
     "objectives": [
       {
-        "id": "RHCSA-7.1"
+        "id": "RHCSA-7.2",
+        "note": "Start, stop, enable and disable services"
+      },
+      {
+        "id": "RHCSA-4.1",
+        "note": "Boot and shut down; targets"
+      },
+      {
+        "id": "RHCSA-7.3",
+        "note": "Boot into a specific target; modify the bootloader"
       }
     ]
   },
@@ -4091,6 +4220,12 @@
       "Problem: `/var` is filling up because of journal growth."
     ],
     "quickRef": "Service:        systemd-journald\nPackage:        systemd (bundled)\nsystemd unit:   systemd-journald.service\nDaemon:         /usr/lib/systemd/systemd-journald\nConfiguration:  /etc/systemd/journald.conf, /etc/systemd/journald.conf.d/\nLogs:           itself — /run/log/journal/ or /var/log/journal/\nPorts:          none by default (optional systemd-journal-remote adds one)\n\nEssential commands:\n  journalctl --header\n  journalctl --disk-usage\n  journalctl --vacuum-size=SIZE\n  journalctl -u SERVICE -b\n\nVerification:\n  journalctl --header shows expected storage path and mode\n\nTroubleshooting:\n  journalctl --verify → df -h /var → journalctl -u systemd-journald -b\n\nCritical warnings:\n  🟡 Verify persistent storage explicitly — don't assume logs survive reboot.\n  🟠 Set SystemMaxUse=/SystemKeepFree= before /var fills up in production.\n  🔴 Local-only journal storage can be tampered with by anyone with root — forward for forensic-grade retention.",
-    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested."
+    "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
+    "objectives": [
+      {
+        "id": "RHCSA-4.5",
+        "note": "Locate and interpret system journals"
+      }
+    ]
   }
 ]

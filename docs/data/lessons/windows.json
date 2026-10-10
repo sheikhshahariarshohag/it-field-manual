@@ -448,10 +448,11 @@
     ],
     "objectives": [
       {
-        "id": "WS-AD.1"
+        "id": "AZ800-1.1",
+        "note": "Forest, domain and trust deployment"
       },
       {
-        "id": "WS-NET.2",
+        "id": "AZ800-4.2",
         "note": "AD-integrated DNS and the Global Catalog"
       }
     ]
@@ -559,7 +560,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-AD.3"
+        "id": "AZ800-1.3",
+        "note": "Implement and reset Group Policy"
       }
     ]
   }

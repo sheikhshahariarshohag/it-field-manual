@@ -127,6 +127,10 @@
     "objectives": [
       {
         "id": "CCNA-2.1"
+      },
+      {
+        "id": "MTCNA-M3.1",
+        "note": "The same problem on MikroTik"
       }
     ]
   },
@@ -245,8 +249,8 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-5.1",
-        "note": "Name resolution"
+        "id": "RHCSA-8.2",
+        "note": "Configure hostname resolution"
       }
     ]
   },
@@ -352,8 +356,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-AD.1",
-        "note": "Client domain join"
+        "id": "AZ800-1.1",
+        "note": "Joining a computer to the domain"
       }
     ]
   }

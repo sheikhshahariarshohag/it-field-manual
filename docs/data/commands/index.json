@@ -57,7 +57,7 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-7.1"
+        "id": "RHCSA-7.2"
       }
     ]
   },
@@ -119,7 +119,8 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-7.1"
+        "id": "RHCSA-7.2",
+        "note": "enable --now is exactly the 'start now and at boot' pattern the exam wants"
       }
     ]
   },
@@ -181,8 +182,8 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-6.1",
-        "note": "systemd and journald"
+        "id": "RHCSA-4.5",
+        "note": "Interpret system journals"
       }
     ]
   },
@@ -245,8 +246,8 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-5.1",
-        "note": "Checking listening services"
+        "id": "RHCSA-4.6",
+        "note": "Start, stop and check the status of network services"
       }
     ]
   },
@@ -310,7 +311,8 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-8.1"
+        "id": "RHCSA-2.3",
+        "note": "Install and update packages from a repository"
       }
     ]
   },
@@ -367,8 +369,11 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-6.2",
-        "note": "SELinux"
+        "id": "RHCSA-10.5",
+        "note": "Identify SELinux context"
+      },
+      {
+        "id": "RHCSA-10.4"
       }
     ]
   },
@@ -432,8 +437,7 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-2",
-        "note": "Basic security tasks"
+        "id": "RHCSA-10.1"
       }
     ]
   },
@@ -497,7 +501,8 @@
     ],
     "objectives": [
       {
-        "id": "RHCSA-5.1"
+        "id": "RHCSA-8.1",
+        "note": "Configure IPv4 and IPv6 addresses"
       }
     ]
   },
@@ -552,6 +557,12 @@
       "interface",
       "status",
       "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1",
+        "note": "Interface addresses are what the routing table is built from"
+      }
     ]
   },
   {
@@ -604,6 +615,12 @@
       "interface",
       "config",
       "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1",
+        "note": "Port state and switchport configuration"
+      }
     ]
   },
   {
@@ -663,6 +680,12 @@
       "switching",
       "ccna",
       "ios"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1",
+        "note": "Configure and verify VLANs"
+      }
     ]
   },
   {
@@ -720,6 +743,12 @@
       "traceroute",
       "reachability",
       "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1",
+        "note": "Confirming a path and its next hop"
+      }
     ]
   },
   {
@@ -778,6 +807,16 @@
       "ip",
       "address",
       "mtcna"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M1.2",
+        "note": "RouterOS CLI principles"
+      },
+      {
+        "id": "MTCRE-M2",
+        "note": "Point to point addressing"
+      }
     ]
   },
   {
@@ -1188,8 +1227,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-AD.1",
-        "note": "AD DS role installation"
+        "id": "AZ800-1.1",
+        "note": "Installing the AD DS role"
       }
     ]
   },
@@ -1255,7 +1294,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-NET.1"
+        "id": "AZ800-4.1",
+        "note": "Scopes, options and reservations"
       }
     ]
   },

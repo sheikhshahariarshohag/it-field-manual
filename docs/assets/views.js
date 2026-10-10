@@ -902,6 +902,12 @@ export function objectivesView() {
       wrap.appendChild(h("div.note", h("strong", "Why this is unverified"), h("span", ex.verifyNote)));
     }
 
+    if (ex.coverageCaveat) {
+      wrap.appendChild(h("div.note.note--risk",
+        h("strong", "Coverage caveat"),
+        h("span", ex.coverageCaveat)));
+    }
+
     const table = h("table",
       h("thead", h("tr", h("th", "Objective"), h("th", "Weight"), h("th", "Covers in this manual"))),
       h("tbody"));

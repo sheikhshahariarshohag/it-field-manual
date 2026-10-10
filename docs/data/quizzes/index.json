@@ -90,6 +90,15 @@
         "hint": "Runtime and boot-time are two separate pieces of state.",
         "why": "They are genuinely different actions. `enable --now` does both, which is why it is the form you will use almost every time."
       }
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-1",
+        "note": "Essential tools"
+      },
+      {
+        "id": "RHCSA-4"
+      }
     ]
   },
   {
@@ -170,6 +179,12 @@
         "hint": "The access port is working correctly. The problem is now upstream of it.",
         "why": "The port is confirmed in the right VLAN and operational, so Layer 2 on the port is fine. DHCP requires a server (or a relay agent to a server) reachable on VLAN 20. Whether the VLAN also exists on the trunk to that server is a possible cause, but the more direct next check is whether the server or relay answers."
       }
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2",
+        "note": "Network Access"
+      }
     ]
   },
   {
@@ -249,6 +264,12 @@
         "topic": "Domain join prerequisites",
         "hint": "Name resolution and ICMP are not the ports the join actually uses.",
         "why": "The join needs LDAP (389) and Kerberos (88). ICMP and DNS both working tells you very little about either. The other options produce different error messages, which is a useful reminder: error text is diagnostic evidence."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "AZ800-10.2",
+        "note": "Windows Server troubleshooting and recovery"
       }
     ]
   }

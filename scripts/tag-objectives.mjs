@@ -79,45 +79,87 @@ const MAP = [
   ["win11-get-physicaldisk", "APLUS-C1-3.5", "Storage health"],
   ["win11-netsh-wlan", "APLUS-C1-2.1", "Wireless networking"],
 
-  // ---- Windows Server -----------------------------------------------------
-  ["winserver-ad-forests-and-trusts", "WS-AD.1"],
-  ["winserver-ad-forests-and-trusts", "WS-NET.2", "AD-integrated DNS and the Global Catalog"],
-  ["winserver-group-policy-troubleshooting", "WS-AD.3"],
-  ["winserver-install-addfeature", "WS-AD.1", "AD DS role installation"],
-  ["winserver-dhcp-scope-create", "WS-NET.1"],
-  ["winserver-dcdiag", "WS-NET.2"],
-  ["winserver-get-dnsserverscope", "WS-NET.2"],
-  ["win11-get-netadapter", "WS-NET.1"],
-  ["win11-gpresult", "WS-AD.3"],
-  ["winserver-get-adcomputer", "WS-AD.2"],
-  ["win11-domain-join", "WS-AD.1", "Client domain join"],
-  ["scn-ad-dns-resolution-failure", "WS-NET.2", "DNS and DHCP interaction in AD"],
+  // ---- Windows Server / AZ-800 --------------------------------------------
+  ["winserver-ad-forests-and-trusts", "AZ800-1.1", "Forest, domain and trust deployment"],
+  ["winserver-ad-forests-and-trusts", "AZ800-4.2", "AD-integrated DNS and the Global Catalog"],
+  ["winserver-group-policy-troubleshooting", "AZ800-1.3", "Implement and reset Group Policy"],
+  ["winserver-install-addfeature", "AZ800-1.1", "Installing the AD DS role"],
+  ["winserver-dhcp-scope-create", "AZ800-4.1", "Scopes, options and reservations"],
+  ["winserver-dcdiag", "AZ800-4.2", "Diagnosing DNS and domain controller health"],
+  ["winserver-get-dnsserverscope", "AZ800-4.2"],
+  ["winserver-get-adcomputer", "AZ800-1.2", "Managing computers with PowerShell"],
+  ["win11-gpresult", "AZ800-1.3", "Client-side Group Policy result"],
+  ["win11-domain-join", "AZ800-1.1", "Joining a computer to the domain"],
+  ["win11-net-user", "AZ800-1.2", "Local and domain account administration"],
+  ["scn-ad-dns-resolution-failure", "AZ800-4.2", "DNS and DHCP interaction in AD"],
+  ["scn-ad-dns-resolution-failure", "AZ800-10.2", "Troubleshooting a Windows Server environment"],
+  ["proj-small-office", "AZ800-1.1", "Bringing the whole design together"],
 
-  // ---- RHEL (RHCSA — objective list is UNVERIFIED, see the json) -----------
-  ["rhel-systemctl-status", "RHCSA-7.1"],
-  ["rhel-systemctl-enable-now", "RHCSA-7.1"],
-  ["rhel-journalctl-unit", "RHCSA-6.1", "systemd and journald"],
-  ["rhel-sudo-dnf", "RHCSA-8.1"],
-  ["rhel-ss-lntup", "RHCSA-5.1", "Checking listening services"],
-  ["rhel-nmcli-connection", "RHCSA-5.1"],
-  ["rhel-firewall-cmd-list", "RHCSA-2", "Basic security tasks"],
-  ["rhel-getenforce-ausearch", "RHCSA-6.2", "SELinux"],
-  ["linux-dns-resolution", "RHCSA-5.1", "Name resolution"],
-  ["rhel-service-systemd-systemctl", "RHCSA-7.1"],
-  ["rhel-service-firewalld", "RHCSA-2"],
-  ["rhel-service-selinux", "RHCSA-6.2"],
-  ["rhel-service-sshd" /* placeholder replaced below */, "RHCSA-2"],
+  // ---- RHEL / RHCSA EX200 -------------------------------------------------
+  // The exam is 100% hands-on on RHEL 10 with no documentation allowed, so a
+  // lot of these are the user's own converted service profiles.
+  ["rhel-service-systemd-systemctl", "RHCSA-7.2", "Start, stop, enable and disable services"],
+  ["rhel-service-systemd-systemctl", "RHCSA-4.1", "Boot and shut down; targets"],
+  ["rhel-service-systemd-systemctl", "RHCSA-7.3", "Boot into a specific target; modify the bootloader"],
+  ["rhel-service-systemd-journald", "RHCSA-4.5", "Locate and interpret system journals"],
+  ["rhel-service-systemd-journald", "RHCSA-4.5", "Preserve journals so they survive reboot"],
+  ["rhel-service-cron-crond", "RHCSA-7.1", "Schedule tasks using cron and systemd timer units"],
+  ["rhel-service-chronyd", "RHCSA-7.4", "Configure time service clients"],
+  ["rhel-service-autofs", "RHCSA-6.3", "Configure autofs"],
+  ["rhel-service-nfs", "RHCSA-6.2", "Mount and unmount network file systems using NFS"],
+  ["rhel-service-selinux", "RHCSA-10.4", "Enforcing and permissive modes"],
+  ["rhel-service-selinux", "RHCSA-10.5", "File and process context; restorecon"],
+  ["rhel-service-selinux", "RHCSA-10.6", "Manage SELinux port labels"],
+  ["rhel-service-selinux", "RHCSA-10.7", "Boolean settings"],
+  ["rhel-service-firewalld", "RHCSA-10.1", "Configure firewall settings using firewall-cmd"],
+  ["rhel-service-firewalld", "RHCSA-8.4", "Restrict network access"],
+  ["rhel-service-openssh-sshd", "RHCSA-1.4", "Access remote systems using SSH"],
+  ["rhel-service-openssh-sshd", "RHCSA-10.3", "Configure key-based authentication for SSH"],
+  ["rhel-service-openssh-sshd", "RHCSA-8.3", "Configure network services to start at boot"],
+  ["rhel-service-sssd", "RHCSA-9.1", "User accounts from an identity provider"],
+  ["rhel-service-sssd", "RHCSA-9.3", "Groups and group membership"],
+  ["rhel-service-auditd", "RHCSA-10", "Security auditing — audit rules and logs"],
+  ["rhel-service-rsyslog", "RHCSA-4.5", "Locate and interpret system log files"],
+  ["rhel-service-bind-named", "RHCSA-8.2", "Configure hostname resolution"],
+  ["rhel-service-dhcp", "RHCSA-8.3", "Configure network services to start at boot"],
+  ["rhel-service-apache-httpd", "RHCSA-7.2", "Start and stop services; start automatically at boot"],
+  ["rhel-service-samba-smb", "RHCSA-6", "File systems — Samba is assessed indirectly, not by name"],
+  ["rhel-service-postgresql", "RHCSA-2", "Installing and running a server package; database packages are not named in EX200"],
+  ["rhel-service-podman", "RHCSA-2", "Containers are not a named EX200 objective; package/container management overlap only"],
+  ["rhel-service-libvirt-kvm-qemu", "RHCSA-7.2", "Virtualisation is not a named EX200 objective; only service management applies"],
+
+  ["rhel-systemctl-status", "RHCSA-7.2"],
+  ["rhel-systemctl-enable-now", "RHCSA-7.2", "enable --now is exactly the 'start now and at boot' pattern the exam wants"],
+  ["rhel-journalctl-unit", "RHCSA-4.5", "Interpret system journals"],
+  ["rhel-sudo-dnf", "RHCSA-2.3", "Install and update packages from a repository"],
+  ["rhel-ss-lntup", "RHCSA-4.6", "Start, stop and check the status of network services"],
+  ["rhel-nmcli-connection", "RHCSA-8.1", "Configure IPv4 and IPv6 addresses"],
+  ["rhel-firewall-cmd-list", "RHCSA-10.1"],
+  ["rhel-getenforce-ausearch", "RHCSA-10.5", "Identify SELinux context"],
+  ["rhel-getenforce-ausearch", "RHCSA-10.4"],
+  ["linux-dns-resolution", "RHCSA-8.2", "Configure hostname resolution"],
+  ["scn-rhel-service-running-not-working", "RHCSA-4.6", "A service can be running and still not working"],
+  ["quiz-rhel-basics", "RHCSA-1", "Essential tools"],
+  ["quiz-rhel-basics", "RHCSA-4"],
 
   // ---- Cross-domain -------------------------------------------------------
-  ["proj-small-office", "WS-AD.1", "Bringing the whole design together"],
+  ["cisco-show-ip-interface-brief", "CCNA-3.1", "Interface addresses are what the routing table is built from"],
+  ["cisco-show-run-interface", "CCNA-2.1", "Port state and switchport configuration"],
+  ["cisco-vlan-database", "CCNA-2.1", "Configure and verify VLANs"],
+  ["cisco-ping-traceroute", "CCNA-3.1", "Confirming a path and its next hop"],
+  ["mikrotik-ip-address-print", "MTCNA-M1.2", "RouterOS CLI principles"],
+  ["mikrotik-ip-address-print", "MTCRE-M2", "Point to point addressing"],
+  ["quiz-switching", "CCNA-2", "Network Access"],
+  ["quiz-windows-basics", "AZ800-10.2", "Windows Server troubleshooting and recovery"],
+
   ["proj-small-office", "CCNA-4.3", "NAT at the edge"],
   ["linux-vlan-troubleshooting", "CCNA-2.1"],
+  ["linux-vlan-troubleshooting", "MTCNA-M3.1", "The same problem on MikroTik"],
 ];
 
 /* ---------------------------------------------------------------- apply */
 
-// Remove a placeholder used above to keep the list readable.
-const CLEAN = MAP.filter(([id]) => id !== "rhel-service-sshd");
+const CLEAN = MAP;
 
 const valid = new Set();
 for (const ex of objectives.exams) {
@@ -147,17 +189,15 @@ const unmatched = [];
 const unknownObjective = [];
 const problems = [];
 
+// Pass 1 — validate the whole mapping before touching anything, so a typo in an
+// objective id cannot half-apply and wipe good links.
+const byContent = new Map();
 for (const [id, obj, note] of CLEAN) {
   if (!byId.has(id)) { unmatched.push(id); continue; }
   if (!valid.has(obj)) { unknownObjective.push(`${id} -> ${obj}`); continue; }
-  const { item } = byId.get(id);
-  item.objectives = item.objectives || [];
-  const entry = { id: obj };
-  if (note) entry.note = note;
-  if (!item.objectives.some((o) => o.id === obj)) {
-    item.objectives.push(entry);
-    changed++;
-  }
+  if (!byContent.has(id)) byContent.set(id, []);
+  const list = byContent.get(id);
+  if (!list.some((o) => o.id === obj)) list.push(note ? { id: obj, note } : { id: obj });
 }
 
 for (const u of unmatched) problems.push(`no content with id "${u}"`);
@@ -166,6 +206,20 @@ for (const u of unknownObjective) problems.push(`unknown objective in ${u}`);
 if (problems.length) {
   console.error("Mapping problems:\n" + problems.map((p) => "  x " + p).join("\n"));
   process.exit(1);
+}
+
+// Pass 2 — the mapping above is the single source of truth. Each item's
+// objectives are REBUILT from it rather than appended to, so an objective that
+// has been renamed (e.g. WS-AD.1 -> AZ800-1.1) is pruned instead of being left
+// behind pointing at an id that no longer exists.
+let pruned = 0;
+for (const { item } of byId.values()) {
+  const want = byContent.get(item.id) || [];
+  const before = JSON.stringify(item.objectives || []);
+  const after = JSON.stringify(want);
+  if (before !== after) changed++;
+  if ((item.objectives || []).length > want.length) pruned += (item.objectives || []).length - want.length;
+  item.objectives = want;
 }
 
 // Write from the MUTATED objects in byId, not from a fresh read of the file —
@@ -190,7 +244,7 @@ if (!DRY) {
 }
 
 // Report coverage per exam, so gaps are visible rather than assumed.
-console.log(`Tagged ${changed} objective link(s)${DRY ? " (dry run, nothing written)" : ""}.\n`);
+console.log(`Tagged ${changed} item(s)${pruned ? `, pruned ${pruned} stale link(s)` : ""}${DRY ? " (dry run, nothing written)" : ""}.\n`);
 for (const ex of objectives.exams) {
   const linked = CLEAN.filter(([, obj]) => {
     const o = ex.domains.find((d) => d.id === obj);

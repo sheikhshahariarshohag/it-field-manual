@@ -78,6 +78,12 @@
       "listen address",
       "troubleshooting",
       "reachability"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-4.6",
+        "note": "A service can be running and still not working"
+      }
     ]
   },
   {
@@ -255,8 +261,12 @@
     ],
     "objectives": [
       {
-        "id": "WS-NET.2",
+        "id": "AZ800-4.2",
         "note": "DNS and DHCP interaction in AD"
+      },
+      {
+        "id": "AZ800-10.2",
+        "note": "Troubleshooting a Windows Server environment"
       }
     ]
   }

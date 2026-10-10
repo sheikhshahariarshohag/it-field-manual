@@ -62,9 +62,6 @@
       {
         "id": "APLUS-C1-2.1",
         "note": "IP configuration"
-      },
-      {
-        "id": "WS-NET.1"
       }
     ]
   },
@@ -194,6 +191,12 @@
       "accounts",
       "net user",
       "security"
+    ],
+    "objectives": [
+      {
+        "id": "AZ800-1.2",
+        "note": "Local and domain account administration"
+      }
     ]
   },
   {
@@ -268,7 +271,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-AD.3"
+        "id": "AZ800-1.3",
+        "note": "Client-side Group Policy result"
       }
     ]
   },
@@ -409,7 +413,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-AD.2"
+        "id": "AZ800-1.2",
+        "note": "Managing computers with PowerShell"
       }
     ]
   },
@@ -475,7 +480,8 @@
     ],
     "objectives": [
       {
-        "id": "WS-NET.2"
+        "id": "AZ800-4.2",
+        "note": "Diagnosing DNS and domain controller health"
       }
     ]
   },
@@ -540,7 +546,7 @@
     ],
     "objectives": [
       {
-        "id": "WS-NET.2"
+        "id": "AZ800-4.2"
       }
     ]
   }

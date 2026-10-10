@@ -10,11 +10,13 @@ matter.
 | # | Limitation | Impact | Fix |
 |---|---|---|---|
 | A1 | **No Cisco/CCNA source material exists in your library at all** | Cisco content is built from vendor docs, with no local fallback | Install free Packet Tracer / CML Free; add a Cisco reference |
-| A2 | **No CompTIA A+ source material** | A+ must be built from current objectives | Build from CompTIA's published objectives |
+| A2 | ~~No CompTIA A+ source material~~ — objectives now **verified** from CompTIA's published objectives (2026-10-10) | Lesson *content* is still unbuilt; the syllabus it must answer to is now known | Build from the verified objectives |
 | A3 | ~~3 commands, 3 lessons~~ → now **22 commands, 22 lessons** | RHEL depth closed by importing the 19 service profiles; the other five subjects are still thin | Keep expanding per `CONTENT_MAP.md` |
 | A4 | 4 of 6 subjects still have few or no lessons | A+, Cisco, MikroTik, Windows 11, Windows Server | Next build sessions |
 | A5 | One infrastructure project only | The prompt asks for several | Schedule after the first is completed end-to-end |
 | A6 | Quizzes are 5–6 questions each | Thin assessment | Expand as subjects are built |
+| **A7** | **The Azure half of AZ-800 is entirely uncovered** | AZ-800 is a hybrid exam: domains 2, 3, 7, 8, 9 are largely Azure Arc, Azure IaaS, availability sets, Site Recovery and migration. This manual is on-premises only and maps to domains 1, 4, 5, 6, 10 | Only close this by building Azure content, which is outside this project's scope |
+| **A8** | **MTCRE has verified objectives but zero content** | 8 MTCRE objectives, 1 covered. Static routing in depth, point-to-point addressing, tunnels and OSPF are absent | Next MikroTik build session |
 
 ## B. Verification gaps — the important ones
 
@@ -26,6 +28,7 @@ matter.
 | B4 | **No Cisco IOS, no MikroTik CHR** | Cisco and MikroTik procedures cannot be executed |
 | B5 | Scenario command output is **invented for teaching**, clearly labelled | Usable for pattern-matching, never as evidence about a real system |
 | B6 | `dnf4` vs `dnf5` unconfirmed on an actual RHEL 10.2 host | One command's version assumption is untested |
+| **B7** | **Exam objectives are verified; the *lessons* are not** | All 6 syllabi were read from the publishers' own pages and mapped. But mapping a lesson to an objective does not make the lesson correct — B1 and B2 still apply to every mapped entry. Objective coverage is a syllabus claim, not a correctness claim. |
 
 ## C. Library problems found
 

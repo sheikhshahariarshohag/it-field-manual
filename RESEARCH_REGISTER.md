@@ -84,15 +84,65 @@ Concrete, dated findings — not a summary of what I already knew.
 
 ---
 
-## 6. Outstanding research
+## 6. Certification objectives — checked against the publishers
+
+The manual was originally written from vendor documentation, with **no traceable
+link to any exam syllabus**. That was a real gap and it is now closed. Each
+objective in `docs/data/exam-objectives.json` carries its source and the date it
+was read.
+
+| Exam | Status | Source | Read |
+|---|---|---|---|
+| CCNA 200-301 v2.0 | **Verified** | Cisco's own exam topics PDF (published 2026-05-14) | 2026-10-10 |
+| CompTIA A+ 220-1201/1202 | **Verified** | CompTIA published objectives; current since March 2025 | 2026-10-10 |
+| MTCNA | **Verified** | MikroTik's published training outline | 2026-10-10 |
+| MTCRE | **Verified** | MikroTik's published training outline | 2026-10-10 |
+| RHCSA EX200 | **Verified** | Red Hat's EX200 objectives page | 2026-10-10 |
+| AZ-800 | **Verified** | Microsoft Learn, "Assessed on this exam" | 2026-10-10 |
+
+### Two corrections this produced
+
+1. **RHCSA is EX200, not EX294.** EX294 is the RHCE/Ansible exam. I had the
+   wrong code in the first draft.
+2. **My unverified RHCSA guess was wrong in substance, not just detail.** I had
+   guessed 9 category names; the real exam has **10**, and my guess missed
+   **Flatpak**, **autofs**, **tuning profiles**, **systemd timer units**,
+   **chronyd**, **SSH key authentication** and **SELinux port labels and
+   Booleans** entirely. Flagging it unverified rather than presenting it as fact
+   is what kept that from becoming a wrong "exam fact".
+
+### The most useful line on the Red Hat page
+
+> "This exam is based on Red Hat® Enterprise Linux® 10."
+
+The manual targets RHEL 10, so that is the correct base version.
+
+Also worth knowing before sitting RHCSA: it is **100% hands-on**, no
+multiple-choice, **no internet access and no permitted documentation**, and
+configurations must survive a reboot without intervention. That is why so many
+objectives are phrased as "configure to start automatically at boot".
+
+### What is deliberately not covered
+
+AZ-800 is substantially a **hybrid and Azure** exam — domains 2, 3, 7, 8 and 9
+are largely Azure Arc, Azure IaaS, availability sets, Site Recovery and workload
+migration. This manual is on-premises focused and covers **none** of that. It
+maps to AZ-800 domains 1, 4, 5, 6 and 10 only. Stated in the app itself, not
+buried here.
+
+---
+
+## 7. Outstanding research
 
 | Item | Why it blocks | Priority |
 |---|---|---|
 | Cisco command reference for a specific model | Cannot verify platform-specific syntax without picking models | **High** |
 | RHEL 10.2 execution testing on your VMs | Only way to promote entries from source-checked | **High** |
 | Windows Server 2025 cmdlet diffs from 2019 | Library is two releases behind | Medium |
-| CompTIA A+ current objectives | No local source at all | Medium |
+| CompTIA A+ current objectives | No local source at all | ~~Done~~ — verified from CompTIA, 2026-10-10 |
 | MikroTik CHR throughput/lab setup specifics | Needed before RHEL-free MikroTik labs | Medium |
+| RHCSA EX200 per-category weights | Red Hat publishes objectives but not percentage weights | Low |
+| MTCRE content | Objectives verified, but **0 MTCRE lessons exist** | Medium |
 
 > If internet access is ever unavailable, the offline Microsoft Learn PowerShell
 > export and the local library still cover a large share of the Windows and RHEL
