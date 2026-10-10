@@ -58,8 +58,10 @@ All found by exercising the app, none visible in source review.
 
 | Bug | Symptom | Root cause | Fix |
 |---|---|---|---|
+| **⚠ Nothing clickable** | **Every click on the page did nothing.** Reported by the user. | `.sheet-host { display: grid }` is an author rule, which **outranks the browser's `[hidden] { display: none }`**. The modal host kept `hidden` in the HTML but stayed laid out as a full-screen `z-index: 80` overlay, silently eating every click. | Global `[hidden] { display: none !important; }`, plus a **build gate** that fails if that rule is missing or if a `hidden` element's class sets `display` |
 | **Offline cache poisoning** | Blank page with the server dead | Origin returns **502**, a valid response; the handler cached it over the good shell | Treat any non-OK navigation as failure; never cache non-200; added `repairCaches()` that re-fetches missing *or* empty entries |
 | **Cache never rebuilt** | Caches empty, SW "active", offline broken | Caches deleted while the worker stayed byte-identical → `install` never re-ran | `repairCaches()` on every `activate` |
+| **Stale service worker in dev** | Code edits appeared to do nothing | Dev server sent `no-cache` for `sw.js`; the browser reused a byte-identical registration | `no-store` + `Service-Worker-Allowed: /` for `sw.js` |
 | **Update never shown** | New SW silently waited forever | `updatefound` fires on the **registration**, not `navigator.serviceWorker` | Listen on the registration, and check `reg.waiting` at boot |
 | **All private data silently lost** | Bookmarks/notes saved but never came back | `tx()` resolved from `oncomplete`, returning `undefined` for every read | Rewrote to resolve from the request's success event |
 | **Stale search results** | Typing returned nothing | `history.replaceState` doesn't fire `hashchange`; router never re-ran | Call `resolve()` explicitly |
@@ -68,6 +70,22 @@ All found by exercising the app, none visible in source review.
 | **Bookmark aria wrong** | `aria-pressed="rhel-ss-lntup"` | `toggleBookmark` returned the storage key, not a boolean | Now returns a boolean |
 | **Focus stolen** | Could not type in search | `render()` called `main.focus()` on every keystroke | Skipped while the search box has focus |
 | **Contrast 96/100** | Lighthouse failed | Shared tech colours and too-dark `--text-faint` | Per-theme variables → **100/100 both themes** |
+
+### Why the click bug survived my earlier testing
+
+Every earlier interaction test used `element.click()` from JavaScript. That
+**dispatches the event directly and bypasses hit-testing entirely** — so it
+passed while the page was genuinely unusable.
+
+From now on, interaction testing has two layers:
+
+1. **Programmatic** (fast, covers logic) — as before.
+2. **Real click + hit-test sweep** (covers what a user experiences) — for each
+   interactive control, assert that `document.elementFromPoint()` at the
+   control's own centre returns that control or a descendant, and sweep the
+   viewport for invisible full-screen blockers.
+
+Layer 2 found the bug in one pass. It should have been there from the start.
 
 ## F. Environment notes
 

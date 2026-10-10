@@ -69,6 +69,19 @@ Performed in a real Chromium browser against the running app, not by reading cod
 | A33 | Code blocks scroll internally | measured | ✅ no page blow-out |
 | A34 | Service-worker update prompt | Edited a file, waited | ✅ bar appeared, reload worked |
 | A35 | Static validation gate | `node scripts/validate.mjs` | ✅ passes, 0 errors 0 warnings |
+| A36 | **Real click: nav link** | Coordinate click, not JS `.click()` | ✅ navigated to `#/commands` |
+| A37 | **Real click: filter chip** | Coordinate click | ✅ `#/commands?tech=rhel`, 8 results, `aria-pressed="true"` |
+| A38 | **Real click: command card** | Coordinate click | ✅ `systemctl status`, 5 code blocks, 4 fact rows |
+| A39 | **Real click: copy button** | Coordinate click | ✅ "Copied" |
+| A40 | **Real click: theme toggle** | Coordinate click | ✅ light ↔ dark |
+| A41 | **Real click: data panel → modal → close** | Coordinate clicks | ✅ opens `display:grid`, closes `display:none` |
+| A42 | **Real click: mobile drawer** | Coordinate clicks at 800 px | ✅ hamburger opens, nav link navigates **and** auto-closes, Escape closes |
+| A43 | **Hit-test sweep, fresh load** | `elementFromPoint` across the whole viewport | ✅ **0 invisible blockers** |
+| A44 | **Per-control hit test** | `elementFromPoint` at each control's own centre, 56 controls | ✅ **0 unclickable** |
+
+> **A36–A44 exist because A1–A35 all passed on an app where nothing was
+> clickable.** `element.click()` bypasses hit-testing entirely. Any future
+> interaction test must include a real click and a hit-test sweep.
 
 ---
 

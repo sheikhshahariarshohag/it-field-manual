@@ -15,7 +15,7 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v1";
+const VERSION = "v2";
 const SHELL_CACHE = `field-manual-shell-${VERSION}`;
 const DATA_CACHE = `field-manual-data-${VERSION}`;
 

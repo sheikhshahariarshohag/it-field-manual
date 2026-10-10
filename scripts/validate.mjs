@@ -254,6 +254,49 @@ for (const f of PRIVACY_FILES) {
   }
 }
 
+/* --------------------------------------- hidden-vs-display regression guard */
+
+// An author rule like `.sheet-host { display: grid }` outranks the UA's
+// `[hidden] { display: none }`. The element keeps `hidden` in the HTML, looks
+// invisible to a reader, and still covers the page — silently swallowing every
+// click. It shipped once already, so it is now a build failure rather than
+// something a user has to discover.
+const css = readFileSync(join(APP, "assets", "app.css"), "utf8");
+const html = readFileSync(join(APP, "index.html"), "utf8");
+
+const hasGlobalHiddenGuard = /\[hidden\]\s*\{[^}]*display:\s*none\s*!important/.test(css);
+if (!hasGlobalHiddenGuard) {
+  fail("app.css must contain `[hidden] { display: none !important; }` — without it any class with a display rule silently defeats the hidden attribute");
+} else {
+  // With the global guard in place `[hidden]` always wins, so an element that
+  // also has a `display` in its class rule is safe. Only warn about the ones
+  // that would be dangerous without it, to keep the signal useful.
+  for (const m of html.matchAll(/<[^>]*\bclass="([^"]+)"[^>]*\bhidden\b[^>]*>/g)) {
+    for (const cls of m[1].split(/\s+/)) {
+      const rule = css.match(new RegExp(`\\.${cls}\\s*\\{([^}]*)\\}`));
+      if (rule && /(^|;)\s*display\s*:/.test(rule[1]) && /position:\s*fixed|inset:\s*0|z-index/.test(rule[1])) {
+        warn(`index.html: .${cls} carries \`hidden\` and has a display plus overlay properties — currently safe because of the global [hidden] rule, but fragile if that rule is ever removed`);
+      }
+    }
+  }
+}
+
+// Fixed-position elements that cover the viewport are a click-blocking hazard.
+// They must be hidden by default.
+const viewportCoverers = [...css.matchAll(/([.#][\w-]+)\s*\{([^}]*)\}/g)].filter(([, , body]) => {
+  const hasFixed = /position:\s*fixed/.test(body);
+  const covers = /inset:\s*0/.test(body) || /top:\s*0/.test(body) && /left:\s*0/.test(body);
+  const highZ = /z-index:\s*(5\d|[6-9]\d|\d{3,})/.test(body);
+  return hasFixed && covers && highZ;
+});
+for (const [, sel] of viewportCoverers) {
+  const cls = sel.replace(/^[.#]/, "");
+  const guardedByHiddenRule = new RegExp(`${sel.replace('.', '\\.')}\\[hidden\\]`) || false;
+  if (!guardedByHiddenRule) {
+    warn(`app.css: ${sel} is position:fixed, covers the viewport and has a high z-index — confirm it is hidden by default or it will block clicks`);
+  }
+}
+
 /* ------------------------------------------------- repo-level privacy guard */
 
 const gi = join(ROOT, ".gitignore");

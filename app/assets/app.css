@@ -85,6 +85,17 @@ html[data-theme="dark"] {
 
 * { box-sizing: border-box; }
 
+/**
+ * `hidden` must always win.
+ *
+ * A class rule like `.sheet-host { display: grid }` beats the browser's
+ * built-in `[hidden] { display: none }` because author styles outrank the UA
+ * stylesheet. The result is an invisible element that is still laid out and
+ * still eats every click on the page — which is exactly what happened to the
+ * modal host here. This one rule makes that failure impossible.
+ */
+[hidden] { display: none !important; }
+
 html, body { height: 100%; }
 
 body {
