@@ -1,5 +1,8 @@
 # Personal IT Field Manual
 
+**Live site:** https://sheikhshahariarshohag.github.io/it-field-manual/
+**Repository:** https://github.com/sheikhshahariarshohag/it-field-manual
+
 A free, offline-first, private field manual and learning environment for:
 **CompTIA A+ · Cisco/CCNA · MikroTik/MTCNA · Windows 11 · Windows Server · RHEL 10**
 
