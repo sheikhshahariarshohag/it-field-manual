@@ -1,7 +1,7 @@
 # Source Inventory — the private book library
 
 **Scanned:** 2026-10-10
-**Location:** `C:\Users\NT_70\Desktop\New folder\IT Infrastucture\` (read-only; never modified)
+**Location:** `C:\Users\<your-name>\Desktop\<your-notes>\IT Infrastructure\` (read-only; never modified)
 **Method:** `tools/pdfextract` (Node + pdfjs-dist, dev-only). Page counts and
 character counts below are measured, not estimated.
 **Total:** 23 PDFs · 11,061 pages · ~12.6 M extractable characters · **0 scanned

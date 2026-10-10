@@ -1,0 +1,71 @@
+# Deploy the static site.
+#
+# The app is already a static site — there is no build step, which is the whole
+# point of the architecture. This workflow exists only to run the content and
+# privacy gate before anything is published, and to copy app/ into _site/ so
+# GitHub Pages has a single known output directory.
+#
+# It is intentionally simple. If this file ever needs a build tool, something
+# has gone wrong with the design.
+
+name: Deploy field manual
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deployments race. Only the newest commit is published.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # Fails the deploy if any data file is malformed, a cross-reference is
+      # dangling, an entry claims a test it did not do, or private material,
+      # a credential or an absolute user path has appeared.
+      - name: Validate content and privacy
+        run: node scripts/validate.mjs
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Stage the site
+        run: |
+          rm -rf _site
+          mkdir -p _site
+          cp -r app/. _site/
+
+      - uses: actions/configure-pages@v5
+        id: pages
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

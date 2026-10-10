@@ -18,15 +18,27 @@
  *
  * Output: app/data/lessons/services.json  (loaded by app.js as an extra file)
  */
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join, resolve, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 
+/**
+ * Where the author's private RHEL 10 service-profile notes live.
+ *
+ * Deliberately NOT hardcoded: this repository is public, and a developer's
+ * real Windows account name should not be committed to it. Override with an
+ * environment variable:
+ *
+ *   PowerShell:  $env:FIELD_MANUAL_SOURCE = 'C:\path\to\notes'
+ *   bash:        FIELD_MANUAL_SOURCE=/path/to/notes node scripts/import-service-profiles.mjs
+ *
+ * On Windows the notes usually sit in the user's Desktop under a folder named
+ * "IT Infrastructure". If you are cloning this and do not have the notes, the
+ * script tells you and exits — it is a personal build step, not part of the app.
+ */
 const HERE = resolve(fileURLToPath(new URL(".", import.meta.url)));
-const DEFAULT_SRC = "C:/Users/NT_70/Desktop/New folder/IT Infrastucture";
-// argv[0] is the node binary and argv[1] is this script — skip both.
 const ARGS = process.argv.slice(2);
-const SRC = ARGS.find((a) => !a.startsWith("--")) || DEFAULT_SRC;
+const SRC = ARGS.find((a) => !a.startsWith("--")) || process.env.FIELD_MANUAL_SOURCE || "";
 const DRY = ARGS.includes("--dry-run");
 const OUT = join(HERE, "..", "app", "data", "lessons", "services.json");
 
@@ -162,12 +174,19 @@ function mapWhere(lang) {
 
 /* ---------------------------------------------------------------- convert */
 
-const files = readdirSync(SRC)
-  .filter((f) => /^\d{2}-.*\.md$/.test(f))
-  .sort();
+const files = existsSync(SRC)
+  ? readdirSync(SRC).filter((f) => /^\d{2}-.*\.md$/.test(f)).sort()
+  : [];
 
 if (!files.length) {
-  console.error(`No numbered .md service profiles found in:\n  ${SRC}`);
+  console.error(
+    "Could not read the RHEL service-profile notes.\n" +
+    "Set FIELD_MANUAL_SOURCE to the folder containing the numbered .md files, e.g.\n" +
+    '  PowerShell:  $env:FIELD_MANUAL_SOURCE = "C:\\path\\to\\IT Infrastructure"\n' +
+    "  bash:        FIELD_MANUAL_SOURCE=/path/to/notes node scripts/import-service-profiles.mjs\n\n" +
+    "This is a personal build step. The generated app/data/lessons/services.json\n" +
+    "is committed, so you do not need the source notes to run the app.",
+  );
   process.exit(1);
 }
 

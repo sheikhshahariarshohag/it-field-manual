@@ -250,7 +250,14 @@ const SECRET_PATTERNS = [
   [/AKIA[0-9A-Z]{16}/, "AWS access key"],
 ];
 
-const ALLOWED_HOME = "C:\\Users\\NT_70";
+// Windows profile paths leak a developer's real account name and break on
+// every other machine. This repository is public, so there is deliberately no
+// allowlist — not even for the machine the author develops on.
+//
+// Only Windows paths are checked. `/home/someuser` and `/Users/you` appear
+// legitimately inside the *documentation* as examples, and flagging those
+// would train people to ignore this check.
+const HOME_RE = /[A-Za-z]:\\Users\\[^"'\s\\]+/g;
 
 for (const f of PRIVACY_FILES) {
   if (!/\.(js|mjs|json|css|html|webmanifest|svg)$/.test(f)) continue;
@@ -261,13 +268,8 @@ for (const f of PRIVACY_FILES) {
     if (re.test(text)) fail(`${rel}: ${why} — must never be committed`);
   }
 
-  // Absolute user paths leak identity and break on any other machine.
-  const homeHits = text.match(/[A-Za-z]:\\Users\\[^"'\s\\]+/g) || [];
-  for (const h of homeHits) {
-    if (!h.startsWith(ALLOWED_HOME)) fail(`${rel}: absolute user path "${h}"`);
-  }
-  if (homeHits.length) {
-    warn(`${rel}: contains an absolute path to your user profile (${ALLOWED_HOME}) — portable only on this machine`);
+  for (const hit of text.match(HOME_RE) || []) {
+    fail(`${rel}: contains an absolute Windows profile path ("${hit}") — a real account name does not belong in a public repository`);
   }
 
   if (/\.innerHTML\b/.test(text)) fail(`${rel}: uses innerHTML — the manual never injects markup as a string`);

@@ -1,7 +1,7 @@
 # Discovery Report — Personal IT Field Manual
 
 **Date:** 2026-10-10
-**Workspace scanned:** `C:\Users\NT_70` (the Windows user profile, recursively)
+**Workspace scanned:** `C:\Users\<your-name>` (the Windows user profile, recursively)
 **Status:** Phase 1 (Discovery) complete. Phase 2 (Research) partially complete.
 **Nothing in the source library was modified, moved, renamed or deleted.**
 
@@ -9,13 +9,13 @@
 
 ## 1. The headline finding, and it is a safety one
 
-**`C:\Users\NT_70` — your entire Windows user profile — is a git repository with
+**`C:\Users\<your-name>` — your entire Windows user profile — is a git repository with
 zero commits and no `.gitignore`.**
 
 ```
-$ git -C C:\Users\NT_70 rev-parse --show-toplevel
-C:/Users/NT_70
-$ git -C C:\Users\NT_70 log --oneline
+$ git -C C:\Users\<your-name> rev-parse --show-toplevel
+C:/Users/<your-name>
+$ git -C C:\Users\<your-name> log --oneline
 (no commits)
 ```
 
@@ -26,10 +26,10 @@ would have staged:
 |---|---|
 | `NTUSER.DAT` + transaction logs | Windows credential store. Not reversible by deleting the repo. |
 | `.ssh/` | Private keys. |
-| `Desktop/New folder/IT Infrastucture/` | ~300 MB of copyrighted books. |
+| `Desktop/<your-notes>/IT Infrastructure/` | ~300 MB of copyrighted books. |
 | `AppData/`, `.config/`, browser profiles | Session tokens, cookies. |
 
-**Action taken:** wrote `C:\Users\NT_70\.gitignore` (additive, deletable, it
+**Action taken:** wrote `C:\Users\<your-name>\.gitignore` (additive, deletable, it
 changes no existing file). Result, measured immediately after:
 
 ```
@@ -38,13 +38,13 @@ after:    3 untracked entries  (.gitignore, one .doc, it-field-manual/)
 ```
 
 **The real project does not live at the profile root.** It is a separate
-repository at `C:\Users\NT_70\it-field-manual\`. Keep it that way.
+repository at `C:\Users\<your-name>\it-field-manual\`. Keep it that way.
 
 ---
 
 ## 2. The book library
 
-Location: **`C:\Users\NT_70\Desktop\New folder\IT Infrastucture\`**
+Location: **`C:\Users\<your-name>\Desktop\<your-notes>\IT Infrastructure\`**
 
 23 PDFs. All text-searchable — **zero scanned documents**, so no OCR was needed
 and nothing is unreadable. Roughly 11,000 pages, ~12.6 million extractable
@@ -85,7 +85,7 @@ it, and these become the RHEL seed content rather than being rewritten.
 
 ## 3. Your existing project (found, inspected, not modified)
 
-`Desktop\New folder\NSpersonal v0.1` — **Life OS**, a local-first single-user PWA.
+`Desktop\<notes folder>\NSpersonal v0.1` — **Life OS**, a local-first single-user PWA.
 Not the Field Manual, and not mine to change. It was opened because its
 `AGENTS.md` loads automatically and its architecture is directly relevant.
 
@@ -172,7 +172,7 @@ Six real bugs were found by testing rather than by reading, and are documented i
 
 ## 8. Recommended next actions
 
-1. **Confirm R1 is understood** — never run `git add` at `C:\Users\NT_70`.
+1. **Confirm R1 is understood** — never run `git add` at `C:\Users\<your-name>`.
 2. Start the three RHEL 10 VMs and promote RHEL entries from *source-checked* to
    *execution-tested*. This is the single biggest accuracy win available.
 3. Build the Cisco/CCNA subject from free Cisco material — the largest gap.

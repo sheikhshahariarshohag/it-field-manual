@@ -25,18 +25,18 @@ changes. It also isn't mine to change — your project, your rules.
 
 ## D-002 — The project lives in `it-field-manual\`, not the profile root
 
-**Context.** `C:\Users\NT_70` is already a git repository with zero commits and
+**Context.** `C:\Users\<your-name>` is already a git repository with zero commits and
 nothing ignored. `git add -A` there would have staged `NTUSER.DAT`, `.ssh/`,
 `AppData/` and the entire book library.
 
-**Decision.** New repository at `C:\Users\NT_70\it-field-manual\`, plus a
+**Decision.** New repository at `C:\Users\<your-name>\it-field-manual\`, plus a
 protective `.gitignore` at the profile root.
 
 **Why.** The root repo is a hazard, not a project. Adding `.gitignore` was
 additive, reversible, and prevented a catastrophic outcome. Measured: untracked
 entries went from 20+ (including credentials and books) to 3.
 
-**Also decided:** never run `git add` at `C:\Users\NT_70`. The manual's history
+**Also decided:** never run `git add` at `C:\Users\<your-name>`. The manual's history
 must never contain your Windows profile.
 
 ---
@@ -44,7 +44,7 @@ must never contain your Windows profile.
 ## D-003 — Extracted PDF text into `private/`, outside the repository
 
 **Decision.** All extracted book text, probes and working notes live in
-`C:\Users\NT_70\it-field-manual\private\` and are gitignored.
+`C:\Users\<your-name>\it-field-manual\private\` and are gitignored.
 
 **Why.** Extracted text is a derivative of copyrighted books. Even though it
 never ships, keeping it inside the repository risks it being committed by an

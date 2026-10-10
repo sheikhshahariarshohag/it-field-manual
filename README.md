@@ -69,7 +69,7 @@ page in the app, and in `VERIFICATION_REGISTER.md`.
   the gitignored `private/` directory. The build greps `app/` for book filenames
   and personal-material references and fails if any appear.
 
-> ⚠ **Never run `git add` at `C:\Users\NT_70`.** Your Windows profile is a git
+> ⚠ **Never run `git add` at `C:\Users\<your-name>`.** Your Windows profile is a git
 > repository with zero commits. A protective `.gitignore` is in place, but this
 > project is the repository that matters and it lives one level down.
 

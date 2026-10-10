@@ -89,7 +89,7 @@ Layer 2 found the bug in one pass. It should have been there from the start.
 
 ## F. Environment notes
 
-- `C:\Users\NT_70` is a git repository with zero commits. **Never `git add` there.**
+- `C:\Users\<your-name>` is a git repository with zero commits. **Never `git add` there.**
   A protective `.gitignore` is in place but is not a substitute for care.
 - No Python, and the `python`/`python3` commands are Microsoft Store stubs that
   fail with exit code 9009. Anything scripted for this machine must use Node.
