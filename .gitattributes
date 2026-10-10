@@ -1,0 +1,9 @@
+# Normalise line endings so the working tree matches what git stores.
+# Without this, Windows rewrites LF to CRLF on checkout and the service-worker
+# byte comparison can differ between machines.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.ico binary
+*.woff2 binary
