@@ -1028,6 +1028,15 @@ export function knowledgeMapView() {
       "The PDF itself is not published here; it stays in your own library."),
   ));
 
+  wrap.appendChild(h("div.note",
+    h("strong", "What the numbers mean"),
+    h("span",
+      "A teal number is how many hands-on items in the field manual cover that topic. " +
+      "\\u201cNo hands-on yet\\u201d means the topic has no practice lesson or command written for it — " +
+      "the session text itself is complete, it is the drills that are missing. " +
+      "Every session's full text is on its own page."),
+  ));
+
   wrap.appendChild(h("h2", "By layer"));
 
   for (const layer of km.layers) {
@@ -1053,8 +1062,16 @@ export function knowledgeMapView() {
           h("span.session__title", s.title),
           h("span.session__sum", s.summary),
         ),
-        n ? h("span.badge.badge--accent", String(n))
-          : h("span.session__gap", "not in manual"),
+        // A number means "N hands-on items in the field manual cover this session".
+        // The absence of one means there is NO hands-on practice for this topic
+        // yet — which used to read as "not in manual", implying the session had
+        // no content at all. It has plenty: the whole section text above. The
+        // wording was the problem, so it now says what it actually means.
+        n ? h("span.badge.badge--accent", { title: `${n} hands-on item${n === 1 ? "" : "s"} in the field manual cover this topic` }, String(n))
+          : h("span.session__gap", {
+              title: "This topic has no hands-on lesson or command in the field manual yet. " +
+                     "The session text below is complete — it is the practical drills that are missing.",
+            }, "no hands-on yet"),
       );
       const item = h("li.session", link);
       // The jump links are SIBLINGS of the session link, never children of it.
@@ -1107,6 +1124,81 @@ async function loadSessionContent(id) {
     STATUS.set(id, "error");
     return null;
   }
+}
+
+/**
+ * Writable personal notes for a Knowledge Map session.
+ *
+ * Your document ships a "Personal notes" section with five prompts — learned,
+ * unclear, questions, mistakes, insights. Those are printed read-only. This
+ * makes them fillable.
+ *
+ * Storage: one JSON blob per session in the existing `notes` store, keyed by
+ * the session id. That means the existing export/import already carries these
+ * notes with no changes — they stay on the device and travel only when you
+ * export them yourself.
+ */
+const KM_NOTE_FIELDS = [
+  { k: "learned", label: "Things I learned", ph: "What actually clicked? Write it in your own words." },
+  { k: "unclear", label: "Things I still don't understand", ph: "Be specific. A vague note helps nobody." },
+  { k: "questions", label: "Questions I still have", ph: "Anything you need to look up or ask." },
+  { k: "mistakes", label: "Mistakes I made", ph: "What you got wrong, and what the fix was." },
+  { k: "insights", label: "Insights", ph: "Anything the material does not say outright." },
+];
+
+function kmNotesEditor(session) {
+  const box = h("div.kmnotes");
+  const status = h("span.kmnotes__status", { role: "status" });
+
+  const save = async () => {
+    const payload = {};
+    for (const f of KM_NOTE_FIELDS) payload[f.k] = box.querySelector(`[data-k="${f.k}"]`).value.trim();
+    if (!Object.values(payload).some(Boolean)) {
+      await db.store.note(session.id, "");
+    } else {
+      await db.store.note(session.id, JSON.stringify(payload));
+    }
+    status.textContent = "Saved on this device";
+    clearTimeout(save._t);
+    save._t = setTimeout(() => { status.textContent = ""; }, 2500);
+  };
+
+  for (const f of KM_NOTE_FIELDS) {
+    const ta = h("textarea.kmnotes__ta", {
+      id: `kmn-${session.id}-${f.k}`,
+      rows: 2, placeholder: f.ph, "data-k": f.k,
+      "aria-label": f.label,
+    });
+    let t = null;
+    ta.addEventListener("input", () => {
+      clearTimeout(t);
+      status.textContent = "Saving…";
+      t = setTimeout(save, 500);
+    });
+    // Leaving the field should flush immediately, not wait out the debounce.
+    ta.addEventListener("blur", () => { clearTimeout(t); save(); });
+
+    box.appendChild(h("label.kmnotes__field",
+      h("span.kmnotes__label", f.label), ta));
+  }
+
+  db.store.note(session.id).then((raw) => {
+    if (!raw) return;
+    try {
+      const saved = JSON.parse(raw);
+      for (const f of KM_NOTE_FIELDS) {
+        if (saved[f.k]) box.querySelector(`[data-k="${f.k}"]`).value = saved[f.k];
+      }
+    } catch (_) { /* a plain-text note from an older build; leave the boxes empty */ }
+  });
+
+  box.appendChild(h("div.kmnotes__foot",
+    h("p.srcref",
+      "Private. Saved on this device only, and included when you export your data " +
+      "from the storage button in the top bar. Never uploaded."),
+    status));
+
+  return h("div.kmnotewrap", box);
 }
 
 export function knowledgeSessionView(params) {
@@ -1166,6 +1258,12 @@ export function knowledgeSessionView(params) {
       panel.appendChild(ul);
       panel.appendChild(h("p.srcref",
         `From Enterprise_Infrastructure_Knowledge_Map_Unified.pdf, pages ${data.page}–${data.endPage}.`));
+
+      // The document's own "Personal notes" prompts are printed above. Below
+      // them sit fillable versions that actually save.
+      if (kind === "notes") {
+        panel.appendChild(kmNotesEditor(s));
+      }
     };
 
     for (const sec of s.sections) {
@@ -1233,9 +1331,10 @@ export function knowledgeSessionView(params) {
 
   if (!docs.length) {
     wrap.appendChild(h("div.empty",
-      h("h2", "Not covered in the manual yet"),
-      h("p", "This session is on the roadmap but the manual has no hands-on material for it yet. " +
-             "That is a known gap, not an oversight — see CONTENT_MAP.md for what is queued next."),
+      h("h2", "No hands-on material in the field manual yet"),
+      h("p", "This session has no practice lesson or command written for it. That is a known gap " +
+             "in the field manual, not a gap in your curriculum — the full session text is above, " +
+             "and every chip opens it. See CONTENT_MAP.md for what is queued next."),
     ));
   } else {
     wrap.appendChild(h("h2", { id: "km-manual" }, `In this manual (${docs.length})`));

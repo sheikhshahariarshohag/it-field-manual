@@ -731,6 +731,26 @@ a.session__mark:hover { border-color: var(--accent); color: var(--accent); backg
 .kmreader ul.prose { display: grid; gap: 8px; }
 .kmreader li { line-height: 1.55; }
 
+/* Writable personal notes, inside the "Personal notes" section chip. */
+.kmnotewrap { margin-top: 18px; padding-top: 14px; border-top: 1px dashed var(--line); }
+.kmnotes { display: grid; gap: 12px; }
+.kmnotes__field { display: grid; gap: 5px; }
+.kmnotes__label {
+  font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--accent);
+}
+.kmnotes__ta {
+  width: 100%; font: inherit; font-size: .92rem; line-height: 1.5;
+  color: var(--text); background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 8px 10px; resize: vertical; min-height: 44px;
+}
+.kmnotes__ta:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+.kmnotes__ta::placeholder { color: var(--text-faint); }
+.kmnotes__foot { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.kmnotes__foot p { margin: 0; }
+.kmnotes__status { font-size: 12px; color: var(--ok); font-weight: 600; }
+
 h2.flash { animation: kmtarget 1.4s ease-out; border-radius: var(--r-sm); }
 @keyframes kmtarget {
   0%, 60% { background: var(--accent-dim); box-shadow: 0 0 0 6px var(--accent-dim); }
