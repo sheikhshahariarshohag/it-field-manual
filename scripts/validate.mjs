@@ -444,6 +444,80 @@ const ROUTES = {
   }
 }
 
+/* --------------------------------------------------- knowledge map integrity */
+
+{
+  const kmPath = join(APP, "data", "knowledge-map.json");
+  if (!existsSync(kmPath)) {
+    fail("data/knowledge-map.json is missing — run scripts/extract-knowledge-map.mjs then scripts/tag-knowledge-map.mjs");
+  } else {
+    let km = null;
+    try {
+      km = JSON.parse(readFileSync(kmPath, "utf8"));
+    } catch (e) {
+      fail(`data/knowledge-map.json is not valid JSON: ${e.message}`);
+    }
+
+    if (km) {
+      const sessions = km.sessions || [];
+
+      if (!Array.isArray(sessions) || !sessions.length) {
+        fail("knowledge-map.json has no sessions");
+      } else {
+        // The document claims 146 sessions; a short list means the TOC parse
+        // silently regressed.
+        if (sessions.length !== 146) {
+          fail(`knowledge map has ${sessions.length} sessions, expected 146 — the extraction is incomplete`);
+        }
+        // Every session must carry a hand-written summary, not just a title.
+        for (const s of sessions) {
+          if (!s.summary || s.summary.length < 12) {
+            fail(`knowledge map ${s.id} ("${s.title}") has no summary — run scripts/tag-knowledge-map.mjs`);
+          }
+        }
+        // Numbers must be contiguous 1..N with no gaps or duplicates.
+        const nums = sessions.map((s) => s.n).sort((a, b) => a - b);
+        const dupes = nums.filter((n, i, a) => a.indexOf(n) !== i);
+        if (dupes.length) fail(`knowledge map has duplicate session numbers: ${[...new Set(dupes)].join(", ")}`);
+        for (let i = 0; i < nums.length; i++) {
+          if (nums[i] !== i + 1) {
+            fail(`knowledge map session numbering has a gap: expected ${i + 1}, found ${nums[i]}`);
+            break;
+          }
+        }
+        // Every manual link must resolve to a real document.
+        const ids = new Set(Object.values(corpus).flat().map((d) => d.id));
+        for (const s of sessions) {
+          for (const id of s.manual || []) {
+            if (!ids.has(id)) fail(`knowledge map ${s.id} links to "${id}", which is not in the manual`);
+          }
+        }
+      }
+
+      // It must be precached, or the Knowledge Map breaks offline.
+      const swSrc = readFileSync(join(APP, "sw.js"), "utf8");
+      if (!swSrc.includes("data/knowledge-map.json")) {
+        fail("sw.js does not precache data/knowledge-map.json — the Knowledge Map would break offline");
+      }
+
+      // The source PDF must never be committed. private/ is gitignored and
+      // *.pdf is ignored, but this catches someone adding one by another route.
+      const pdfs = [];
+      (function walkAll(dir) {
+        for (const e of readdirSync(dir, { withFileTypes: true })) {
+          if (e.name === "node_modules" || e.name === ".git") continue;
+          const full = join(dir, e.name);
+          if (e.isDirectory()) walkAll(full);
+          else if (full.toLowerCase().endsWith(".pdf")) pdfs.push(full);
+        }
+      })(ROOT);
+      for (const p of pdfs) {
+        fail(`${p.slice(ROOT.length + 1)} — a PDF must never be committed to this repository`);
+      }
+    }
+  }
+}
+
 /* ------------------------------------------------- repo-level privacy guard */
 
 const gi = join(ROOT, ".gitignore");

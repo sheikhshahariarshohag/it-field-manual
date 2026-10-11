@@ -143,6 +143,7 @@ buried here.
 | MikroTik CHR throughput/lab setup specifics | Needed before RHEL-free MikroTik labs | Medium |
 | RHCSA EX200 per-category weights | Red Hat publishes objectives but not percentage weights | Low |
 | MTCRE content | Objectives verified, but **0 MTCRE lessons exist** | Medium |
+| Line-by-line technical audit of the Knowledge Map PDF | Structure (146 sessions, 10 layers, page ranges) is verified mechanically. The technical *claims* in the prose have **not** been audited claim-by-claim | **High** — next research task |
 
 > If internet access is ever unavailable, the offline Microsoft Learn PowerShell
 > export and the local library still cover a large share of the Windows and RHEL

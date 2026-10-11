@@ -262,6 +262,7 @@ export async function commandView(params) {
       verifyBadge(d.verification),
       d.version ? h("span.badge", d.version) : null),
     objectiveBadges(d),
+    kmBacklinks(d),
   ));
 
   const facts = [];
@@ -337,6 +338,7 @@ export function lessonView(params) {
       verifyBadge(d.verification),
       d.time ? h("span.badge", d.time + " read") : null),
     objectiveBadges(d),
+    kmBacklinks(d),
   ));
 
   wrap.appendChild(progressBar(d.id));
@@ -824,6 +826,171 @@ export function verifyView() {
   add(wrap,
     h("h2", "Every reference entry"),
     h("p", h("a", { href: href("commands?verification=execution-tested") }, "Execution-tested commands only →")));
+
+  return wrap;
+}
+
+/* ========================================================== knowledge map */
+
+/**
+ * The user's own master curriculum: Enterprise_Infrastructure_Knowledge_Map_Unified
+ * (146 sessions, 10 layers). The PDF stays in their private library; only a
+ * derived outline is shipped, so the app can say where each session connects
+ * to the manual without republishing the book.
+ */
+export function KM() {
+  return search.CORPUS.km || null;
+}
+
+function kmSession(id) {
+  const km = KM();
+  return km ? km.sessions.find((s) => s.id === id || String(s.n) === String(id)) : null;
+}
+
+/**
+ * Knowledge Map sessions that point at a given piece of content — the backlink
+ * half of the cross-reference. Shown on every command, lesson and scenario.
+ */
+export function kmBacklinks(doc) {
+  const km = KM();
+  if (!km || !doc) return null;
+  const hits = km.sessions.filter((s) => (s.manual || []).includes(doc.id));
+  if (!hits.length) return null;
+  const box = h("div.card__meta");
+  box.appendChild(h("span.badge.badge--accent", "Knowledge Map"));
+  for (const s of hits) {
+    box.appendChild(h("a.badge", { href: href(`km/${s.id}`), title: s.summary },
+      `S${s.n} ${s.title}`));
+  }
+  return box;
+}
+
+export function knowledgeMapView() {
+  const wrap = h("div");
+  const km = KM();
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Knowledge Map"),
+    h("p", "Your master curriculum — " +
+      `${km ? km.totalSessions : 146} sessions across ${km ? km.layers.length : 10} layers, ` +
+      "from physical hardware up to governance. Each session links to the parts of this manual " +
+      "that cover it, so you can move between the roadmap and the hands-on detail in either direction."),
+  ));
+
+  if (!km) {
+    wrap.appendChild(h("div.empty", h("h2", "Knowledge Map not loaded"),
+      h("p", "docs/data/knowledge-map.json did not load. Everything else still works.")));
+    return wrap;
+  }
+
+  const sessions = km.sessions;
+  const linked = sessions.filter((s) => (s.manual || []).length);
+  const pct = Math.round((linked.length / sessions.length) * 100);
+
+  wrap.appendChild(h("div.stat-row",
+    h("div.stat", h("div.stat__n", String(sessions.length)), h("div.stat__l", "sessions")),
+    h("div.stat", h("div.stat__n", String(km.layers.length)), h("div.stat__l", "layers")),
+    h("div.stat", h("div.stat__n", String(linked.length)), h("div.stat__l", "linked to the manual")),
+    h("div.stat", h("div.stat__n", pct + "%"), h("div.stat__l", "coverage")),
+  ));
+
+  wrap.appendChild(h("div.note",
+    h("strong", "Source"),
+    h("span", `Outline of ${km.source} — ${km.totalPages} pages, prepared July 2026. ` +
+      "Session numbers, titles, layers and page ranges were extracted mechanically from the PDF. " +
+      "The summaries below are hand-written for this app and are NOT extracted from it. " +
+      "The PDF itself is not published here; it stays in your own library."),
+  ));
+
+  wrap.appendChild(h("h2", "By layer"));
+
+  for (const layer of km.layers) {
+    const mine = sessions.filter((s) => s.layer === layer.n);
+    const withLinks = mine.filter((s) => (s.manual || []).length).length;
+    const share = Math.round((withLinks / mine.length) * 100);
+
+    const section = h("section.layer");
+    section.appendChild(h("div.layer__head",
+      h("h3", h("span.layer__n", "L" + layer.n), layer.name),
+      h("span.layer__count", `${withLinks}/${mine.length} linked`),
+    ));
+    section.appendChild(h("div.layer__bar", { role: "img",
+      "aria-label": `${share}% of ${layer.name} sessions have content in the manual` },
+      h("span", { style: { width: share + "%" } })));
+
+    const list = h("ol.sessions");
+    for (const s of mine) {
+      const n = (s.manual || []).length;
+      list.appendChild(h("li.session",
+        h("a.session__link", { href: href(`km/${s.id}`) },
+          h("span.session__n", String(s.n)),
+          h("span.session__body",
+            h("span.session__title", s.title),
+            h("span.session__sum", s.summary),
+          ),
+          n ? h("span.badge.badge--accent", String(n))
+            : h("span.session__gap", "not in manual"),
+        ),
+      ));
+    }
+    section.appendChild(list);
+    wrap.appendChild(section);
+  }
+
+  return wrap;
+}
+
+export function knowledgeSessionView(params) {
+  const wrap = h("div");
+  const km = KM();
+  const s = kmSession(params.id);
+  if (!s) return notFound("Knowledge Map session", params.id);
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", `Session ${s.n} — ${s.title}`),
+    h("p", s.summary),
+    h("div.card__meta",
+      h("span.badge", `Layer ${s.layer} · ${s.layerName}`),
+      h("span.badge", `Pages ${s.page}–${s.endPage}`),
+      h("a.badge", { href: href("km") }, "All sessions"),
+    ),
+  ));
+
+  const docs = (s.manual || []).map((id) => search.docById(id)).filter(Boolean);
+
+  if (!docs.length) {
+    wrap.appendChild(h("div.empty",
+      h("h2", "Not covered in the manual yet"),
+      h("p", "This session is on the roadmap but the manual has no hands-on material for it yet. " +
+             "That is a known gap, not an oversight — see CONTENT_MAP.md for what is queued next."),
+    ));
+    return wrap;
+  }
+
+  wrap.appendChild(h("h2", `In this manual (${docs.length})`));
+  const list = h("ul.linklist");
+  for (const d of docs) {
+    list.appendChild(h("li",
+      h("a", { href: contentHref(d) }, d.title),
+      h("span.kindtag", d.kind),
+      d.tech ? techBadge(d.tech) : null,
+      verifyBadge(d.verification),
+    ));
+  }
+  wrap.appendChild(list);
+
+  // Sibling sessions, so the map is browsable without going back to the top.
+  const layer = km.layers.find((l) => l.n === s.layer);
+  if (layer) {
+    const siblings = km.sessions.filter((x) => x.layer === s.layer && x.id !== s.id);
+    wrap.appendChild(h("h2", `Rest of Layer ${s.layer}`));
+    const chips = h("div.chips");
+    for (const x of siblings) {
+      chips.appendChild(h("a.chip", { href: href(`km/${x.id}`), title: x.summary },
+        `${x.n}. ${x.title}`));
+    }
+    wrap.appendChild(chips);
+  }
 
   return wrap;
 }

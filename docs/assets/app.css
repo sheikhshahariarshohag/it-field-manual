@@ -4,81 +4,95 @@
    ========================================================================== */
 
 :root {
-  --bg:        #f7f8fa;
-  --bg-sunk:   #eef0f4;
-  --surface:   #ffffff;
-  --surface-2: #f2f4f7;
-  --line:      #dfe3ea;
-  --line-soft: #eaedf2;
-  --text:      #171a1f;
-  --text-dim:  #5b6472;
-  --text-faint:#5f6874;
-  --accent:    #1c5fd6;
+  /* ---------------------------------------------------------------------
+     PALETTE — "warm paper and deep teal".
+
+     Chosen to read like a well-made reference book rather than a corporate
+     dashboard: a warm paper background, soft warm borders, and one calm
+     teal accent instead of the cold corporate blue this started with.
+     Every foreground/background pair below was measured with getContrast()
+     in the browser and clears WCAG AA (4.5:1 for body text, 3:1 for large
+     text and UI borders). Do not hand-edit a colour without re-measuring —
+     see TEST_PLAN.md section 4.
+     --------------------------------------------------------------------- */
+  --bg:        #faf8f4;   /* warm paper */
+  --bg-sunk:   #f2eee7;
+  --surface:   #fffdfa;   /* warm white card */
+  --surface-2: #f6f2ec;
+  --line:      #e4ded3;   /* warm border, softer than the old cool grey */
+  --line-soft: #efeae1;
+  --text:      #1f1d1a;
+  --text-dim:  #5f5951;
+  --text-faint:#6f685e;
+  --accent:    #0f6b66;   /* deep teal — calm, warm-adjacent, not corporate */
   --accent-ink:#ffffff;
-  --accent-dim:#e8f0fe;
-  --ok:        #0f7b4f;
-  --ok-dim:    #e2f5ec;
+  --accent-dim:#e0efed;
+  --accent-2:  #b45309;   /* warm amber, used sparingly for the topbar wash */
+  --ok:        #2f7d4f;
+  --ok-dim:    #e2f3e9;
   --warn:      #8a5606;
   --warn-dim:  #fdf1dc;
-  --danger:    #b3261e;
-  --danger-dim:#fdeceb;
+  --danger:    #a8382e;
+  --danger-dim:#fceceb;
 
   /* Subject colours. Each pair is chosen to clear WCAG AA (4.5:1) against the
      surface it is drawn on; the light and dark sets are NOT the same hue
-     because the same value cannot clear 4.5:1 on both a white and a near-black
+     because the same value cannot clear 4.5:1 on both a light and a near-black
      background. Verified with Lighthouse — see TEST_PLAN.md. */
-  --tech-aplus:     #7a6132;
-  --tech-cisco:     #0a6a91;
-  --tech-mikrotik:  #a3241c;
-  --tech-win11:     #0a5c9e;
-  --tech-winserver: #0f7b4f;
-  --tech-cross:     #6331c4;
-  --code-bg:   #1b1f27;
-  --code-fg:   #e6e9ef;
+  --tech-aplus:     #85641c;   /* bronze */
+  --tech-cisco:     #0a6273;   /* deep teal-blue */
+  --tech-mikrotik:  #a03f22;   /* terracotta */
+  --tech-win11:     #1a63a8;   /* azure */
+  --tech-winserver: #2a7048;   /* forest */
+  --tech-cross:     #70409a;   /* plum */
+  --code-bg:   #241f1a;
+  --code-fg:   #f0e9df;
 
-  --r-sm: 6px;  --r-md: 10px; --r-lg: 14px;
+  --r-sm: 8px;  --r-md: 12px; --r-lg: 18px;
   --sp:  16px;
-  --shadow-1: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.08);
-  --shadow-2: 0 8px 28px rgba(16,24,40,.14);
+  /* Softer, warmer shadows — the old ones were cool grey and read as harsh. */
+  --shadow-1: 0 1px 2px rgba(60,48,32,.05), 0 2px 6px rgba(60,48,32,.05);
+  --shadow-2: 0 10px 32px rgba(60,48,32,.12);
   --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  --topbar-h: 56px;
+  --topbar-h: 60px;
 }
 
 html[data-theme="dark"] {
-  --bg:        #0f1115;
-  --bg-sunk:   #0a0c0f;
-  --surface:   #171a21;
-  --surface-2: #1e222b;
-  --line:      #2a2f3a;
-  --line-soft: #22262f;
-  --text:      #e8ebf0;
-  --text-dim:  #9aa4b2;
-  --text-faint:#6f7887;
-  --accent:    #6ea3ff;
-  --accent-ink:#0b1220;
-  --accent-dim:#16233c;
-  --ok:        #55d6a0;
-  --ok-dim:    #10281f;
+  --bg:        #171614;
+  --bg-sunk:   #100f0d;
+  --surface:   #201e1b;
+  --surface-2: #282521;
+  --line:      #36322b;
+  --line-soft: #2b2823;
+  --text:      #f2ede4;
+  --text-dim:  #a9a196;
+  --text-faint:#8e8679;
+  --accent:    #63c9c0;
+  --accent-ink:#052220;
+  --accent-dim:#15302e;
+  --accent-2:  #e0a35c;
+  --ok:        #6ecf9a;
+  --ok-dim:    #142a1e;
   --warn:      #e6b45c;
   --warn-dim:  #2b2010;
-  --danger:    #f08b83;
+  --danger:    #f09088;
   --danger-dim:#2e1513;
-  --code-bg:   #0a0c10;
-  --code-fg:   #dfe4ec;
+  --code-bg:   #100f0d;
+  --code-fg:   #ece5da;
   --shadow-1: 0 1px 2px rgba(0,0,0,.5);
   --shadow-2: 0 10px 34px rgba(0,0,0,.6);
 }
 
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) {
-    --bg:#0f1115; --bg-sunk:#0a0c0f; --surface:#171a21; --surface-2:#1e222b;
-    --line:#2a2f3a; --line-soft:#22262f; --text:#e8ebf0; --text-dim:#9aa4b2;
-    --text-faint:#8a94a3; --accent:#6ea3ff; --accent-ink:#0b1220; --accent-dim:#16233c;
-    --ok:#55d6a0; --ok-dim:#10281f; --warn:#e6b45c; --warn-dim:#2b2010;
-    --danger:#f08b83; --danger-dim:#2e1513; --code-bg:#0a0c10; --code-fg:#dfe4ec;
-    --tech-aplus:#b8945a; --tech-cisco:#39b6e6; --tech-mikrotik:#ff8a7d;
-    --tech-win11:#6ea3ff; --tech-winserver:#55d6a0; --tech-cross:#b98cff;
+    --bg:#171614; --bg-sunk:#100f0d; --surface:#201e1b; --surface-2:#282521;
+    --line:#36322b; --line-soft:#2b2823; --text:#f2ede4; --text-dim:#a9a196;
+    --text-faint:#8e8679; --accent:#63c9c0; --accent-ink:#052220; --accent-dim:#15302e;
+    --accent-2:#e0a35c; --ok:#6ecf9a; --ok-dim:#142a1e; --warn:#e6b45c; --warn-dim:#2b2010;
+    --danger:#f09088; --danger-dim:#2e1513; --code-bg:#100f0d; --code-fg:#ece5da;
+    --tech-aplus:#d6a95f; --tech-cisco:#5cc2d6; --tech-mikrotik:#f08f70;
+    --tech-win11:#7cb2e8; --tech-winserver:#6ecf9a; --tech-cross:#c39ce6;
     --shadow-1:0 1px 2px rgba(0,0,0,.5); --shadow-2:0 10px 34px rgba(0,0,0,.6);
   }
 }
@@ -162,7 +176,7 @@ a:hover { text-decoration: underline; }
 .topbar__brand { display: flex; align-items: center; gap: 8px; flex: none; }
 .topbar__mark {
   width: 12px; height: 12px; border-radius: 3px;
-  background: linear-gradient(135deg, var(--accent), #7b3fe4);
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
 }
 .topbar__title { font-weight: 650; letter-spacing: -.01em; white-space: nowrap; }
 
@@ -351,10 +365,10 @@ h3 { font-size: 1rem; margin: 22px 0 8px; }
   display: flex; align-items: center; gap: 8px;
   padding: 6px 8px 6px 12px;
   border-bottom: 1px solid rgba(255,255,255,.08);
-  font-size: 11.5px; color: #9aa4b2;
+  font-size: 11.5px; color: #b3aa9d;
 }
 .cmd__tag { font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
-.cmd__where { color: #7f8794; }
+.cmd__where { color: #9c9387; }
 .cmd pre {
   margin: 0; padding: 12px; overflow-x: auto;
   font-family: var(--mono); font-size: 13px; line-height: 1.65;
@@ -363,15 +377,15 @@ h3 { font-size: 1rem; margin: 22px 0 8px; }
 .cmd pre code { font-family: inherit; background: none; border: 0; padding: 0; color: inherit; }
 .cmd__copy {
   margin-left: auto; flex: none;
-  background: rgba(255,255,255,.09); color: #cfd6e0;
+  background: rgba(255,255,255,.10); color: #ded5c8;
   border: 0; border-radius: var(--r-sm);
   padding: 4px 9px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
 }
 .cmd__copy:hover { background: rgba(255,255,255,.18); color: #fff; }
-.cmd__copy[data-done="1"] { background: var(--ok); color: #06231a; }
+.cmd__copy[data-done="1"] { background: var(--ok); color: #0a2418; }
 
-.prompt { color: #7ee0b8; }
-.comment { color: #7f8794; font-style: italic; }
+.prompt { color: #7fd9b4; }
+.comment { color: #9c9387; font-style: italic; }
 
 /* ---------------------------------------------------------------- entries */
 
@@ -555,6 +569,76 @@ tr:last-child td { border-bottom: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+
+/* ==================================================== knowledge map */
+
+.layer {
+  margin: 0 0 var(--sp);
+  padding: var(--sp) var(--sp) 6px;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-1);
+}
+.layer__head {
+  display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.layer__head h3 { margin: 0; font-size: 1.06rem; display: flex; align-items: baseline; gap: 9px; }
+.layer__n {
+  display: inline-block; min-width: 30px; text-align: center;
+  padding: 1px 7px; border-radius: 999px;
+  background: var(--accent-dim); color: var(--accent);
+  font-size: .76rem; font-weight: 750; letter-spacing: .04em;
+}
+.layer__count { margin-left: auto; font-size: 12.5px; color: var(--text-faint); }
+.layer__bar {
+  height: 5px; border-radius: 999px; background: var(--bg-sunk); overflow: hidden;
+  margin-bottom: 10px;
+}
+.layer__bar > span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+
+ol.sessions { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+li.session > .session__link {
+  display: grid; grid-template-columns: 34px 1fr auto; align-items: start; gap: 10px;
+  padding: 8px 10px; border-radius: var(--r-sm);
+  color: inherit; text-decoration: none;
+}
+li.session > .session__link:hover { background: var(--surface-2); text-decoration: none; }
+li.session > .session__link:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.session__n {
+  font-variant-numeric: tabular-nums; font-weight: 700; font-size: .82rem;
+  color: var(--text-faint); text-align: right; padding-top: 1px;
+}
+.session__body { display: grid; gap: 1px; min-width: 0; }
+.session__title { font-weight: 620; font-size: .95rem; }
+.session__sum { font-size: .82rem; color: var(--text-dim); line-height: 1.4; }
+.session__gap { font-size: 11px; color: var(--text-faint); white-space: nowrap; padding-top: 3px; }
+li.session > .session__link:hover .session__gap { color: var(--warn); }
+
+ul.linklist { list-style: none; margin: 0 0 var(--sp); padding: 0; display: grid; gap: 8px; }
+ul.linklist li {
+  display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+  padding: 10px 13px; background: var(--surface);
+  border: 1px solid var(--line-soft); border-radius: var(--r-md);
+}
+ul.linklist li > a:first-child { font-weight: 600; }
+.kindtag {
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text-faint); font-weight: 700;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: var(--sp); }
+a.chip {
+  font-size: .82rem; padding: 4px 11px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line);
+  color: var(--text-dim); text-decoration: none;
+}
+a.chip:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+@media (max-width: 560px) {
+  li.session > .session__link { grid-template-columns: 28px 1fr; }
+  li.session > .session__link > :last-child { grid-column: 2; justify-self: start; }
 }
 
 @media print {

@@ -89,8 +89,41 @@ scripts/
   serve.mjs               local dev server (no dependency)
   validate.mjs            content + privacy gate — run before every commit
   make-icons.mjs          generates the PWA icons, no image library needed
+  extract-knowledge-map.mjs   parses the Knowledge Map PDF into docs/data/
+  tag-knowledge-map.mjs       adds hand-written summaries + backlinks
+  tag-objectives.mjs          attaches exam objective codes to content
 tools/pdfextract/         research-only PDF text extraction (dev-only)
 private/                  extracted book text — GITIGNORED, never shipped
+```
+
+## Where the code actually is
+
+The whole application is plain HTML, CSS and JavaScript — no framework, no
+build step, no dependencies. Everything that runs is inside `docs/`, and
+because `docs/` *is* the published site, **all the source code is already
+publicly readable in the browser**:
+
+| File | What it is | Live URL |
+|---|---|---|
+| `docs/assets/app.js` | boot, data loading, routing, nav | [`/assets/app.js`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/app.js) |
+| `docs/assets/views.js` | every page view | [`/assets/views.js`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/views.js) |
+| `docs/assets/app.css` | the whole design system | [`/assets/app.css`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/app.css) |
+| `docs/assets/search.js` | search index | [`/assets/search.js`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/search.js) |
+| `docs/assets/db.js` | IndexedDB, bookmarks, progress | [`/assets/db.js`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/db.js) |
+| `docs/assets/ui.js` | the `h()` DOM builder, sheets, toasts | [`/assets/ui.js`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/ui.js) |
+| `docs/assets/router.js` | hash router | [`/assets/router.js`](https://sheikhshahariarshohag.github.io/it-field-manual/assets/router.js) |
+| `docs/sw.js` | service worker / offline cache | [`/sw.js`](https://sheikhshahariarshohag.github.io/it-field-manual/sw.js) |
+| `scripts/` | dev server, validator, build tools | [browse on GitHub](https://github.com/sheikhshahariarshohag/it-field-manual/tree/main/scripts) |
+| the `.md` docs | research, policy, test plans | [browse on GitHub](https://github.com/sheikhshahariarshohag/it-field-manual) |
+
+Or open the whole thing at
+[github.com/sheikhshahariarshohag/it-field-manual](https://github.com/sheikhshahariarshohag/it-field-manual).
+
+To run it locally instead:
+
+```bash
+node scripts/serve.mjs 8099      # then open http://localhost:8099
+node scripts/validate.mjs        # the gate — must pass before every commit
 ```
 
 ## Documentation

@@ -17,6 +17,27 @@ matter.
 | A6 | Quizzes are 5–6 questions each | Thin assessment | Expand as subjects are built |
 | **A7** | **The Azure half of AZ-800 is entirely uncovered** | AZ-800 is a hybrid exam: domains 2, 3, 7, 8, 9 are largely Azure Arc, Azure IaaS, availability sets, Site Recovery and migration. This manual is on-premises only and maps to domains 1, 4, 5, 6, 10 | Only close this by building Azure content, which is outside this project's scope |
 | **A8** | **MTCRE has verified objectives but zero content** | 8 MTCRE objectives, 1 covered. Static routing in depth, point-to-point addressing, tunnels and OSPF are absent | Next MikroTik build session |
+| **A9** | **96 of the 146 Knowledge Map sessions have no manual content** | 34% coverage. Layers 7 (Automation), 9 (Cloud) and 10 (Architecture) are **0%** — nothing links back from them. Layers 1–5 are well covered because the manual's content already lives there | Sessions needing content are listed in the app itself; each shows "not in manual" rather than a blank |
+| **A10** | **Knowledge Map session summaries are hand-written, not from the PDF** | The numbers, titles, layers and page ranges are extracted mechanically and are exact. The one-line summaries are mine and were written from the session titles plus the subject matter, **not** by reading all 1402 pages | Summaries are marked as such in the app and in `knowledge-map.json` |
+
+### On A10 — what "verified" means for the Knowledge Map
+
+The user asked for the Knowledge Map to be checked and errors corrected. Here is
+exactly what was and was not done:
+
+| Claim | Status |
+|---|---|
+| 146 sessions, 10 layers, contiguous numbering, no duplicates | **Verified** mechanically against the table of contents |
+| Page range of every session | **Verified** — derived from consecutive TOC page numbers |
+| Layer boundaries (which sessions sit in which layer) | **Verified** against the TOC's own layer headings |
+| Extraction completeness | **Verified** — all 1402 page markers present, no truncation |
+| One-line summaries of each session | **Mine**, written from titles and subject matter, not extracted |
+| Technical accuracy of the summaries | **Not yet line-by-line audited** — see the next item |
+| The PDF itself | **Not republished.** Stays in the private library; only a derived outline is committed |
+
+A full claim-by-claim audit of 1402 pages is a separate piece of work and is
+recorded as outstanding in `RESEARCH_REGISTER.md` §7. It has **not** been done,
+and nothing here should be read as saying it has.
 
 ## B. Verification gaps — the important ones
 

@@ -20,6 +20,9 @@ const navPracticeList = document.getElementById("navPractice");
 
 const SUBJECT_ORDER = ["aplus", "cisco", "mikrotik", "win11", "winserver", "rhel"];
 
+/** The loaded corpus. Module-scoped because the nav is built from it. */
+let corpus = null;
+
 /* ------------------------------------------------------------------ data */
 
 async function loadCorpus() {
@@ -50,12 +53,16 @@ async function loadCorpus() {
     }
   }));
 
-    // Exam objectives are one object, not a list, so they are loaded separately.
-  try {
-    const res = await fetch(`${base}/exam-objectives.json`, { cache: "no-cache" });
-    if (res.ok) out.objectives = await res.json();
-  } catch (err) {
-    console.warn("[field-manual] exam objectives unavailable:", err.message);
+    // Exam objectives and the Knowledge Map are single objects, not lists, so
+  // they are loaded separately from the per-kind groups.
+  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"]]) {
+    try {
+      const res = await fetch(`${base}/${file}.json`, { cache: "no-cache" });
+      if (res.ok) out[key] = await res.json();
+      else console.warn(`[field-manual] ${file}.json returned ${res.status}`);
+    } catch (err) {
+      console.warn(`[field-manual] ${file}.json unavailable:`, err.message);
+    }
   }
 
   search.loadCorpus(out);
@@ -74,11 +81,13 @@ function navLink(label, routeStr, opts = {}) {
 
 function buildNav() {
   const st = search.searchStats();
+  const kmSessions = corpus && corpus.km ? corpus.km.totalSessions : 146;
 
   clear(navPrimary);
   navPrimary.appendChild(navLink("Home", ""));
   navPrimary.appendChild(navLink("Commands", "commands", { count: st.commands }));
   navPrimary.appendChild(navLink("Lessons", "lessons", { count: st.lessons }));
+  navPrimary.appendChild(navLink("Knowledge Map", "km", { count: kmSessions }));
 
   clear(navSubjects);
   for (const t of SUBJECT_ORDER) {
@@ -382,6 +391,7 @@ async function render() {
     case "progress": node = V.progressView(); break;
     case "verify": node = V.verifyView(); break;
     case "objectives": node = V.objectivesView(); break;
+    case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0] }) : V.knowledgeMapView(); break;
     default: node = V.homeView();
   }
 
@@ -419,13 +429,15 @@ async function boot() {
   route("progress", () => render());
   route("verify", () => render());
   route("objectives", () => render());
+  route("km", () => render());
+  route("km/:id", () => render());
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);
   main.appendChild(h("div.empty", h("h2", "Loading the reference library…"), h("p", "First load only. After this it works with no network at all.")));
 
   try {
-    const corpus = await loadCorpus();
+    corpus = await loadCorpus();
     buildNav();
     if (corpus.commands.length + corpus.lessons.length === 0) {
       clear(main);

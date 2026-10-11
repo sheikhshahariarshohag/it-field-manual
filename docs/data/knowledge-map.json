@@ -1,0 +1,2240 @@
+{
+  "note": "Outline of the user's own master curriculum, Enterprise_Infrastructure_Knowledge_Map_Unified.pdf (prepared July 2026, 146 sessions across 10 layers, 1402 pages). Structure extracted mechanically from the document. Summaries and any corrections are added by hand and reviewed. The PDF itself stays in the user's private library and is never committed to this repository.",
+  "source": "Enterprise_Infrastructure_Knowledge_Map_Unified.pdf",
+  "extracted": "2026-10-11",
+  "totalPages": 1402,
+  "totalSessions": 146,
+  "layers": [
+    {
+      "n": 1,
+      "name": "Physical Hardware",
+      "sessions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "first": 1,
+      "last": 9
+    },
+    {
+      "n": 2,
+      "name": "Operating Systems",
+      "sessions": [
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "first": 10,
+      "last": 24
+    },
+    {
+      "n": 3,
+      "name": "Networking",
+      "sessions": [
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50
+      ],
+      "first": 25,
+      "last": 50
+    },
+    {
+      "n": 4,
+      "name": "Identity",
+      "sessions": [
+        51,
+        52,
+        53,
+        54,
+        55,
+        56,
+        57,
+        58,
+        59,
+        60,
+        61,
+        62,
+        63,
+        64,
+        65,
+        66
+      ],
+      "first": 51,
+      "last": 66
+    },
+    {
+      "n": 5,
+      "name": "Enterprise Services",
+      "sessions": [
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74,
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82
+      ],
+      "first": 67,
+      "last": 82
+    },
+    {
+      "n": 6,
+      "name": "Security",
+      "sessions": [
+        83,
+        84,
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        102,
+        103
+      ],
+      "first": 83,
+      "last": 103
+    },
+    {
+      "n": 7,
+      "name": "Automation & CI/CD",
+      "sessions": [
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112,
+        113
+      ],
+      "first": 104,
+      "last": 113
+    },
+    {
+      "n": 8,
+      "name": "Containers & Observability",
+      "sessions": [
+        114,
+        115,
+        116,
+        117,
+        118,
+        119,
+        120,
+        121,
+        122
+      ],
+      "first": 114,
+      "last": 122
+    },
+    {
+      "n": 9,
+      "name": "Cloud",
+      "sessions": [
+        123,
+        124,
+        125,
+        126,
+        127,
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        135
+      ],
+      "first": 123,
+      "last": 135
+    },
+    {
+      "n": 10,
+      "name": "Architecture & Governance",
+      "sessions": [
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146
+      ],
+      "first": 136,
+      "last": 146
+    }
+  ],
+  "sessions": [
+    {
+      "n": 1,
+      "id": "km-001",
+      "title": "CPU",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 6,
+      "endPage": 10,
+      "headings": [],
+      "summary": "What a CPU actually is: cores, threads, clock speed, cache, and why 'GHz' is not a performance score.",
+      "manual": []
+    },
+    {
+      "n": 2,
+      "id": "km-002",
+      "title": "Memory",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 11,
+      "endPage": 15,
+      "headings": [],
+      "summary": "RAM: modules, channels, ECC vs non-ECC, speeds, and how virtual memory swaps to disk.",
+      "manual": []
+    },
+    {
+      "n": 3,
+      "id": "km-003",
+      "title": "Storage",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 16,
+      "endPage": 20,
+      "headings": [],
+      "summary": "Disks and storage tiers: HDD vs SSD vs NVMe, SMART health, RAID levels, and partitioning.",
+      "manual": [
+        "aplus-disk-management",
+        "win11-get-physicaldisk"
+      ]
+    },
+    {
+      "n": 4,
+      "id": "km-004",
+      "title": "Motherboard",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 21,
+      "endPage": 25,
+      "headings": [],
+      "summary": "The motherboard: chipset, buses, slots, POST codes, and what each diagnostic beep means.",
+      "manual": [
+        "aplus-reading-post-codes"
+      ]
+    },
+    {
+      "n": 5,
+      "id": "km-005",
+      "title": "Power",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 26,
+      "endPage": 30,
+      "headings": [],
+      "summary": "Power supplies and power delivery: wattage, efficiency, transient spikes, and UPS sizing.",
+      "manual": []
+    },
+    {
+      "n": 6,
+      "id": "km-006",
+      "title": "Firmware",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 31,
+      "endPage": 35,
+      "headings": [],
+      "summary": "Firmware: BIOS vs UEFI, Secure Boot, TPM, and flashing risk.",
+      "manual": []
+    },
+    {
+      "n": 7,
+      "id": "km-007",
+      "title": "Virtualization",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 36,
+      "endPage": 41,
+      "headings": [],
+      "summary": "Virtualisation concepts, hypervisors, Type 1 vs Type 2, and VM resource overhead.",
+      "manual": [
+        "rhel-service-libvirt-kvm-qemu"
+      ]
+    },
+    {
+      "n": 8,
+      "id": "km-008",
+      "title": "Boot Process",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 42,
+      "endPage": 47,
+      "headings": [],
+      "summary": "The full cold-boot sequence from power-on to a login prompt, and where it can break.",
+      "manual": [
+        "aplus-post-boot-sequence",
+        "win11-flags-bcdedit"
+      ]
+    },
+    {
+      "n": 9,
+      "id": "km-009",
+      "title": "Hardware Troubleshooting",
+      "layer": 1,
+      "layerName": "Physical Hardware",
+      "page": 48,
+      "endPage": 53,
+      "headings": [],
+      "summary": "A disciplined hardware troubleshooting process: identify, theorise, test, verify.",
+      "manual": [
+        "aplus-reading-post-codes",
+        "aplus-chkdsk-sfc"
+      ]
+    },
+    {
+      "n": 10,
+      "id": "km-010",
+      "title": "Windows",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 54,
+      "endPage": 63,
+      "headings": [],
+      "summary": "Windows as an operating system: editions, features, registry, and the shell.",
+      "manual": [
+        "win11-boot-repair-decision",
+        "win11-sfc-dism",
+        "quiz-windows-basics"
+      ]
+    },
+    {
+      "n": 11,
+      "id": "km-011",
+      "title": "Linux",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 64,
+      "endPage": 73,
+      "headings": [
+        "Hands-on exercise using your existing Rocky Linux VM under VMware Workstation:"
+      ],
+      "summary": "Linux as an operating system: distributions, the filesystem layout, and package managers.",
+      "manual": [
+        "quiz-rhel-basics"
+      ]
+    },
+    {
+      "n": 12,
+      "id": "km-012",
+      "title": "Kernel",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 74,
+      "endPage": 83,
+      "headings": [
+        "Hands-on exercise usable on both your Rocky Linux VM and your Windows host:"
+      ],
+      "summary": "The kernel: system calls, modules, and what runs in ring 0 versus user space.",
+      "manual": []
+    },
+    {
+      "n": 13,
+      "id": "km-013",
+      "title": "Processes",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 84,
+      "endPage": 92,
+      "headings": [
+        "Hands-on exercise usable on both your Rocky Linux VM and your Windows host:"
+      ],
+      "summary": "Processes: creating, inspecting, signalling and terminating them.",
+      "manual": [
+        "rhel-ss-lntup"
+      ]
+    },
+    {
+      "n": 14,
+      "id": "km-014",
+      "title": "Threads",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 93,
+      "endPage": 102,
+      "headings": [
+        "practical skills any working Linux administrator uses regularly.",
+        "Hands-on exercise usable on both your Rocky Linux VM and your Windows host:"
+      ],
+      "summary": "Threads and concurrency: scheduling, contention, and why a thread can starve.",
+      "manual": []
+    },
+    {
+      "n": 15,
+      "id": "km-015",
+      "title": "Memory Management",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 103,
+      "endPage": 112,
+      "headings": [],
+      "summary": "Memory management: virtual memory, paging, swapping, and OOM behaviour.",
+      "manual": []
+    },
+    {
+      "n": 16,
+      "id": "km-016",
+      "title": "Drivers",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 113,
+      "endPage": 122,
+      "headings": [],
+      "summary": "Drivers: the kernel interface, the driver store, and why signed drivers matter.",
+      "manual": []
+    },
+    {
+      "n": 17,
+      "id": "km-017",
+      "title": "Services",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 123,
+      "endPage": 132,
+      "headings": [],
+      "summary": "Services and init systems, and how they differ between Windows and Linux.",
+      "manual": [
+        "rhel-service-systemd-systemctl",
+        "rhel-systemctl-status",
+        "rhel-systemctl-enable-now",
+        "rhel-service-cron-crond",
+        "scn-rhel-service-running-not-working"
+      ]
+    },
+    {
+      "n": 18,
+      "id": "km-018",
+      "title": "Logging OSLevel",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 133,
+      "endPage": 142,
+      "headings": [],
+      "summary": "Operating-system level logging: Windows event logs, syslog and journald.",
+      "manual": [
+        "rhel-service-rsyslog",
+        "rhel-service-systemd-journald",
+        "rhel-journalctl-unit"
+      ]
+    },
+    {
+      "n": 19,
+      "id": "km-019",
+      "title": "File Systems",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 143,
+      "endPage": 152,
+      "headings": [],
+      "summary": "File systems: NTFS, ext4, XFS and their journaling behaviour.",
+      "manual": [
+        "rhel-service-nfs",
+        "rhel-service-samba-smb",
+        "rhel-service-autofs"
+      ]
+    },
+    {
+      "n": 20,
+      "id": "km-020",
+      "title": "Permissions",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 153,
+      "endPage": 163,
+      "headings": [],
+      "summary": "Permissions and ownership: ugo/rwx, ACLs, and diagnosing permission problems.",
+      "manual": []
+    },
+    {
+      "n": 21,
+      "id": "km-021",
+      "title": "Users",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 164,
+      "endPage": 174,
+      "headings": [],
+      "summary": "Users: local accounts, password aging, and service accounts.",
+      "manual": [
+        "rhel-service-sssd",
+        "win11-net-user"
+      ]
+    },
+    {
+      "n": 22,
+      "id": "km-022",
+      "title": "Groups",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 175,
+      "endPage": 185,
+      "headings": [],
+      "summary": "Groups, memberships, and the difference between primary and supplementary groups.",
+      "manual": [
+        "rhel-service-sssd"
+      ]
+    },
+    {
+      "n": 23,
+      "id": "km-023",
+      "title": "Package Management",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 186,
+      "endPage": 196,
+      "headings": [],
+      "summary": "Package management: RPM and dnf, repositories, and what Flatpak changes in RHEL 10.",
+      "manual": [
+        "rhel-sudo-dnf"
+      ]
+    },
+    {
+      "n": 24,
+      "id": "km-024",
+      "title": "Networking Stack",
+      "layer": 2,
+      "layerName": "Operating Systems",
+      "page": 197,
+      "endPage": 202,
+      "headings": [],
+      "summary": "The networking stack: sockets, the port table, and which services listen by default.",
+      "manual": [
+        "rhel-ss-lntup",
+        "rhel-nmcli-connection",
+        "rhel-service-openssh-sshd"
+      ]
+    },
+    {
+      "n": 25,
+      "id": "km-025",
+      "title": "OSIModel",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 203,
+      "endPage": 208,
+      "headings": [],
+      "summary": "The OSI model, what each layer actually does, and where real devices sit.",
+      "manual": []
+    },
+    {
+      "n": 26,
+      "id": "km-026",
+      "title": "TCPIPModel",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 209,
+      "endPage": 214,
+      "headings": [],
+      "summary": "The TCP/IP model and how it maps onto OSI. Encapsulation and headers.",
+      "manual": []
+    },
+    {
+      "n": 27,
+      "id": "km-027",
+      "title": "Ethernet",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 215,
+      "endPage": 220,
+      "headings": [],
+      "summary": "Ethernet: frames, MAC addresses, switches and how a switch learns.",
+      "manual": [
+        "ccna-switch-learns-mac",
+        "cisco-show-mac-address-table"
+      ]
+    },
+    {
+      "n": 28,
+      "id": "km-028",
+      "title": "Switching",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 221,
+      "endPage": 226,
+      "headings": [],
+      "summary": "Switching: frame forwarding, VLANs, and the switchport lifecycle.",
+      "manual": [
+        "ccna-switch-learns-mac",
+        "cisco-show-interfaces-switchport",
+        "cisco-vlan-database",
+        "cisco-show-run-interface",
+        "cisco-interface-no-shutdown",
+        "quiz-switching"
+      ]
+    },
+    {
+      "n": 29,
+      "id": "km-029",
+      "title": "Routing",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 227,
+      "endPage": 232,
+      "headings": [],
+      "summary": "Routing: longest-prefix match, administrative distance, metric, next hop.",
+      "manual": [
+        "ccna-longest-prefix-match",
+        "cisco-show-ip-route",
+        "cisco-ip-route",
+        "cisco-show-ip-interface-brief",
+        "mikrotik-ip-route-print"
+      ]
+    },
+    {
+      "n": 30,
+      "id": "km-030",
+      "title": "Subnetting",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 233,
+      "endPage": 238,
+      "headings": [],
+      "summary": "Subnetting that survives contact with a real network, including IPv4 exhaustion.",
+      "manual": [
+        "ccna-subnetting-that-sticks"
+      ]
+    },
+    {
+      "n": 31,
+      "id": "km-031",
+      "title": "IPv4",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 239,
+      "endPage": 250,
+      "headings": [],
+      "summary": "IPv4 addressing, subnet masks, private ranges, and special addresses.",
+      "manual": [
+        "win11-ipconfig-all",
+        "win11-get-netadapter",
+        "mikrotik-ip-address-print"
+      ]
+    },
+    {
+      "n": 32,
+      "id": "km-032",
+      "title": "IPv6",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 251,
+      "endPage": 262,
+      "headings": [],
+      "summary": "IPv6: addressing, compression, and transition mechanisms.",
+      "manual": []
+    },
+    {
+      "n": 33,
+      "id": "km-033",
+      "title": "VLAN",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 263,
+      "endPage": 274,
+      "headings": [],
+      "summary": "VLANs: why they exist, 802.1Q tagging, and trunking.",
+      "manual": [
+        "linux-vlan-troubleshooting",
+        "mikrotik-bridge-broadcast-domains",
+        "mikrotik-bridge-port-print"
+      ]
+    },
+    {
+      "n": 34,
+      "id": "km-034",
+      "title": "STP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 275,
+      "endPage": 286,
+      "headings": [],
+      "summary": "Spanning Tree Protocol: why loops are catastrophic, and the states that prevent them.",
+      "manual": [
+        "cisco-show-spanning-tree"
+      ]
+    },
+    {
+      "n": 35,
+      "id": "km-035",
+      "title": "LACP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 287,
+      "endPage": 297,
+      "headings": [
+        "Practical risks and mitigations:"
+      ],
+      "summary": "Link aggregation: LACP, bonding, and hashing rules that surprise people.",
+      "manual": []
+    },
+    {
+      "n": 36,
+      "id": "km-036",
+      "title": "Routing Protocols",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 298,
+      "endPage": 308,
+      "headings": [],
+      "summary": "Dynamic routing protocols: distance vector vs link state, and when to use each.",
+      "manual": []
+    },
+    {
+      "n": 37,
+      "id": "km-037",
+      "title": "NAT",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 309,
+      "endPage": 318,
+      "headings": [],
+      "summary": "NAT and PAT: how translation breaks return traffic, and how it is undone.",
+      "manual": [
+        "mikrotik-ip-firewall-nat",
+        "proj-small-office"
+      ]
+    },
+    {
+      "n": 38,
+      "id": "km-038",
+      "title": "ACL",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 319,
+      "endPage": 329,
+      "headings": [],
+      "summary": "Access control lists: standard vs extended, and why rule order decides everything.",
+      "manual": [
+        "cisco-ip-access-list"
+      ]
+    },
+    {
+      "n": 39,
+      "id": "km-039",
+      "title": "DNS",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 330,
+      "endPage": 340,
+      "headings": [],
+      "summary": "DNS: records, resolvers, caching, and how name resolution fails.",
+      "manual": [
+        "linux-dns-resolution",
+        "scn-ad-dns-resolution-failure"
+      ]
+    },
+    {
+      "n": 40,
+      "id": "km-040",
+      "title": "DHCP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 341,
+      "endPage": 351,
+      "headings": [],
+      "summary": "DHCP: the DORA exchange, scopes, options, reservations, and lease failure modes.",
+      "manual": [
+        "mikrotik-ip-dhcp-server-network",
+        "rhel-service-dhcp",
+        "winserver-dhcp-scope-create",
+        "scn-dhcp-client-no-lease"
+      ]
+    },
+    {
+      "n": 41,
+      "id": "km-041",
+      "title": "ARP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 352,
+      "endPage": 361,
+      "headings": [
+        "hands-on."
+      ],
+      "summary": "ARP: building the L2-to-L3 map, and why a wrong ARP cache is so hard to see.",
+      "manual": []
+    },
+    {
+      "n": 42,
+      "id": "km-042",
+      "title": "ICMP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 362,
+      "endPage": 368,
+      "headings": [],
+      "summary": "ICMP: ping, traceroute, and what each reply type actually tells you.",
+      "manual": [
+        "cisco-ping-traceroute"
+      ]
+    },
+    {
+      "n": 43,
+      "id": "km-043",
+      "title": "TCP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 369,
+      "endPage": 376,
+      "headings": [],
+      "summary": "TCP: the three-way handshake, sequence numbers, and what a SYN flood is.",
+      "manual": []
+    },
+    {
+      "n": 44,
+      "id": "km-044",
+      "title": "UDP",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 377,
+      "endPage": 383,
+      "headings": [],
+      "summary": "UDP: connectionless, and why DNS and DHCP both depend on it.",
+      "manual": []
+    },
+    {
+      "n": 45,
+      "id": "km-045",
+      "title": "VPN",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 384,
+      "endPage": 391,
+      "headings": [
+        "lab environment) and record the tunnel type (IKEv2/SSTP/etc.)."
+      ],
+      "summary": "VPN fundamentals: tunnels, encapsulation and the trust boundary.",
+      "manual": []
+    },
+    {
+      "n": 46,
+      "id": "km-046",
+      "title": "IPSec",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 392,
+      "endPage": 398,
+      "headings": [],
+      "summary": "IPSec: transport vs tunnel mode, and the two phases that negotiate security.",
+      "manual": []
+    },
+    {
+      "n": 47,
+      "id": "km-047",
+      "title": "SSL TLS",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 399,
+      "endPage": 406,
+      "headings": [],
+      "summary": "SSL/TLS: the handshake, certificate chain validation, and why padlocks are not proof.",
+      "manual": []
+    },
+    {
+      "n": 48,
+      "id": "km-048",
+      "title": "Load Balancing",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 407,
+      "endPage": 414,
+      "headings": [],
+      "summary": "Load balancing: algorithms, health checks, and where sessions stick.",
+      "manual": []
+    },
+    {
+      "n": 49,
+      "id": "km-049",
+      "title": "Qo S",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 415,
+      "endPage": 432,
+      "headings": [
+        "Lab Objective"
+      ],
+      "summary": "Quality of Service: classification, marking, queuing and shaping.",
+      "manual": []
+    },
+    {
+      "n": 50,
+      "id": "km-050",
+      "title": "Wireless",
+      "layer": 3,
+      "layerName": "Networking",
+      "page": 433,
+      "endPage": 451,
+      "headings": [
+        "Lab Objective"
+      ],
+      "summary": "Wireless: channels, interference, and how 802.11 differs from Ethernet.",
+      "manual": [
+        "win11-netsh-wlan"
+      ]
+    },
+    {
+      "n": 51,
+      "id": "km-051",
+      "title": "Directory Services",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 452,
+      "endPage": 468,
+      "headings": [
+        "Lab Objective"
+      ],
+      "summary": "Directory services: what a directory is, and why nearly everything binds to one.",
+      "manual": []
+    },
+    {
+      "n": 52,
+      "id": "km-052",
+      "title": "Active Directory",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 469,
+      "endPage": 485,
+      "headings": [
+        "practical, high-frequency topic rather than a niche one.",
+        "practically applicable rather than theoretical.",
+        "Lab Objective"
+      ],
+      "summary": "Active Directory: the forest, domain, DC and Global Catalog, and how a client finds them.",
+      "manual": [
+        "winserver-ad-forests-and-trusts",
+        "winserver-install-addfeature",
+        "win11-domain-join"
+      ]
+    },
+    {
+      "n": 53,
+      "id": "km-053",
+      "title": "LDAP",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 486,
+      "endPage": 494,
+      "headings": [],
+      "summary": "LDAP: the protocol under AD, bind types, and how to query it.",
+      "manual": [
+        "winserver-get-adcomputer"
+      ]
+    },
+    {
+      "n": 54,
+      "id": "km-054",
+      "title": "Kerberos",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 495,
+      "endPage": 503,
+      "headings": [],
+      "summary": "Kerberos: tickets, the KDC, and why time skew breaks authentication.",
+      "manual": []
+    },
+    {
+      "n": 55,
+      "id": "km-055",
+      "title": "NTLM",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 504,
+      "endPage": 511,
+      "headings": [],
+      "summary": "NTLM: the older protocol, its weaknesses, and how it still appears in mixed networks.",
+      "manual": []
+    },
+    {
+      "n": 56,
+      "id": "km-056",
+      "title": "DNS Integration AD",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 512,
+      "endPage": 520,
+      "headings": [],
+      "summary": "How AD DNS actually works: SRV records, the _msdcs zones, and why DNS breaks join first.",
+      "manual": [
+        "winserver-dcdiag",
+        "winserver-get-dnsserverscope",
+        "scn-ad-dns-resolution-failure"
+      ]
+    },
+    {
+      "n": 57,
+      "id": "km-057",
+      "title": "Trusts",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 521,
+      "endPage": 529,
+      "headings": [],
+      "summary": "Trusts: one-way, two-way, transitive, and the security cost of each.",
+      "manual": [
+        "winserver-ad-forests-and-trusts"
+      ]
+    },
+    {
+      "n": 58,
+      "id": "km-058",
+      "title": "Forests",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 530,
+      "endPage": 538,
+      "headings": [],
+      "summary": "Forests, domains and the Global Catalog as the price of scale.",
+      "manual": [
+        "winserver-ad-forests-and-trusts"
+      ]
+    },
+    {
+      "n": 59,
+      "id": "km-059",
+      "title": "Domains",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 539,
+      "endPage": 552,
+      "headings": [],
+      "summary": "Domains, OUs, and structuring an object model that survives staff turnover.",
+      "manual": [
+        "win11-domain-join"
+      ]
+    },
+    {
+      "n": 60,
+      "id": "km-060",
+      "title": "Group Policy",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 553,
+      "endPage": 566,
+      "headings": [],
+      "summary": "Group Policy: scopes, security filtering, and the order settings apply in.",
+      "manual": [
+        "winserver-group-policy-troubleshooting",
+        "win11-gpresult"
+      ]
+    },
+    {
+      "n": 61,
+      "id": "km-061",
+      "title": "PKI",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 567,
+      "endPage": 581,
+      "headings": [
+        "practical only for audiences the organization directly"
+      ],
+      "summary": "PKI: what a certificate authority is for and how trust anchors work.",
+      "manual": []
+    },
+    {
+      "n": 62,
+      "id": "km-062",
+      "title": "Certificates",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 582,
+      "endPage": 596,
+      "headings": [
+        "practical dependencies specific to using them day-to-day:"
+      ],
+      "summary": "Certificates: issuing, renewal, and the expiry outage nobody planned for.",
+      "manual": []
+    },
+    {
+      "n": 63,
+      "id": "km-063",
+      "title": "Federation ADFS",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 597,
+      "endPage": 611,
+      "headings": [],
+      "summary": "Federation and ADFS: joining two identity worlds without duplicating passwords.",
+      "manual": []
+    },
+    {
+      "n": 64,
+      "id": "km-064",
+      "title": "SSO",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 612,
+      "endPage": 625,
+      "headings": [],
+      "summary": "Single sign-on: the promise, the trade-offs, and where it breaks.",
+      "manual": []
+    },
+    {
+      "n": 65,
+      "id": "km-065",
+      "title": "MFA",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 626,
+      "endPage": 639,
+      "headings": [],
+      "summary": "Multi-factor authentication: factors, fatigue attacks, and recovery paths.",
+      "manual": []
+    },
+    {
+      "n": 66,
+      "id": "km-066",
+      "title": "Identity Governance",
+      "layer": 4,
+      "layerName": "Identity",
+      "page": 640,
+      "endPage": 653,
+      "headings": [
+        "Core Concepts"
+      ],
+      "summary": "Identity governance: joiners, movers and leavers as a security control.",
+      "manual": []
+    },
+    {
+      "n": 67,
+      "id": "km-067",
+      "title": "DNS Enterprise",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 654,
+      "endPage": 667,
+      "headings": [],
+      "summary": "Enterprise DNS design: zones, delegation, forwarders and caching.",
+      "manual": [
+        "rhel-service-bind-named",
+        "linux-dns-resolution"
+      ]
+    },
+    {
+      "n": 68,
+      "id": "km-068",
+      "title": "DHCP Enterprise Deployment",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 668,
+      "endPage": 679,
+      "headings": [],
+      "summary": "Deploying DHCP at enterprise scale: scopes, reservations, failover and relay.",
+      "manual": [
+        "rhel-service-dhcp",
+        "winserver-dhcp-scope-create"
+      ]
+    },
+    {
+      "n": 69,
+      "id": "km-069",
+      "title": "NTP",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 680,
+      "endPage": 690,
+      "headings": [],
+      "summary": "Time synchronisation: NTP/chrony, and why unsynchronised clocks cause outages.",
+      "manual": [
+        "rhel-service-chronyd"
+      ]
+    },
+    {
+      "n": 70,
+      "id": "km-070",
+      "title": "File Servers",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 691,
+      "endPage": 701,
+      "headings": [],
+      "summary": "File services: shares, permissions, quotas, and the NTFS vs share distinction.",
+      "manual": [
+        "rhel-service-samba-smb"
+      ]
+    },
+    {
+      "n": 71,
+      "id": "km-071",
+      "title": "Print Servers",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 702,
+      "endPage": 712,
+      "headings": [],
+      "summary": "Print services: queues, drivers, and why printing breaks on every migration.",
+      "manual": []
+    },
+    {
+      "n": 72,
+      "id": "km-072",
+      "title": "Application Servers",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 713,
+      "endPage": 722,
+      "headings": [
+        "Lab 1 — Observe Connection Pool Exhaustion (Linux)",
+        "Lab 2 — Sticky Sessions vs. Externalized Sessions",
+        "Lab 3 — Windows IIS App Pool Recycling"
+      ],
+      "summary": "Application servers: deployment, runtime, and service management.",
+      "manual": []
+    },
+    {
+      "n": 73,
+      "id": "km-073",
+      "title": "Database Servers",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 723,
+      "endPage": 732,
+      "headings": [
+        "Lab 1 — Observe the Effect of an Index (Linux/PostgreSQL)",
+        "Lab 2 — Simulate and Recover From a Crash",
+        "Lab 3 — Set Up Primary/Replica Replication"
+      ],
+      "summary": "Database servers: installing, initialising and securing a database service.",
+      "manual": [
+        "rhel-service-postgresql"
+      ]
+    },
+    {
+      "n": 74,
+      "id": "km-074",
+      "title": "Web Servers",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 733,
+      "endPage": 742,
+      "headings": [
+        "Lab 1 — Configure and Break/Fix a Reverse Proxy Route (Linux/Nginx)",
+        "Lab 2 — Simulate Worker Connection Exhaustion",
+        "Lab 3 — TLS Termination and Redirect (Windows/IIS)"
+      ],
+      "summary": "Web servers: Apache httpd, virtual hosts, TLS termination.",
+      "manual": [
+        "rhel-service-apache-httpd"
+      ]
+    },
+    {
+      "n": 75,
+      "id": "km-075",
+      "title": "Reverse Proxy",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 743,
+      "endPage": 752,
+      "headings": [
+        "Lab 1 — Path-Based Routing to Two Backends (Linux/Nginx)",
+        "Lab 2 — Verify and Fix X-Forwarded-For Handling",
+        "Lab 3 — TLS Termination with Backend Health Checks (Windows/IIS ARR)"
+      ],
+      "summary": "Reverse proxies: TLS offload, header rewriting, and health checks.",
+      "manual": []
+    },
+    {
+      "n": 76,
+      "id": "km-076",
+      "title": "Proxy",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 753,
+      "endPage": 762,
+      "headings": [
+        "Lab 1 — Configure Squid as an Explicit Forward Proxy (Linux)",
+        "Lab 2 — Observe the CONNECT Method",
+        "Lab 3 — Deploy Proxy Settings via Group Policy (Windows)"
+      ],
+      "summary": "Forward proxies: filtering, caching, and egress control.",
+      "manual": []
+    },
+    {
+      "n": 77,
+      "id": "km-077",
+      "title": "Storage SAN NAS",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 763,
+      "endPage": 771,
+      "headings": [],
+      "summary": "Storage: SAN vs NAS, iSCSI, NFS, and the trade-offs.",
+      "manual": [
+        "rhel-service-nfs"
+      ]
+    },
+    {
+      "n": 78,
+      "id": "km-078",
+      "title": "Backup",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 772,
+      "endPage": 780,
+      "headings": [],
+      "summary": "Backup: full, incremental and differential, and why backup is not restore.",
+      "manual": [
+        "mikrotik-system-backup-save"
+      ]
+    },
+    {
+      "n": 79,
+      "id": "km-079",
+      "title": "High Availability",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 781,
+      "endPage": 789,
+      "headings": [],
+      "summary": "High availability: failover clustering, load balancing, and quorum.",
+      "manual": []
+    },
+    {
+      "n": 80,
+      "id": "km-080",
+      "title": "Disaster Recovery",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 790,
+      "endPage": 798,
+      "headings": [],
+      "summary": "Disaster recovery: RPO, RTO, and designing for the day it all fails.",
+      "manual": []
+    },
+    {
+      "n": 81,
+      "id": "km-081",
+      "title": "Monitoring",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 799,
+      "endPage": 808,
+      "headings": [],
+      "summary": "Monitoring: what to watch, alert thresholds, and alert fatigue.",
+      "manual": [
+        "mikrotik-system-resource-print"
+      ]
+    },
+    {
+      "n": 82,
+      "id": "km-082",
+      "title": "Logging",
+      "layer": 5,
+      "layerName": "Enterprise Services",
+      "page": 809,
+      "endPage": 818,
+      "headings": [],
+      "summary": "Centralised logging: shipping, retention, and reading logs under pressure.",
+      "manual": [
+        "rhel-service-rsyslog"
+      ]
+    },
+    {
+      "n": 83,
+      "id": "km-083",
+      "title": "CIA Triad",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 819,
+      "endPage": 828,
+      "headings": [],
+      "summary": "The CIA triad and how each property fails in a real incident.",
+      "manual": []
+    },
+    {
+      "n": 84,
+      "id": "km-084",
+      "title": "AAA",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 829,
+      "endPage": 838,
+      "headings": [],
+      "summary": "Authentication, authorisation and accounting, and where MFA fits.",
+      "manual": []
+    },
+    {
+      "n": 85,
+      "id": "km-085",
+      "title": "Least Privilege",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 839,
+      "endPage": 847,
+      "headings": [],
+      "summary": "Least privilege: granting the minimum, and auditing what was granted.",
+      "manual": []
+    },
+    {
+      "n": 86,
+      "id": "km-086",
+      "title": "Defense in Depth",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 848,
+      "endPage": 857,
+      "headings": [],
+      "summary": "Defence in depth: layers that must fail independently.",
+      "manual": []
+    },
+    {
+      "n": 87,
+      "id": "km-087",
+      "title": "Zero Trust",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 858,
+      "endPage": 864,
+      "headings": [],
+      "summary": "Zero trust: never trust, always verify, and what it costs to retrofit.",
+      "manual": []
+    },
+    {
+      "n": 88,
+      "id": "km-088",
+      "title": "Firewalls",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 865,
+      "endPage": 871,
+      "headings": [],
+      "summary": "Firewalls: stateful inspection, zones, and rules that quietly block you out.",
+      "manual": [
+        "rhel-service-firewalld",
+        "rhel-firewall-cmd-list",
+        "mikrotik-firewall-chains",
+        "mikrotik-ip-firewall-filter"
+      ]
+    },
+    {
+      "n": 89,
+      "id": "km-089",
+      "title": "IDS",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 872,
+      "endPage": 878,
+      "headings": [],
+      "summary": "Intrusion detection: signatures, anomalies, and false positives.",
+      "manual": []
+    },
+    {
+      "n": 90,
+      "id": "km-090",
+      "title": "IPS",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 879,
+      "endPage": 885,
+      "headings": [
+        "lab:"
+      ],
+      "summary": "Intrusion prevention: blocking in-line and the cost of a wrong block.",
+      "manual": []
+    },
+    {
+      "n": 91,
+      "id": "km-091",
+      "title": "EDR",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 886,
+      "endPage": 892,
+      "headings": [],
+      "summary": "Endpoint detection and response: telemetry, containment, forensics.",
+      "manual": []
+    },
+    {
+      "n": 92,
+      "id": "km-092",
+      "title": "SIEM",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 893,
+      "endPage": 899,
+      "headings": [],
+      "summary": "SIEM: collecting security events and making them actionable.",
+      "manual": []
+    },
+    {
+      "n": 93,
+      "id": "km-093",
+      "title": "SOAR",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 900,
+      "endPage": 906,
+      "headings": [],
+      "summary": "SOAR: automating response and the risk of automating the wrong thing.",
+      "manual": []
+    },
+    {
+      "n": 94,
+      "id": "km-094",
+      "title": "Threat Intelligence",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 907,
+      "endPage": 913,
+      "headings": [],
+      "summary": "Threat intelligence: using it without being overwhelmed by it.",
+      "manual": []
+    },
+    {
+      "n": 95,
+      "id": "km-095",
+      "title": "Threat Hunting",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 914,
+      "endPage": 920,
+      "headings": [],
+      "summary": "Threat hunting: hypotheses, queries, and proving a negative.",
+      "manual": []
+    },
+    {
+      "n": 96,
+      "id": "km-096",
+      "title": "Hardening",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 921,
+      "endPage": 930,
+      "headings": [
+        "Hands-on exercise (safe on a personal VM or test system — never on production):"
+      ],
+      "summary": "Hardening: baselines, CIS guidance, and the cost of locking yourself out.",
+      "manual": [
+        "rhel-service-selinux",
+        "rhel-getenforce-ausearch"
+      ]
+    },
+    {
+      "n": 97,
+      "id": "km-097",
+      "title": "Vulnerability Management",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 931,
+      "endPage": 940,
+      "headings": [
+        "Hands-on exercise (safe on a personal VM or test system — never on production):"
+      ],
+      "summary": "Vulnerability management: finding, prioritising, and actually fixing.",
+      "manual": []
+    },
+    {
+      "n": 98,
+      "id": "km-098",
+      "title": "Patch Management",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 941,
+      "endPage": 950,
+      "headings": [
+        "Hands-on exercise (safe on a personal VM or test system — never on production):"
+      ],
+      "summary": "Patch management: cadence, reboots, and the services that break on update.",
+      "manual": []
+    },
+    {
+      "n": 99,
+      "id": "km-099",
+      "title": "Logging Security",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 951,
+      "endPage": 960,
+      "headings": [
+        "Hands-on exercise (safe on a personal VM or test system — never on production):"
+      ],
+      "summary": "Security logging: what to record so an investigation is possible later.",
+      "manual": [
+        "rhel-service-auditd"
+      ]
+    },
+    {
+      "n": 100,
+      "id": "km-100",
+      "title": "Incident Response",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 961,
+      "endPage": 970,
+      "headings": [],
+      "summary": "Incident response: preparation, containment, eradication, recovery.",
+      "manual": []
+    },
+    {
+      "n": 101,
+      "id": "km-101",
+      "title": "Forensics",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 971,
+      "endPage": 980,
+      "headings": [],
+      "summary": "Forensics: preserving evidence, and the order you must work in.",
+      "manual": []
+    },
+    {
+      "n": 102,
+      "id": "km-102",
+      "title": "Security Monitoring",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 981,
+      "endPage": 990,
+      "headings": [
+        "Hands-on exercise (safe on a personal VM or test system — never on production):"
+      ],
+      "summary": "Security monitoring: dashboards that answer a question, not collect a metric.",
+      "manual": []
+    },
+    {
+      "n": 103,
+      "id": "km-103",
+      "title": "Mitre Attack Mapping",
+      "layer": 6,
+      "layerName": "Security",
+      "page": 991,
+      "endPage": 1000,
+      "headings": [
+        "Hands-on exercise (safe on a personal VM or test system — never on production):"
+      ],
+      "summary": "MITRE ATT&CK mapping: describing behaviour instead of products.",
+      "manual": []
+    },
+    {
+      "n": 104,
+      "id": "km-104",
+      "title": "Power Shell",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1001,
+      "endPage": 1010,
+      "headings": [
+        "Hands-on exercise (safe to run on your own Windows machine or a test VM):"
+      ],
+      "summary": "PowerShell: objects, pipelines, remoting, and why text output is not enough.",
+      "manual": []
+    },
+    {
+      "n": 105,
+      "id": "km-105",
+      "title": "Bash",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1011,
+      "endPage": 1021,
+      "headings": [
+        "Hands-on exercise — build and harden a real operational script.",
+        "lab-verification"
+      ],
+      "summary": "Bash: variables, redirection, pipelines, and writing scripts you can trust.",
+      "manual": []
+    },
+    {
+      "n": 106,
+      "id": "km-106",
+      "title": "Python",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1022,
+      "endPage": 1031,
+      "headings": [
+        "hands-on/scripting portions of associate and professional-level exams.",
+        "practical application of Session 51–66 concepts.",
+        "Hands-on exercise — build a small but production-shaped automation script.",
+        "lab-commands"
+      ],
+      "summary": "Python for administration: automating the boring parts safely.",
+      "manual": []
+    },
+    {
+      "n": 107,
+      "id": "km-107",
+      "title": "Git",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1032,
+      "endPage": 1041,
+      "headings": [
+        "lab-commands"
+      ],
+      "summary": "Git: commits, branches, merges, and using it as an audit trail.",
+      "manual": []
+    },
+    {
+      "n": 108,
+      "id": "km-108",
+      "title": "REST APIs",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1042,
+      "endPage": 1052,
+      "headings": [
+        "lab-commands"
+      ],
+      "summary": "REST APIs: methods, status codes, idempotency, and authentication.",
+      "manual": []
+    },
+    {
+      "n": 109,
+      "id": "km-109",
+      "title": "Infrastructure as Code",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1053,
+      "endPage": 1063,
+      "headings": [
+        "lab-commands"
+      ],
+      "summary": "Infrastructure as Code: declarative vs imperative, and state drift.",
+      "manual": []
+    },
+    {
+      "n": 110,
+      "id": "km-110",
+      "title": "Configuration Management",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1064,
+      "endPage": 1075,
+      "headings": [
+        "lab-commands"
+      ],
+      "summary": "Configuration management: Ansible, idempotence, and push vs pull.",
+      "manual": [
+        "cisco-copy-running-config"
+      ]
+    },
+    {
+      "n": 111,
+      "id": "km-111",
+      "title": "CICD",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1076,
+      "endPage": 1084,
+      "headings": [],
+      "summary": "CI/CD: pipelines, gates, and the difference between building and deploying.",
+      "manual": []
+    },
+    {
+      "n": 112,
+      "id": "km-112",
+      "title": "Secrets Management",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1085,
+      "endPage": 1092,
+      "headings": [],
+      "summary": "Secrets management: why config files leak credentials, and what to do instead.",
+      "manual": []
+    },
+    {
+      "n": 113,
+      "id": "km-113",
+      "title": "Automation Pipelines",
+      "layer": 7,
+      "layerName": "Automation & CI/CD",
+      "page": 1093,
+      "endPage": 1100,
+      "headings": [],
+      "summary": "Automation pipelines: orchestration, dependencies and failure handling.",
+      "manual": []
+    },
+    {
+      "n": 114,
+      "id": "km-114",
+      "title": "Docker",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1101,
+      "endPage": 1111,
+      "headings": [],
+      "summary": "Docker: images, containers, layers, and why builds are not deployments.",
+      "manual": [
+        "rhel-service-podman"
+      ]
+    },
+    {
+      "n": 115,
+      "id": "km-115",
+      "title": "Container Networking",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1112,
+      "endPage": 1121,
+      "headings": [],
+      "summary": "Container networking: bridge vs host, port publishing, and DNS between containers.",
+      "manual": []
+    },
+    {
+      "n": 116,
+      "id": "km-116",
+      "title": "Container Storage",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1122,
+      "endPage": 1131,
+      "headings": [],
+      "summary": "Container storage: volumes, bind mounts, and persistence across restarts.",
+      "manual": []
+    },
+    {
+      "n": 117,
+      "id": "km-117",
+      "title": "Container Security",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1132,
+      "endPage": 1141,
+      "headings": [],
+      "summary": "Container security: capabilities, namespaces, and rootless containers.",
+      "manual": []
+    },
+    {
+      "n": 118,
+      "id": "km-118",
+      "title": "Image Lifecycle",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1142,
+      "endPage": 1151,
+      "headings": [],
+      "summary": "Image lifecycle: tagging, registries, and immutable tags vs latest.",
+      "manual": []
+    },
+    {
+      "n": 119,
+      "id": "km-119",
+      "title": "Kubernetes",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1152,
+      "endPage": 1162,
+      "headings": [
+        "labels: { app: ethics-api }",
+        "Label selector doesn't match any running"
+      ],
+      "summary": "Kubernetes: control plane, scheduling, and the objects you actually manage.",
+      "manual": []
+    },
+    {
+      "n": 120,
+      "id": "km-120",
+      "title": "Helm",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1163,
+      "endPage": 1173,
+      "headings": [],
+      "summary": "Helm: templating, values, and the cost of hiding complexity in charts.",
+      "manual": []
+    },
+    {
+      "n": 121,
+      "id": "km-121",
+      "title": "Service Mesh",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1174,
+      "endPage": 1183,
+      "headings": [
+        "labels"
+      ],
+      "summary": "Service mesh: sidecars, mTLS, and traffic policy.",
+      "manual": []
+    },
+    {
+      "n": 122,
+      "id": "km-122",
+      "title": "Observability",
+      "layer": 8,
+      "layerName": "Containers & Observability",
+      "page": 1184,
+      "endPage": 1191,
+      "headings": [
+        "labels) that observability tools key off of."
+      ],
+      "summary": "Observability: metrics, logs and traces, and how they answer different questions.",
+      "manual": []
+    },
+    {
+      "n": 123,
+      "id": "km-123",
+      "title": "IAM Cloud",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1192,
+      "endPage": 1199,
+      "headings": [],
+      "summary": "Cloud IAM: identities, roles, policies, and least privilege at scale.",
+      "manual": []
+    },
+    {
+      "n": 124,
+      "id": "km-124",
+      "title": "VPC",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1200,
+      "endPage": 1208,
+      "headings": [],
+      "summary": "VPCs: subnets, route tables, and why the default is not always safe.",
+      "manual": []
+    },
+    {
+      "n": 125,
+      "id": "km-125",
+      "title": "Cloud Networking",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1209,
+      "endPage": 1216,
+      "headings": [],
+      "summary": "Cloud networking: gateways, peering, and hybrid connectivity.",
+      "manual": []
+    },
+    {
+      "n": 126,
+      "id": "km-126",
+      "title": "Cloud Storage",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1217,
+      "endPage": 1224,
+      "headings": [],
+      "summary": "Cloud storage: object vs block, access tiers, and lifecycle rules.",
+      "manual": []
+    },
+    {
+      "n": 127,
+      "id": "km-127",
+      "title": "Cloud Compute",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1225,
+      "endPage": 1233,
+      "headings": [],
+      "summary": "Cloud compute: instances, images, scaling groups and instance types.",
+      "manual": []
+    },
+    {
+      "n": 128,
+      "id": "km-128",
+      "title": "Cloud Databases",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1234,
+      "endPage": 1241,
+      "headings": [],
+      "summary": "Cloud databases: managed instances, replicas, and the shared-responsibility trap.",
+      "manual": []
+    },
+    {
+      "n": 129,
+      "id": "km-129",
+      "title": "Cloud Identity",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1242,
+      "endPage": 1250,
+      "headings": [],
+      "summary": "Cloud identity: federation with on-premises directories.",
+      "manual": []
+    },
+    {
+      "n": 130,
+      "id": "km-130",
+      "title": "Cloud Logging",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1251,
+      "endPage": 1259,
+      "headings": [],
+      "summary": "Cloud logging: centralised retention, and the egress bill that follows.",
+      "manual": []
+    },
+    {
+      "n": 131,
+      "id": "km-131",
+      "title": "Cloud Security",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1260,
+      "endPage": 1269,
+      "headings": [
+        "Practical CSPM/remediation workflow knowledge"
+      ],
+      "summary": "Cloud security: the shared responsibility model, precisely.",
+      "manual": []
+    },
+    {
+      "n": 132,
+      "id": "km-132",
+      "title": "Cloud Monitoring",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1270,
+      "endPage": 1279,
+      "headings": [],
+      "summary": "Cloud monitoring: metrics, alerting, and cost visibility.",
+      "manual": []
+    },
+    {
+      "n": 133,
+      "id": "km-133",
+      "title": "Serverless",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1280,
+      "endPage": 1289,
+      "headings": [
+        "practical build workflow:"
+      ],
+      "summary": "Serverless: functions, cold starts, and the limits that make them unsuitable.",
+      "manual": []
+    },
+    {
+      "n": 134,
+      "id": "km-134",
+      "title": "Cloud Containers",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1290,
+      "endPage": 1299,
+      "headings": [
+        "Practical troubleshooting instinct, log-first approach",
+        "hands-on orchestration skill or just conceptual familiarity"
+      ],
+      "summary": "Cloud containers: managed Kubernetes and the differences that matter.",
+      "manual": []
+    },
+    {
+      "n": 135,
+      "id": "km-135",
+      "title": "Cloud Automation",
+      "layer": 9,
+      "layerName": "Cloud",
+      "page": 1300,
+      "endPage": 1309,
+      "headings": [],
+      "summary": "Cloud automation: policy as code and drift detection.",
+      "manual": []
+    },
+    {
+      "n": 136,
+      "id": "km-136",
+      "title": "Enterprise Design",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1310,
+      "endPage": 1319,
+      "headings": [],
+      "summary": "Enterprise design: making choices that stay defensible for years.",
+      "manual": []
+    },
+    {
+      "n": 137,
+      "id": "km-137",
+      "title": "Scalability",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1320,
+      "endPage": 1327,
+      "headings": [],
+      "summary": "Scalability: vertical vs horizontal, and where bottlenecks actually appear.",
+      "manual": []
+    },
+    {
+      "n": 138,
+      "id": "km-138",
+      "title": "Reliability",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1328,
+      "endPage": 1334,
+      "headings": [
+        "Hands-on exercise (conceptual, adaptable to any current project):"
+      ],
+      "summary": "Reliability: failure domains, MTBF/MTTR, and designing for graceful failure.",
+      "manual": []
+    },
+    {
+      "n": 139,
+      "id": "km-139",
+      "title": "Performance",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1335,
+      "endPage": 1341,
+      "headings": [],
+      "summary": "Performance: latency, throughput, queues, and measuring before optimising.",
+      "manual": []
+    },
+    {
+      "n": 140,
+      "id": "km-140",
+      "title": "Security",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1342,
+      "endPage": 1348,
+      "headings": [],
+      "summary": "Security architecture: where controls belong and how they are evidenced.",
+      "manual": []
+    },
+    {
+      "n": 141,
+      "id": "km-141",
+      "title": "Compliance",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1349,
+      "endPage": 1356,
+      "headings": [],
+      "summary": "Compliance: frameworks, evidence collection, and the cost of assurance.",
+      "manual": []
+    },
+    {
+      "n": 142,
+      "id": "km-142",
+      "title": "Business Continuity",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1357,
+      "endPage": 1363,
+      "headings": [],
+      "summary": "Business continuity: BIA, recovery objectives, and testing that counts.",
+      "manual": []
+    },
+    {
+      "n": 143,
+      "id": "km-143",
+      "title": "Cost Optimization",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1364,
+      "endPage": 1371,
+      "headings": [
+        "Hands-on exercise (directly actionable on Aptimetric's actual stack):"
+      ],
+      "summary": "Cost optimisation: knowing what things cost before you build them.",
+      "manual": []
+    },
+    {
+      "n": 144,
+      "id": "km-144",
+      "title": "Documentation",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1372,
+      "endPage": 1381,
+      "headings": [
+        "Architecture",
+        "Practical, lived understanding of the business problem",
+        "Practical prioritization under real-world constraints"
+      ],
+      "summary": "Documentation: runbooks, architecture decision records, and keeping them true.",
+      "manual": []
+    },
+    {
+      "n": 145,
+      "id": "km-145",
+      "title": "Change Management",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1382,
+      "endPage": 1391,
+      "headings": [],
+      "summary": "Change management: CABs, risk assessment, and emergency changes.",
+      "manual": []
+    },
+    {
+      "n": 146,
+      "id": "km-146",
+      "title": "Governance",
+      "layer": 10,
+      "layerName": "Architecture & Governance",
+      "page": 1392,
+      "endPage": 1402,
+      "headings": [],
+      "summary": "Governance: policy, ownership, review cycles, and enforcement that works.",
+      "manual": []
+    }
+  ]
+}
