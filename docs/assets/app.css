@@ -185,13 +185,9 @@ a:hover { text-decoration: underline; }
   position: relative; display: flex; align-items: center;
   flex: 1 1 auto; max-width: 430px; margin-inline: auto;
 }
-.search__icon {
-  position: absolute; left: 12px; color: var(--text-faint); pointer-events: none;
-  width: 17px; height: 17px;
-}
 .search input {
   width: 100%; height: 40px;
-  padding: 0 68px 0 38px;
+  padding: 0 42px 0 16px;
   font: inherit; font-size: 15px; color: var(--text);
   background: var(--surface-2);
   border: 1px solid var(--line);
@@ -222,15 +218,7 @@ a:hover { text-decoration: underline; }
   background: var(--surface); border-color: var(--accent);
   outline: none; box-shadow: 0 0 0 3px var(--accent-dim);
 }
-/* The "/" hint, hidden once there is something to clear. */
-.search__kbd {
-  position: absolute; right: 36px; pointer-events: none;
-  font-family: var(--mono); font-size: 11px; line-height: 1;
-  color: var(--text-faint); background: var(--bg-sunk);
-  border: 1px solid var(--line); border-radius: 5px;
-  padding: 3px 6px;
-}
-.search:focus-within .search__kbd { display: none; }
+/* The "/" hint and the magnifier were removed at the user's request. */
 .search input::-webkit-search-cancel-button { display: none; }
 .search__clear {
   position: absolute; right: 6px;
@@ -452,12 +440,29 @@ details.more .cmd:last-child { margin-bottom: 0; }
 
 /* ---------------------------------------------------------------- lists */
 
-.resultlist { display: grid; gap: 0; }
+.resultlist { display: grid; gap: 8px; }
+
+/* Search results were a flat list with a single hairline under each row and
+   nothing else. In a dark theme that reads as static text, and people
+   reported "no clickable link". Each result is now a card with its own
+   surface, border and hover state, so it is obviously a link before you
+   touch it. */
 .result {
-  display: block; padding: 13px 4px; border-bottom: 1px solid var(--line-soft);
+  display: block; padding: 13px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-1);
   color: inherit;
+  transition: border-color .14s, background .14s, transform .14s;
 }
-.result:hover { text-decoration: none; }
+.result:hover {
+  text-decoration: none;
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.result:active { transform: translateY(1px); }
+.result:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .result:hover .result__t { color: var(--accent); }
 .result__t { font-weight: 620; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .result__m { font-size: 13px; color: var(--text-dim); margin-top: 2px; }
