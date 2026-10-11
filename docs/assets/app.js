@@ -391,7 +391,7 @@ async function render() {
     case "progress": node = V.progressView(); break;
     case "verify": node = V.verifyView(); break;
     case "objectives": node = V.objectivesView(); break;
-    case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0] }) : V.knowledgeMapView(); break;
+    case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
     default: node = V.homeView();
   }
 

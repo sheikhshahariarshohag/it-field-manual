@@ -677,14 +677,29 @@ li.session > .session__link:focus-visible { outline: 2px solid var(--accent); ou
 .session__sum { font-size: .82rem; color: var(--text-dim); line-height: 1.4; }
 .session__gap { font-size: 11px; color: var(--text-faint); white-space: nowrap; padding-top: 3px; }
 li.session > .session__link:hover .session__gap { color: var(--warn); }
-.session__marks { display: flex; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+.session__marks { display: flex; gap: 6px; margin: -3px 0 7px 44px; flex-wrap: wrap; }
 .session__mark {
-  font-size: 10.5px; font-weight: 650; letter-spacing: .03em;
-  padding: 1px 7px; border-radius: 999px;
-  background: var(--surface-2); color: var(--text-faint);
-  border: 1px solid var(--line-soft);
+  font-size: 10.5px; font-weight: 650; letter-spacing: .03em; text-decoration: none;
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-dim);
+  border: 1px solid var(--line);
 }
-.chip--static { cursor: default; background: var(--surface-2); color: var(--text-dim); }
+a.session__mark:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* Section tags are a contents summary from the PDF, not navigation. They get
+   NO border and no hover, so they cannot be mistaken for the clickable chips
+   used for dependencies and sibling sessions. */
+.chip--static {
+  cursor: default; background: var(--surface-2); color: var(--text-faint);
+  border: 1px solid transparent; text-decoration: none;
+}
+.chip--static:hover { border-color: transparent; color: var(--text-faint); }
+
+h2.flash { animation: kmtarget 1.4s ease-out; border-radius: var(--r-sm); }
+@keyframes kmtarget {
+  0%, 60% { background: var(--accent-dim); box-shadow: 0 0 0 6px var(--accent-dim); }
+  100%    { background: transparent; box-shadow: 0 0 0 6px transparent; }
+}
 
 .depgraph { display: grid; gap: 12px; margin-bottom: 8px; }
 .depgraph__row { display: grid; gap: 6px; }

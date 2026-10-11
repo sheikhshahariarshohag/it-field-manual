@@ -1047,23 +1047,33 @@ export function knowledgeMapView() {
     const list = h("ol.sessions");
     for (const s of mine) {
       const n = (s.manual || []).length;
-      list.appendChild(h("li.session",
-        h("a.session__link", { href: href(`km/${s.id}`) },
-          h("span.session__n", String(s.n)),
-          h("span.session__body",
-            h("span.session__title", s.title),
-            h("span.session__sum", s.summary),
-            (s.hasLab || (s.interview && s.interview.length))
-              ? h("span.session__marks",
-                  s.hasLab ? h("span.session__mark", "Lab") : null,
-                  (s.interview && s.interview.length)
-                    ? h("span.session__mark", s.interview.length + " interview Q") : null)
-              : null,
-          ),
-          n ? h("span.badge.badge--accent", String(n))
-            : h("span.session__gap", "not in manual"),
+      const link = h("a.session__link", { href: href(`km/${s.id}`) },
+        h("span.session__n", String(s.n)),
+        h("span.session__body",
+          h("span.session__title", s.title),
+          h("span.session__sum", s.summary),
         ),
-      ));
+        n ? h("span.badge.badge--accent", String(n))
+          : h("span.session__gap", "not in manual"),
+      );
+      const item = h("li.session", link);
+      // The jump links are SIBLINGS of the session link, never children of it.
+      // An <a> nested inside an <a> is invalid HTML; browsers repair it by
+      // dropping the outer link, which would break the whole row.
+      if (s.hasLab || (s.interview && s.interview.length)) {
+        item.appendChild(h("span.session__marks",
+          s.hasLab
+            ? h("a.session__mark", { href: href(`km/${s.id}?to=manual`),
+                                   title: "Open this session at the manual's lab steps" }, "Lab")
+            : null,
+          (s.interview && s.interview.length)
+            ? h("a.session__mark", { href: href(`km/${s.id}?to=interview`),
+                                   title: "Open this session at the interview questions" },
+                s.interview.length + " interview Q")
+            : null,
+        ));
+      }
+      list.appendChild(item);
     }
     section.appendChild(list);
     wrap.appendChild(section);
@@ -1095,8 +1105,15 @@ export function knowledgeSessionView(params) {
   ));
 
   // --- what the session actually contains -------------------------------
+  // These are a CONTENTS SUMMARY taken from the PDF, not navigation. They are
+  // deliberately styled as inert tags: an earlier version rendered them as
+  // pills identical to the working dependency links, so they looked clickable
+  // and did nothing when pressed. Only 4 of these ~16 sections are rendered
+  // below, so linking each one would be worse still.
   if (s.sections && s.sections.length) {
-    wrap.appendChild(h("h2", "What is in this session"));
+    wrap.appendChild(h("h2", "Sections in this session"));
+    wrap.appendChild(h("p.srcref",
+      "Read from your document — this is the session's own table of contents, not a set of links."));
     const chips = h("div.chips");
     for (const sec of s.sections) {
       chips.appendChild(h("span.chip.chip--static", sec.label));
@@ -1106,7 +1123,7 @@ export function knowledgeSessionView(params) {
 
   // --- memory anchors: the recall aid ------------------------------------
   if (s.anchors && s.anchors.length) {
-    wrap.appendChild(h("h2", "Memory anchors"));
+    wrap.appendChild(h("h2", { id: "km-anchors" }, "Memory anchors"));
     const ul = h("ul.prose");
     for (const a of s.anchors) ul.appendChild(h("li", ...paraTokens(a)));
     wrap.appendChild(ul);
@@ -1116,7 +1133,7 @@ export function knowledgeSessionView(params) {
   const deps = s.dependsOn || [];
   const dependents = s.dependents || [];
   if (deps.length || dependents.length) {
-    wrap.appendChild(h("h2", "How this fits together"));
+    wrap.appendChild(h("h2", { id: "km-deps" }, "How this fits together"));
     const box = h("div.depgraph");
     if (deps.length) {
       box.appendChild(h("div.depgraph__row",
@@ -1140,7 +1157,7 @@ export function knowledgeSessionView(params) {
 
   // --- interview questions: the recall test ------------------------------
   if (s.interview && s.interview.length) {
-    wrap.appendChild(h("h2", "Interview questions"));
+    wrap.appendChild(h("h2", { id: "km-interview" }, "Interview questions"));
     const ol = h("ol.prose.kmlist");
     for (const q of s.interview) ol.appendChild(h("li", ...paraTokens(q)));
     wrap.appendChild(h("details.more",
@@ -1159,7 +1176,7 @@ export function knowledgeSessionView(params) {
              "That is a known gap, not an oversight — see CONTENT_MAP.md for what is queued next."),
     ));
   } else {
-    wrap.appendChild(h("h2", `In this manual (${docs.length})`));
+    wrap.appendChild(h("h2", { id: "km-manual" }, `In this manual (${docs.length})`));
     const list = h("ul.linklist");
     for (const d of docs) {
       list.appendChild(h("li",
@@ -1170,6 +1187,26 @@ export function knowledgeSessionView(params) {
       ));
     }
     wrap.appendChild(list);
+  }
+
+  // Honour ?to=<section> so the list page's "Lab" / "N interview Q" marks land
+  // on the matching heading instead of the top of the session.
+  //
+  // This MUST be deferred. The view is built before its node is in the
+  // document, and app.js's render() calls scrollTo({top:0}) after appending —
+  // a synchronous scrollIntoView here is silently undone by that. One frame's
+  // timeout runs after both.
+  if (params.query && params.query.to) {
+    const key = params.query.to;
+    setTimeout(() => {
+      const target = wrap.querySelector("#km-" + key);
+      if (!target) return;
+      target.setAttribute("tabindex", "-1");
+      const top = target.getBoundingClientRect().top + window.scrollY - 90;
+      scrollTo({ top, behavior: "instant" });
+      target.classList.add("flash");
+      setTimeout(() => target.classList.remove("flash"), 1500);
+    }, 0);
   }
 
   // Sibling sessions, so the map is browsable without going back to the top.
