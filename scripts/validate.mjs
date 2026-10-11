@@ -500,6 +500,45 @@ const ROUTES = {
         fail("sw.js does not precache data/knowledge-map.json — the Knowledge Map would break offline");
       }
 
+      // Every session must have its prose file, or the chips open an empty panel.
+      const kmDir = join(APP, "data", "km");
+      if (!existsSync(kmDir)) {
+        fail("data/km/ is missing — run scripts/export-knowledge-content.mjs, or the section chips open nothing");
+      } else {
+        let missing = 0;
+        let empty = 0;
+        let bytes = 0;
+        for (const s of sessions) {
+          const p = join(kmDir, `${s.id}.json`);
+          if (!existsSync(p)) {
+            missing++;
+            if (missing <= 5) fail(`data/km/${s.id}.json is missing (session ${s.n}, "${s.title}")`);
+            continue;
+          }
+          bytes += statSync(p).size;
+          try {
+            const rec = JSON.parse(readFileSync(p, "utf8"));
+            const kinds = Object.keys(rec.sections || {});
+            if (!kinds.length) {
+              empty++;
+              if (empty <= 5) fail(`data/km/${s.id}.json has no section text`);
+            }
+            // Every kind the outline advertises must actually be in the file,
+            // or a chip opens a panel saying "this session has no ...".
+            for (const k of (s.sectionKinds || [])) {
+              if (!kinds.includes(k)) {
+                fail(`data/km/${s.id}.json lacks "${k}" but session ${s.n} advertises it`);
+              }
+            }
+          } catch (e) {
+            fail(`data/km/${s.id}.json is not valid JSON: ${e.message}`);
+          }
+        }
+        if (!missing && !empty) {
+          console.log(`  knowledge prose  ${sessions.length} files, ${(bytes / 1024 / 1024).toFixed(2)} MB, avg ${(bytes / sessions.length / 1024).toFixed(1)} KB`);
+        }
+      }
+
       // The source PDF must never be committed. private/ is gitignored and
       // *.pdf is ignored, but this catches someone adding one by another route.
       const pdfs = [];

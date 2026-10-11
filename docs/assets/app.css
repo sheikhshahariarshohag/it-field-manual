@@ -54,7 +54,7 @@
   /* Softer, warmer shadows — the old ones were cool grey and read as harsh. */
   --shadow-1: 0 1px 2px rgba(60,48,32,.05), 0 2px 6px rgba(60,48,32,.05);
   --shadow-2: 0 10px 32px rgba(60,48,32,.12);
-  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", Tahoma, Verdana, sans-serif;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --topbar-h: 60px;
 }
@@ -195,8 +195,26 @@ a:hover { text-decoration: underline; }
   background: var(--surface-2);
   border: 1px solid var(--line); border-radius: var(--r-md);
   appearance: none;
+  /* Hardening for a reported rendering fault where the placeholder glyphs
+     overlapped each other. Not reproducible here (560px input, 225px measured
+     placeholder), so these are defensive rather than a confirmed fix:
+       letter-spacing/font-stretch pinned so nothing can squeeze the glyphs
+       font-synthesis off, which stops a broken fallback font being faked
+       a wider fallback chain for machines where ui-sans-serif resolves oddly
+     If the fault survives these, the cause is the machine's font config. */
+  letter-spacing: normal;
+  font-stretch: 100%;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-variant-ligatures: none;
 }
-.search input::placeholder { color: var(--text-faint); }
+.search input::placeholder {
+  color: var(--text-faint);
+  letter-spacing: normal;
+  word-spacing: normal;
+  opacity: 1;              /* some engines dim placeholders to ~0.54 and it reads as broken */
+  font-synthesis: none;
+}
 .search input:focus { background: var(--surface); border-color: var(--accent); outline: none; }
 .search input::-webkit-search-cancel-button { display: none; }
 .search__clear {
@@ -694,6 +712,24 @@ a.session__mark:hover { border-color: var(--accent); color: var(--accent); backg
   border: 1px solid transparent; text-decoration: none;
 }
 .chip--static:hover { border-color: transparent; color: var(--text-faint); }
+
+/* Section chips on a Knowledge Map session. Real buttons: they fetch and show
+   the matching text from the user's document. */
+.chip--btn {
+  appearance: none; cursor: pointer; font: inherit; font-size: .82rem;
+  background: var(--surface); border: 1px solid var(--line); color: var(--text-dim);
+}
+.chip--btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.chip--btn[aria-selected="true"] {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-ink);
+}
+.chip--btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.kmreader { margin: 4px 0 10px; }
+.kmreader:empty { display: none; }
+.kmreader h3 { margin: 14px 0 8px; font-size: 1.02rem; }
+.kmreader ul.prose { display: grid; gap: 8px; }
+.kmreader li { line-height: 1.55; }
 
 h2.flash { animation: kmtarget 1.4s ease-out; border-radius: var(--r-sm); }
 @keyframes kmtarget {

@@ -401,9 +401,10 @@ const doc = {
   note:
     "Outline of the user's own master curriculum, Enterprise_Infrastructure_Knowledge_Map_Unified.pdf " +
     "(146 sessions across 10 layers, 1402 pages, prepared July 2026). Structure, section outline and " +
-    "the dependency graph are extracted mechanically from the document. Session summaries are " +
-    "hand-written and reviewed. Prose bodies are deliberately NOT copied — the full text is 2.6 MB and " +
-    "stays in the user's private library.",
+    "the dependency graph are extracted mechanically. Session summaries are hand-written and reviewed. " +
+    "The section PROSE lives in docs/data/km/, one file per session, fetched on demand and cached for " +
+    "offline - it is ~2.9 MB and would otherwise dominate every page load. The source PDF itself stays " +
+    "in the user's private library and is never committed.",
   source: "Enterprise_Infrastructure_Knowledge_Map_Unified.pdf",
   extracted: new Date().toISOString().slice(0, 10),
   totalPages: pages.length,

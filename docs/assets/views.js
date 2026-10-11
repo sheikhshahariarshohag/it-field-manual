@@ -1082,6 +1082,33 @@ export function knowledgeMapView() {
   return wrap;
 }
 
+/**
+ * Session prose, fetched per session and kept in memory for the session.
+ *
+ * The corpus is ~2.9 MB across 146 files (~20 KB each), so it is NOT part of
+ * the initial payload. Opening a session's chips fetches that one file; the
+ * service worker caches it for offline afterwards. `STATUS` is exposed so the
+ * UI can say "no content for this section" instead of an empty panel.
+ */
+const STATUS = new Map();
+const CONTENT = new Map();
+
+async function loadSessionContent(id) {
+  if (CONTENT.has(id)) return CONTENT.get(id);
+  if (STATUS.has(id)) return null;
+  STATUS.set(id, "loading");
+  try {
+    const res = await fetch(`data/km/${id}.json`, { cache: "default" });
+    if (!res.ok) throw new Error(String(res.status));
+    const json = await res.json();
+    CONTENT.set(id, json);
+    return json;
+  } catch (err) {
+    STATUS.set(id, "error");
+    return null;
+  }
+}
+
 export function knowledgeSessionView(params) {
   const wrap = h("div");
   const km = KM();
@@ -1105,20 +1132,55 @@ export function knowledgeSessionView(params) {
   ));
 
   // --- what the session actually contains -------------------------------
-  // These are a CONTENTS SUMMARY taken from the PDF, not navigation. They are
-  // deliberately styled as inert tags: an earlier version rendered them as
-  // pills identical to the working dependency links, so they looked clickable
-  // and did nothing when pressed. Only 4 of these ~16 sections are rendered
-  // below, so linking each one would be worse still.
+  // Every chip opens the real text from the document. Nothing here is a
+  // placeholder: the file is fetched on first open and cached from then on.
   if (s.sections && s.sections.length) {
     wrap.appendChild(h("h2", "Sections in this session"));
-    wrap.appendChild(h("p.srcref",
-      "Read from your document — this is the session's own table of contents, not a set of links."));
-    const chips = h("div.chips");
+
+    const panel = h("div.kmreader", { id: "kmreader" });
+    const chips = h("div.chips", { role: "tablist", "aria-label": "Session sections" });
+
+    const openSection = async (kind, label, btn) => {
+      for (const b of chips.querySelectorAll(".chip")) b.setAttribute("aria-selected", "false");
+      btn.setAttribute("aria-selected", "true");
+      clear(panel);
+      panel.appendChild(h("p.srcref", "Loading " + label + "…"));
+      const data = await loadSessionContent(s.id);
+      clear(panel);
+      if (!data) {
+        panel.appendChild(h("div.note.note--risk",
+          h("strong", "Could not load this section"),
+          h("span", "The text for session " + s.n + " could not be read. It has not been " +
+            "downloaded yet, and you may be offline.")));
+        return;
+      }
+      const items = (data.sections || {})[kind];
+      panel.appendChild(h("h3", label));
+      if (!items || !items.length) {
+        panel.appendChild(h("p.srcref", "This session has no " + label.toLowerCase() +
+          " section in the document."));
+        return;
+      }
+      const ul = h("ul.prose");
+      for (const it of items) ul.appendChild(h("li", ...paraTokens(it)));
+      panel.appendChild(ul);
+      panel.appendChild(h("p.srcref",
+        `From Enterprise_Infrastructure_Knowledge_Map_Unified.pdf, pages ${data.page}–${data.endPage}.`));
+    };
+
     for (const sec of s.sections) {
-      chips.appendChild(h("span.chip.chip--static", sec.label));
+      const btn = h("button.chip.chip--btn", {
+        type: "button", role: "tab", "aria-selected": "false",
+      }, sec.label);
+      btn.addEventListener("click", () => openSection(sec.kind, sec.label, btn));
+      chips.appendChild(btn);
     }
+
     wrap.appendChild(chips);
+    wrap.appendChild(panel);
+    wrap.appendChild(h("p.srcref",
+      "Every chip opens the matching text from your document. Each session is " +
+      "downloaded once, on first use, then kept for offline."));
   }
 
   // --- memory anchors: the recall aid ------------------------------------
