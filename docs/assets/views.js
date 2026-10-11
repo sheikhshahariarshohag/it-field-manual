@@ -1072,27 +1072,48 @@ export function knowledgeMapView() {
     const list = h("ol.sessions");
     for (const s of mine) {
       const n = (s.manual || []).length;
+
       const link = h("a.session__link", { href: href(`km/${s.id}`) },
         h("span.session__n", String(s.n)),
         h("span.session__body",
           h("span.session__title", s.title),
           h("span.session__sum", s.summary),
         ),
-        // A number means "N hands-on items in the field manual cover this session".
-        // The absence of one means there is NO hands-on practice for this topic
-        // yet — which used to read as "not in manual", implying the session had
-        // no content at all. It has plenty: the whole section text above. The
-        // wording was the problem, so it now says what it actually means.
-        n ? h("span.badge.badge--accent", { title: `${n} hands-on item${n === 1 ? "" : "s"} in the field manual cover this topic` }, String(n))
-          : h("span.session__gap", {
-              title: "This topic has no hands-on lesson or command in the field manual yet. " +
-                     "The session text below is complete — it is the practical drills that are missing.",
-            }, "no hands-on yet"),
       );
       const item = h("li.session", link);
-      // The jump links are SIBLINGS of the session link, never children of it.
-      // An <a> nested inside an <a> is invalid HTML; browsers repair it by
-      // dropping the outer link, which would break the whole row.
+
+      // "N in manual" — how many hands-on items link to this session. A bare
+      // digit reads as noise (people asked what 2 or 1 meant), so it spells out
+      // the unit and expands on click to list the exact items. This is a
+      // SIBLING of the row link, never a child: a <button> inside an <a> is
+      // invalid, and an <a> inside an <a> makes browsers drop the outer one.
+      if (n) {
+        const btn = h("button.linkcount", { type: "button", "aria-expanded": "false" },
+          String(n), " in manual");
+        const panel = h("ul.linklist.linklist--inline", { hidden: true });
+        for (const id of s.manual) {
+          const doc = search.docById(id);
+          panel.appendChild(h("li",
+            h("a", { href: doc ? contentHref(doc) : href("km/" + s.id) },
+              doc ? doc.title : id),
+            doc ? h("span.kindtag", doc.kind) : null,
+          ));
+        }
+        btn.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          const open = btn.getAttribute("aria-expanded") === "true";
+          btn.setAttribute("aria-expanded", open ? "false" : "true");
+          panel.hidden = open;
+        });
+        item.appendChild(h("div.linkcount__wrap", btn, panel));
+      } else {
+        item.appendChild(h("span.session__gap", {
+          title: "This topic has no hands-on lesson or command in the field manual yet. " +
+                 "The session text is complete — it is the practice drills that are missing.",
+        }, "no hands-on yet"));
+      }
+
+      // Jump links, likewise siblings of the row link for the same reason.
       if (s.hasLab || (s.interview && s.interview.length)) {
         item.appendChild(h("span.session__marks",
           s.hasLab

@@ -715,6 +715,34 @@ li.session > .session__link:focus-visible { outline: 2px solid var(--accent); ou
 .session__sum { font-size: .82rem; color: var(--text-dim); line-height: 1.4; }
 .session__gap { font-size: 11px; color: var(--text-faint); white-space: nowrap; padding-top: 3px; }
 li.session > .session__link:hover .session__gap { color: var(--warn); }
+
+/* The coverage badge sits on its own row under the title, right-aligned, so
+   the row link itself stays a clean full-width target. */
+li.session { display: grid; grid-template-columns: 1fr auto; align-items: start; }
+li.session > .session__link { grid-column: 1 / -1; }
+li.session > .linkcount__wrap,
+li.session > .session__gap { grid-column: 2; justify-self: end; }
+li.session > .session__marks { grid-column: 1 / -1; }
+
+.linkcount {
+  appearance: none; cursor: pointer; font: inherit; font-size: 10.5px; font-weight: 700;
+  letter-spacing: .02em; white-space: nowrap;
+  padding: 3px 10px; border-radius: 999px;
+  background: var(--accent-dim); color: var(--accent);
+  border: 1px solid transparent;
+}
+.linkcount:hover { border-color: var(--accent); }
+.linkcount:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.linkcount[aria-expanded="true"] { background: var(--accent); color: var(--accent-ink); }
+
+.linkcount__wrap { display: grid; justify-items: end; margin: -2px 0 6px; }
+ul.linklist--inline {
+  grid-column: 1 / -1; justify-items: stretch;
+  margin: 4px 0 0; padding: 8px 12px;
+  background: var(--surface-2); border: 1px solid var(--line-soft);
+  border-radius: var(--r-sm);
+}
+ul.linklist--inline li { padding: 3px 0; }
 .session__marks { display: flex; gap: 6px; margin: -3px 0 7px 44px; flex-wrap: wrap; }
 .session__mark {
   font-size: 10.5px; font-weight: 650; letter-spacing: .03em; text-decoration: none;
