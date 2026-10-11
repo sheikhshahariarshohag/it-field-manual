@@ -253,9 +253,20 @@ function blocks(body) {
       cur = text;
       continue;
     }
-    const prevEndsSentence = /[.!?:;]$/.test(cur);
-    // Short fragments ending in a full stop are their own item, not a wrap.
-    if (prevEndsSentence && cur.length < 120) { out.push(cur); cur = text; continue; }
+    // A bullet always starts a new item. Otherwise the line continues the
+    // current one UNLESS the previous line finished a sentence — a full stop
+    // is a reliable boundary no matter how long the item already is.
+    //
+    // The closing quote/bracket after the punctuation matters: session 103 ends
+    // sentences with `."`, which a bare [.!?:;]$ test misses, merging the whole
+    // section into one oversized block that the size filter then discarded.
+    //
+    // There must be no length guard here. One existed ("only split if the
+    // block is under 120 chars") and it silently broke 24 sessions: once a
+    // block grew past that, sentence-ending periods stopped splitting it, so
+    // a whole Memory Anchors section collapsed into one block — 8 lines in,
+    // 0 anchors out.
+    if (/[.!?:;][")'\u201D\u2019\]]?$/.test(cur)) { out.push(cur); cur = text; continue; }
     cur = `${cur} ${text}`;
   }
   if (cur) out.push(cur);
@@ -359,7 +370,7 @@ const sessions = toc.map((s) => {
   const dependents = parseEdges((find("dependents") || {}).body || []).filter((n) => n !== s.n);
   const interview = interviewQuestions((find("interview") || {}).body || []);
   const anchors = blocks((find("anchors") || {}).body || [])
-    .filter((s) => s.length < 400).slice(0, 5);
+    .filter((s) => s.length < 600).slice(0, 5);
 
   const ordered = [...kinds].sort(
     (a, b) => (KIND_ORDER.indexOf(a) + 99 * (KIND_ORDER.indexOf(a) < 0)) -
