@@ -1053,6 +1053,12 @@ export function knowledgeMapView() {
           h("span.session__body",
             h("span.session__title", s.title),
             h("span.session__sum", s.summary),
+            (s.hasLab || (s.interview && s.interview.length))
+              ? h("span.session__marks",
+                  s.hasLab ? h("span.session__mark", "Lab") : null,
+                  (s.interview && s.interview.length)
+                    ? h("span.session__mark", s.interview.length + " interview Q") : null)
+              : null,
           ),
           n ? h("span.badge.badge--accent", String(n))
             : h("span.session__gap", "not in manual"),
@@ -1072,16 +1078,78 @@ export function knowledgeSessionView(params) {
   const s = kmSession(params.id);
   if (!s) return notFound("Knowledge Map session", params.id);
 
+  const label = (n) => {
+    const t = km.sessions.find((x) => x.n === n);
+    return t ? `S${t.n} ${t.title}` : `S${n}`;
+  };
+
   wrap.appendChild(h("header.page-head",
     h("h1", `Session ${s.n} — ${s.title}`),
     h("p", s.summary),
     h("div.card__meta",
       h("span.badge", `Layer ${s.layer} · ${s.layerName}`),
       h("span.badge", `Pages ${s.page}–${s.endPage}`),
+      s.hasLab ? h("span.badge", "Has a lab") : null,
       h("a.badge", { href: href("km") }, "All sessions"),
     ),
   ));
 
+  // --- what the session actually contains -------------------------------
+  if (s.sections && s.sections.length) {
+    wrap.appendChild(h("h2", "What is in this session"));
+    const chips = h("div.chips");
+    for (const sec of s.sections) {
+      chips.appendChild(h("span.chip.chip--static", sec.label));
+    }
+    wrap.appendChild(chips);
+  }
+
+  // --- memory anchors: the recall aid ------------------------------------
+  if (s.anchors && s.anchors.length) {
+    wrap.appendChild(h("h2", "Memory anchors"));
+    const ul = h("ul.prose");
+    for (const a of s.anchors) ul.appendChild(h("li", ...paraTokens(a)));
+    wrap.appendChild(ul);
+  }
+
+  // --- the dependency graph ----------------------------------------------
+  const deps = s.dependsOn || [];
+  const dependents = s.dependents || [];
+  if (deps.length || dependents.length) {
+    wrap.appendChild(h("h2", "How this fits together"));
+    const box = h("div.depgraph");
+    if (deps.length) {
+      box.appendChild(h("div.depgraph__row",
+        h("span.depgraph__label", "Needs first"),
+        h("div.chips", deps.map((n) => h("a.chip", { href: href(`km/km-${String(n).padStart(3, "0")}`) }, label(n)))),
+      ));
+    }
+    if (dependents.length) {
+      box.appendChild(h("div.depgraph__row",
+        h("span.depgraph__label", "Built on this"),
+        h("div.chips", dependents.map((n) => h("a.chip", { href: href(`km/km-${String(n).padStart(3, "0")}`) }, label(n)))),
+      ));
+    }
+    wrap.appendChild(box);
+    wrap.appendChild(h("p.srcref",
+      "Links are resolved from the session's own Dependencies and Dependents lists by matching topic " +
+      "names to session titles. Only confident matches are kept — generic names like “Services” or " +
+      "“Security” are deliberately not linked, so this graph is smaller than the prose but should not " +
+      "point anywhere wrong."));
+  }
+
+  // --- interview questions: the recall test ------------------------------
+  if (s.interview && s.interview.length) {
+    wrap.appendChild(h("h2", "Interview questions"));
+    const ol = h("ol.prose.kmlist");
+    for (const q of s.interview) ol.appendChild(h("li", ...paraTokens(q)));
+    wrap.appendChild(h("details.more",
+      h("summary", `Answer these out loud — ${s.interview.length} question${s.interview.length === 1 ? "" : "s"}`),
+      ol,
+    ));
+  }
+
+  // --- what this manual covers -------------------------------------------
   const docs = (s.manual || []).map((id) => search.docById(id)).filter(Boolean);
 
   if (!docs.length) {
@@ -1090,20 +1158,19 @@ export function knowledgeSessionView(params) {
       h("p", "This session is on the roadmap but the manual has no hands-on material for it yet. " +
              "That is a known gap, not an oversight — see CONTENT_MAP.md for what is queued next."),
     ));
-    return wrap;
+  } else {
+    wrap.appendChild(h("h2", `In this manual (${docs.length})`));
+    const list = h("ul.linklist");
+    for (const d of docs) {
+      list.appendChild(h("li",
+        h("a", { href: contentHref(d) }, d.title),
+        h("span.kindtag", d.kind),
+        d.tech ? techBadge(d.tech) : null,
+        verifyBadge(d.verification),
+      ));
+    }
+    wrap.appendChild(list);
   }
-
-  wrap.appendChild(h("h2", `In this manual (${docs.length})`));
-  const list = h("ul.linklist");
-  for (const d of docs) {
-    list.appendChild(h("li",
-      h("a", { href: contentHref(d) }, d.title),
-      h("span.kindtag", d.kind),
-      d.tech ? techBadge(d.tech) : null,
-      verifyBadge(d.verification),
-    ));
-  }
-  wrap.appendChild(list);
 
   // Sibling sessions, so the map is browsable without going back to the top.
   const layer = km.layers.find((l) => l.n === s.layer);

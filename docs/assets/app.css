@@ -677,6 +677,24 @@ li.session > .session__link:focus-visible { outline: 2px solid var(--accent); ou
 .session__sum { font-size: .82rem; color: var(--text-dim); line-height: 1.4; }
 .session__gap { font-size: 11px; color: var(--text-faint); white-space: nowrap; padding-top: 3px; }
 li.session > .session__link:hover .session__gap { color: var(--warn); }
+.session__marks { display: flex; gap: 6px; margin-top: 3px; flex-wrap: wrap; }
+.session__mark {
+  font-size: 10.5px; font-weight: 650; letter-spacing: .03em;
+  padding: 1px 7px; border-radius: 999px;
+  background: var(--surface-2); color: var(--text-faint);
+  border: 1px solid var(--line-soft);
+}
+.chip--static { cursor: default; background: var(--surface-2); color: var(--text-dim); }
+
+.depgraph { display: grid; gap: 12px; margin-bottom: 8px; }
+.depgraph__row { display: grid; gap: 6px; }
+.depgraph__label {
+  font-size: 11px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--accent);
+}
+.depgraph__row .chips { margin-bottom: 0; }
+ol.kmlist { margin: 0; padding-left: 20px; display: grid; gap: 7px; }
+ol.kmlist li { line-height: 1.45; }
 
 ul.linklist { list-style: none; margin: 0 0 var(--sp); padding: 0; display: grid; gap: 8px; }
 ul.linklist li {
