@@ -67,6 +67,13 @@ const ROUTE_FOR_KIND = {
   scenario: "scenarios",
   quiz: "quizzes",
   project: "projects",
+  session: "km",          // Knowledge Map sessions are search results too
+};
+
+/** The label shown on a search result row. */
+const KIND_LABEL = {
+  command: "Command", lesson: "Lesson", scenario: "Scenario",
+  quiz: "Quiz", project: "Project", session: "Knowledge Map",
 };
 
 /** The canonical URL for any content item. */
@@ -195,9 +202,16 @@ export function browseView(params, query) {
 }
 
 function resultRow(d, kind) {
-  const a = h("a.result", { href: href(`${kind}/${encodeURIComponent(d.id)}`) },
-    h("div.result__t", d.title, techBadge(d.tech), kind === "commands" ? verifyBadge(d.verification) : null,
-      d.risk && d.risk !== "safe" ? h("span.badge", { class: `badge ${RISK[d.risk].cls}` }, RISK[d.risk].label) : null),
+  // Knowledge Map sessions arrive with kind "session" and must route to the km
+  // segment; everything else is passed in already pluralised by the caller.
+  const seg = ROUTE_FOR_KIND[d.kind] || kind;
+  const a = h("a.result", { href: href(`${seg}/${encodeURIComponent(d.id)}`) },
+    h("div.result__t", d.title,
+      h("span.kindtag", KIND_LABEL[d.kind] || d.kind),
+      techBadge(d.tech),
+      d.kind === "command" ? verifyBadge(d.verification) : null,
+      d.risk && RISK[d.risk] && d.risk !== "safe"
+        ? h("span.badge", { class: `badge ${RISK[d.risk].cls}` }, RISK[d.risk].label) : null),
     d.task ? h("div.result__m", d.task) : null,
     d.summary ? h("div.result__m", d.summary) : null,
     d.commands ? h("div.result__x", firstLine(d.commands)) : null,
@@ -231,11 +245,13 @@ export function searchView(params, query) {
 
   const { results, total, expanded } = search.search(q);
   wrap.appendChild(h("p.srcref", h("strong", String(total)), " result" + (total === 1 ? "" : "s"),
-    expanded ? " · no exact match, showing partial matches" : ""));
+    expanded ? " · no exact match, showing partial matches" : "",
+    // Never let the list look complete when it is not.
+    total > results.length ? ` · showing the top ${results.length}` : ""));
 
   if (!results.length) {
     wrap.appendChild(h("div.empty", h("h2", "No matches"),
-      h("p", "Nothing in the packaged library matched. Check the spelling, or try a shorter fragment — “dhcp” finds more than “dhcpd-lease-time” would if it were mistyped.")));
+      h("p", "Nothing matched. Search covers every command, lesson, lab step, troubleshooting entry, quiz question and Knowledge Map session — so try a shorter fragment, or a word you can see on a page.")));
     return wrap;
   }
 
@@ -1253,9 +1269,13 @@ export function knowledgeSessionView(params) {
           " section in the document."));
         return;
       }
-      const ul = h("ul.prose");
-      for (const it of items) ul.appendChild(h("li", ...paraTokens(it)));
-      panel.appendChild(ul);
+      // The Personal notes section is a set of empty prompts. Printing them
+      // above the inputs is just noise — the inputs carry the labels already.
+      if (kind !== "notes") {
+        const ul = h("ul.prose");
+        for (const it of items) ul.appendChild(h("li", ...paraTokens(it)));
+        panel.appendChild(ul);
+      }
       panel.appendChild(h("p.srcref",
         `From Enterprise_Infrastructure_Knowledge_Map_Unified.pdf, pages ${data.page}–${data.endPage}.`));
 

@@ -110,7 +110,46 @@ const pageAt = new Map();
   }
 }
 
-/* ------------------------------------------------------------- per session */
+/* ------------------------------------------------- searchable term index */
+
+// The prose lives in 146 lazy-loaded files, so the in-app search index cannot
+// see it: searching "mutex" or "restorecon" found nothing even though both
+// appear on screen. Rather than loading 2.9 MB at boot, a distinctive-term
+// list per session is written back into knowledge-map.json, which is already
+// loaded. search.js walks it like any other field.
+//
+// The list is pruned by DOCUMENT FREQUENCY. A first attempt kept every word of
+// five or more characters: 779 terms a session, and the outline went from
+// 540 KB to 2.8 MB — mostly words like "server", "network" and "system" that
+// appear in half the document and tell you nothing when searched. A term is
+// kept only if it is rare enough to be a real signal, the same idea as IDF.
+const STOP = new Set(("the and for with that this from are was were you your not but all any can " +
+  "its they them then than there here when what which while will would should could have has had " +
+  "been being into over under more most some such only also very just like about after before " +
+  "because each other both same too own does did doing done how why where whose whom").split(" "));
+
+// Appearing in more than this many sessions = common vocabulary, not a signal.
+const DF_MAX = 5;
+
+function sessionTerms(sections) {
+  const set = new Set();
+  const walk = (node, depth = 0) => {
+    if (depth > 6 || node == null) return;
+    if (typeof node === "string") {
+      for (const w of node.toLowerCase().split(/[^a-z0-9.+#-]+/)) {
+        // The splitter keeps . + # - so IPs and time_wait survive, but that also
+        // leaves sentence punctuation on the end of ordinary words ("alike.").
+        const clean = w.replace(/[.,;:!?]+$/, "");
+        if (clean.length >= 5 && !STOP.has(clean) && /\w/.test(clean)) set.add(clean);
+      }
+      return;
+    }
+    if (Array.isArray(node)) { for (const v of node) walk(v, depth + 1); return; }
+    if (typeof node === "object") for (const v of Object.values(node)) walk(v, depth + 1);
+  };
+  walk(sections);
+  return [...set].sort();
+}
 
 const DRY = process.argv.includes("--dry-run");
 const written = [];
@@ -172,7 +211,11 @@ for (const s of outline.sessions) {
   }
 
   const json = JSON.stringify(record);
-  written.push({ n: s.n, id: s.id, title: s.title, bytes: json.length, kinds: Object.keys(body).length });
+  written.push({
+    n: s.n, id: s.id, title: s.title, bytes: json.length,
+    kinds: Object.keys(body).length,
+    terms: sessionTerms(body),
+  });
   if (!DRY) {
     mkdirSync(OUT, { recursive: true });
     writeFileSync(join(OUT, `${s.id}.json`), json, "utf8");
@@ -191,6 +234,32 @@ if (problems.length) {
   console.error("Problems:\n" + problems.slice(0, 20).map((p) => "  x " + p).join("\n"));
   if (problems.length > 20) console.error(`  ... and ${problems.length - 20} more`);
   process.exit(1);
+}
+
+// Fold the term lists back into the outline so search can reach them — but
+// only after pruning terms that appear in too many sessions to distinguish
+// anything.
+{
+  const raw = written.map((w) => [w.id, w.terms]);
+  const df = new Map();
+  for (const [, set] of raw) for (const t of set) df.set(t, (df.get(t) || 0) + 1);
+
+  const byId = new Map();
+  let keptTotal = 0;
+  let droppedTotal = 0;
+  for (const [id, set] of raw) {
+    const kept = [...set].filter((t) => (df.get(t) || 0) <= DF_MAX).sort();
+    byId.set(id, kept);
+    keptTotal += kept.length;
+    droppedTotal += set.length - kept.length;
+  }
+
+  for (const s of outline.sessions) s.terms = byId.get(s.id) || [];
+  writeFileSync(KM, JSON.stringify(outline, null, 2), "utf8");
+
+  console.log(`  term index: ${keptTotal} distinctive terms kept, ${droppedTotal} dropped as too common ` +
+    `(appear in >${DF_MAX} of ${outline.sessions.length} sessions)`);
+  console.log(`  outline now ${(readFileSync(KM).length / 1024).toFixed(0)} KB`);
 }
 
 const total = written.reduce((a, w) => a + w.bytes, 0);
