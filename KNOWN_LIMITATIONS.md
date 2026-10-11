@@ -19,6 +19,7 @@ matter.
 | **A8** | **MTCRE has verified objectives but zero content** | 8 MTCRE objectives, 1 covered. Static routing in depth, point-to-point addressing, tunnels and OSPF are absent | Next MikroTik build session |
 | **A9** | **96 of the 146 Knowledge Map sessions have no manual content** | 34% coverage. Layers 7 (Automation), 9 (Cloud) and 10 (Architecture) are **0%** — nothing links back from them. Layers 1–5 are well covered because the manual's content already lives there | Sessions needing content are listed in the app itself; each shows "not in manual" rather than a blank |
 | **A10** | **Knowledge Map session summaries are hand-written, not from the PDF** | The numbers, titles, layers and page ranges are extracted mechanically and are exact. The one-line summaries are mine and were written from the session titles plus the subject matter, **not** by reading all 1402 pages | Summaries are marked as such in the app and in `knowledge-map.json` |
+| **A11** | **The Knowledge Map assumes a Windows Server 2019 lab** | ~24 of its lab steps say "On your Windows Server 2019 VM…", because the source library is *Windows Server 2019 & PowerShell*. This manual targets **Windows Server 2025** for AZ-800. WS2019 left mainstream support 2024-01-10 (extended to 2029-01-10), so the PowerShell still works but the environment reference is two releases behind | Lab on WS2025 for AZ-800. The PDF was **not** edited — it is the user's own document |
 
 ### On A10 — what "verified" means for the Knowledge Map
 

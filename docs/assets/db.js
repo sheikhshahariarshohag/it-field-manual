@@ -256,7 +256,14 @@ export async function importPersonal(raw) {
   });
 
   for (const n of notes) await store.note(n.id, n.text);
-  for (const b of bookmarks) await store.toggleBookmark(b).catch(() => {});
+  // Add only what is missing. toggleBookmark() would INVERT an existing
+  // bookmark, so importing the same file twice silently deleted every
+  // bookmark it had just added. Import must be idempotent.
+  const have = new Set(await store.bookmarks());
+  for (const b of bookmarks) {
+    if (have.has(b)) continue;
+    await put("bookmarks", b, {});
+  }
   for (const p of progress) await store.setProgress(p.id, { status: p.status, score: p.score });
   for (const q of quiz) await store.saveQuiz(q.id, { answers: q.answers, score: q.score, submitted_at: q.submitted_at });
 

@@ -16,7 +16,7 @@ export const TECH = {
   mikrotik: { label: "MikroTik",       varName: "--tech-mikrotik" },
   win11:    { label: "Windows 11",     varName: "--tech-win11" },
   winserver:{ label: "Windows Server", varName: "--tech-winserver" },
-  rhel:     { label: "RHEL 10",        varName: "--tech-winserver" },
+  rhel:     { label: "RHEL 10",        varName: "--tech-rhel" },
   cross:    { label: "Cross-domain",   varName: "--tech-cross" },
 };
 
@@ -326,6 +326,96 @@ export async function commandView(params) {
 
 /* ================================================================== lesson */
 
+/* ============================================================= study mode */
+
+/**
+ * Read / Recall mode.
+ *
+ * READ is the ordinary reading experience. RECALL hides every explanation and
+ * command behind a "Reveal" control, so the learner has to produce the answer
+ * from memory first — which is the part that actually moves retention. The
+ * choice is remembered across lessons because it is a study preference, not a
+ * per-page one.
+ *
+ * State lives in localStorage, not IndexedDB: it is a preference, not study
+ * progress, and it must work before the database opens.
+ */
+const STUDY_KEY = "field-manual:study-mode";
+let STUDY_MODE = "read";
+
+try { STUDY_MODE = localStorage.getItem(STUDY_KEY) === "recall" ? "recall" : "read"; } catch (_) {}
+
+function setStudyMode(mode) {
+  STUDY_MODE = mode === "recall" ? "recall" : "read";
+  try { localStorage.setItem(STUDY_KEY, STUDY_MODE); } catch (_) {}
+  location.reload(); // the simplest correct re-render; the corpus is already cached
+}
+
+/**
+ * Content that recall mode hides. `label` describes what the learner should be
+ * able to say or type BEFORE revealing, so the prompt is itself the test.
+ */
+function recallBox(label, ...nodes) {
+  if (STUDY_MODE !== "recall") {
+    return h("div", ...nodes);
+  }
+  const body = h("div.recall__body", ...nodes);
+  const btn = h("button.btn.recall__btn", { type: "button" }, "Reveal");
+  const box = h("div.recall", body, btn);
+  btn.addEventListener("click", () => {
+    const open = box.hasAttribute("data-open");
+    if (open) { box.removeAttribute("data-open"); body.hidden = true; btn.textContent = "Reveal"; }
+    else { box.setAttribute("data-open", ""); body.hidden = false; btn.textContent = "Hide"; }
+  });
+  body.hidden = true;
+  return h("div",
+    label ? h("p.recall__prompt", h("span.recall__q", "Before you look: "), label) : null,
+    box);
+}
+
+/** The Read / Recall switch, shown once per lesson. */
+function studyControls() {
+  const mk = (mode, label, hint) => h("button.seg__btn", {
+    type: "button",
+    "aria-pressed": STUDY_MODE === mode ? "true" : "false",
+    title: hint,
+    onclick: () => setStudyMode(mode),
+  }, label);
+  return h("div.studybar",
+    h("div.studybar__label", h("strong", "Mode"),
+      h("span", STUDY_MODE === "recall" ? "Recall — explanations hidden until you reveal them" : "Read — everything visible")),
+    h("div.seg", mk("read", "Read", "Show everything"),
+                mk("recall", "Recall", "Hide explanations until you recall them")),
+  );
+}
+
+/**
+ * Learning objectives for a lesson, derived from the exam objectives it is
+ * mapped to. If a lesson has no mapping, this says so honestly rather than
+ * inventing objectives.
+ */
+function learningObjectives(d) {
+  const defs = objectiveIndex();
+  const items = (d.objectives || []).map((o) => defs.get(o.id)).filter(Boolean);
+  if (!items.length) return null;
+  const unverified = (d.objectives || []).map((o) => (defs.get(o.id) || {}).exam)
+    .filter((e) => e && !e.verified);
+
+  return h("div.objectives",
+    h("h2.objectives__h", "What this is for"),
+    h("ul",
+      items.map((def) => h("li",
+        h("span.objectives__code", def.id),
+        h("span", (def.text || def.name) + "."),
+        def.exam ? h("span.objectives__exam", def.exam.title) : null,
+      )),
+    ),
+    unverified.length
+      ? h("p.srcref", "Objective list not verified against the publisher — treat as a coverage hint, not an exam fact.")
+      : null,
+  );
+}
+
 export function lessonView(params) {
   const d = search.docById(params.id);
   if (!d || d.kind !== "lesson") return notFound();
@@ -341,7 +431,12 @@ export function lessonView(params) {
     kmBacklinks(d),
   ));
 
+  wrap.appendChild(studyControls());
   wrap.appendChild(progressBar(d.id));
+
+  const objs = learningObjectives(d);
+  if (objs) wrap.appendChild(objs);
+
   wrap.appendChild(noteEditor(d.id));
 
   if (d.analogy) wrap.appendChild(h("div.note", h("strong", "In one sentence"), h("span", d.analogy)));
@@ -356,21 +451,31 @@ export function lessonView(params) {
     add(wrap, h("h2", "Before you start"), ul);
   }
 
-  for (const s of sections) {
-    wrap.appendChild(h("h2", s.h));
+  // Numbered sections so the shape of every lesson is predictable: idea, then
+  // the command, then the thing that trips people up.
+  sections.forEach((s, i) => {
+    wrap.appendChild(h("h2.sec", h("span.sec__n", String(i + 1)), s.h));
     const body = h("div.prose");
-    for (const para of (s.p || [])) body.appendChild(h("p", ...paraTokens(para)));
-    if (s.code) body.appendChild(codeBlock(s.code, { where: s.where || d.where || "shell", risk: s.risk || "safe" }));
-    if (s.list) { const ul = h("ul"); for (const li of s.list) ul.appendChild(h("li", ...paraTokens(li))); body.appendChild(ul); }
+    const paras = (s.p || []).map((para) => h("p", ...paraTokens(para)));
+    const list = s.list ? h("ul", s.list.map((li) => h("li", ...paraTokens(li)))) : null;
+    const code = s.code ? codeBlock(s.code, { where: s.where || d.where || "shell", risk: s.risk || "safe" }) : null;
+
+    const prompt = s.h + " — can you explain it without looking?";
+    if (paras.length || list) {
+      body.appendChild(recallBox(prompt, ...paras, list));
+    }
+    if (code) body.appendChild(recallBox("What command or configuration does this need?", code));
     wrap.appendChild(body);
-  }
+  });
 
   if (d.lab) {
-    wrap.appendChild(h("h2", "Lab"));
+    wrap.appendChild(h("h2.sec", h("span.sec__n", "L"), "Lab"));
     const steps = h("div.prose");
     d.lab.forEach((step, i) => {
       steps.appendChild(h("p", h("strong", `${i + 1}. `), ...paraTokens(step.text)));
-      if (step.cmd) steps.appendChild(codeBlock(step.cmd, { where: step.where || d.where || "shell", risk: step.risk || "safe" }));
+      if (step.cmd) steps.appendChild(h("div",
+        recallBox("What would you run for step " + (i + 1) + "?",
+          codeBlock(step.cmd, { where: step.where || d.where || "shell", risk: step.risk || "safe" }))));
       if (step.expect) steps.appendChild(h("p.srcref", "Expected: ", ...paraTokens(step.expect)));
     });
     wrap.appendChild(steps);
@@ -383,20 +488,22 @@ export function lessonView(params) {
     d.trouble.forEach((step, i) => {
       steps.appendChild(h("p", h("strong", `${i + 1}. `), ...paraTokens(step)));
     });
-    wrap.appendChild(h("h2", "Troubleshooting"));
-    wrap.appendChild(steps);
+    add(wrap, h("h2", "Troubleshooting"), steps);
   }
 
   if (d.failures && d.failures.length) {
     const ul = h("ul.prose");
-    for (const f of d.failures) ul.appendChild(h("li", h("strong", f.why + " "), ...paraTokens(f.fix)));
+    for (const f of d.failures) {
+      ul.appendChild(h("li", h("strong", f.why + " "), recallBox("How do you fix it?", paraTokens(f.fix))));
+    }
     add(wrap, h("h2", "When it goes wrong"), ul);
   }
 
   // Emergency quick reference from the converted service profiles.
   if (d.quickRef) {
     add(wrap, h("h2", "Quick reference"),
-      codeBlock(d.quickRef, { where: "RHEL shell", risk: "safe", tag: "cheat sheet" }));
+      recallBox("Recite the commands for this service without looking.",
+        codeBlock(d.quickRef, { where: "RHEL shell", risk: "safe", tag: "cheat sheet" })));
   }
   if (d.source) wrap.appendChild(h("p.srcref", d.source));
 
@@ -728,7 +835,7 @@ export async function progressView() {
 
   wrap.appendChild(h("h2", "Done"));
   if (!done.length) {
-    wrap.appendChild(h("p.srcref", "Nothing marked done yet."));
+    wrap.appendChild(h("p.srcref", { id: "done-empty" }, "Nothing marked done yet."));
   } else {
     const ul = h("ul.prose");
     for (const d of done) {
@@ -736,7 +843,26 @@ export async function progressView() {
       ul.appendChild(h("li", doc ? h("a", { href: contentHref(doc) }, doc.title) : d.id,
         h("button.btn", {
           style: { marginLeft: "10px", padding: "2px 8px", fontSize: "12px" },
-          onclick: async () => { await db.store.setProgress(d.id, { status: "open" }); render(wrap); },
+          onclick: async (ev) => {
+            // Capture the element SYNCHRONOUSLY. `currentTarget` is nulled by
+            // the browser once dispatch finishes, so reading it after an
+            // `await` throws — which it did, silently killing the handler.
+            const btn = ev.currentTarget;
+            await db.store.setProgress(d.id, { status: "open" });
+            // Re-render this view in place. `render` is app.js's job and is not
+            // imported here, so undo must not rely on it.
+            const row = btn.closest("li");
+            if (row) row.remove();
+            const note = wrap.querySelector("#done-empty");
+            if (note) note.hidden = false;
+            if (!wrap.querySelector("ul.prose li")) {
+              const heading = [...wrap.querySelectorAll("h2")].find((x) => x.textContent === "Done");
+              if (heading && !wrap.querySelector("#done-empty")) {
+                heading.after(h("p.srcref", { id: "done-empty" }, "Nothing marked done yet."));
+              }
+            }
+            toast("Marked as not done");
+          },
         }, "undo")));
     }
     wrap.appendChild(ul);
@@ -1113,10 +1239,16 @@ export function objectivesView() {
 
 function progressBar(id) {
   const bar = h("div.progressbar", h("div.progressbar__fill", { style: { width: "0%" } }));
-  db.store.setProgress(id, {}).then(async () => {
-    const rec = await db.store.setProgress(id, {});
+  // READ the record, never write it. Writing here created a progress entry for
+  // every page merely opened, which then showed up as "Done" work that never
+  // happened. `setProgress` resolves with the KEY, not the record, so the old
+  // code also always computed 0%.
+  db.get("progress", id).then((rec) => {
     const pct = rec && rec.status === "done" ? 100 : 0;
     bar.firstChild.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(pct));
+    bar.setAttribute("role", "img");
+    bar.setAttribute("aria-label", pct === 100 ? "Marked done" : "Not marked done");
   });
   return bar;
 }

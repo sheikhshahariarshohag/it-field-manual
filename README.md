@@ -27,6 +27,24 @@ build step and no output directory.
 
 ---
 
+## Study mode
+
+Every lesson has a **Read / Recall** switch, and the choice is remembered.
+
+- **Read** — the ordinary reading experience, everything visible.
+- **Recall** — every explanation, command, lab step and quick-reference sheet is
+  hidden behind a **Reveal** control, with the question shown first. You have to
+  produce the answer before you can look at it.
+
+Across the 32 lessons that is **656 recall prompts**. The mode is a study
+preference, so it is kept in `localStorage` and applies to every lesson, and it
+survives a reload.
+
+Lessons also open with a **What this is for** panel listing the official exam
+objectives they serve, taken from `exam-objectives.json` — and where that
+objective list is not verified against the publisher, it says so rather than
+implying the lesson is exam-accurate.
+
 ## What it does
 
 | Mode | For |
