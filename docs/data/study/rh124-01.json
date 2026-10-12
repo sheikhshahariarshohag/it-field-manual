@@ -1,0 +1,567 @@
+{
+  "id": "rh124-01",
+  "n": 1,
+  "sourceNumber": 0,
+  "kind": "part",
+  "title": "BUILDING YOUR PRACTICE LAB",
+  "display": "Part 0 — BUILDING YOUR PRACTICE LAB",
+  "exam": "RHCSA (EX200)",
+  "words": 2035,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Goal: recreate the exact 4-machine classroom this book was written for, inside VMware Workstation, using a real RHEL 8 install instead of the Red Hat Online Learning cloud classroom."
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — Why rebuild the classroom instead of using single sandboxes"
+        },
+        {
+          "level": 0,
+          "text": "Every chapter in this book assumes four machines are already up and know about each other: workstation (your desktop), servera and serverb (the two servers you practice on), and bastion (the router that gets everyone online). Work you do in one chapter — a user you create, a key you generate, a service you enable — is expected to still be there in a later chapter."
+        },
+        {
+          "level": 0,
+          "text": "A single throwaway VM, or a fresh sandbox per exercise, breaks that continuity and quietly skips the networking, SSH, and multi-server exercises entirely. Building the real 4-machine topology once, up front, is what makes every chapter in this guide usable as written."
+        }
+      ],
+      "words": 151
+    },
+    {
+      "title": "0.1 The network plan",
+      "content": [
+        {
+          "level": 0,
+          "text": "This is the same layout the book documents in its own \"Orientation to the Classroom Environment\" section — same hostnames, same IPs, same domain. Keeping it identical means every command example in this guide that mentions a hostname will just work on your machines, unmodified."
+        },
+        {
+          "level": 0,
+          "text": "Machine"
+        },
+        {
+          "level": 0,
+          "text": "Hostname"
+        },
+        {
+          "level": 0,
+          "text": "IP address"
+        },
+        {
+          "level": 0,
+          "text": "Role"
+        },
+        {
+          "level": 0,
+          "text": "bastion"
+        },
+        {
+          "level": 0,
+          "text": "bastion.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.254"
+        },
+        {
+          "level": 0,
+          "text": "Router between your lab network and the internet. Two network cards."
+        },
+        {
+          "level": 0,
+          "text": "workstation"
+        },
+        {
+          "level": 0,
+          "text": "workstation.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.9"
+        },
+        {
+          "level": 0,
+          "text": "Your graphical admin desktop — where you'll do most exercises from."
+        },
+        {
+          "level": 0,
+          "text": "servera"
+        },
+        {
+          "level": 0,
+          "text": "servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.10"
+        },
+        {
+          "level": 0,
+          "text": "First practice server."
+        },
+        {
+          "level": 0,
+          "text": "serverb"
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.11"
+        },
+        {
+          "level": 0,
+          "text": "Second practice server."
+        },
+        {
+          "level": 0,
+          "text": "Credentials used everywhere in this guide (and in the book): root password redhat · regular user student password student (member of the wheel/sudo group)."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Lab-only credentials"
+        },
+        {
+          "level": 0,
+          "text": "student/student and root/redhat are deliberately weak — they match the book so every exercise's example commands work unchanged. Never reuse these on anything internet-facing or real. Your bastion's external NIC does reach the internet, so keep these VMs on the isolated internal network as described below and don't port-forward them."
+        }
+      ],
+      "words": 169
+    },
+    {
+      "title": "0.2 Get Red Hat Enterprise Linux 8 — free",
+      "content": [
+        {
+          "level": 0,
+          "text": "You'll use a real RHEL 8 install rather than a rebuild like Rocky or Alma. This matters for one reason: Chapter 14 of the book (software management) and several exam-critical topics revolve around Red Hat's own subscription and repository system (subscription-manager, BaseOS/AppStream, Red Hat Insights in Chapter 16). Those don't exist in the same form on rebuild distributions."
+        },
+        {
+          "level": 0,
+          "text": "1. Create a Red Hat Developer account — Go to developers.redhat.com and sign up (free). This gives you a \"Red Hat Developer Subscription for Individuals\" — up to 16 systems, real RHEL, real repositories."
+        },
+        {
+          "level": 0,
+          "text": "2. Download the RHEL 8 ISO — From the Red Hat Customer Portal (access.redhat.com) → Downloads → Red Hat Enterprise Linux → version 8 (any 8.x point release, e.g. 8.10, is fine — nothing in this book depends on a specific minor version). Grab the full \"Binary DVD\" ISO, not the boot ISO, so package installs work offline too."
+        },
+        {
+          "level": 0,
+          "text": "3. Save it somewhere VMware can see it — Note the path — you'll point VMware Workstation's new-VM wizard at this ISO file directly."
+        }
+      ],
+      "words": 175
+    },
+    {
+      "title": "0.3 Build the two virtual networks in VMware Workstation",
+      "content": [
+        {
+          "level": 0,
+          "text": "Open the Virtual Network Editor (Windows: Edit menu → Virtual Network Editor, run as Administrator. Linux: Edit menu → Virtual Network Editor, or run sudo vmware-netcfg — you'll get a polkit prompt either way). Click \"Change Settings\" if the options are greyed out."
+        },
+        {
+          "level": 0,
+          "text": "1. Keep the existing NAT network — VMware Workstation ships with VMnet8 as NAT by default. This is bastion's link to the real internet — you don't need to create anything for it, just note its name (VMnet8)."
+        },
+        {
+          "level": 0,
+          "text": "2. Add a new isolated network for the lab — Click \"Add Network...\", pick an unused VMnet (e.g. VMnet2), set its type to Host-only. Then untick \"Connect a host virtual adapter to this network\" (so your physical laptop can't see or reach this network — it's VM-to-VM only, matching the book's private classroom segment) and untick \"Use local DHCP service\" (so nothing hands out addresses automatically — every machine gets the static IP from the table above)."
+        },
+        {
+          "level": 0,
+          "text": "3. Apply — Click OK / Apply. You now have two networks: VMnet8 (NAT, internet) and VMnet2 (isolated, your 172.25.250.0/24 lab segment)."
+        },
+        {
+          "level": 0,
+          "text": "NOTE —"
+        },
+        {
+          "level": 0,
+          "text": "If VMnet2 is already used by something else on your laptop (e.g. from your CCNA/GNS3 work), pick any free VMnet number instead — just be consistent about which one you select as each VM's network adapter in the steps below."
+        }
+      ],
+      "words": 222
+    },
+    {
+      "title": "0.4 Install the \"gold\" VM",
+      "content": [
+        {
+          "level": 0,
+          "text": "Build this once, get it exactly right, then clone it four times — far faster and more consistent than installing RHEL from scratch four times."
+        },
+        {
+          "level": 0,
+          "text": "1. In VMware Workstation: File → New Virtual Machine → Custom → point the installer ISO at your RHEL 8 DVD image."
+        },
+        {
+          "level": 0,
+          "text": "2. Guest OS: Linux → Red Hat Enterprise Linux 8 (64-bit)."
+        },
+        {
+          "level": 0,
+          "text": "3. Name it \"rhel8-gold\", give it 2 GB RAM and 20 GB disk (single file) to start — comfortable for every exercise in this book."
+        },
+        {
+          "level": 0,
+          "text": "4. Network adapter: set it to Custom → the isolated VMnet you created (e.g. VMnet2). We'll add a second adapter later, only on the machine that becomes bastion."
+        },
+        {
+          "level": 0,
+          "text": "5. Finish, then power on and walk through the RHEL installer: language, \"Minimal Install\" under Software Selection (keeps things lean; you can dnf install anything extra a chapter needs), set the root password to redhat, and create the user student with password student and tick \"Make this user administrator\" (adds it to wheel)."
+        },
+        {
+          "level": 0,
+          "text": "6. Leave networking (IP address) at its installer default for now — you'll set the real static IP by hand after install, per machine, in step 0.6."
+        },
+        {
+          "level": 0,
+          "text": "7. Begin Installation, wait for it to finish, reboot."
+        }
+      ],
+      "words": 200
+    },
+    {
+      "title": "0.5 Register the gold VM with Red Hat",
+      "content": [
+        {
+          "level": 0,
+          "text": "Do this once, on the gold VM, before cloning — every clone inherits a working subscription-manager identity path, though each clone still needs its own registration call after cloning (Section 0.7) since Red Hat ties registration to a machine's unique ID."
+        },
+        {
+          "level": 0,
+          "text": "# log in as root, or as student then: su -"
+        },
+        {
+          "level": 0,
+          "text": "subscription-manager register --username=<your-developer-account-email>"
+        },
+        {
+          "level": 0,
+          "text": "# (enter your Red Hat Developer account password when prompted)"
+        },
+        {
+          "level": 0,
+          "text": "Most Red Hat accounts today use Simple Content Access, which unlocks repositories immediately after registration — no separate \"attach\" step needed. If a later dnf command complains about no subscription attached, this fallback covers the older-style accounts:"
+        },
+        {
+          "level": 0,
+          "text": "subscription-manager attach --auto"
+        },
+        {
+          "level": 0,
+          "text": "Then enable the two repositories this whole book lives in:"
+        },
+        {
+          "level": 0,
+          "text": "subscription-manager repos --enable=rhel-8-for-x86_64-baseos-rpms \\"
+        },
+        {
+          "level": 0,
+          "text": "--enable=rhel-8-for-x86_64-appstream-rpms"
+        },
+        {
+          "level": 0,
+          "text": "dnf repolist # confirm both show up"
+        },
+        {
+          "level": 0,
+          "text": "dnf check-update # confirm packages are reachable"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Chapter 14 — Registering Systems for Red Hat Support"
+        },
+        {
+          "level": 0,
+          "text": "The exact sequence you just ran — register, (attach), enable repos — is itself graded material in Chapter 14. You're not just prepping your lab; you're rehearsing a real exam objective."
+        }
+      ],
+      "words": 179
+    },
+    {
+      "title": "0.6 Shut down and clone the gold VM, four times",
+      "content": [
+        {
+          "level": 0,
+          "text": "In VMware Workstation: power off rhel8-gold, right-click it → Manage → Clone → \"Create a full clone\" (not linked — you want each machine to survive independently). Do this four times, naming the clones bastion, workstation, servera, serverb."
+        },
+        {
+          "level": 0,
+          "text": "NOTE —"
+        },
+        {
+          "level": 0,
+          "text": "A full clone takes a minute or two and uses more disk than a linked clone, but it means you can delete or rebuild any one machine later without breaking the others — closer to how the real classroom's independent VMs behave."
+        }
+      ],
+      "words": 82
+    },
+    {
+      "title": "0.7 Configure workstation, servera, and serverb",
+      "content": [
+        {
+          "level": 0,
+          "text": "Power on each of these three clones one at a time and run the same pattern of commands, substituting that machine's own name/IP from the table in 0.1. Example shown for workstation — repeat for servera (.10) and serverb (.11)."
+        },
+        {
+          "level": 0,
+          "text": "1. Set the hostname — hostnamectl set-hostname workstation.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "2. Find the connection name — nmcli connection show — note the NAME column for your one network adapter (often something like \"ens160\")."
+        },
+        {
+          "level": 0,
+          "text": "nmcli connection modify \"<connection-name>\" \\"
+        },
+        {
+          "level": 0,
+          "text": "ipv4.addresses 172.25.250.9/24 \\"
+        },
+        {
+          "level": 0,
+          "text": "ipv4.gateway 172.25.250.254 \\"
+        },
+        {
+          "level": 0,
+          "text": "ipv4.dns 172.25.250.254 \\"
+        },
+        {
+          "level": 0,
+          "text": "ipv4.method manual"
+        },
+        {
+          "level": 0,
+          "text": "nmcli connection up \"<connection-name>\""
+        },
+        {
+          "level": 0,
+          "text": "(Use .10 for servera, .11 for serverb — everything else identical.)"
+        },
+        {
+          "level": 0,
+          "text": "Then add every machine's name to /etc/hosts, so name resolution works with no DNS server at all — exactly enough for what this book tests:"
+        },
+        {
+          "level": 0,
+          "text": "cat >> /etc/hosts << 'EOF'"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.254 bastion.lab.example.com bastion"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.9 workstation.lab.example.com workstation"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.10 servera.lab.example.com servera"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.11 serverb.lab.example.com serverb"
+        },
+        {
+          "level": 0,
+          "text": "EOF"
+        },
+        {
+          "level": 0,
+          "text": "Finally, re-register this clone (registration is tied to a unique machine ID, which cloning duplicates — re-registering fixes that) and re-enable the repos, same commands as Section 0.5:"
+        },
+        {
+          "level": 0,
+          "text": "subscription-manager register --username=<your-developer-account-email>"
+        },
+        {
+          "level": 0,
+          "text": "subscription-manager repos --enable=rhel-8-for-x86_64-baseos-rpms \\"
+        },
+        {
+          "level": 0,
+          "text": "--enable=rhel-8-for-x86_64-appstream-rpms"
+        }
+      ],
+      "words": 181
+    },
+    {
+      "title": "0.8 Configure bastion (the router)",
+      "content": [
+        {
+          "level": 0,
+          "text": "Bastion is the one machine that's different: it needs a second network card, and it needs to actually route traffic. Power it off first to add the adapter."
+        },
+        {
+          "level": 0,
+          "text": "1. In VMware Workstation, bastion's VM Settings → Add → Network Adapter → set it to NAT (VMnet8). Leave the existing adapter on the isolated VMnet (that one becomes bastion's 172.25.250.254 side)."
+        },
+        {
+          "level": 0,
+          "text": "2. Power bastion on. hostnamectl set-hostname bastion.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "3. nmcli connection show — you'll now see two connections. Identify which is which: the one that gets an address automatically (DHCP, something like 192.168.x.x) is the NAT/external leg; the other is the internal leg."
+        },
+        {
+          "level": 0,
+          "text": "# internal leg — static, matches the lab network"
+        },
+        {
+          "level": 0,
+          "text": "nmcli connection modify \"<internal-connection-name>\" \\"
+        },
+        {
+          "level": 0,
+          "text": "ipv4.addresses 172.25.250.254/24 ipv4.method manual"
+        },
+        {
+          "level": 0,
+          "text": "nmcli connection up \"<internal-connection-name>\""
+        },
+        {
+          "level": 0,
+          "text": "# external leg — leave on DHCP, it already has an address from VMware's NAT service"
+        },
+        {
+          "level": 0,
+          "text": "Add the same /etc/hosts block from Section 0.7 to bastion too, so it can resolve the other three by name."
+        },
+        {
+          "level": 0,
+          "text": "Now turn bastion into an actual router — enable IP forwarding and let firewalld masquerade (translate) traffic from the internal network out through the external one:"
+        },
+        {
+          "level": 0,
+          "text": "echo 'net.ipv4.ip_forward = 1' > /etc/sysctl.d/95-ipforward.conf"
+        },
+        {
+          "level": 0,
+          "text": "sysctl --system"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --get-active-zones # confirm the external NIC's zone (usually 'public')"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --zone=public --add-masquerade --permanent"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — What you just built"
+        },
+        {
+          "level": 0,
+          "text": "This is precisely the relationship the book describes for the real classroom: \"the primary function of bastion is that it acts as a router between the network that connects the student machines and the classroom network. If bastion is down, other student machines will only be able to access systems on the individual student network.\" You've now reproduced that behavior exactly — workstation, servera, and serverb have no route to the internet at all except through bastion."
+        },
+        {
+          "level": 0,
+          "text": "Register bastion the same way as the others (Section 0.5/0.7) so it can dnf install things directly too."
+        }
+      ],
+      "words": 314
+    },
+    {
+      "title": "0.9 Validate the whole topology",
+      "content": [
+        {
+          "level": 0,
+          "text": "From workstation, run through this checklist. Every line should succeed before you start Chapter 1."
+        },
+        {
+          "level": 0,
+          "text": "ping -c2 bastion"
+        },
+        {
+          "level": 0,
+          "text": "ping -c2 servera"
+        },
+        {
+          "level": 0,
+          "text": "ping -c2 serverb"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@servera # accept the host key, log in with password 'student'"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@serverb"
+        },
+        {
+          "level": 0,
+          "text": "Then, from servera or serverb (not bastion, not workstation), confirm internet only flows through bastion:"
+        },
+        {
+          "level": 0,
+          "text": "dnf check-update"
+        },
+        {
+          "level": 0,
+          "text": "If that hangs or fails on servera/serverb, the fault is almost always on bastion — recheck ip_forward, the masquerade rule, and that its internal NIC really is 172.25.250.254 on the isolated VMnet."
+        }
+      ],
+      "words": 87
+    },
+    {
+      "title": "0.10 Snapshot your baseline",
+      "content": [
+        {
+          "level": 0,
+          "text": "Once everything above validates, shut down all four VMs and take a VMware snapshot of each one (right-click VM → Snapshot → Take Snapshot), named something like \"clean-baseline\". Several chapters' Guided Exercises and Labs assume a known starting state — if an exercise goes sideways, revert to this snapshot rather than troubleshooting a compounding mess."
+        },
+        {
+          "level": 0,
+          "text": "NOTE —"
+        },
+        {
+          "level": 0,
+          "text": "This is also your fastest path to redoing the whole book a second time closer to your exam date — revert all four to clean-baseline and start Chapter 1 again with a clean slate."
+        }
+      ],
+      "words": 91
+    },
+    {
+      "title": "0.11 The one thing this lab can't reproduce",
+      "content": [
+        {
+          "level": 0,
+          "text": "The book occasionally references content.example.com and materials.example.com — the real classroom's private file server, used to hand out a handful of extra practice files and a placeholder package called rht-system (used only in Chapter 14 to demonstrate dnf commands without touching the real internet). You don't have that server, and you don't need it:"
+        },
+        {
+          "level": 0,
+          "text": "Anywhere the book installs, updates, or removes rht-system, this guide substitutes a real, small AppStream package instead (called out exactly where it happens, in Chapter 14 below) — the commands and the concepts are identical."
+        },
+        {
+          "level": 0,
+          "text": "Everywhere else, your real BaseOS/AppStream repositories are a strict upgrade over the classroom's private mirror — same packages, straight from Red Hat."
+        }
+      ],
+      "words": 111
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": [
+    {
+      "id": "rhel8-lab",
+      "severity": "high",
+      "title": "The lab is specified as RHEL 8, not RHEL 10",
+      "found": "Part 0 builds the practice environment on VMware Workstation with a four-machine RHEL 8 topology.",
+      "current": "Red Hat Enterprise Linux 8 left mainstream support on 2024-05-31 and is in extended support until 2029-05-31. RHEL 10 is the current major release and is the basis of the RHCSA EX200 exam.",
+      "action": "Build the lab on RHEL 10. Every command in these guides still applies, but package names, default service enablement and some paths differ between major releases. Keep an RHEL 8 machine only if you specifically need to practise the older behaviour.",
+      "verified": "2026-10-12",
+      "source": "redhat.com lifecycle pages"
+    }
+  ]
+}

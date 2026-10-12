@@ -48,6 +48,7 @@ const DATA = [
   "data/projects/index.json",
   "data/exam-objectives.json",
   "data/knowledge-map.json",
+  "data/study-manual.json",
 ];
 
 self.addEventListener("install", (event) => {

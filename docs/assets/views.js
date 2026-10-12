@@ -1427,6 +1427,204 @@ export function knowledgeSessionView(params) {
   return wrap;
 }
 
+/* ========================================================== study manual */
+
+/**
+ * The personalised study manual: three RHEL guides, 35 units, in the original
+ * book order. Built by scripts/build-study-manual.mjs from the user's own
+ * guides; the section text is theirs.
+ *
+ * Unit bodies are separate files under data/study/ and fetched on demand, so
+ * the index stays small.
+ */
+export function STUDY() {
+  return search.CORPUS.study || null;
+}
+
+const studyCache = new Map();
+async function loadStudyUnit(id) {
+  if (studyCache.has(id)) return studyCache.get(id);
+  try {
+    const res = await fetch(`data/study/${id}.json`, { cache: "default" });
+    if (!res.ok) return null;
+    const j = await res.json();
+    studyCache.set(id, j);
+    return j;
+  } catch (_) { return null; }
+}
+
+/** Render one content block, upgrading marker lines and headings. */
+function studyBlock(b) {
+  const t = String(b.text || "");
+  // The guides use consistent prefixes for callouts. Surface them rather than
+  // printing "WARNING - ..." as if it were ordinary prose.
+  const m = t.match(/^(RHCSA EXAM CRITICAL|EXAM CRITICAL|WARNING|NOTE|Why this matters)\b\s*[—–-]?\s*([\s\S]*)$/);
+  if (m) {
+    const kind = m[1].toLowerCase();
+    const cls = kind.includes("critical") || kind.includes("warning") ? "note--risk"
+      : kind.includes("why") ? "note" : "note--ok";
+    return h("div", { class: cls ? `note ${cls}` : "note" },
+      h("strong", m[1]), h("span", m[2].trim()));
+  }
+  if (b.level === 2 || b.level === 3) return h("h3", t);
+  if (b.level === 4) return h("h4", t);
+  return h("p", t);
+}
+
+function renderStudyList(items) {
+  return h("div.study__body", items.map(studyBlock));
+}
+
+export function studyManualView() {
+  const wrap = h("div");
+  const m = STUDY();
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Study Manual"),
+    h("p", m ? m.note : "The study manual has not been loaded."),
+  ));
+
+  if (!m || !m.books) {
+    wrap.appendChild(h("div.empty", h("h2", "Not built yet"),
+      h("p", "Run node scripts/extract-docx.mjs --all then scripts/build-study-manual.mjs")));
+    return wrap;
+  }
+
+  let units = 0, words = 0;
+  for (const b of m.books) { units += b.units.length; words += b.units.reduce((a, u) => a + u.words, 0); }
+
+  wrap.appendChild(h("div.stat-row",
+    h("div.stat", h("div.stat__n", String(m.books.length)), h("div.stat__l", "courses")),
+    h("div.stat", h("div.stat__n", String(units)), h("div.stat__l", "units")),
+    h("div.stat", h("div.stat__n", words > 9999 ? (words / 1000).toFixed(0) + "k" : String(words)), h("div.stat__l", "words")),
+    h("div.stat", h("div.stat__n", new Date(m.built).getDate()), h("div.stat__l", "built " + new Date(m.built).toDateString().slice(0, 10))),
+  ));
+
+  wrap.appendChild(h("div.note.note--risk",
+    h("strong", "Personalisation status"),
+    h("span", m.assessment)));
+
+  for (const b of m.books) {
+    const secs = h("section.layer");
+    secs.appendChild(h("div.layer__head",
+      h("h3", h("span.layer__n", b.code), b.title),
+      h("span.layer__count", `${b.units.length} units`)));
+    secs.appendChild(h("p.srcref", b.blurb));
+    const list = h("ol.sessions");
+    b.units.forEach((u, i) => {
+      list.appendChild(h("li.session",
+        h("a.session__link", { href: href(`study/${u.id}`) },
+          h("span.session__n", String(u.n)),
+          h("span.session__body",
+            h("span.session__title", u.display),
+            h("span.session__sum",
+              `${u.sections} topics · ${u.words.toLocaleString()} words` +
+              (u.labs ? ` · ${u.labs} lab${u.labs === 1 ? "" : "s"}` : "") +
+              (u.quizzes ? ` · ${u.quizzes} quiz${u.quizzes === 1 ? "" : "zes"}` : "")),
+          ),
+          u.services ? h("span.badge.badge--accent", `${u.services} svc`) : null,
+          u.hasCurrency ? h("span.badge.badge--risk", "check") : null,
+        ),
+      ));
+    });
+    secs.appendChild(list);
+    wrap.appendChild(secs);
+  }
+
+  return wrap;
+}
+
+export async function studyUnitView(params) {
+  const wrap = h("div");
+  const m = STUDY();
+  if (!m) return notFound("Study manual", params.id);
+
+  let book = null, unit = null;
+  for (const b of m.books) {
+    const u = b.units.find((x) => x.id === params.id);
+    if (u) { book = b; unit = u; break; }
+  }
+  if (!unit) return notFound("Study unit", params.id);
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", unit.display),
+    h("div.card__meta",
+      h("span.badge", book.code),
+      h("span.badge", unit.exam || book.exam),
+      h("span.badge", `${unit.sections} topics`),
+      h("span.badge", `${unit.words.toLocaleString()} words`),
+      unit.labs ? h("span.badge", `${unit.labs} lab${unit.labs === 1 ? "" : "s"}`) : null,
+      unit.quizzes ? h("span.badge", `${unit.quizzes} quiz${unit.quizzes === 1 ? "" : "zes"}`) : null,
+    ),
+    h("p", book.blurb),
+  ));
+
+  const body = h("div.study");
+  wrap.appendChild(body);
+  body.appendChild(h("p.srcref", "Loading…"));
+
+  const data = await loadStudyUnit(unit.id);
+  clear(body);
+  if (!data) {
+    body.appendChild(h("div.note.note--risk", h("strong", "Could not load"),
+      h("span", "This unit has not been downloaded yet, and you may be offline.")));
+    return wrap;
+  }
+
+  // Currency problems first: they change how the chapter should be read.
+  for (const c of data.currency || []) {
+    body.appendChild(h("div.note.note--risk",
+      h("strong", `${c.severity === "high" ? "Outdated" : "Worth knowing"} — ${c.title}`),
+      h("span",
+        h("p", h("b", "The guide says: "), c.found),
+        h("p", h("b", "Current practice: "), c.current),
+        h("p", h("b", "What to do: "), c.action),
+        h("p.srcref", `Checked ${c.verified} · ${c.source}`))));
+  }
+
+  for (const s of data.sections || []) {
+    body.appendChild(h("h2", s.title));
+    body.appendChild(renderStudyList(s.content));
+  }
+
+  for (const l of data.labs || []) {
+    body.appendChild(h("h2", h("span.sec__n", "L"), l.title));
+    body.appendChild(renderStudyList(l.content));
+  }
+  for (const q of data.quizzes || []) {
+    body.appendChild(h("h2", h("span.sec__n", "Q"), q.title));
+    body.appendChild(renderStudyList(q.content));
+  }
+
+  // Service profiles nested under this chapter.
+  if (data.services && data.services.length) {
+    body.appendChild(h("h2", "Service profiles for this chapter"));
+    body.appendChild(h("p.srcref",
+      "Reference profiles from the field manual, attached here because they cover this material."));
+    const ul = h("ul.linklist");
+    for (const s of data.services) {
+      const doc = search.docById(s.id);
+      ul.appendChild(h("li",
+        h("a", { href: doc ? contentHref(doc) : href("km") }, doc ? doc.title : s.id),
+        doc ? verifyBadge(doc.verification) : null,
+        h("span.kindtag", s.why),
+      ));
+    }
+    body.appendChild(ul);
+  }
+
+  // Navigation: previous / next in the ORIGINAL book order.
+  const flat = m.books.flatMap((b) => b.units.map((u) => ({ b, u })));
+  const i = flat.findIndex((x) => x.u.id === unit.id);
+  body.appendChild(h("div.btnrow",
+    i > 0 ? h("a.btn", { href: href(`study/${flat[i - 1].u.id}`) }, "← " + flat[i - 1].u.display) : null,
+    h("a.btn", { href: href("study") }, "All units"),
+    i < flat.length - 1 ? h("a.btn", { href: href(`study/${flat[i + 1].u.id}`) }, flat[i + 1].u.display + " →") : null,
+  ));
+
+  return wrap;
+}
+
 /* ================================================================== objectives */
 
 /** Exam objectives, verified or explicitly flagged as unverified. */

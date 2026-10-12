@@ -1,0 +1,1184 @@
+{
+  "id": "rh294-06",
+  "n": 6,
+  "sourceNumber": 6,
+  "kind": "part",
+  "title": "Part 6",
+  "display": "Part 6 — Describing Role Structure; Reusing Content with RHEL System…",
+  "exam": "RHCE (EX294)",
+  "words": 2374,
+  "sections": [
+    {
+      "title": "1. Describing Role Structure",
+      "content": [
+        {
+          "level": 0,
+          "text": "A role is a standardized directory structure that bundles everything a piece of functionality needs — tasks, handlers, default variables, templates, static files — into one self-contained, reusable, shareable unit."
+        },
+        {
+          "level": 0,
+          "text": "[user@host roles]$ tree user.example"
+        },
+        {
+          "level": 0,
+          "text": "user.example/"
+        },
+        {
+          "level": 0,
+          "text": "├── defaults"
+        },
+        {
+          "level": 0,
+          "text": "│ └── main.yml"
+        },
+        {
+          "level": 0,
+          "text": "├── files"
+        },
+        {
+          "level": 0,
+          "text": "├── handlers"
+        },
+        {
+          "level": 0,
+          "text": "│ └── main.yml"
+        },
+        {
+          "level": 0,
+          "text": "├── meta"
+        },
+        {
+          "level": 0,
+          "text": "│ └── main.yml"
+        },
+        {
+          "level": 0,
+          "text": "├── README.md"
+        },
+        {
+          "level": 0,
+          "text": "├── tasks"
+        },
+        {
+          "level": 0,
+          "text": "│ └── main.yml"
+        },
+        {
+          "level": 0,
+          "text": "├── templates"
+        },
+        {
+          "level": 0,
+          "text": "├── tests"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── inventory"
+        },
+        {
+          "level": 0,
+          "text": "│ └── test.yml"
+        },
+        {
+          "level": 0,
+          "text": "└── vars"
+        },
+        {
+          "level": 0,
+          "text": "└── main.yml"
+        },
+        {
+          "level": 0,
+          "text": "Subdirectory"
+        },
+        {
+          "level": 0,
+          "text": "Function"
+        },
+        {
+          "level": 0,
+          "text": "defaults"
+        },
+        {
+          "level": 0,
+          "text": "main.yml holds LOW-precedence default variable values — meant to be overridden by whoever uses the role"
+        },
+        {
+          "level": 0,
+          "text": "files"
+        },
+        {
+          "level": 0,
+          "text": "Static files referenced by role tasks (no path needed — the role finds them automatically)"
+        },
+        {
+          "level": 0,
+          "text": "handlers"
+        },
+        {
+          "level": 0,
+          "text": "main.yml holds the role's handler definitions"
+        },
+        {
+          "level": 0,
+          "text": "meta"
+        },
+        {
+          "level": 0,
+          "text": "main.yml holds author/license/platform/dependency info about the role itself"
+        },
+        {
+          "level": 0,
+          "text": "tasks"
+        },
+        {
+          "level": 0,
+          "text": "main.yml holds the role's actual task definitions"
+        },
+        {
+          "level": 0,
+          "text": "templates"
+        },
+        {
+          "level": 0,
+          "text": "Jinja2 templates referenced by role tasks (same automatic path-finding as files)"
+        },
+        {
+          "level": 0,
+          "text": "tests"
+        },
+        {
+          "level": 0,
+          "text": "An inventory + test.yml for testing the role in isolation"
+        },
+        {
+          "level": 0,
+          "text": "vars"
+        },
+        {
+          "level": 0,
+          "text": "main.yml holds HIGH-precedence internal variables — not meant to be casually overridden"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT defaults vs. vars is a direct exam target, and it's about PRECEDENCE, not just location: defaults/main.yml variables are LOW precedence (deliberately easy to override from a playbook or inventory); vars/main.yml variables are HIGH precedence (meant for the role's internal use, resistant to being overridden). Put anything you WANT the user to customize in defaults, never vars."
+        },
+        {
+          "level": 0,
+          "text": "Not every role needs every directory — an empty or omitted subdirectory is simply ignored."
+        },
+        {
+          "level": 2,
+          "text": "Using a role in a playbook"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- hosts: remote.example.com"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- role1"
+        },
+        {
+          "level": 0,
+          "text": "- role2"
+        },
+        {
+          "level": 0,
+          "text": "For each listed role, its tasks, handlers, variables, and dependencies are pulled into the play, IN THAT ORDER. Roles listed in roles: always run BEFORE any tasks: defined directly in that same play."
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- hosts: remote.example.com"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- role: role1"
+        },
+        {
+          "level": 0,
+          "text": "- role: role2"
+        },
+        {
+          "level": 0,
+          "text": "var1: val1"
+        },
+        {
+          "level": 0,
+          "text": "var2: val2"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Variables set inline this way (role parameters) have VERY HIGH precedence — they override nearly everything else, including inventory variables and play vars. Reusing one of these variable names elsewhere in the same play is asking for confusing, hard-to-trace bugs."
+        },
+        {
+          "level": 2,
+          "text": "Controlling execution order: pre_tasks and post_tasks"
+        },
+        {
+          "level": 0,
+          "text": "A play's actual execution order, when everything is present, always follows this sequence:"
+        },
+        {
+          "level": 0,
+          "text": "Order"
+        },
+        {
+          "level": 0,
+          "text": "Section"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "pre_tasks (+ any handlers they notify)"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "roles (+ any handlers they notify)"
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "tasks (+ any handlers they notify)"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "post_tasks (+ any handlers they notify)"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Memorize this exact order — pre_tasks, then roles, then tasks, then post_tasks, with handlers firing after each stage that notified them (not just once at the very end). This is a direct, specific exam target, and it's easy to assume roles and tasks run in file order rather than this fixed sequence."
+        },
+        {
+          "level": 0,
+          "text": "A role can also be added as an ordinary task instead of via the roles: section — include_role for dynamic (run-time) inclusion, or import_role for static (parse-time) inclusion, following the exact same static-vs-dynamic logic from Part 5's import_tasks/include_tasks."
+        }
+      ],
+      "words": 487
+    },
+    {
+      "title": "2. Reusing Content with RHEL System Roles",
+      "content": [
+        {
+          "level": 0,
+          "text": "RHEL System Roles are a set of Red Hat-provided, Red Hat-SUPPORTED roles for common subsystem configuration — included with a standard RHEL subscription, not something you write yourself."
+        },
+        {
+          "level": 0,
+          "text": "Role"
+        },
+        {
+          "level": 0,
+          "text": "Support level"
+        },
+        {
+          "level": 0,
+          "text": "Configures"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.kdump"
+        },
+        {
+          "level": 0,
+          "text": "Fully Supported"
+        },
+        {
+          "level": 0,
+          "text": "The kdump crash recovery service"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.network"
+        },
+        {
+          "level": 0,
+          "text": "Fully Supported"
+        },
+        {
+          "level": 0,
+          "text": "Network interfaces"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.selinux"
+        },
+        {
+          "level": 0,
+          "text": "Fully Supported"
+        },
+        {
+          "level": 0,
+          "text": "SELinux mode, file/port contexts, booleans, SELinux users"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.timesync"
+        },
+        {
+          "level": 0,
+          "text": "Fully Supported"
+        },
+        {
+          "level": 0,
+          "text": "NTP/PTP time synchronization"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.postfix"
+        },
+        {
+          "level": 0,
+          "text": "Technology Preview"
+        },
+        {
+          "level": 0,
+          "text": "Postfix Mail Transfer Agent configuration"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.firewall / .tuned"
+        },
+        {
+          "level": 0,
+          "text": "In Development"
+        },
+        {
+          "level": 0,
+          "text": "Firewall / performance tuning (at time of writing)"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS The pitch in one sentence: RHEL 7 uses ntpd, RHEL 8 uses chronyd for time sync — managing both by hand means maintaining two different config approaches. rhel-system-roles.timesync abstracts that difference away entirely; the same role, same variables, correctly configures time sync whichever service the target host actually uses."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Fully Supported roles have a STABLE interface — Red Hat commits to not breaking their variables across versions. Technology Preview roles may change variables in future versions, so integration testing matters more for those. Know which tier a role is in before depending on it heavily."
+        },
+        {
+          "level": 2,
+          "text": "Installing and finding System Roles"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum install rhel-system-roles"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ls /usr/share/ansible/roles/"
+        },
+        {
+          "level": 0,
+          "text": "Documentation for each installed role lives at /usr/share/doc/rhel-system-roles/ROLENAME/README.md, describing every variable the role accepts."
+        },
+        {
+          "level": 2,
+          "text": "A complete example: the timesync role"
+        },
+        {
+          "level": 0,
+          "text": "- name: Time Synchronization Play"
+        },
+        {
+          "level": 0,
+          "text": "hosts: servers"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "timesync_ntp_servers:"
+        },
+        {
+          "level": 0,
+          "text": "- hostname: 0.rhel.pool.ntp.org"
+        },
+        {
+          "level": 0,
+          "text": "iburst: yes"
+        },
+        {
+          "level": 0,
+          "text": "- hostname: 1.rhel.pool.ntp.org"
+        },
+        {
+          "level": 0,
+          "text": "iburst: yes"
+        },
+        {
+          "level": 0,
+          "text": "timezone: UTC"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- rhel-system-roles.timesync"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Set timezone"
+        },
+        {
+          "level": 0,
+          "text": "timezone:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ timezone }}\""
+        },
+        {
+          "level": 0,
+          "text": "One role, driven entirely by variables, correctly configures NTP on RHEL 6, 7, or 8 hosts, without the playbook author needing to know or care which underlying service each host actually uses."
+        }
+      ],
+      "words": 283
+    },
+    {
+      "title": "3. Creating Your Own Roles",
+      "content": [
+        {
+          "level": 0,
+          "text": "Three steps, always: (1) create the role's directory structure, (2) define its content, (3) use it in a playbook."
+        },
+        {
+          "level": 0,
+          "text": "Where Ansible looks for a role, in order"
+        },
+        {
+          "level": 0,
+          "text": "Location"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "The roles/ subdirectory next to the playbook itself"
+        },
+        {
+          "level": 0,
+          "text": "2 onward"
+        },
+        {
+          "level": 0,
+          "text": "Each directory in roles_path (default ~/.ansible/roles : /usr/share/ansible/roles : /etc/ansible/roles), in order"
+        },
+        {
+          "level": 2,
+          "text": "Generating the skeleton with ansible-galaxy init"
+        },
+        {
+          "level": 0,
+          "text": "[user@host roles]$ ansible-galaxy init motd"
+        },
+        {
+          "level": 0,
+          "text": "- Role motd was created successfully"
+        },
+        {
+          "level": 0,
+          "text": "This creates the complete standard directory tree automatically — faster and less error-prone than mkdir-ing each subdirectory by hand."
+        },
+        {
+          "level": 2,
+          "text": "Using a locally-created role"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ cat use-motd-role.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: use motd role playbook"
+        },
+        {
+          "level": 0,
+          "text": "hosts: remote.example.com"
+        },
+        {
+          "level": 0,
+          "text": "remote_user: devops"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- motd"
+        },
+        {
+          "level": 0,
+          "text": "Task output from a role is prefixed with the role's name — a task shown as TASK [motd : deliver motd file] instantly tells you which role produced it, invaluable once a playbook uses several roles at once."
+        },
+        {
+          "level": 2,
+          "text": "Overriding a role's default variables"
+        },
+        {
+          "level": 0,
+          "text": "A variable defined in defaults/main.yml gets overridden, in increasing precedence, by: inventory host/group variables, then variables set inline where the role is called (role parameters, from Section 6.1) — which is exactly the same variable precedence logic from Part 2, just applied specifically to a role's low-precedence defaults."
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- role: motd"
+        },
+        {
+          "level": 0,
+          "text": "motd_message: \"Welcome to the production web tier\""
+        }
+      ],
+      "words": 213
+    },
+    {
+      "title": "4. Deploying Roles with Ansible Galaxy",
+      "content": [
+        {
+          "level": 0,
+          "text": "Ansible Galaxy (galaxy.ansible.com) is a public hub of community-contributed roles — and the ansible-galaxy command-line tool that manages them also works against your own private Git repositories, not just the public site."
+        },
+        {
+          "level": 2,
+          "text": "Finding roles"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ansible-galaxy search 'redis' --platforms EL"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ansible-galaxy info geerlingguy.redis"
+        },
+        {
+          "level": 0,
+          "text": "search results are alphabetical, NOT ranked by quality/popularity (the website's Best Match score is a web-only feature) — info pulls detailed metadata (license, download count, min_ansible_version) from the role's meta/main.yml and its GitHub repo."
+        },
+        {
+          "level": 2,
+          "text": "Installing a single role"
+        },
+        {
+          "level": 0,
+          "text": "[user@host project]$ ansible-galaxy install geerlingguy.redis -p roles/"
+        },
+        {
+          "level": 0,
+          "text": "- downloading role 'redis', owned by geerlingguy"
+        },
+        {
+          "level": 0,
+          "text": "- extracting geerlingguy.redis to /opt/project/roles/geerlingguy.redis"
+        },
+        {
+          "level": 0,
+          "text": "- geerlingguy.redis (1.6.0) was installed successfully"
+        },
+        {
+          "level": 0,
+          "text": "Without -p, roles install into the first writable directory in roles_path — normally ~/.ansible/roles."
+        },
+        {
+          "level": 2,
+          "text": "Installing a project's full role set with requirements.yml"
+        },
+        {
+          "level": 0,
+          "text": "A roles/requirements.yml file acts as a dependency manifest, letting a whole set of roles be installed in one command instead of one-by-one — and it isn't limited to Ansible Galaxy itself:"
+        },
+        {
+          "level": 0,
+          "text": "# roles/requirements.yml"
+        },
+        {
+          "level": 0,
+          "text": "# from Ansible Galaxy, latest version"
+        },
+        {
+          "level": 0,
+          "text": "- src: geerlingguy.redis"
+        },
+        {
+          "level": 0,
+          "text": "# from Ansible Galaxy, specific version, renamed locally"
+        },
+        {
+          "level": 0,
+          "text": "- src: geerlingguy.redis"
+        },
+        {
+          "level": 0,
+          "text": "version: \"1.5.0\""
+        },
+        {
+          "level": 0,
+          "text": "name: redis_prod"
+        },
+        {
+          "level": 0,
+          "text": "# from a Git repository over HTTPS"
+        },
+        {
+          "level": 0,
+          "text": "- src: https://gitlab.com/example/ansible-nginx-acme.git"
+        },
+        {
+          "level": 0,
+          "text": "scm: git"
+        },
+        {
+          "level": 0,
+          "text": "version: 56e00a54"
+        },
+        {
+          "level": 0,
+          "text": "name: nginx-acme"
+        },
+        {
+          "level": 0,
+          "text": "# from a plain tar archive"
+        },
+        {
+          "level": 0,
+          "text": "- src: file:///opt/local/roles/myrole.tar"
+        },
+        {
+          "level": 0,
+          "text": "name: myrole"
+        },
+        {
+          "level": 0,
+          "text": "Key"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "src"
+        },
+        {
+          "level": 0,
+          "text": "The Galaxy role name, OR a URL if not hosted on Galaxy"
+        },
+        {
+          "level": 0,
+          "text": "scm"
+        },
+        {
+          "level": 0,
+          "text": "git or hg — required only for source-control-hosted roles; omitted for Galaxy/tarball sources"
+        },
+        {
+          "level": 0,
+          "text": "version"
+        },
+        {
+          "level": 0,
+          "text": "A branch, tag, or commit hash to pin"
+        },
+        {
+          "level": 0,
+          "text": "name"
+        },
+        {
+          "level": 0,
+          "text": "Overrides the local directory name the role is installed as"
+        },
+        {
+          "level": 0,
+          "text": "[user@host project]$ ansible-galaxy install -r roles/requirements.yml -p roles"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT A requirements.yml is the standard way real projects pin exact role versions for reproducibility — installing 'whatever the latest role happens to be today' is a real source of playbooks breaking unexpectedly months later. Pin versions the same way you'd pin package versions in any other dependency file."
+        },
+        {
+          "level": 2,
+          "text": "Managing locally installed roles"
+        },
+        {
+          "level": 0,
+          "text": "[user@host project]$ ansible-galaxy list"
+        },
+        {
+          "level": 0,
+          "text": "- geerlingguy.redis, 1.6.0"
+        },
+        {
+          "level": 0,
+          "text": "- redis_prod, 1.5.0"
+        },
+        {
+          "level": 0,
+          "text": "[user@host project]$ ansible-galaxy remove nginx-acme-ssh"
+        },
+        {
+          "level": 0,
+          "text": "- successfully removed nginx-acme-ssh"
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 6"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "ansible-galaxy init ROLENAME"
+        },
+        {
+          "level": 0,
+          "text": "Generate a new role's standard directory skeleton"
+        },
+        {
+          "level": 0,
+          "text": "roles: [ - rolename ]"
+        },
+        {
+          "level": 0,
+          "text": "Use a role in a play — runs before that play's own tasks"
+        },
+        {
+          "level": 0,
+          "text": "pre_tasks / post_tasks"
+        },
+        {
+          "level": 0,
+          "text": "Tasks that run before/after roles+tasks (in fixed order)"
+        },
+        {
+          "level": 0,
+          "text": "include_role / import_role"
+        },
+        {
+          "level": 0,
+          "text": "Add a role via an ordinary task, dynamically/statically"
+        },
+        {
+          "level": 0,
+          "text": "yum install rhel-system-roles"
+        },
+        {
+          "level": 0,
+          "text": "Install Red Hat's supported system roles"
+        },
+        {
+          "level": 0,
+          "text": "ansible-galaxy search / info ROLE"
+        },
+        {
+          "level": 0,
+          "text": "Find and inspect community roles"
+        },
+        {
+          "level": 0,
+          "text": "ansible-galaxy install ROLE -p DIR"
+        },
+        {
+          "level": 0,
+          "text": "Install one role"
+        },
+        {
+          "level": 0,
+          "text": "ansible-galaxy install -r requirements.yml -p DIR"
+        },
+        {
+          "level": 0,
+          "text": "Install a whole pinned role set"
+        },
+        {
+          "level": 0,
+          "text": "ansible-galaxy list / remove ROLE"
+        },
+        {
+          "level": 0,
+          "text": "Manage locally installed roles"
+        }
+      ],
+      "words": 450
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Build, Use, and Reuse a Role",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Create a custom role from scratch, use it alongside a RHEL System Role in one play with correct execution ordering, and pin a Galaxy role via requirements.yml."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "New servers need: a standard MOTD banner (your own role), correct time synchronization (a RHEL System Role), and a verification step that runs before anything else to confirm connectivity."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "A control node with a project directory ~/ansible-lab6, an inventory group [newservers]"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles installed"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Run ansible-galaxy init to scaffold a role named motd_banner"
+        },
+        {
+          "level": 0,
+          "text": "2. Fill in tasks/main.yml (a template task deploying a banner to /etc/motd) and defaults/main.yml (a default banner message variable)"
+        },
+        {
+          "level": 0,
+          "text": "3. Write a playbook targeting newservers with: a pre_tasks ping check, roles: listing both motd_banner and rhel-system-roles.timesync (with timesync_ntp_servers set), and confirm the motd_banner role's default message can be overridden inline"
+        },
+        {
+          "level": 0,
+          "text": "4. Create roles/requirements.yml pinning one real Galaxy role (e.g. geerlingguy.redis) at a specific version, and install it with ansible-galaxy"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Remember the fixed order from Section 6.1: pre_tasks run first, then everything in roles: (in the order listed), then tasks:. Your ping check belongs in pre_tasks specifically so it runs before either role does anything."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: does overriding motd_banner's message inline in the roles: section actually take effect? If not, double check the variable is defined in defaults/main.yml (low precedence, overridable) and not accidentally in vars/main.yml (high precedence, resistant to override)."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab6]$ ansible-galaxy init roles/motd_banner"
+        },
+        {
+          "level": 0,
+          "text": "# roles/motd_banner/defaults/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "motd_message: \"This system is managed by Ansible.\""
+        },
+        {
+          "level": 0,
+          "text": "# roles/motd_banner/tasks/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "- name: Deploy MOTD banner"
+        },
+        {
+          "level": 0,
+          "text": "copy:"
+        },
+        {
+          "level": 0,
+          "text": "content: \"{{ motd_message }}\\n\""
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/motd"
+        },
+        {
+          "level": 0,
+          "text": "# site.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Provision new servers"
+        },
+        {
+          "level": 0,
+          "text": "hosts: newservers"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "timesync_ntp_servers:"
+        },
+        {
+          "level": 0,
+          "text": "- hostname: 0.rhel.pool.ntp.org"
+        },
+        {
+          "level": 0,
+          "text": "iburst: yes"
+        },
+        {
+          "level": 0,
+          "text": "pre_tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Confirm connectivity first"
+        },
+        {
+          "level": 0,
+          "text": "ping:"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- motd_banner"
+        },
+        {
+          "level": 0,
+          "text": "- role: rhel-system-roles.timesync"
+        },
+        {
+          "level": 0,
+          "text": "# roles/requirements.yml"
+        },
+        {
+          "level": 0,
+          "text": "- src: geerlingguy.redis"
+        },
+        {
+          "level": 0,
+          "text": "version: \"1.6.0\""
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab6]$ ansible-galaxy install -r roles/requirements.yml -p roles"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "ansible-galaxy init generates the full standard skeleton in one command, avoiding manual mkdir/touch of eight subdirectories."
+        },
+        {
+          "level": 0,
+          "text": "motd_message lives in defaults/main.yml specifically so it's LOW precedence and cleanly overridable — exactly per Section 6.1's precedence rule."
+        },
+        {
+          "level": 0,
+          "text": "pre_tasks: guarantees the ping check runs before either role, matching the fixed pre_tasks → roles → tasks → post_tasks order from Section 6.1."
+        },
+        {
+          "level": 0,
+          "text": "requirements.yml pins geerlingguy.redis at an exact version — reproducible across every machine that later runs ansible-galaxy install -r on this same file."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/motd on a managed host should show the default banner text; overriding motd_message inline in roles: (motd_banner then a nested vars: or inline var) should change that output on the next run. ansible-galaxy list should show geerlingguy.redis at exactly version 1.6.0."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This lab's shape — a small custom role for something org-specific (a banner), a Red Hat-supported System Role for something standard (time sync), and a pinned third-party role for something common (Redis) — is genuinely how mature Ansible projects are composed: write only what's actually unique to you, reuse everything else."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 6 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What's the precedence difference between a role's defaults/main.yml and vars/main.yml variables?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: defaults/main.yml is LOW precedence, meant to be easily overridden by whoever uses the role; vars/main.yml is HIGH precedence, meant for the role's own internal use and resistant to casual override."
+        },
+        {
+          "level": 0,
+          "text": "Q2. When a play has pre_tasks, roles, tasks, and post_tasks all defined, what's the execution order?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: pre_tasks → roles → tasks → post_tasks, with any notified handlers firing after each stage that notified them."
+        },
+        {
+          "level": 0,
+          "text": "Q3. Do roles listed in roles: run before or after that play's own tasks: list?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Before — roles always run first, ahead of any tasks defined directly in the play."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What's the practical benefit of rhel-system-roles.timesync over writing your own time-sync tasks?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It abstracts away the difference between chronyd (RHEL 7/8) and ntpd (RHEL 6) — one role, one set of variables, correctly configures either underlying service."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What's the practical difference between a Fully Supported and a Technology Preview RHEL System Role?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Fully Supported roles have a stable interface Red Hat commits to keeping unchanged; Technology Preview roles may change their variables in future versions, so integration testing matters more."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What command generates a new role's complete standard directory structure automatically?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ansible-galaxy init ROLENAME"
+        },
+        {
+          "level": 0,
+          "text": "Q7. In what order does Ansible search for a role by default?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: First the roles/ subdirectory next to the playbook, then each directory listed in roles_path in order (default: ~/.ansible/roles, /usr/share/ansible/roles, /etc/ansible/roles)."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What does a requirements.yml file let you do that ansible-galaxy install alone doesn't as conveniently?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Install and pin a whole SET of roles (from Galaxy, Git repos, or tarballs, each at a specific version) in one command, instead of installing and version-pinning each role individually."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What precedence level do variables set INLINE where a role is called (role parameters) have?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Very high — they override nearly everything else, including inventory variables and play vars, which is why reusing those variable names elsewhere in the same play is risky."
+        },
+        {
+          "level": 0,
+          "text": "Q10. What's the difference between include_role and import_role?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The same static-vs-dynamic distinction as Part 5's include_tasks/import_tasks — include_role is resolved dynamically at run time, import_role is resolved statically when the playbook is parsed."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 7: TROUBLESHOOTING ANSIBLE"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 9 in full: diagnosing broken playbooks before they run, reading and controlling execution output, safely testing changes with check mode, and tracking down the connection/privilege problems that account for most real managed-host failures."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Every other RH294 Part has been about writing automation. This one is about what happens the moment it doesn't work — which, in real infrastructure work, is often more of the job than the writing itself."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

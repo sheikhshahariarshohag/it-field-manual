@@ -1,0 +1,1053 @@
+{
+  "id": "rh294-01",
+  "n": 1,
+  "sourceNumber": 1,
+  "kind": "part",
+  "title": "Part 1",
+  "display": "Part 1 — Why Automate, and What Ansible Actually Is; Installing Ansi…",
+  "exam": "RHCE (EX294)",
+  "words": 2523,
+  "sections": [
+    {
+      "title": "1. Why Automate, and What Ansible Actually Is",
+      "content": [
+        {
+          "level": 0,
+          "text": "Manual, one-server-at-a-time administration doesn't scale, and worse, it doesn't stay consistent — the exact commands run on server 12 are never guaranteed to match what ran on server 3 six months earlier. Infrastructure as Code (IaC) means describing the desired state of your systems in machine-readable text files, which can then be version-controlled, reviewed, and re-applied identically, every time."
+        },
+        {
+          "level": 0,
+          "text": "Ansible trait"
+        },
+        {
+          "level": 0,
+          "text": "What it means practically"
+        },
+        {
+          "level": 0,
+          "text": "Simple"
+        },
+        {
+          "level": 0,
+          "text": "Automation is written in plain YAML — readable by someone who didn't write it"
+        },
+        {
+          "level": 0,
+          "text": "Powerful"
+        },
+        {
+          "level": 0,
+          "text": "Handles configuration management, app deployment, provisioning, and orchestration — not just one narrow job"
+        },
+        {
+          "level": 0,
+          "text": "Agentless"
+        },
+        {
+          "level": 0,
+          "text": "No special software needs to be installed or running on managed hosts — Ansible connects over standard SSH"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Agentless is a bigger deal than it sounds. Every other agent-based tool means: install an agent, keep the agent updated, secure the agent, open a nonstandard port for it, and troubleshoot the agent when it breaks. Ansible needs none of that — if you can SSH to a box, Ansible can manage it."
+        },
+        {
+          "level": 2,
+          "text": "The vocabulary, top to bottom"
+        },
+        {
+          "level": 0,
+          "text": "Term"
+        },
+        {
+          "level": 0,
+          "text": "Definition"
+        },
+        {
+          "level": 0,
+          "text": "Control node"
+        },
+        {
+          "level": 0,
+          "text": "The machine Ansible is installed and run FROM — your laptop, a shared admin box, or an Ansible Tower/AAP server. Never a Windows machine."
+        },
+        {
+          "level": 0,
+          "text": "Managed host"
+        },
+        {
+          "level": 0,
+          "text": "A machine Ansible connects TO and configures. Needs no Ansible installation at all."
+        },
+        {
+          "level": 0,
+          "text": "Inventory"
+        },
+        {
+          "level": 0,
+          "text": "The list of managed hosts, organized into groups"
+        },
+        {
+          "level": 0,
+          "text": "Module"
+        },
+        {
+          "level": 0,
+          "text": "A small program (Python, PowerShell, etc.) that does one specific job — e.g. ensure a package is installed, a file exists, a service is running"
+        },
+        {
+          "level": 0,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "One call to a module, with specific arguments"
+        },
+        {
+          "level": 0,
+          "text": "Play"
+        },
+        {
+          "level": 0,
+          "text": "A set of tasks applied, in order, to a specific host or group"
+        },
+        {
+          "level": 0,
+          "text": "Playbook"
+        },
+        {
+          "level": 0,
+          "text": "A YAML file containing one or more plays"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Idempotence is the single most important concept in this entire course, and it will be tested directly: a well-written task checks the CURRENT state first, and only makes a change if the system isn't already in the desired state. Running the same playbook twice should report changed the first time and ok the second — with zero actual changes made on that second run."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Assuming Ansible's command module (or shell) is automatically idempotent just because Ansible itself is described as idempotent. Running an arbitrary shell command is NOT inherently safe to repeat — echo 'foo' >> file.txt would append 'foo' again every single run. Idempotence is a property of well-designed MODULES, not a guarantee Ansible enforces on every possible task."
+        }
+      ],
+      "words": 411
+    },
+    {
+      "title": "2. Installing Ansible",
+      "content": [
+        {
+          "level": 0,
+          "text": "Requirement"
+        },
+        {
+          "level": 0,
+          "text": "Detail"
+        },
+        {
+          "level": 0,
+          "text": "Control node OS"
+        },
+        {
+          "level": 0,
+          "text": "Linux or UNIX only — Windows is NOT supported as a control node (it CAN be a managed host)"
+        },
+        {
+          "level": 0,
+          "text": "Control node Python"
+        },
+        {
+          "level": 0,
+          "text": "Python 3.5+ or Python 2.7+. On RHEL 8, the bundled platform-python already satisfies this — no separate python36 package needed"
+        },
+        {
+          "level": 0,
+          "text": "Managed hosts"
+        },
+        {
+          "level": 0,
+          "text": "No Ansible installation required at all — connects via SSH by default (or WinRM for Windows targets)"
+        },
+        {
+          "level": 0,
+          "text": "[root@controlnode ~]# subscription-manager repos --enable ansible-2-for-rhel-8-x86_64-rpms"
+        },
+        {
+          "level": 0,
+          "text": "[root@controlnode ~]# yum install ansible"
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION Windows-based managed hosts need WinRM configured and use Windows-specific modules (win_ping instead of ping, for instance). Network devices (routers, switches) can also be managed hosts, using network-specific modules — this course focuses on Linux managed hosts throughout."
+        }
+      ],
+      "words": 117
+    },
+    {
+      "title": "3. Building a Static Inventory",
+      "content": [
+        {
+          "level": 0,
+          "text": "The simplest inventory is just a list of hostnames, one per line. Real inventories organize hosts into named groups using INI-style bracket headers:"
+        },
+        {
+          "level": 0,
+          "text": "[webservers]"
+        },
+        {
+          "level": 0,
+          "text": "web1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "web2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "192.0.2.42"
+        },
+        {
+          "level": 0,
+          "text": "[db-servers]"
+        },
+        {
+          "level": 0,
+          "text": "db1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "db2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "A host can belong to multiple groups at once — organize by role, by datacenter, by environment, however makes sense:"
+        },
+        {
+          "level": 0,
+          "text": "[east-datacenter]"
+        },
+        {
+          "level": 0,
+          "text": "web1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "db1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "[production]"
+        },
+        {
+          "level": 0,
+          "text": "web1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "web2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "db1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "db2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Two groups exist automatically in every inventory, whether you define them or not: all (every host in the inventory) and ungrouped (every host that isn't in any group you defined). Know these by name — they're used constantly in playbook host: lines and are an easy exam trap if you assume they need to be created."
+        },
+        {
+          "level": 2,
+          "text": "Nested groups"
+        },
+        {
+          "level": 0,
+          "text": "A group of groups uses the :children suffix on the parent group name:"
+        },
+        {
+          "level": 0,
+          "text": "[usa]"
+        },
+        {
+          "level": 0,
+          "text": "washington1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "washington2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "[canada]"
+        },
+        {
+          "level": 0,
+          "text": "ontario01.example.com"
+        },
+        {
+          "level": 0,
+          "text": "ontario02.example.com"
+        },
+        {
+          "level": 0,
+          "text": "[north-america:children]"
+        },
+        {
+          "level": 0,
+          "text": "usa"
+        },
+        {
+          "level": 0,
+          "text": "canada"
+        },
+        {
+          "level": 2,
+          "text": "Ranges — collapsing repetitive host lists"
+        },
+        {
+          "level": 0,
+          "text": "Range example"
+        },
+        {
+          "level": 0,
+          "text": "Matches"
+        },
+        {
+          "level": 0,
+          "text": "server[01:20].example.com"
+        },
+        {
+          "level": 0,
+          "text": "server01.example.com through server20.example.com"
+        },
+        {
+          "level": 0,
+          "text": "192.168.[4:7].[0:255]"
+        },
+        {
+          "level": 0,
+          "text": "Every IPv4 address in 192.168.4.0 through 192.168.7.255"
+        },
+        {
+          "level": 0,
+          "text": "[a:c].dns.example.com"
+        },
+        {
+          "level": 0,
+          "text": "a.dns.example.com, b.dns.example.com, c.dns.example.com"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Leading zeros in a numeric range are significant. server[01:20] does NOT match server1.example.com — it matches server01 through server20 with the zero-padded width preserved. Get the padding wrong and hosts silently fall outside the range."
+        },
+        {
+          "level": 2,
+          "text": "Verifying and locating the inventory"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible canada --list-hosts"
+        },
+        {
+          "level": 0,
+          "text": "hosts (2):"
+        },
+        {
+          "level": 0,
+          "text": "ontario01.example.com"
+        },
+        {
+          "level": 0,
+          "text": "ontario02.example.com"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Naming a host group the same as an actual host in the inventory. Ansible resolves the ambiguity by targeting the HOST and silently ignoring the group of the same name — always keep group names and host names visually distinct."
+        },
+        {
+          "level": 0,
+          "text": "The default system inventory is /etc/ansible/hosts, but real projects almost always override this — either via the inventory setting in ansible.cfg, or with -i PATH / --inventory PATH on the command line."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION A dynamic inventory generates the host list on the fly from an external source — a cloud provider's API, Red Hat Satellite, a CMDB — instead of a static text file. Covered in more depth later in RH294; for now, know that both static and dynamic inventories exist and serve the same purpose."
+        }
+      ],
+      "words": 347
+    },
+    {
+      "title": "4. Managing Ansible Configuration Files",
+      "content": [
+        {
+          "level": 0,
+          "text": "Ansible's behavior — where it looks for the inventory, how it connects, whether it escalates privileges — comes from an ansible.cfg file. Four possible locations exist, and only ONE is ever used per run."
+        },
+        {
+          "level": 0,
+          "text": "Checked in this order — first match wins:"
+        },
+        {
+          "level": 0,
+          "text": "Order"
+        },
+        {
+          "level": 0,
+          "text": "Location"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "Path in the ANSIBLE_CONFIG environment variable, if set"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "./ansible.cfg — in the directory where the ansible command is run"
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "~/.ansible.cfg — in the current user's home directory"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "/etc/ansible/ansible.cfg — the global default"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT This precedence order is a direct exam target. Memorize it in this exact order: ANSIBLE_CONFIG variable → ./ansible.cfg → ~/.ansible.cfg → /etc/ansible/ansible.cfg. Recommended real-world practice is a project-local ./ansible.cfg sitting alongside that project's inventory and playbooks — the global and home-directory files are rarely used in practice."
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible --version"
+        },
+        {
+          "level": 0,
+          "text": "ansible 2.8.0"
+        },
+        {
+          "level": 0,
+          "text": "config file = /etc/ansible/ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "ansible --version is the fastest way to confirm exactly which config file is actually active, whenever there's any doubt."
+        },
+        {
+          "level": 2,
+          "text": "Key settings: connections and privilege escalation"
+        },
+        {
+          "level": 0,
+          "text": "Setting"
+        },
+        {
+          "level": 0,
+          "text": "Section"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "inventory"
+        },
+        {
+          "level": 0,
+          "text": "[defaults]"
+        },
+        {
+          "level": 0,
+          "text": "Path to the inventory file to use by default"
+        },
+        {
+          "level": 0,
+          "text": "remote_user"
+        },
+        {
+          "level": 0,
+          "text": "[defaults]"
+        },
+        {
+          "level": 0,
+          "text": "Which user Ansible connects as (defaults to the local user's own username)"
+        },
+        {
+          "level": 0,
+          "text": "become"
+        },
+        {
+          "level": 0,
+          "text": "[privilege_escalation]"
+        },
+        {
+          "level": 0,
+          "text": "true/false — whether to escalate privileges by default"
+        },
+        {
+          "level": 0,
+          "text": "become_method"
+        },
+        {
+          "level": 0,
+          "text": "[privilege_escalation]"
+        },
+        {
+          "level": 0,
+          "text": "How to escalate — defaults to sudo"
+        },
+        {
+          "level": 0,
+          "text": "become_user"
+        },
+        {
+          "level": 0,
+          "text": "[privilege_escalation]"
+        },
+        {
+          "level": 0,
+          "text": "Which user to become — defaults to root"
+        },
+        {
+          "level": 0,
+          "text": "become_ask_pass"
+        },
+        {
+          "level": 0,
+          "text": "[privilege_escalation]"
+        },
+        {
+          "level": 0,
+          "text": "true/false — whether to prompt for a password to escalate"
+        },
+        {
+          "level": 0,
+          "text": "SSH key-based auth is the normal connection method — copy your public key to each managed host once, and Ansible authenticates without a password from then on:"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ssh-keygen"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ssh-copy-id remote_user@web1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Escalating privileges via become (running as an unprivileged user, then becoming root only when needed) is the same least-privilege principle from Part 3's ACL/sudo material — Ansible doesn't introduce a new security philosophy, it just applies the one you already know at scale."
+        }
+      ],
+      "words": 314
+    },
+    {
+      "title": "5. Running Ad Hoc Commands",
+      "content": [
+        {
+          "level": 0,
+          "text": "An ad hoc command runs ONE task, once, without saving it anywhere — the automation equivalent of typing a single command instead of writing a script. Perfect for quick checks and one-off changes; playbooks are for anything you'll want to run again."
+        },
+        {
+          "level": 0,
+          "text": "ansible host-pattern -m module [-a 'module arguments'] [-i inventory]"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible all -m ping"
+        },
+        {
+          "level": 0,
+          "text": "servera.lab.example.com | SUCCESS => {"
+        },
+        {
+          "level": 0,
+          "text": "\"changed\": false,"
+        },
+        {
+          "level": 0,
+          "text": "\"ping\": \"pong\""
+        },
+        {
+          "level": 0,
+          "text": "}"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Confusing the ping MODULE with an actual ICMP ping. It doesn't send network ping packets at all — it verifies that Ansible can log in AND run Python-based modules on the host. That's a meaningfully different (and more useful) check."
+        },
+        {
+          "level": 2,
+          "text": "Passing arguments to modules"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible servera.lab.example.com -m user -a 'name=newbie uid=4000 state=present'"
+        },
+        {
+          "level": 0,
+          "text": "Run that exact command again and it reports changed: false — proof of idempotence in action. The user module checked whether newbie already existed with UID 4000 and, finding it already true, did nothing."
+        },
+        {
+          "level": 2,
+          "text": "command vs. shell vs. raw"
+        },
+        {
+          "level": 0,
+          "text": "Module"
+        },
+        {
+          "level": 0,
+          "text": "Runs through a shell?"
+        },
+        {
+          "level": 0,
+          "text": "Use when"
+        },
+        {
+          "level": 0,
+          "text": "command (the default if -m is omitted)"
+        },
+        {
+          "level": 0,
+          "text": "No"
+        },
+        {
+          "level": 0,
+          "text": "Running a simple binary directly — safest default, but can't use pipes, redirection, or shell variables"
+        },
+        {
+          "level": 0,
+          "text": "shell"
+        },
+        {
+          "level": 0,
+          "text": "Yes"
+        },
+        {
+          "level": 0,
+          "text": "You genuinely need shell features — pipes, redirection, environment variable expansion"
+        },
+        {
+          "level": 0,
+          "text": "raw"
+        },
+        {
+          "level": 0,
+          "text": "Bypasses the module system entirely"
+        },
+        {
+          "level": 0,
+          "text": "The managed host has no Python at all yet (rare — e.g. bootstrapping a brand-new image)"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible mymanagedhosts -m command -a /usr/bin/hostname -o"
+        },
+        {
+          "level": 0,
+          "text": "host1.lab.example.com | CHANGED | rc=0 >> (stdout) host1.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT If an ad hoc command doesn't specify -m at all, Ansible defaults to the command module — not shell. This distinction matters because command cannot process pipes or redirection; a command like ps aux | grep httpd silently fails to do what you expect under the command module, since | is treated as a literal argument, not a shell pipe."
+        },
+        {
+          "level": 0,
+          "text": "The -o flag compresses each host's result to one line — genuinely useful once you're running ad hoc commands against dozens of hosts and don't want to scroll through multi-line output for each one."
+        },
+        {
+          "level": 0,
+          "text": "ansible-doc -l lists every module installed locally; ansible-doc MODULENAME shows that module's full documentation and arguments — the fastest way to check a module's exact option names without leaving the terminal."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 1"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "ansible HOST-PATTERN --list-hosts"
+        },
+        {
+          "level": 0,
+          "text": "Show which hosts a pattern/group actually resolves to"
+        },
+        {
+          "level": 0,
+          "text": "ansible --version"
+        },
+        {
+          "level": 0,
+          "text": "Show Ansible version AND which config file is active"
+        },
+        {
+          "level": 0,
+          "text": "ansible-doc -l"
+        },
+        {
+          "level": 0,
+          "text": "List every installed module"
+        },
+        {
+          "level": 0,
+          "text": "ansible-doc MODULE"
+        },
+        {
+          "level": 0,
+          "text": "Show a module's documentation and arguments"
+        },
+        {
+          "level": 0,
+          "text": "ansible HOSTS -m MODULE -a 'args'"
+        },
+        {
+          "level": 0,
+          "text": "Run an ad hoc command"
+        },
+        {
+          "level": 0,
+          "text": "ansible HOSTS -m ping"
+        },
+        {
+          "level": 0,
+          "text": "Verify connectivity + Python availability (not ICMP)"
+        },
+        {
+          "level": 0,
+          "text": "ssh-copy-id user@host"
+        },
+        {
+          "level": 0,
+          "text": "Deploy your SSH public key for password-less auth"
+        }
+      ],
+      "words": 448
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: First Inventory + Ad Hoc Automation",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Build a real static inventory with groups and a range, configure a project-local ansible.cfg, and use ad hoc commands to prove connectivity and make an idempotent change."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "You're setting up Ansible for the first time against three lab servers: two web servers and one database server, all reachable by SSH key."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "A control node with Ansible installed"
+        },
+        {
+          "level": 0,
+          "text": "Three managed hosts: web1.lab.example.com, web2.lab.example.com, db1.lab.example.com, all with your SSH public key already deployed"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Create a project directory ~/ansible-lab1 with a static inventory file defining a [webservers] group (web1, web2) and a [db-servers] group (db1)"
+        },
+        {
+          "level": 0,
+          "text": "2. Add a project-local ansible.cfg in that same directory pointing inventory at your inventory file, and setting remote_user appropriately"
+        },
+        {
+          "level": 0,
+          "text": "3. Confirm ansible --version shows YOUR config file is the active one (not the global default)"
+        },
+        {
+          "level": 0,
+          "text": "4. Run an ad hoc ping module check against all three hosts at once"
+        },
+        {
+          "level": 0,
+          "text": "5. Use the user module to ensure an account named opsuser (UID 5000) exists on the webservers group only"
+        },
+        {
+          "level": 0,
+          "text": "6. Run that same command a second time and confirm it reports no change"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Run every ansible/ansible-playbook command FROM inside ~/ansible-lab1 — the ./ansible.cfg precedence rule only kicks in when your current directory actually contains that file."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: did ansible --version actually report your project's ansible.cfg path, or did it fall back to /etc/ansible/ansible.cfg? If it's the global one, you're not running the command from inside the project directory."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ mkdir ~/ansible-lab1 && cd ~/ansible-lab1"
+        },
+        {
+          "level": 0,
+          "text": "# inventory"
+        },
+        {
+          "level": 0,
+          "text": "[webservers]"
+        },
+        {
+          "level": 0,
+          "text": "web1.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "web2.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "[db-servers]"
+        },
+        {
+          "level": 0,
+          "text": "db1.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "# ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "[defaults]"
+        },
+        {
+          "level": 0,
+          "text": "inventory = ./inventory"
+        },
+        {
+          "level": 0,
+          "text": "remote_user = ansible"
+        },
+        {
+          "level": 0,
+          "text": "[privilege_escalation]"
+        },
+        {
+          "level": 0,
+          "text": "become = true"
+        },
+        {
+          "level": 0,
+          "text": "become_method = sudo"
+        },
+        {
+          "level": 0,
+          "text": "become_user = root"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab1]$ ansible --version"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab1]$ ansible all -m ping"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab1]$ ansible webservers -m user -a 'name=opsuser uid=5000 state=present' --become"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab1]$ ansible webservers -m user -a 'name=opsuser uid=5000 state=present' --become"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "inventory = ./inventory in ansible.cfg means you never have to pass -i on every single command — a huge quality-of-life win once a project has more than a couple of commands to run."
+        },
+        {
+          "level": 0,
+          "text": "--become on the user module command escalates to root for that one task, since creating a user requires root privileges the connecting account likely doesn't have directly."
+        },
+        {
+          "level": 0,
+          "text": "Running the exact same user command twice and getting changed: false the second time is the idempotence proof — the module checked current state, found opsuser already correct, and did nothing."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "ansible webservers -m command -a 'id opsuser' should show the account exists with UID 5000 on both web1 and web2, and should FAIL (or show no such user) if run against db-servers — confirming the group targeting worked correctly."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This exact inventory-plus-config-plus-ad-hoc pattern is how most real Ansible projects start, even ones that eventually grow into dozens of playbooks and roles. Getting comfortable with it now means every later RH294 Part builds on muscle memory you already have."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 1 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What does 'agentless' mean for Ansible, and why does it matter practically?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No special software needs to be installed or running on managed hosts — Ansible connects over standard SSH, so there's no agent to install, update, secure, or troubleshoot."
+        },
+        {
+          "level": 0,
+          "text": "Q2. Can a Windows machine be an Ansible control node? Can it be a managed host?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No to control node (Linux/UNIX only); yes to managed host, via WinRM and Windows-specific modules."
+        },
+        {
+          "level": 0,
+          "text": "Q3. What does idempotence mean, and is it guaranteed for every Ansible task automatically?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Running the same task/play/playbook repeatedly should only change the system when it isn't already in the desired state. It is NOT automatic for every task — it depends on the module being idempotent (command/shell are not inherently safe to repeat)."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What are the two host groups that exist in every Ansible inventory without being explicitly defined?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: all and ungrouped."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What does the range server[01:20].example.com match, and would it match server1.example.com?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: server01.example.com through server20.example.com, zero-padded — it would NOT match server1.example.com because the leading zero is significant."
+        },
+        {
+          "level": 0,
+          "text": "Q6. List the ansible.cfg search order from highest to lowest precedence."
+        },
+        {
+          "level": 0,
+          "text": "Answer: ANSIBLE_CONFIG environment variable → ./ansible.cfg → ~/.ansible.cfg → /etc/ansible/ansible.cfg."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What command shows exactly which ansible.cfg file is currently active?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ansible --version"
+        },
+        {
+          "level": 0,
+          "text": "Q8. In the [privilege_escalation] section, what do become, become_method, and become_user each control?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: become: whether to escalate privileges by default; become_method: HOW to escalate (default sudo); become_user: WHICH user to become (default root)."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What's the practical difference between the command and shell modules?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: command runs a binary directly without shell processing (no pipes/redirection/env vars); shell processes the command through an actual shell, enabling those features."
+        },
+        {
+          "level": 0,
+          "text": "Q10. If an ad hoc command omits -m entirely, which module runs by default?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: command — not shell."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 2: PLAYBOOKS + VARIABLES, FACTS & VAULT"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 3 (Implementing Playbooks) and Chapter 4 (Managing Variables and Facts). This is where ad hoc one-off commands from Part 1 become saved, reusable, shareable automation — and where that automation starts adapting itself to different hosts using variables and facts, with secrets protected by Vault."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Playbooks plus variables plus facts is genuinely 80% of real-world Ansible work. Roles (Part 6) and advanced task control (Part 3) build on top of this, but this Part is where the actual day-to-day skill lives."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": [
+    {
+      "id": "rhce-ansible",
+      "severity": "medium",
+      "title": "EX294 remains the current RHCE exam, but the ecosystem has moved to Ansible Automation Platform",
+      "found": "The guide configures Ansible from the repository with ansible.cfg and static inventories.",
+      "current": "EX294 is still the exam for Red Hat Certified Engineer in Ansible Automation. Red Hat has since steered large-scale automation toward Ansible Automation Platform (AAP), which adds a web interface, job scheduling and a controller. The underlying modules and playbook syntax used here are unchanged.",
+      "action": "Everything in these guides remains valid for EX294. AAP knowledge is useful in industry but is not required for the exam and is not covered here.",
+      "verified": "2026-10-12",
+      "source": "Red Hat EX294 certification page"
+    }
+  ]
+}

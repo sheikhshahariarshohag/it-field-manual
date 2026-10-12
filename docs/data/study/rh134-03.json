@@ -1,0 +1,1715 @@
+{
+  "id": "rh134-03",
+  "n": 3,
+  "sourceNumber": 3,
+  "kind": "part",
+  "title": "Part 3",
+  "display": "Part 3 — Adjusting Tuning Profiles — tuned; Influencing Process Sche…",
+  "exam": "RHCSA (EX200)",
+  "words": 4515,
+  "sections": [
+    {
+      "title": "1. Adjusting Tuning Profiles — tuned",
+      "content": [
+        {
+          "level": 0,
+          "text": "tuned is a daemon that applies a bundle of kernel and device settings — disk I/O scheduler, CPU governor, network parameters — as a single named profile, instead of you hand-tuning dozens of individual sysctl values."
+        },
+        {
+          "level": 0,
+          "text": "Tuning mode"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "Static"
+        },
+        {
+          "level": 0,
+          "text": "Settings applied once, when the service starts or the profile is selected"
+        },
+        {
+          "level": 0,
+          "text": "Dynamic"
+        },
+        {
+          "level": 0,
+          "text": "tuned monitors activity and adjusts settings on the fly — e.g. storage gets tuned hard at boot/login, then relaxed once the system is idle"
+        },
+        {
+          "level": 0,
+          "text": "Profile"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "balanced"
+        },
+        {
+          "level": 0,
+          "text": "Default compromise between power saving and performance"
+        },
+        {
+          "level": 0,
+          "text": "throughput-performance"
+        },
+        {
+          "level": 0,
+          "text": "Maximum throughput"
+        },
+        {
+          "level": 0,
+          "text": "latency-performance"
+        },
+        {
+          "level": 0,
+          "text": "Low latency for servers, at the cost of power"
+        },
+        {
+          "level": 0,
+          "text": "network-latency / network-throughput"
+        },
+        {
+          "level": 0,
+          "text": "Latency/throughput profiles with extra network-specific tuning"
+        },
+        {
+          "level": 0,
+          "text": "powersave"
+        },
+        {
+          "level": 0,
+          "text": "Maximum power saving"
+        },
+        {
+          "level": 0,
+          "text": "virtual-guest / virtual-host"
+        },
+        {
+          "level": 0,
+          "text": "Tuned for running inside a VM, or for hosting VMs"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl enable --now tuned"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# tuned-adm active"
+        },
+        {
+          "level": 0,
+          "text": "Current active profile: virtual-guest"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# tuned-adm list"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# tuned-adm profile throughput-performance"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the fastest legitimate performance win an admin can make: one command, a sensible pre-built profile, no manual sysctl tuning required. Always check tuned-adm active before assuming a performance problem needs deeper investigation."
+        }
+      ],
+      "words": 187
+    },
+    {
+      "title": "2. Influencing Process Scheduling — nice and renice",
+      "content": [
+        {
+          "level": 0,
+          "text": "The kernel scheduler shares CPU time across every process wanting to run. When there's enough CPU to go around, a process's priority barely matters. When CPU is contended, priority decides who gets served first — and nice levels are how you influence that."
+        },
+        {
+          "level": 2,
+          "text": "The nice level scale"
+        },
+        {
+          "level": 0,
+          "text": "Value"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "-20"
+        },
+        {
+          "level": 0,
+          "text": "Highest priority — most favored by the scheduler"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "Default for normal processes"
+        },
+        {
+          "level": 0,
+          "text": "19"
+        },
+        {
+          "level": 0,
+          "text": "Lowest priority — most willing to yield CPU to others"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Only root can lower a nice level (make a process higher priority). Unprivileged users can only raise their own processes' nice level (make them lower priority), and once raised, they can't lower it back down themselves."
+        },
+        {
+          "level": 2,
+          "text": "Checking nice levels"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ps axo pid,comm,nice,cls --sort=-nice"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ top # NI column = nice level, PR column = scheduled priority"
+        },
+        {
+          "level": 2,
+          "text": "Starting a process with a specific nice level"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ nice sha1sum /dev/zero & # starts at nice 10 (the default bump)"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ nice -n 15 sha1sum /dev/zero & # starts at nice 15"
+        },
+        {
+          "level": 2,
+          "text": "Changing the nice level of a running process"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ renice -n 19 3521"
+        },
+        {
+          "level": 0,
+          "text": "3521 (process ID) old priority 15, new priority 19"
+        },
+        {
+          "level": 0,
+          "text": "You can also renice interactively from inside top by pressing r, then supplying the PID and new nice level."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Trying to renice someone else's process, or lower your own process's nice level, as a regular user — both fail with a permissions error. This isn't a bug; it's the whole point of the permission model (a low-priority user shouldn't be able to make their process outrank everyone else's)."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 2"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "at TIMESPEC"
+        },
+        {
+          "level": 0,
+          "text": "Schedule a one-time deferred job"
+        },
+        {
+          "level": 0,
+          "text": "atq / atrm N"
+        },
+        {
+          "level": 0,
+          "text": "List / remove pending at jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e / -l"
+        },
+        {
+          "level": 0,
+          "text": "Edit / list your personal recurring jobs"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "Reload systemd after editing a unit file"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now NAME.timer"
+        },
+        {
+          "level": 0,
+          "text": "Activate a systemd timer immediately and on boot"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "Purge stale temp files per tmpfiles.d config"
+        },
+        {
+          "level": 0,
+          "text": "tuned-adm active / list / profile NAME"
+        },
+        {
+          "level": 0,
+          "text": "Check / list / switch performance profile"
+        },
+        {
+          "level": 0,
+          "text": "nice -n N command"
+        },
+        {
+          "level": 0,
+          "text": "Start a command with a specific nice level"
+        },
+        {
+          "level": 0,
+          "text": "renice -n N PID"
+        },
+        {
+          "level": 0,
+          "text": "Change the nice level of a running process"
+        }
+      ],
+      "words": 369
+    },
+    {
+      "title": "1. ACL Concepts and Viewing ACLs",
+      "content": [
+        {
+          "level": 0,
+          "text": "Standard Linux permissions give you exactly three subjects to grant permission to: the owner, the group owner, and everyone else. That's fine until you need to say \"this one specific other user should also get write access\" — standard permissions simply can't express that. Access Control Lists (ACLs) let you attach permissions to any number of additional named users and named groups on top of the standard three."
+        },
+        {
+          "level": 2,
+          "text": "Reading getfacl output"
+        },
+        {
+          "level": 0,
+          "text": "[user@host content]$ getfacl reports.txt"
+        },
+        {
+          "level": 0,
+          "text": "# file: reports.txt"
+        },
+        {
+          "level": 0,
+          "text": "# owner: user"
+        },
+        {
+          "level": 0,
+          "text": "# group: operators"
+        },
+        {
+          "level": 0,
+          "text": "user::rwx"
+        },
+        {
+          "level": 0,
+          "text": "user:consultant3:---"
+        },
+        {
+          "level": 0,
+          "text": "user:1005:rwx #effective:rw-"
+        },
+        {
+          "level": 0,
+          "text": "group::rwx #effective:rw-"
+        },
+        {
+          "level": 0,
+          "text": "group:consultant1:r--"
+        },
+        {
+          "level": 0,
+          "text": "group:2210:rwx #effective:rw-"
+        },
+        {
+          "level": 0,
+          "text": "mask::rw-"
+        },
+        {
+          "level": 0,
+          "text": "other::---"
+        },
+        {
+          "level": 0,
+          "text": "Line"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "user::rwx"
+        },
+        {
+          "level": 0,
+          "text": "File owner's permissions (the base ACL, equivalent to standard chmod owner bits)"
+        },
+        {
+          "level": 0,
+          "text": "user:consultant3:---"
+        },
+        {
+          "level": 0,
+          "text": "Named user consultant3 has been granted no permissions"
+        },
+        {
+          "level": 0,
+          "text": "user:1005:rwx #effective:rw-"
+        },
+        {
+          "level": 0,
+          "text": "Named UID 1005 was granted rwx, but the mask caps it to rw-"
+        },
+        {
+          "level": 0,
+          "text": "group::rwx #effective:rw-"
+        },
+        {
+          "level": 0,
+          "text": "Group owner's permissions, also capped by the mask"
+        },
+        {
+          "level": 0,
+          "text": "group:consultant1:r--"
+        },
+        {
+          "level": 0,
+          "text": "Named group consultant1 has read-only"
+        },
+        {
+          "level": 0,
+          "text": "mask::rw-"
+        },
+        {
+          "level": 0,
+          "text": "The ceiling — no named user, group owner, or named group can exceed this"
+        },
+        {
+          "level": 0,
+          "text": "other::---"
+        },
+        {
+          "level": 0,
+          "text": "Everyone else — same meaning as standard 'other' permissions"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL An ls -l on a file with ACLs shows a '+' after the permission string (e.g. -rw-rw-r--+). That plus sign is your only visual clue from ls that ACLs are involved — always follow up with getfacl to see the actual entries."
+        },
+        {
+          "level": 2,
+          "text": "The ACL mask — the ceiling, not a grant"
+        },
+        {
+          "level": 0,
+          "text": "The mask defines the MAXIMUM effective permission for named users, the group owner, and named groups — it never grants anything by itself, it only caps what's already been granted. The file owner and 'other' are never affected by the mask."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the single most confusing part of ACLs for newcomers. You can set a named user to rwx and still see them with effective rw- — that's not a bug, that's the mask doing its job. Whenever an ACL entry doesn't seem to be taking effect, check the mask first."
+        }
+      ],
+      "words": 326
+    },
+    {
+      "title": "2. Setting and Removing ACLs — setfacl",
+      "content": [
+        {
+          "level": 2,
+          "text": "Adding or modifying entries"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "What it does"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m u:name:rX file"
+        },
+        {
+          "level": 0,
+          "text": "Add/modify a named user entry — blank name = file owner"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m g:name:rw file"
+        },
+        {
+          "level": 0,
+          "text": "Add/modify a named group entry — blank name = group owner"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m o::- file"
+        },
+        {
+          "level": 0,
+          "text": "Set 'other' permissions (equivalent to chmod on other)"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m u::rwx,g:consultants:rX,o::- file"
+        },
+        {
+          "level": 0,
+          "text": "Set multiple entries in one comma-separated command"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m m::r file"
+        },
+        {
+          "level": 0,
+          "text": "Explicitly set the mask"
+        },
+        {
+          "level": 0,
+          "text": "Capital X (as opposed to lowercase x) is worth using deliberately: it sets execute only if the target is a directory, or if the file already had execute set. That prevents you from accidentally making a plain text file executable when you meant to grant directory traversal."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Using chmod after setting ACLs, expecting it to affect named users. chmod only ever touches owner/group-owner/other — it has zero effect on named user or named group ACL entries, though it DOES recalculate the mask, which can silently cap ACL entries you just set."
+        },
+        {
+          "level": 2,
+          "text": "Recursive changes and inheritance"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ setfacl -R -m u:name:rX directory"
+        },
+        {
+          "level": 0,
+          "text": "-R applies the entry to the directory and everything already inside it. That's a one-time application, though — it does nothing for files created later. For that, you need a default ACL, which new files and subdirectories inherit automatically:"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ setfacl -m d:u:name:rx directory"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING A default ACL only controls inheritance for NEW content — it is not itself an access-control mechanism for the directory. The directory still needs its own standard/regular ACL entries to control who can access the directory itself."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL New regular files never inherit execute permission from a default ACL, even if the default ACL includes x — the mask on a new file is always rw- by default. New directories DO get it. This asymmetry is a favorite exam trap."
+        },
+        {
+          "level": 2,
+          "text": "Deleting ACL entries"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "What it does"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -x u:name,g:name file"
+        },
+        {
+          "level": 0,
+          "text": "Remove specific named entries (base ACL untouched)"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -b file"
+        },
+        {
+          "level": 0,
+          "text": "Remove ALL ACL entries (including defaults) — back to plain permissions"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -k directory"
+        },
+        {
+          "level": 0,
+          "text": "Remove all default ACL entries on a directory only"
+        },
+        {
+          "level": 0,
+          "text": "The mask can only be deleted once every other named entry is gone — it has to go last, since it exists to govern those entries."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — ACLs"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "getfacl file"
+        },
+        {
+          "level": 0,
+          "text": "View ACL entries"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m u:name:perms file"
+        },
+        {
+          "level": 0,
+          "text": "Add/modify a named user entry"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m g:name:perms file"
+        },
+        {
+          "level": 0,
+          "text": "Add/modify a named group entry"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -R -m ... dir"
+        },
+        {
+          "level": 0,
+          "text": "Apply recursively to existing content"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m d:... dir"
+        },
+        {
+          "level": 0,
+          "text": "Set a default (inherited) ACL entry"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -x ... file"
+        },
+        {
+          "level": 0,
+          "text": "Remove a specific entry"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -b file"
+        },
+        {
+          "level": 0,
+          "text": "Strip all ACLs back to plain permissions"
+        }
+      ],
+      "words": 441
+    },
+    {
+      "title": "3. How SELinux Works and Changing Its Mode",
+      "content": [
+        {
+          "level": 0,
+          "text": "Standard permissions and ACLs are both Discretionary Access Control (DAC) — the file owner decides who gets access, and any process running as that owner inherits the same access. SELinux is Mandatory Access Control (MAC) — a system-wide policy decides what's allowed, based on labels, regardless of ownership. Even root can be denied by SELinux."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the mental model that unlocks everything else in this section: a process doesn't ask 'am I the file owner or in the group?' under SELinux — it asks 'does the policy allow a process of MY type to perform THIS action on a resource of THAT type?' Two completely independent yes/no checks (DAC and MAC) both have to say yes."
+        },
+        {
+          "level": 2,
+          "text": "The three SELinux modes"
+        },
+        {
+          "level": 0,
+          "text": "Mode"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "Enforcing"
+        },
+        {
+          "level": 0,
+          "text": "Policy is enforced — denied actions are blocked and logged"
+        },
+        {
+          "level": 0,
+          "text": "Permissive"
+        },
+        {
+          "level": 0,
+          "text": "Nothing is blocked, but denials are still logged — used for testing/diagnosing policy"
+        },
+        {
+          "level": 0,
+          "text": "Disabled"
+        },
+        {
+          "level": 0,
+          "text": "SELinux is off entirely — no labels, no enforcement, no logging"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ getenforce"
+        },
+        {
+          "level": 0,
+          "text": "Enforcing"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setenforce 0"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ getenforce"
+        },
+        {
+          "level": 0,
+          "text": "Permissive"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setenforce Enforcing"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL setenforce only changes the mode until the next reboot. To make it persistent, edit SELINUX= in /etc/selinux/config (values: enforcing, permissive, disabled). Kernel boot parameters enforcing=0/1 and selinux=0/1 override the config file for that boot only."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Setting SELINUX=disabled fully unloads the policy — going back to enforcing later requires a full filesystem relabel on next boot (autorelabel), which can take a long time on a large disk. Prefer permissive mode over disabled when you just need SELinux out of the way temporarily for diagnosis."
+        }
+      ],
+      "words": 269
+    },
+    {
+      "title": "4. Controlling SELinux File Contexts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Every file, directory, and process has an SELinux context — user:role:type:level. For file access decisions, the type is almost always what matters."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ls -Z /var/www/html"
+        },
+        {
+          "level": 0,
+          "text": "drwxr-xr-x. root root system_u:object_r:httpd_sys_content_t:s0 html"
+        },
+        {
+          "level": 2,
+          "text": "How files get their context — and how it goes wrong"
+        },
+        {
+          "level": 0,
+          "text": "New files normally inherit context from their parent directory. But two everyday operations quietly break that assumption:"
+        },
+        {
+          "level": 0,
+          "text": "Operation"
+        },
+        {
+          "level": 0,
+          "text": "Resulting context"
+        },
+        {
+          "level": 0,
+          "text": "mv file /new/location"
+        },
+        {
+          "level": 0,
+          "text": "KEEPS its original context — this is the #1 cause of 'it worked yesterday' SELinux denials"
+        },
+        {
+          "level": 0,
+          "text": "cp file /new/location"
+        },
+        {
+          "level": 0,
+          "text": "INHERITS the destination directory's context (unless you use cp -a, which preserves the original)"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL If web content 'disappeared' right after someone moved a file into /var/www/html instead of copying it, that's almost always a context mismatch, not a real access problem. ls -Z is your first diagnostic step, every time."
+        },
+        {
+          "level": 2,
+          "text": "Fixing context: chcon vs. the semanage + restorecon pattern"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "Survives relabel?"
+        },
+        {
+          "level": 0,
+          "text": "chcon -t type_t path"
+        },
+        {
+          "level": 0,
+          "text": "Directly sets context on that one file/dir right now"
+        },
+        {
+          "level": 0,
+          "text": "No — reverted by restorecon or a full relabel"
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext -a -t type_t 'path(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "Defines the POLICY RULE for what context this path should have"
+        },
+        {
+          "level": 0,
+          "text": "N/A — this just defines the rule"
+        },
+        {
+          "level": 0,
+          "text": "restorecon -Rv path"
+        },
+        {
+          "level": 0,
+          "text": "Applies whatever the policy rule says the context should be"
+        },
+        {
+          "level": 0,
+          "text": "Yes — this is what makes it permanent"
+        },
+        {
+          "level": 0,
+          "text": "The correct production pattern is always semanage fcontext first (define the rule), then restorecon (apply it) — never chcon alone, because chcon's change disappears the next time anything triggers a relabel."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage fcontext -a -t httpd_sys_content_t '/virtual(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# restorecon -Rv /virtual"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Running chcon to \"fix\" a denial, seeing it work, and considering the problem solved. It'll silently break again on the next relabel or the next time restorecon runs against that path — because chcon never updated the underlying policy rule."
+        }
+      ],
+      "words": 306
+    },
+    {
+      "title": "5. Adjusting Policy with Booleans",
+      "content": [
+        {
+          "level": 0,
+          "text": "Booleans are pre-built on/off switches for common policy variations — a much safer way to adjust behavior than writing custom policy. Example: should Apache be allowed to serve files out of users' home directories? That's exactly what httpd_enable_homedirs controls."
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "Privilege needed"
+        },
+        {
+          "level": 0,
+          "text": "getsebool -a"
+        },
+        {
+          "level": 0,
+          "text": "List every boolean and its current state"
+        },
+        {
+          "level": 0,
+          "text": "Any user"
+        },
+        {
+          "level": 0,
+          "text": "getsebool boolean_name"
+        },
+        {
+          "level": 0,
+          "text": "Check one specific boolean"
+        },
+        {
+          "level": 0,
+          "text": "Any user"
+        },
+        {
+          "level": 0,
+          "text": "setsebool boolean_name on"
+        },
+        {
+          "level": 0,
+          "text": "Change it for THIS boot only"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "setsebool -P boolean_name on"
+        },
+        {
+          "level": 0,
+          "text": "Change it AND make it persistent"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "semanage boolean -l"
+        },
+        {
+          "level": 0,
+          "text": "List booleans with description + persistent state"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "semanage boolean -l -C"
+        },
+        {
+          "level": 0,
+          "text": "List only booleans that differ from their default"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL setsebool without -P only lasts until reboot. This is a very common exam mistake — you fix the problem, it works, then it silently reverts on reboot because -P was never used."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Booleans are the SAFE middle ground in SELinux troubleshooting: reaching for restorecon (fix a context) or a boolean (enable a documented policy variation) is low-risk. Writing a brand-new custom policy module is a much bigger, riskier step — reach for it last, not first."
+        }
+      ],
+      "words": 191
+    },
+    {
+      "title": "6. Investigating and Resolving SELinux Denials",
+      "content": [
+        {
+          "level": 0,
+          "text": "A structured troubleshooting order — in priority sequence:"
+        },
+        {
+          "level": 0,
+          "text": "Step"
+        },
+        {
+          "level": 0,
+          "text": "Action"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "Ask whether SELinux is actually WRONG here — a web server trying to read /home might be exactly the attack SELinux exists to stop. Don't reflexively 'fix' every denial."
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "Check for an incorrect file context first (ls -Z) — this is by far the most common real cause, and restorecon has the narrowest security impact of any fix."
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "Check whether a documented boolean covers the scenario (semanage boolean -l, or man -k _selinux)."
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "Only as a last resort: the policy itself may be missing a legitimate allow rule — this is rare, and the fix (audit2allow / a custom module, or reporting a bug) has the broadest impact."
+        },
+        {
+          "level": 2,
+          "text": "Finding the evidence"
+        },
+        {
+          "level": 0,
+          "text": "SELinux denials are AVC (Access Vector Cache) messages, logged to the audit log. With setroubleshoot-server installed, a human-readable summary with a unique ID also lands in /var/log/messages."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# tail /var/log/audit/audit.log"
+        },
+        {
+          "level": 0,
+          "text": "type=AVC msg=audit(...): avc: denied { getattr } for"
+        },
+        {
+          "level": 0,
+          "text": "pid=1609 comm=\"httpd\" path=\"/var/www/html/file3\""
+        },
+        {
+          "level": 0,
+          "text": "scontext=system_u:system_r:httpd_t:s0"
+        },
+        {
+          "level": 0,
+          "text": "tcontext=unconfined_u:object_r:admin_home_t:s0 tclass=file"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# tail /var/log/messages"
+        },
+        {
+          "level": 0,
+          "text": "SELinux is preventing /usr/sbin/httpd from getattr access on the file."
+        },
+        {
+          "level": 0,
+          "text": "For complete SELinux messages, run sealert -l 613ca624-248d-48a2-a7d9-d28f5bbe2763"
+        },
+        {
+          "level": 0,
+          "text": "That one AVC line already tells the story: scontext is the process's type (httpd_t — a web server process), tcontext is the file's type (admin_home_t — an admin home-directory file, not web content). A web server process has no business touching admin home-directory files — that's the mismatch."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# sealert -l 613ca624-248d-48a2-a7d9-d28f5bbe2763"
+        },
+        {
+          "level": 0,
+          "text": "# Shows a plain-English explanation and a suggested fix, e.g.:"
+        },
+        {
+          "level": 0,
+          "text": "# grep httpd /var/log/audit/audit.log | audit2allow -M mypol"
+        },
+        {
+          "level": 0,
+          "text": "# semodule -i mypol.pp"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING sealert's audit2allow suggestion generates a brand-new custom policy module granting the exact access seen in the log — treat this as the LAST resort, not the first thing you try. In this example, the real fix is restorecon (the file's context is simply wrong for its location), not a new policy module."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION The Cockpit web console has a graphical SELinux troubleshooting panel that surfaces the same sealert-style alerts with a clickable interface — useful if you prefer not to live entirely in the terminal, though the underlying diagnosis process is identical."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — SELinux"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "getenforce / setenforce 0|1"
+        },
+        {
+          "level": 0,
+          "text": "Check / change current mode (not persistent)"
+        },
+        {
+          "level": 0,
+          "text": "/etc/selinux/config"
+        },
+        {
+          "level": 0,
+          "text": "Persistent mode setting (SELINUX=enforcing|permissive|disabled)"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z / ls -Zd"
+        },
+        {
+          "level": 0,
+          "text": "Show SELinux context of files / a directory itself"
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext -a -t type 'path(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "Define the policy rule for a path's context"
+        },
+        {
+          "level": 0,
+          "text": "restorecon -Rv path"
+        },
+        {
+          "level": 0,
+          "text": "Apply the defined context rule"
+        },
+        {
+          "level": 0,
+          "text": "chcon -t type path"
+        },
+        {
+          "level": 0,
+          "text": "Temporary context change (testing only — doesn't survive restorecon/relabel)"
+        },
+        {
+          "level": 0,
+          "text": "getsebool -a / boolean_name"
+        },
+        {
+          "level": 0,
+          "text": "View boolean states"
+        },
+        {
+          "level": 0,
+          "text": "setsebool -P boolean_name on"
+        },
+        {
+          "level": 0,
+          "text": "Persistently change a boolean"
+        },
+        {
+          "level": 0,
+          "text": "sealert -l UUID"
+        },
+        {
+          "level": 0,
+          "text": "Human-readable explanation of a specific AVC denial"
+        }
+      ],
+      "words": 459
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Scheduling + Performance",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Set up a recurring cleanup job the right way (via /etc/cron.d/), then observe and adjust process priority under CPU load."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "A junior admin on your team edited /etc/crontab directly to add a nightly log-cleanup job, and it vanished after the last cron package update. You're fixing it properly, and separately, a batch report script is slowing down interactive logins on the same box."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM with sudo access"
+        },
+        {
+          "level": 0,
+          "text": "A placeholder script /usr/local/bin/cleanup_logs.sh (assume it exists and is executable)"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Create /etc/cron.d/log-cleanup that runs /usr/local/bin/cleanup_logs.sh as root at 02:30 every day"
+        },
+        {
+          "level": 0,
+          "text": "2. Verify the syntax against the field-order comment in /etc/crontab before saving"
+        },
+        {
+          "level": 0,
+          "text": "3. Start a CPU-bound background process (e.g. sha1sum /dev/zero &) and confirm its default nice level with ps"
+        },
+        {
+          "level": 0,
+          "text": "4. Lower its priority to nice 15 using renice, and verify the change"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Remember the extra field in system crontabs: minute hour day month weekday USER command. Files in /etc/cron.d/ don't need a shebang or execute bit — they're crontab syntax, not scripts."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: did you remember the user field? A system cron file without it will either fail to run or (worse) try to interpret the user field as part of the command."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# /etc/cron.d/log-cleanup"
+        },
+        {
+          "level": 0,
+          "text": "30 2 * * * root /usr/local/bin/cleanup_logs.sh"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ sha1sum /dev/zero &"
+        },
+        {
+          "level": 0,
+          "text": "[1] 4821"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ps -o pid,comm,nice 4821"
+        },
+        {
+          "level": 0,
+          "text": "PID COMMAND NI"
+        },
+        {
+          "level": 0,
+          "text": "4821 sha1sum 0"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ renice -n 15 4821"
+        },
+        {
+          "level": 0,
+          "text": "4821 (process ID) old priority 0, new priority 15"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ps -o pid,comm,nice 4821"
+        },
+        {
+          "level": 0,
+          "text": "PID COMMAND NI"
+        },
+        {
+          "level": 0,
+          "text": "4821 sha1sum 15"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "The cron.d file has 6 fields, not 5 — the extra 'root' field tells cron which account runs the command, which is required (and unique to) system-wide crontab files."
+        },
+        {
+          "level": 0,
+          "text": "No chmod +x is needed on the cron.d file itself — it's parsed as configuration, not executed as a script."
+        },
+        {
+          "level": 0,
+          "text": "renice -n 15 4821 changes the priority of the already-running process directly by PID, without needing to restart it."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "Wait for the next scheduled run (or temporarily change the time to a minute in the future for testing) and check /var/log/cron or journalctl -u crond for evidence the job fired. For the nice level, ps -o pid,comm,nice PID showing 15 is your proof."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "In production you'd more likely reach for a systemd timer than cron.d for anything worth monitoring closely — timers log to the journal automatically, cron jobs don't unless you set that up yourself. But cron.d is still everywhere in the real world, especially for jobs shipped inside RPM packages."
+        }
+      ]
+    },
+    {
+      "title": "Lab: ACLs + SELinux Troubleshooting",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Set up a shared directory with ACLs for fine-grained access, then diagnose and fix a realistic SELinux context problem."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Your team shares /shared/reports. The consultants group should get read+execute by default, one specific contractor (dana) needs read-only, and everyone else should have no access. Separately, a colleague moved a file into /var/www/html and now Apache returns 403 Forbidden for it, even though standard permissions look fine."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM with sudo access, SELinux in enforcing mode"
+        },
+        {
+          "level": 0,
+          "text": "httpd installed and running, with /var/www/html as its content root"
+        },
+        {
+          "level": 0,
+          "text": "A group named consultants and a user named dana already existing"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part A (ACLs)"
+        },
+        {
+          "level": 0,
+          "text": "1. Create /shared/reports owned by root:root, mode 770"
+        },
+        {
+          "level": 0,
+          "text": "2. Grant the consultants group rX via ACL, recursively, plus a default ACL so new files inherit it"
+        },
+        {
+          "level": 0,
+          "text": "3. Grant the user dana read-only access, non-default (not inherited by new files)"
+        },
+        {
+          "level": 0,
+          "text": "4. Verify with getfacl that the mask isn't silently capping the consultants group below rX"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part B (SELinux)"
+        },
+        {
+          "level": 0,
+          "text": "1. Reproduce the problem: touch /root/newpage.html; mv /root/newpage.html /var/www/html/"
+        },
+        {
+          "level": 0,
+          "text": "2. Confirm with ls -Z that the moved file's context doesn't match its siblings in /var/www/html"
+        },
+        {
+          "level": 0,
+          "text": "3. Fix it using the correct production-pattern command (not chcon)"
+        },
+        {
+          "level": 0,
+          "text": "4. Confirm with curl http://localhost/newpage.html that access now succeeds"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Part A: remember capital X sets execute conditionally, and default ACL entries use the d: prefix. Part B: the file already has the RIGHT context somewhere else on the system — you don't need semanage fcontext to define a new rule here, restorecon alone can look up the existing rule for /var/www/html and reapply it."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: run getfacl /shared/reports and confirm you see both a default entry (d:group:consultants:r-x) and a non-default entry for dana. If you only see one or the other, re-check whether you used the d: prefix correctly."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# Part A — ACLs"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkdir /shared/reports"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# chmod 770 /shared/reports"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setfacl -R -m g:consultants:rX /shared/reports"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setfacl -m d:g:consultants:rX /shared/reports"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setfacl -m u:dana:r /shared/reports"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# getfacl /shared/reports"
+        },
+        {
+          "level": 0,
+          "text": "# Part B — SELinux"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# touch /root/newpage.html"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mv /root/newpage.html /var/www/html/"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ls -Z /var/www/html/newpage.html"
+        },
+        {
+          "level": 0,
+          "text": "unconfined_u:object_r:admin_home_t:s0 /var/www/html/newpage.html"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# restorecon -Rv /var/www/html/"
+        },
+        {
+          "level": 0,
+          "text": "Relabeled /var/www/html/newpage.html from ...admin_home_t:s0 to ...httpd_sys_content_t:s0"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# curl http://localhost/newpage.html"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "-R applies the consultants ACL to /shared/reports itself (it already exists, empty, so -R is a formality here, but is the right habit for a directory that might already have content)."
+        },
+        {
+          "level": 0,
+          "text": "The separate d: command is required because a single setfacl call doesn't set both the regular AND default ACL at once unless you explicitly issue both."
+        },
+        {
+          "level": 0,
+          "text": "dana's entry has no d: prefix, so it applies to the directory itself only, not to files created later — matching the requirement that her access isn't inherited."
+        },
+        {
+          "level": 0,
+          "text": "restorecon didn't need a new semanage fcontext rule because /var/www/html already HAS a policy rule (from the httpd package) — restorecon just needed to be told to re-apply it after the mv broke it."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shared/reports should show group:consultants:r-x, a default entry for consultants, and user:dana:r--. For Part B, the curl command should return the file's actual content instead of a 403 Forbidden page."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This exact two-part scenario — layered ACLs for a shared directory, and a context-mismatch web server denial — is close to the single most common real-world combination of 'permission denied' tickets an RHEL admin sees. Knowing to check getfacl and ls -Z, in that order, before touching anything else, will resolve the majority of them in minutes instead of hours."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 2 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What TIMESPEC would you give at to run a job in 10 minutes?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: now +10min"
+        },
+        {
+          "level": 0,
+          "text": "Q2. Why should you place custom system cron jobs in /etc/cron.d/ instead of editing /etc/crontab directly?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: A package update to the cron provider can overwrite /etc/crontab and wipe out anything added directly to it; files in /etc/cron.d/ are unaffected."
+        },
+        {
+          "level": 0,
+          "text": "Q3. What does the cron field 15 12 15 * Fri command actually mean when both day-of-month and day-of-week are set?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It runs when EITHER condition is true — the 15th of the month at 12:15, OR every Friday at 12:15 — not only when both coincide."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What's the extra field in a system-wide crontab entry that a personal crontab doesn't have?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The user field — which account the command runs as."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What must you run after editing a systemd timer unit file before the change takes effect?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: systemctl daemon-reload, then re-enable/restart the timer if needed."
+        },
+        {
+          "level": 0,
+          "text": "Q6. Which tmpfiles.d directory should administrators use for their own overrides, and why does it win over the others?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: /etc/tmpfiles.d/ — it has the highest precedence, specifically so admin config always overrides vendor defaults."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What command shows the currently active tuned profile?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: tuned-adm active"
+        },
+        {
+          "level": 0,
+          "text": "Q8. What's the practical difference between a static and a dynamic tuned profile?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Static applies settings once at selection/startup; dynamic continuously monitors activity and adjusts settings in response."
+        },
+        {
+          "level": 0,
+          "text": "Q9. Can an unprivileged user lower their own process's nice level once they've raised it?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — unprivileged users can only increase their own nice level, never decrease it; only root can lower nice levels."
+        },
+        {
+          "level": 0,
+          "text": "Q10. Which command changes the nice level of an already-running process, and which starts a new process at a chosen nice level?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: renice changes an existing process by PID; nice -n N command starts a new process at that level."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 3: ACLS + SELINUX"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH134 Chapter 4 (Controlling Access to Files with ACLs) and Chapter 5 (Managing SELinux Security) — the two access-control systems that sit on top of the standard rwx permissions you already know from RH124."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Standard permissions answer 'what can the owner, the group, and everyone else do?' — exactly three buckets. Real organizations need more nuance than that: 'the finance team can read this, one contractor can write to it, nobody else touches it.' ACLs solve that. SELinux solves a completely different problem: even if permissions and ACLs say yes, SELinux can still say no, based on what TYPE of process is asking and what TYPE of resource it's touching. Together these are the two most commonly misdiagnosed 'permission denied' causes in real troubleshooting — and telling them apart fast is a core admin skill."
+        }
+      ]
+    },
+    {
+      "title": "Quiz: Part 3 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What visual clue does ls -l give you that a file has ACLs set?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: A '+' sign after the permission string, e.g. -rw-rw-r--+."
+        },
+        {
+          "level": 0,
+          "text": "Q2. A named user has rwx in an ACL entry but shows #effective:rw- next to it. Why?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The ACL mask is capping the effective permission below what was granted — the mask is a ceiling, not a grant."
+        },
+        {
+          "level": 0,
+          "text": "Q3. What's the difference between setfacl -m d:u:name:rx dir and setfacl -m u:name:rx dir?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The d: prefix makes it a DEFAULT entry that new files/subdirectories inherit; without it, the entry only applies to the directory itself right now."
+        },
+        {
+          "level": 0,
+          "text": "Q4. Why won't a newly created file ever get execute permission from a default ACL, even if the default includes x?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: New regular files always get a mask of rw- by default — directories don't have that restriction, only files."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What's the fundamental difference between DAC (standard permissions/ACLs) and MAC (SELinux)?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: DAC lets the resource owner decide access; MAC enforces a system-wide policy based on labels/types regardless of ownership — even root can be denied."
+        },
+        {
+          "level": 0,
+          "text": "Q6. You moved a file into /var/www/html and Apache can't serve it, even though ls -l permissions look fine. What's your first diagnostic command?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ls -Z — to check whether the file's SELinux context matches its new location (mv preserves the OLD context)."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What's the correct production sequence for permanently fixing a file's SELinux context, and why not just use chcon?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: semanage fcontext -a (define the rule) then restorecon (apply it) — chcon changes the label directly but doesn't update the policy, so the change is lost on the next restorecon or relabel."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What does setsebool httpd_enable_homedirs on do differently from setsebool -P httpd_enable_homedirs on?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Without -P, the change only lasts until reboot; -P writes it to policy so it persists."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What's the correct FIRST question to ask when SELinux blocks something?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Whether SELinux might be correctly blocking something that genuinely shouldn't be allowed — not every denial is a bug to fix."
+        },
+        {
+          "level": 0,
+          "text": "Q10. In an AVC denial log line, what do scontext and tcontext represent?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: scontext is the SOURCE process's context (what's trying to act); tcontext is the TARGET resource's context (what it's trying to act on)."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 4: BASIC STORAGE + LVM"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH134 Chapter 6 (Managing Basic Storage) and Chapter 7 (Managing Logical Volumes) — partitioning a disk, creating filesystems, mounting them persistently, managing swap, and then the LVM layer that sits on top of raw partitions to make storage flexible instead of fixed."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the heaviest RHCSA-weighted material in the whole book. Partitioning, persistent mounts, and LVM extension show up as hands-on tasks on the actual exam, not just multiple choice. Take the labs in this Part seriously — type every command yourself rather than reading past them."
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "rhel-service-selinux",
+      "why": "ACLs and SELinux Troubleshooting"
+    },
+    {
+      "id": "rhel-service-auditd",
+      "why": "ACLs and SELinux Troubleshooting — audit rules"
+    }
+  ],
+  "currency": []
+}

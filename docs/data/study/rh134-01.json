@@ -1,0 +1,1269 @@
+{
+  "id": "rh134-01",
+  "n": 1,
+  "sourceNumber": 1,
+  "kind": "part",
+  "title": "Part 1",
+  "display": "Part 1 — Writing Simple Bash Scripts; Running Commands More Efficien…",
+  "exam": "RHCSA (EX200)",
+  "words": 2743,
+  "sections": [
+    {
+      "title": "1. Writing Simple Bash Scripts",
+      "content": [
+        {
+          "level": 2,
+          "text": "What a shell script actually is"
+        },
+        {
+          "level": 0,
+          "text": "A shell script is just a text file containing a sequence of commands you'd otherwise type one at a time. Instead of running five commands by hand every time you provision a server, you write them once into a file and run the file. The shell reads the file line by line and executes each line exactly as if you'd typed it at the prompt."
+        },
+        {
+          "level": 0,
+          "text": "The value isn't the individual commands — you already know those from RH124. The value is repeatability: the same five commands, run the same way, every single time, with zero chance of forgetting a step or fat-fingering an option under pressure."
+        },
+        {
+          "level": 2,
+          "text": "The shebang: telling Linux which interpreter to use"
+        },
+        {
+          "level": 0,
+          "text": "The first line of a script tells the kernel which program should interpret the rest of the file. This line is called the shebang (from \"hash-bang\" — the # and ! characters)."
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Hello, world\""
+        },
+        {
+          "level": 0,
+          "text": "Without a shebang, the script would be interpreted by whatever shell happens to be running it — which is a portability trap. Always start scripts with an explicit shebang."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL You must be able to write, save, make executable (chmod +x), and run a Bash script from memory. This exact sequence shows up directly on the RHCSA exam."
+        },
+        {
+          "level": 3,
+          "text": "Making a script executable and running it"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ vim myscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ chmod +x myscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ./myscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "The ./ matters. Linux does not search the current directory for commands by default (unlike some other operating systems), so a bare myscript.sh will usually fail with \"command not found\" unless your current directory happens to be in your PATH — which it normally isn't and shouldn't be. You can also skip the chmod entirely and hand the file straight to the interpreter:"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ bash myscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Forgetting chmod +x, then trying ./script.sh and getting \"Permission denied.\" The execute bit and the shebang are two separate requirements — you need both to run a script as ./script.sh."
+        },
+        {
+          "level": 2,
+          "text": "Quoting: controlling how the shell interprets special characters"
+        },
+        {
+          "level": 0,
+          "text": "Bash treats certain characters as special: $ for variables, * for globbing, spaces as word separators, and so on. Quoting lets you turn that special meaning off when you want the literal character instead."
+        },
+        {
+          "level": 0,
+          "text": "Quoting method"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "Backslash \\X"
+        },
+        {
+          "level": 0,
+          "text": "Escapes a single character — removes its special meaning"
+        },
+        {
+          "level": 0,
+          "text": "Single quotes 'text'"
+        },
+        {
+          "level": 0,
+          "text": "Suppresses ALL special meaning inside — even $ and backticks are literal"
+        },
+        {
+          "level": 0,
+          "text": "Double quotes \"text\""
+        },
+        {
+          "level": 0,
+          "text": "Suppresses globbing and word-splitting, but still expands $variables and `commands`"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ NAME=Sheikh"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ echo 'Hello, $NAME'"
+        },
+        {
+          "level": 0,
+          "text": "Hello, $NAME"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ echo \"Hello, $NAME\""
+        },
+        {
+          "level": 0,
+          "text": "Hello, Sheikh"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This distinction trips up almost everyone at least once. When a script isn't substituting a variable and you can't figure out why — check whether it's wrapped in single quotes. This is the single most common source of \"my script prints the wrong thing\" bugs."
+        },
+        {
+          "level": 2,
+          "text": "Producing output from a script"
+        },
+        {
+          "level": 0,
+          "text": "echo is the simplest way to print output. It's used constantly for status messages, confirmations, and debugging."
+        },
+        {
+          "level": 0,
+          "text": "echo \"Starting backup of /var/www...\""
+        },
+        {
+          "level": 0,
+          "text": "echo \"Backup complete. Exit code: $?\""
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION printf gives you more control over formatting (padding, decimal places, no automatic trailing newline) and is worth knowing for real-world scripting, but RH134 focuses on echo — that's what the exam expects."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Section 1.1"
+        },
+        {
+          "level": 0,
+          "text": "Command / Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "Verify / Notes"
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "Shebang — declares the interpreter for the script"
+        },
+        {
+          "level": 0,
+          "text": "Must be the very first line, no leading blank lines"
+        },
+        {
+          "level": 0,
+          "text": "chmod +x file.sh"
+        },
+        {
+          "level": 0,
+          "text": "Adds execute permission"
+        },
+        {
+          "level": 0,
+          "text": "ls -l file.sh — look for the x bits"
+        },
+        {
+          "level": 0,
+          "text": "./file.sh"
+        },
+        {
+          "level": 0,
+          "text": "Runs an executable script in the current directory"
+        },
+        {
+          "level": 0,
+          "text": "Requires +x and a valid shebang"
+        },
+        {
+          "level": 0,
+          "text": "bash file.sh"
+        },
+        {
+          "level": 0,
+          "text": "Runs a script by explicitly invoking the interpreter"
+        },
+        {
+          "level": 0,
+          "text": "Works even without +x set"
+        },
+        {
+          "level": 0,
+          "text": "echo \"text\""
+        },
+        {
+          "level": 0,
+          "text": "Prints text to standard output"
+        },
+        {
+          "level": 0,
+          "text": "Use double quotes to allow variable expansion"
+        }
+      ],
+      "words": 644
+    },
+    {
+      "title": "2. Running Commands More Efficiently Using Loops",
+      "content": [
+        {
+          "level": 2,
+          "text": "The for loop"
+        },
+        {
+          "level": 0,
+          "text": "System administration is full of repetition: check ten servers, restart three services, process every file in a directory. The for loop runs the same block of commands once per item in a list."
+        },
+        {
+          "level": 0,
+          "text": "for VARIABLE in LIST; do"
+        },
+        {
+          "level": 0,
+          "text": "COMMAND $VARIABLE"
+        },
+        {
+          "level": 0,
+          "text": "done"
+        },
+        {
+          "level": 0,
+          "text": "The list can come from several sources, and this flexibility is the actual skill here — knowing which expansion to reach for."
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ for HOST in host1 host2 host3; do echo $HOST; done"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ for HOST in host{1..3}; do echo $HOST; done # brace expansion"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ for FILE in file*; do ls $FILE; done # file-name (glob) expansion"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ for EVEN in $(seq 2 2 10); do echo $EVEN; done # command substitution"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Brace expansion (host{1..3}) and command substitution ($(seq ...)) inside a for loop are both fair game on the exam. Know the difference between generating a list with braces versus generating one from a command's output."
+        },
+        {
+          "level": 2,
+          "text": "Exit codes: how a command reports success or failure"
+        },
+        {
+          "level": 0,
+          "text": "Every command that finishes returns a number to whatever called it — the exit code. Zero means success. Anything else means some kind of failure, and different nonzero values can mean different specific failures."
+        },
+        {
+          "level": 0,
+          "text": "[user@host bin]$ cat hello"
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Hello, world\""
+        },
+        {
+          "level": 0,
+          "text": "exit 0"
+        },
+        {
+          "level": 0,
+          "text": "[user@host bin]$ ./hello"
+        },
+        {
+          "level": 0,
+          "text": "Hello, world"
+        },
+        {
+          "level": 0,
+          "text": "[user@host bin]$ echo $?"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "$? always holds the exit code of the last command that ran — check it immediately, because the next command you run overwrites it."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Exit codes are the entire foundation of scripted decision-making. Every if statement, every && and ||, every Ansible task's success/failure logic ultimately comes down to reading a 0-or-nonzero exit code."
+        },
+        {
+          "level": 2,
+          "text": "Testing conditions with test / [ ] / [[ ]]"
+        },
+        {
+          "level": 0,
+          "text": "The test command (usually written as [ condition ]) evaluates a condition and returns an exit code — 0 if true, 1 if false. The newer [[ condition ]] extended syntax does the same thing but also supports glob and regex pattern matching."
+        },
+        {
+          "level": 0,
+          "text": "Category"
+        },
+        {
+          "level": 0,
+          "text": "Operator"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "Numeric"
+        },
+        {
+          "level": 0,
+          "text": "-eq / -ne"
+        },
+        {
+          "level": 0,
+          "text": "equal to / not equal to"
+        },
+        {
+          "level": 0,
+          "text": "Numeric"
+        },
+        {
+          "level": 0,
+          "text": "-gt / -ge"
+        },
+        {
+          "level": 0,
+          "text": "greater than / greater than or equal to"
+        },
+        {
+          "level": 0,
+          "text": "Numeric"
+        },
+        {
+          "level": 0,
+          "text": "-lt / -le"
+        },
+        {
+          "level": 0,
+          "text": "less than / less than or equal to"
+        },
+        {
+          "level": 0,
+          "text": "String"
+        },
+        {
+          "level": 0,
+          "text": "= / =="
+        },
+        {
+          "level": 0,
+          "text": "strings are equal"
+        },
+        {
+          "level": 0,
+          "text": "String"
+        },
+        {
+          "level": 0,
+          "text": "!="
+        },
+        {
+          "level": 0,
+          "text": "strings are not equal"
+        },
+        {
+          "level": 0,
+          "text": "String"
+        },
+        {
+          "level": 0,
+          "text": "-z / -n"
+        },
+        {
+          "level": 0,
+          "text": "string is empty / string is not empty"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ [ 1 -eq 1 ]; echo $?"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ [ 2 -lt 2 ]; echo $?"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ [ abc != def ]; echo $?"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ STRING=''; [ -z \"$STRING\" ]; echo $?"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Spaces inside [ ] are mandatory — [ $x -eq 1 ] works, [$x -eq 1] does not. The bracket is literally an alias for the test command, and commands need spaces between their arguments."
+        },
+        {
+          "level": 2,
+          "text": "Conditional structures: if/then/else"
+        },
+        {
+          "level": 0,
+          "text": "if <CONDITION>; then"
+        },
+        {
+          "level": 0,
+          "text": "<STATEMENT>"
+        },
+        {
+          "level": 0,
+          "text": "fi"
+        },
+        {
+          "level": 0,
+          "text": "This is the simplest branch: run the block only if the condition's exit code is 0 (true). A practical example — start a service only if it isn't already running:"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ systemctl is-active psacct > /dev/null 2>&1"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ if [ $? -ne 0 ]; then"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl start psacct"
+        },
+        {
+          "level": 0,
+          "text": "fi"
+        },
+        {
+          "level": 0,
+          "text": "Add an else branch to handle the failure case, and elif to test additional conditions in sequence:"
+        },
+        {
+          "level": 0,
+          "text": "if [ CONDITION1 ]; then"
+        },
+        {
+          "level": 0,
+          "text": "STATEMENT"
+        },
+        {
+          "level": 0,
+          "text": "elif [ CONDITION2 ]; then"
+        },
+        {
+          "level": 0,
+          "text": "STATEMENT"
+        },
+        {
+          "level": 0,
+          "text": "else"
+        },
+        {
+          "level": 0,
+          "text": "STATEMENT"
+        },
+        {
+          "level": 0,
+          "text": "fi"
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION while and until loops (repeat based on a condition instead of a list) aren't covered in this RH134 chapter, but they're common in real scripts — worth knowing the syntax exists even though it isn't exam material here."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Section 1.2"
+        },
+        {
+          "level": 0,
+          "text": "Command / Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "Common Mistake"
+        },
+        {
+          "level": 0,
+          "text": "for X in LIST; do ...; done"
+        },
+        {
+          "level": 0,
+          "text": "Iterate a command block once per item"
+        },
+        {
+          "level": 0,
+          "text": "Forgetting `done`, or using a variable name that shadows an existing one"
+        },
+        {
+          "level": 0,
+          "text": "$?"
+        },
+        {
+          "level": 0,
+          "text": "Holds the exit code of the last command"
+        },
+        {
+          "level": 0,
+          "text": "Checking it after running an unrelated command in between"
+        },
+        {
+          "level": 0,
+          "text": "exit N"
+        },
+        {
+          "level": 0,
+          "text": "Ends a script immediately with exit code N"
+        },
+        {
+          "level": 0,
+          "text": "Using exit inside a function when you meant `return`"
+        },
+        {
+          "level": 0,
+          "text": "[ expr ] / [[ expr ]]"
+        },
+        {
+          "level": 0,
+          "text": "Evaluates a condition, sets $?"
+        },
+        {
+          "level": 0,
+          "text": "Missing spaces around the brackets or the operator"
+        },
+        {
+          "level": 0,
+          "text": "if / elif / else / fi"
+        },
+        {
+          "level": 0,
+          "text": "Branches execution based on a condition"
+        },
+        {
+          "level": 0,
+          "text": "Forgetting the closing `fi`"
+        }
+      ],
+      "words": 717
+    },
+    {
+      "title": "3. Matching Text in Command Output with Regular Expressions",
+      "content": [
+        {
+          "level": 2,
+          "text": "What a regular expression is"
+        },
+        {
+          "level": 0,
+          "text": "A regular expression (regex) is a pattern that describes text you want to find — not a literal string, a pattern. grep, vim, less, sed, and most scripting languages all understand regex, though the exact syntax varies slightly between tools."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Regex is what turns \"scroll through a 10,000-line log file looking for errors\" into a five-second grep command. It's arguably the single highest-leverage skill in this entire chapter for day-to-day troubleshooting."
+        },
+        {
+          "level": 2,
+          "text": "Exact matches and anchors"
+        },
+        {
+          "level": 0,
+          "text": "The simplest regex is just the literal text you're searching for — cat matches cat wherever it occurs, including inside concatenate or category. To control where in the line the match must occur, use anchors:"
+        },
+        {
+          "level": 0,
+          "text": "Anchor"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "^pattern"
+        },
+        {
+          "level": 0,
+          "text": "Matches only at the start of a line"
+        },
+        {
+          "level": 0,
+          "text": "pattern$"
+        },
+        {
+          "level": 0,
+          "text": "Matches only at the end of a line"
+        },
+        {
+          "level": 0,
+          "text": "^pattern$"
+        },
+        {
+          "level": 0,
+          "text": "The entire line must be exactly this pattern"
+        },
+        {
+          "level": 2,
+          "text": "Wildcards and multipliers"
+        },
+        {
+          "level": 0,
+          "text": "Symbol"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "."
+        },
+        {
+          "level": 0,
+          "text": "Matches any single character"
+        },
+        {
+          "level": 0,
+          "text": "?"
+        },
+        {
+          "level": 0,
+          "text": "The preceding item is optional (0 or 1 times)"
+        },
+        {
+          "level": 0,
+          "text": "*"
+        },
+        {
+          "level": 0,
+          "text": "The preceding item matches 0 or more times"
+        },
+        {
+          "level": 0,
+          "text": "+"
+        },
+        {
+          "level": 0,
+          "text": "The preceding item matches 1 or more times"
+        },
+        {
+          "level": 0,
+          "text": "{n}"
+        },
+        {
+          "level": 0,
+          "text": "The preceding item matches exactly n times"
+        },
+        {
+          "level": 0,
+          "text": "{n,}"
+        },
+        {
+          "level": 0,
+          "text": "n or more times"
+        },
+        {
+          "level": 0,
+          "text": "{,m}"
+        },
+        {
+          "level": 0,
+          "text": "at most m times"
+        },
+        {
+          "level": 0,
+          "text": "{n,m}"
+        },
+        {
+          "level": 0,
+          "text": "at least n, at most m times"
+        },
+        {
+          "level": 0,
+          "text": "[abc]"
+        },
+        {
+          "level": 0,
+          "text": "Matches any one of the listed characters"
+        },
+        {
+          "level": 0,
+          "text": "[^abc]"
+        },
+        {
+          "level": 0,
+          "text": "Matches any character NOT listed"
+        },
+        {
+          "level": 0,
+          "text": "Example: c.*t matches anything starting with c and ending with t, with anything (or nothing) in between — cat, coat, culvert, even ct itself."
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ grep 'c.\\{2\\}t' file.txt # c, exactly 2 chars, then t"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Wrap regex patterns in single quotes on the command line. Characters like $, *, and {} mean something to Bash too — single quotes stop the shell from interpreting them before grep ever sees the pattern."
+        },
+        {
+          "level": 3,
+          "text": "POSIX character classes"
+        },
+        {
+          "level": 0,
+          "text": "Instead of spelling out [a-zA-Z0-9] every time, POSIX classes give you named shortcuts:"
+        },
+        {
+          "level": 0,
+          "text": "Class"
+        },
+        {
+          "level": 0,
+          "text": "Matches"
+        },
+        {
+          "level": 0,
+          "text": "[:alpha:]"
+        },
+        {
+          "level": 0,
+          "text": "Letters"
+        },
+        {
+          "level": 0,
+          "text": "[:digit:]"
+        },
+        {
+          "level": 0,
+          "text": "Digits 0-9"
+        },
+        {
+          "level": 0,
+          "text": "[:alnum:]"
+        },
+        {
+          "level": 0,
+          "text": "Letters and digits"
+        },
+        {
+          "level": 0,
+          "text": "[:space:]"
+        },
+        {
+          "level": 0,
+          "text": "Whitespace (space, tab, newline)"
+        },
+        {
+          "level": 0,
+          "text": "[:upper:]"
+        },
+        {
+          "level": 0,
+          "text": "Uppercase letters"
+        },
+        {
+          "level": 0,
+          "text": "[:lower:]"
+        },
+        {
+          "level": 0,
+          "text": "Lowercase letters"
+        },
+        {
+          "level": 0,
+          "text": "[:punct:]"
+        },
+        {
+          "level": 0,
+          "text": "Punctuation characters"
+        },
+        {
+          "level": 2,
+          "text": "Applying regex with grep"
+        },
+        {
+          "level": 0,
+          "text": "Option"
+        },
+        {
+          "level": 0,
+          "text": "Function"
+        },
+        {
+          "level": 0,
+          "text": "-i"
+        },
+        {
+          "level": 0,
+          "text": "Case-insensitive match"
+        },
+        {
+          "level": 0,
+          "text": "-v"
+        },
+        {
+          "level": 0,
+          "text": "Invert — show lines that do NOT match"
+        },
+        {
+          "level": 0,
+          "text": "-r"
+        },
+        {
+          "level": 0,
+          "text": "Recurse into a directory of files"
+        },
+        {
+          "level": 0,
+          "text": "-A N"
+        },
+        {
+          "level": 0,
+          "text": "Show N lines of context after each match"
+        },
+        {
+          "level": 0,
+          "text": "-B N"
+        },
+        {
+          "level": 0,
+          "text": "Show N lines of context before each match"
+        },
+        {
+          "level": 0,
+          "text": "-e"
+        },
+        {
+          "level": 0,
+          "text": "Supply multiple patterns (OR logic) with repeated -e"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ grep -i serverroot /etc/httpd/conf/httpd.conf"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ grep -v server /etc/hosts # lines NOT containing 'server'"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ grep -e error -e warning /var/log/messages"
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION What you've learned here is Basic Regular Expression (BRE) syntax, where + and ? need a backslash (\\+, \\?) to work, and {n,m} needs escaping too (\\{n,m\\}) unless you use grep -E (Extended Regular Expressions), which drops those backslashes. This course teaches BRE by default — know that grep -E / egrep exists for when you want the cleaner ERE syntax."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Section 1.3"
+        },
+        {
+          "level": 0,
+          "text": "Command / Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "grep 'pattern' file"
+        },
+        {
+          "level": 0,
+          "text": "Search file for lines matching pattern"
+        },
+        {
+          "level": 0,
+          "text": "grep -i 'pattern' file"
+        },
+        {
+          "level": 0,
+          "text": "Case-insensitive search"
+        },
+        {
+          "level": 0,
+          "text": "grep -v 'pattern' file"
+        },
+        {
+          "level": 0,
+          "text": "Show non-matching lines"
+        },
+        {
+          "level": 0,
+          "text": "grep -r 'pattern' dir/"
+        },
+        {
+          "level": 0,
+          "text": "Recursive search through a directory"
+        },
+        {
+          "level": 0,
+          "text": "grep -e p1 -e p2 file"
+        },
+        {
+          "level": 0,
+          "text": "Match either pattern (logical OR)"
+        },
+        {
+          "level": 0,
+          "text": "grep -E 'pattern' file"
+        },
+        {
+          "level": 0,
+          "text": "Use extended regex syntax (no backslashes needed for +,?,{})"
+        }
+      ],
+      "words": 550
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Improving Command-Line Productivity",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Write a Bash script that combines a loop, a conditional, and a regex-based check into one useful admin tool."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "You maintain a small fleet of RHEL servers. You want a quick script that checks a list of usernames against /etc/passwd and reports which ones exist and which don't — the kind of sanity check you'd run before an onboarding/offboarding automation job."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM (or your home-lab VM) with normal user access and sudo"
+        },
+        {
+          "level": 0,
+          "text": "A text file named checklist.txt containing five usernames, one per line — mix of real and fake accounts"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "Write a script called checkusers.sh that:"
+        },
+        {
+          "level": 0,
+          "text": "1. Reads each username from checklist.txt using a for loop"
+        },
+        {
+          "level": 0,
+          "text": "2. Uses grep to check whether that username exists in /etc/passwd (anchored, so 'sam' doesn't match 'samantha')"
+        },
+        {
+          "level": 0,
+          "text": "3. Prints \"FOUND: <user>\" or \"MISSING: <user>\" for each one"
+        },
+        {
+          "level": 0,
+          "text": "4. Exits with code 0 if all users were found, or 1 if any were missing"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "You'll need a for loop reading from $(cat checklist.txt), a grep pattern anchored with ^ and : (the field separator in /etc/passwd), an if/then/else, and a variable to track whether anything was missing so you can set the right final exit code."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: does your script correctly print MISSING for a username that's a substring of a real one (e.g. checking 'sam' when 'samantha' exists)? If it does, your grep pattern isn't anchored correctly."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "MISSING_FOUND=0"
+        },
+        {
+          "level": 0,
+          "text": "for USERNAME in $(cat checklist.txt); do"
+        },
+        {
+          "level": 0,
+          "text": "if grep -q \"^${USERNAME}:\" /etc/passwd; then"
+        },
+        {
+          "level": 0,
+          "text": "echo \"FOUND: $USERNAME\""
+        },
+        {
+          "level": 0,
+          "text": "else"
+        },
+        {
+          "level": 0,
+          "text": "echo \"MISSING: $USERNAME\""
+        },
+        {
+          "level": 0,
+          "text": "MISSING_FOUND=1"
+        },
+        {
+          "level": 0,
+          "text": "fi"
+        },
+        {
+          "level": 0,
+          "text": "done"
+        },
+        {
+          "level": 0,
+          "text": "exit $MISSING_FOUND"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "for USERNAME in $(cat checklist.txt) — command substitution feeds each line as a loop item."
+        },
+        {
+          "level": 0,
+          "text": "grep -q \"^${USERNAME}:\" /etc/passwd — -q suppresses output (we only want the exit code), ^ anchors to the start of the line, and the trailing : matches the field separator so 'sam' can never match 'samantha:'."
+        },
+        {
+          "level": 0,
+          "text": "MISSING_FOUND is a tracking variable, initialized to 0 (success) and flipped to 1 the moment any user is missing."
+        },
+        {
+          "level": 0,
+          "text": "exit $MISSING_FOUND at the very end reports overall success/failure to whatever calls this script — exactly the pattern Ansible and monitoring tools expect."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ chmod +x checkusers.sh"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ./checkusers.sh; echo \"Exit code: $?\""
+        },
+        {
+          "level": 0,
+          "text": "Confirm the exit code is 0 only when every username in your test file is a real account."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This exact pattern — loop, anchored regex check, exit-code tracking — is the backbone of pre-flight checks in real automation pipelines: verify state before you change it, and fail loudly (nonzero exit) if something's not as expected, instead of plowing ahead."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 1 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What are the two requirements for running a script as ./myscript.sh (not bash myscript.sh)?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The file needs the execute permission (chmod +x) AND a valid shebang line as the first line."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What's the difference between echo \"$VAR\" and echo '$VAR'?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Double quotes allow variable expansion (prints the value); single quotes suppress it entirely (prints the literal text $VAR)."
+        },
+        {
+          "level": 0,
+          "text": "Q3. Write a for loop header that iterates over host1 through host5 using brace expansion."
+        },
+        {
+          "level": 0,
+          "text": "Answer: for HOST in host{1..5}; do"
+        },
+        {
+          "level": 0,
+          "text": "Q4. What does $? contain immediately after a command runs?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The exit code of that command — 0 for success, nonzero for failure."
+        },
+        {
+          "level": 0,
+          "text": "Q5. Which test operator checks that a string variable is empty?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: -z (as in [ -z \"$VAR\" ])."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What does the regex ^error match that error alone would not exclude?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ^error only matches lines where 'error' is the very first thing on the line — it excludes lines where 'error' appears mid-line, e.g. 'previous error found'."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What does grep -v do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Inverts the match — prints only the lines that do NOT match the pattern."
+        },
+        {
+          "level": 0,
+          "text": "Q8. Why should regex patterns on the command line be wrapped in single quotes?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: To stop Bash itself from interpreting shell metacharacters like $, *, and {} before grep ever sees the pattern."
+        },
+        {
+          "level": 0,
+          "text": "Q9. In BRE (the default grep syntax used in this chapter), how do you match \"exactly 3 of the previous character\"?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: \\{3\\} — the braces need to be escaped in Basic Regular Expressions."
+        },
+        {
+          "level": 0,
+          "text": "Q10. What's the practical difference between if/then/else and if/then/elif/then/else?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: elif lets you test additional distinct conditions in sequence within the same construct, instead of only having a single fallback else branch."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 2: SCHEDULING FUTURE TASKS + TUNING SYSTEM PERFORMANCE"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH134 Chapter 2 (Scheduling Future Tasks) and Chapter 3 (Tuning System Performance). Both chapters are about controlling when and how things happen on a system you're not sitting in front of 24/7 — deferred one-off jobs, recurring jobs, automatic cleanup, and making sure the right processes get the CPU time they need."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Scheduling and process priority are exactly the kind of thing a junior admin gets asked to fix at 2am: 'the backup didn't run' or 'this report generator is starving the database.' Both problems trace back to what's in this Part."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": [
+    {
+      "id": "stratis-vdo",
+      "severity": "medium",
+      "title": "Stratis and VDO are still taught, but they are not on the RHCSA exam",
+      "found": "Part 5 covers Stratis layered storage and VDO compression/deduplication in depth.",
+      "current": "Stratis remains available in RHEL and is a reasonable way to manage layered storage, but the EX200 objective wording is about local storage, LVM, and mounting by UUID or label. VDO is niche and largely absent from enterprise datacentres today.",
+      "action": "Learn these for understanding, but prioritise the LVM objectives — pvcreate, vgcreate, lvcreate, and mounting by UUID — which are directly examined.",
+      "verified": "2026-10-12",
+      "source": "EX200 objectives, read 2026-10-10"
+    }
+  ]
+}

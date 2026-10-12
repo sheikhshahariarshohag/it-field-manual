@@ -1,0 +1,468 @@
+{
+  "id": "rh124-05",
+  "n": 5,
+  "sourceNumber": 4,
+  "kind": "chapter",
+  "title": "GETTING HELP IN RED HAT ENTERPRISE LINUX",
+  "display": "Ch 4 — GETTING HELP IN RED HAT ENTERPRISE LINUX",
+  "exam": "RHCSA (EX200)",
+  "words": 933,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Book reference: Chapter 4, pages 101–123. Guided Exercises: Reading Manual Pages, Reading Info Documentation. Lab: Getting Help in Red Hat Enterprise Linux."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Why this chapter matters for the exam, specifically"
+        },
+        {
+          "level": 0,
+          "text": "The RHCSA exam gives you access to man pages during the test — there's no requirement to memorize every option of every command. What IS graded is your speed at finding the right flag under time pressure. Treat this chapter as exam-day survival skill, not just background reading."
+        }
+      ],
+      "words": 83
+    },
+    {
+      "title": "4.1 Reading man pages",
+      "content": [
+        {
+          "level": 0,
+          "text": "man topic opens the manual page for topic, one screen at a time. Man pages are organized into numbered sections by content type — the same name can exist in more than one section, so the section number disambiguates:"
+        },
+        {
+          "level": 0,
+          "text": "Section"
+        },
+        {
+          "level": 0,
+          "text": "Content"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "User commands"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "System calls (kernel routines)"
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "Library functions"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "Special files (device files)"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "File formats (config file layouts)"
+        },
+        {
+          "level": 0,
+          "text": "6"
+        },
+        {
+          "level": 0,
+          "text": "Games"
+        },
+        {
+          "level": 0,
+          "text": "7"
+        },
+        {
+          "level": 0,
+          "text": "Conventions, standards, protocols, misc."
+        },
+        {
+          "level": 0,
+          "text": "8"
+        },
+        {
+          "level": 0,
+          "text": "System administration / privileged commands"
+        },
+        {
+          "level": 0,
+          "text": "9"
+        },
+        {
+          "level": 0,
+          "text": "Linux kernel API"
+        },
+        {
+          "level": 0,
+          "text": "The classic example: passwd(1) is the command to change a password; passwd(5) documents the /etc/passwd file's format. man passwd (no section) shows section 1 by default — man 5 passwd forces section 5."
+        },
+        {
+          "level": 3,
+          "text": "Navigating once you're inside a man page"
+        },
+        {
+          "level": 0,
+          "text": "Key"
+        },
+        {
+          "level": 0,
+          "text": "Action"
+        },
+        {
+          "level": 0,
+          "text": "Space / PageDown"
+        },
+        {
+          "level": 0,
+          "text": "Scroll forward one screen"
+        },
+        {
+          "level": 0,
+          "text": "PageUp"
+        },
+        {
+          "level": 0,
+          "text": "Scroll back one screen"
+        },
+        {
+          "level": 0,
+          "text": "↑ / ↓"
+        },
+        {
+          "level": 0,
+          "text": "Scroll one line"
+        },
+        {
+          "level": 0,
+          "text": "/string"
+        },
+        {
+          "level": 0,
+          "text": "Search forward for string"
+        },
+        {
+          "level": 0,
+          "text": "n / Shift+N"
+        },
+        {
+          "level": 0,
+          "text": "Repeat the search forward / backward"
+        },
+        {
+          "level": 0,
+          "text": "g / Shift+G"
+        },
+        {
+          "level": 0,
+          "text": "Jump to start / end of the page"
+        },
+        {
+          "level": 0,
+          "text": "q"
+        },
+        {
+          "level": 0,
+          "text": "Quit back to the shell"
+        },
+        {
+          "level": 0,
+          "text": "NOTE —"
+        },
+        {
+          "level": 0,
+          "text": "A search string is actually a regular expression, not plain text — characters like $ * . ^ have special meaning. Searching for something containing those characters can give surprising results; that's a topic for RH134, but worth knowing why an odd search sometimes misbehaves."
+        },
+        {
+          "level": 0,
+          "text": "Every man page follows roughly the same layout — you'll get faster by knowing which heading to jump to instead of reading top to bottom:"
+        },
+        {
+          "level": 0,
+          "text": "Heading"
+        },
+        {
+          "level": 0,
+          "text": "What's there"
+        },
+        {
+          "level": 0,
+          "text": "NAME"
+        },
+        {
+          "level": 0,
+          "text": "One-line description"
+        },
+        {
+          "level": 0,
+          "text": "SYNOPSIS"
+        },
+        {
+          "level": 0,
+          "text": "The command's syntax summary"
+        },
+        {
+          "level": 0,
+          "text": "DESCRIPTION"
+        },
+        {
+          "level": 0,
+          "text": "Full explanation"
+        },
+        {
+          "level": 0,
+          "text": "OPTIONS"
+        },
+        {
+          "level": 0,
+          "text": "Every flag, explained"
+        },
+        {
+          "level": 0,
+          "text": "EXAMPLES"
+        },
+        {
+          "level": 0,
+          "text": "Worked examples"
+        },
+        {
+          "level": 0,
+          "text": "FILES"
+        },
+        {
+          "level": 0,
+          "text": "Related files/paths"
+        },
+        {
+          "level": 0,
+          "text": "SEE ALSO"
+        },
+        {
+          "level": 0,
+          "text": "Related man pages"
+        },
+        {
+          "level": 3,
+          "text": "Finding the right man page when you don't know the command name"
+        },
+        {
+          "level": 0,
+          "text": "man -k keyword # search titles/descriptions for keyword"
+        },
+        {
+          "level": 0,
+          "text": "man -K keyword # full-text search (slower, more thorough)"
+        },
+        {
+          "level": 0,
+          "text": "man -k relies on an index built by mandb (runs automatically once a day, or shortly after boot if overdue) — if a page you just installed doesn't show up in a search yet, that index just hasn't caught up."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — man -k in practice"
+        },
+        {
+          "level": 0,
+          "text": "This is the fastest way to find a command you know exists but can't remember the exact name of — e.g. man -k \"file system\" when you need the tool that resizes an ext4 filesystem (turns out to be resize2fs) but can't recall it under pressure."
+        }
+      ],
+      "words": 396
+    },
+    {
+      "title": "4.2 GNU Info documentation",
+      "content": [
+        {
+          "level": 0,
+          "text": "Some packages — especially GNU tools like coreutils — ship a second, more comprehensive documentation format called Info, viewed with pinfo. Where a man page is a short, formal reference for one command, Info documents are a whole hyperlinked book for a package, with a full-text search and a browsable index across topics."
+        },
+        {
+          "level": 0,
+          "text": "pinfo key"
+        },
+        {
+          "level": 0,
+          "text": "man equivalent"
+        },
+        {
+          "level": 0,
+          "text": "Action"
+        },
+        {
+          "level": 0,
+          "text": "PageDown / Space"
+        },
+        {
+          "level": 0,
+          "text": "PageDown / Space"
+        },
+        {
+          "level": 0,
+          "text": "Scroll forward one screen"
+        },
+        {
+          "level": 0,
+          "text": "d"
+        },
+        {
+          "level": 0,
+          "text": "(none)"
+        },
+        {
+          "level": 0,
+          "text": "Jump to the directory of topics"
+        },
+        {
+          "level": 0,
+          "text": "u"
+        },
+        {
+          "level": 0,
+          "text": "(none)"
+        },
+        {
+          "level": 0,
+          "text": "Go up to the parent node"
+        },
+        {
+          "level": 0,
+          "text": "↓ then Enter"
+        },
+        {
+          "level": 0,
+          "text": "(none)"
+        },
+        {
+          "level": 0,
+          "text": "Follow a hyperlink"
+        },
+        {
+          "level": 0,
+          "text": "/string then Enter"
+        },
+        {
+          "level": 0,
+          "text": "/string"
+        },
+        {
+          "level": 0,
+          "text": "Search"
+        },
+        {
+          "level": 0,
+          "text": "q"
+        },
+        {
+          "level": 0,
+          "text": "q"
+        },
+        {
+          "level": 0,
+          "text": "Quit"
+        },
+        {
+          "level": 0,
+          "text": "pinfo topic jumps straight to a topic; plain pinfo opens the top-level directory. If no Info node exists for what you asked for, pinfo falls back to showing the man page instead — so it never leaves you empty-handed."
+        }
+      ],
+      "words": 138
+    },
+    {
+      "title": "Hands-on: practice these on your own lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. man passwd, then man 5 passwd — compare the command page to the file-format page."
+        },
+        {
+          "level": 0,
+          "text": "2. man -k \"ext4\" — find the tool used to resize an ext4 filesystem (resize2fs) and the one to tune its parameters (tune2fs)."
+        },
+        {
+          "level": 0,
+          "text": "3. man -k zip — see how many unrelated tools share \"zip\" in their description; note why a specific, well-chosen keyword saves time over a vague one."
+        },
+        {
+          "level": 0,
+          "text": "4. pinfo coreutils, then navigate into a subtopic like \"Disk usage\" to compare Info's style to a man page's."
+        },
+        {
+          "level": 0,
+          "text": "5. whereis passwd — see every location (binary, man pages) associated with a single command name."
+        }
+      ],
+      "words": 101
+    },
+    {
+      "title": "Review — check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. Q1 — You need the file-format documentation for /etc/crontab, not the crontab command itself. What do you type?"
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — man -k reports nothing for a command you just installed minutes ago, even though man <command> works fine directly. Why?"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — man 5 crontab (file formats live in section 5; man crontab alone would show the command's section-1 page by default)."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — man -k searches the mandb index, which only rebuilds once a day (or shortly after boot) rather than instantly on install — the direct man <command> lookup doesn't depend on that index at all, which is why it still works."
+        }
+      ],
+      "words": 109
+    },
+    {
+      "title": "Chapter 4 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "man topic (optionally man <section> topic) reads a manual page; section numbers disambiguate identical names across content types (1=commands, 5=file formats, 8=admin commands, etc.)."
+        },
+        {
+          "level": 0,
+          "text": "man -k keyword searches the mandb-built index by title/description when you don't know the exact command name."
+        },
+        {
+          "level": 0,
+          "text": "pinfo gives package-level, hyperlinked documentation for GNU tools, and falls back to the man page if no Info node exists."
+        },
+        {
+          "level": 0,
+          "text": "You're allowed to use these during the RHCSA exam — practicing fast navigation now is time you get back on exam day."
+        }
+      ],
+      "words": 83
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": []
+}

@@ -1,0 +1,541 @@
+{
+  "id": "rh134-02",
+  "n": 2,
+  "sourceNumber": 2,
+  "kind": "part",
+  "title": "Part 2",
+  "display": "Part 2 — Scheduling a Deferred One-Time Job — at; Scheduling Recurri…",
+  "exam": "RHCSA (EX200)",
+  "words": 1116,
+  "sections": [
+    {
+      "title": "1. Scheduling a Deferred One-Time Job — at",
+      "content": [
+        {
+          "level": 0,
+          "text": "A deferred task is something that should run once, in the future, and then be done. Think: \"remind the on-call engineer at 6am\" or \"apply this firewall change tonight during the maintenance window.\" The at command is built exactly for this."
+        },
+        {
+          "level": 2,
+          "text": "Scheduling a job"
+        },
+        {
+          "level": 0,
+          "text": "You give at a TIMESPEC, then type the commands you want to run, then press Ctrl+D to finish. Or, more reliably, redirect a script file in as input instead of typing interactively."
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ at now +5min"
+        },
+        {
+          "level": 0,
+          "text": "at> systemctl restart httpd"
+        },
+        {
+          "level": 0,
+          "text": "at> <Ctrl+D>"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ at teatime tomorrow < myscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "TIMESPEC examples"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "now +5min"
+        },
+        {
+          "level": 0,
+          "text": "5 minutes from now"
+        },
+        {
+          "level": 0,
+          "text": "teatime tomorrow"
+        },
+        {
+          "level": 0,
+          "text": "4:00 PM tomorrow (teatime = 16:00)"
+        },
+        {
+          "level": 0,
+          "text": "noon +4 days"
+        },
+        {
+          "level": 0,
+          "text": "Noon, four days from today"
+        },
+        {
+          "level": 0,
+          "text": "5pm august 3 2027"
+        },
+        {
+          "level": 0,
+          "text": "A specific date and time"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Typing commands interactively and forgetting Ctrl+D — the job just sits there waiting for more input and never gets scheduled. When scripting or automating this, always redirect from a file instead: at TIMESPEC < script.sh."
+        },
+        {
+          "level": 2,
+          "text": "Inspecting and removing deferred jobs"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "atq (or at -l)"
+        },
+        {
+          "level": 0,
+          "text": "List pending jobs for the current user"
+        },
+        {
+          "level": 0,
+          "text": "at -c JOBNUMBER"
+        },
+        {
+          "level": 0,
+          "text": "Show the exact commands and environment a job will run with"
+        },
+        {
+          "level": 0,
+          "text": "atrm JOBNUMBER"
+        },
+        {
+          "level": 0,
+          "text": "Cancel a scheduled job before it runs"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Unprivileged users can only see and manage their own at jobs. root can see and manage everyone's. If a job you scheduled as your own user isn't showing up when someone else checks atq, that's expected behavior, not a bug."
+        }
+      ],
+      "words": 251
+    },
+    {
+      "title": "2. Scheduling Recurring User Jobs — crontab",
+      "content": [
+        {
+          "level": 0,
+          "text": "A recurring job runs on a repeating schedule instead of once. crontab -e opens your personal crontab in an editor (Vim by default) where you define these jobs."
+        },
+        {
+          "level": 2,
+          "text": "Crontab field format"
+        },
+        {
+          "level": 0,
+          "text": "# .---------------- minute (0 - 59)"
+        },
+        {
+          "level": 0,
+          "text": "# | .------------- hour (0 - 23)"
+        },
+        {
+          "level": 0,
+          "text": "# | | .---------- day of month (1 - 31)"
+        },
+        {
+          "level": 0,
+          "text": "# | | | .------- month (1 - 12) OR jan,feb,mar ..."
+        },
+        {
+          "level": 0,
+          "text": "# | | | | .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue ..."
+        },
+        {
+          "level": 0,
+          "text": "# | | | | |"
+        },
+        {
+          "level": 0,
+          "text": "# * * * * * command to be executed"
+        },
+        {
+          "level": 0,
+          "text": "Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "*"
+        },
+        {
+          "level": 0,
+          "text": "\"Don't care\" — matches every value"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "An exact value (5th minute, 5th day, etc.)"
+        },
+        {
+          "level": 0,
+          "text": "x-y"
+        },
+        {
+          "level": 0,
+          "text": "A range, inclusive"
+        },
+        {
+          "level": 0,
+          "text": "x,y,z"
+        },
+        {
+          "level": 0,
+          "text": "A list — can mix in ranges too, e.g. 5,10-13,17"
+        },
+        {
+          "level": 0,
+          "text": "*/x"
+        },
+        {
+          "level": 0,
+          "text": "Every x units — */15 in minutes = every 15 minutes"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL If BOTH day-of-month and day-of-week are set to something other than *, the job runs when EITHER condition is true — not when both are true. This is a classic exam trap: 15 12 15 * Fri some-command runs on the 15th of the month AND every Friday at 12:15, not only when the 15th falls on a Friday."
+        },
+        {
+          "level": 0,
+          "text": "0 9 2 2 * /usr/local/bin/yearly_backup # 9:00 AM every Feb 2"
+        },
+        {
+          "level": 0,
+          "text": "*/5 9-16 * Jul 5 echo \"Chime\" # every 5 min, 9am-4:59pm, every Fri in July"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Assuming 9-16 in the hours field means \"until 4pm sharp.\" It actually means the job window runs through the entire 16th hour — so with a */5 minute interval, the last run is at 16:55, not 16:00."
+        }
+      ],
+      "words": 276
+    },
+    {
+      "title": "3. Scheduling Recurring System Jobs",
+      "content": [
+        {
+          "level": 0,
+          "text": "System-wide recurring jobs (as opposed to a single user's personal crontab) should never be edited directly in /etc/crontab. Best practice: drop a custom file into /etc/cron.d/ instead."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS If a package update ever overwrites /etc/crontab, anything you added directly to that file is gone. A file you placed in /etc/cron.d/ survives that update untouched. This is the same 'never edit the vendor file directly' principle you'll see again with systemd unit files and tmpfiles.d."
+        },
+        {
+          "level": 2,
+          "text": "System crontab format — one extra field"
+        },
+        {
+          "level": 0,
+          "text": "System crontab entries add a user field between the time fields and the command — because the system needs to know which account should run the job."
+        },
+        {
+          "level": 0,
+          "text": "# minute hour day month weekday user-name command"
+        },
+        {
+          "level": 2,
+          "text": "The hourly/daily/weekly/monthly directories"
+        },
+        {
+          "level": 0,
+          "text": "Location"
+        },
+        {
+          "level": 0,
+          "text": "What goes there"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.d/"
+        },
+        {
+          "level": 0,
+          "text": "Custom crontab files (your preferred place for new system jobs)"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.hourly/ , .daily/ , .weekly/ , .monthly/"
+        },
+        {
+          "level": 0,
+          "text": "Executable shell scripts (not crontab files) — run via run-parts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/anacrontab"
+        },
+        {
+          "level": 0,
+          "text": "Ensures important periodic jobs still run even if the system was off when they were due"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Scripts placed in the cron.hourly/daily/weekly/monthly directories must be executable (chmod +x) or run-parts silently skips them — no error, they just never run."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION /etc/anacrontab uses a different 4-field format entirely: period-in-days, delay-in-minutes, job-identifier, command. Its whole purpose is catching up on jobs a normal cron schedule would have silently skipped if the machine was powered off."
+        },
+        {
+          "level": 2,
+          "text": "systemd timers — the modern alternative to cron"
+        },
+        {
+          "level": 0,
+          "text": "A systemd timer unit activates a matching service unit on a schedule. Timers integrate with journald logging and systemd's dependency system, which makes them easier to debug than a silent cron job."
+        },
+        {
+          "level": 0,
+          "text": "[Unit]"
+        },
+        {
+          "level": 0,
+          "text": "Description=Run system activity accounting tool every 10 minutes"
+        },
+        {
+          "level": 0,
+          "text": "[Timer]"
+        },
+        {
+          "level": 0,
+          "text": "OnCalendar=*:00/10"
+        },
+        {
+          "level": 0,
+          "text": "[Install]"
+        },
+        {
+          "level": 0,
+          "text": "WantedBy=sysstat.service"
+        },
+        {
+          "level": 0,
+          "text": "Timer directive"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "OnCalendar="
+        },
+        {
+          "level": 0,
+          "text": "Absolute schedule, cron-like but more readable — *:00/10 = every 10 minutes"
+        },
+        {
+          "level": 0,
+          "text": "OnBootSec="
+        },
+        {
+          "level": 0,
+          "text": "Relative to boot time — OnBootSec=15min fires 15 minutes after boot"
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec="
+        },
+        {
+          "level": 0,
+          "text": "Relative to the last activation — fires again N time after the last run"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl enable --now sysstat-collect.timer"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Never edit unit files under /usr/lib/systemd/system directly — a package update will overwrite your changes. Copy the file to /etc/systemd/system/ first, edit the copy, then run systemctl daemon-reload. Files in /etc/systemd/system/ always win over identically-named files in /usr/lib/systemd/system/."
+        }
+      ],
+      "words": 380
+    },
+    {
+      "title": "4. Managing Temporary Files — systemd-tmpfiles",
+      "content": [
+        {
+          "level": 0,
+          "text": "Temporary directories and volatile runtime files (much of /run, /tmp) need to be created on boot and periodically purged so they don't fill the disk with stale data. systemd-tmpfiles handles both jobs from declarative config files instead of ad-hoc cleanup scripts."
+        },
+        {
+          "level": 2,
+          "text": "Config file syntax"
+        },
+        {
+          "level": 0,
+          "text": "Seven columns: Type, Path, Mode, UID, GID, Age, Argument."
+        },
+        {
+          "level": 0,
+          "text": "Type"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "d"
+        },
+        {
+          "level": 0,
+          "text": "Create a directory if missing (not auto-purged)"
+        },
+        {
+          "level": 0,
+          "text": "D"
+        },
+        {
+          "level": 0,
+          "text": "Create a directory if missing; empty it if it exists"
+        },
+        {
+          "level": 0,
+          "text": "L"
+        },
+        {
+          "level": 0,
+          "text": "Create a symbolic link"
+        },
+        {
+          "level": 0,
+          "text": "Z"
+        },
+        {
+          "level": 0,
+          "text": "Recursively restore SELinux context, permissions, and ownership"
+        },
+        {
+          "level": 0,
+          "text": "d /run/systemd/seats 0755 root root -"
+        },
+        {
+          "level": 0,
+          "text": "D /home/student 0700 student student 1d"
+        },
+        {
+          "level": 0,
+          "text": "L /run/fstablink - root root - /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "The first line creates /run/systemd/seats if missing and never purges it. The second creates /home/student, empties it if it exists, and during a --clean run removes anything untouched for more than a day. The third creates a symlink and never purges it."
+        },
+        {
+          "level": 2,
+          "text": "Where the config lives — and which one wins"
+        },
+        {
+          "level": 0,
+          "text": "Location"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "Precedence if names collide"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/*.conf"
+        },
+        {
+          "level": 0,
+          "text": "Vendor/package defaults — don't edit"
+        },
+        {
+          "level": 0,
+          "text": "Lowest"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/*.conf"
+        },
+        {
+          "level": 0,
+          "text": "Volatile, daemon-managed runtime config"
+        },
+        {
+          "level": 0,
+          "text": "Middle"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/*.conf"
+        },
+        {
+          "level": 0,
+          "text": "Your admin overrides"
+        },
+        {
+          "level": 0,
+          "text": "Highest — always wins"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --create --remove"
+        },
+        {
+          "level": 0,
+          "text": "Runs automatically at boot via systemd-tmpfiles-setup"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "Purges anything past its configured max age; runs on a timer (systemd-tmpfiles-clean.timer)"
+        }
+      ],
+      "words": 209
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [
+    {
+      "id": "rhel-service-chronyd",
+      "why": "Scheduling and Performance — time sync runs as a managed service"
+    }
+  ],
+  "currency": []
+}

@@ -1,0 +1,1418 @@
+{
+  "id": "rh294-02",
+  "n": 2,
+  "sourceNumber": 2,
+  "kind": "part",
+  "title": "Part 2",
+  "display": "Part 2 — Writing and Running Playbooks; Multiple Plays, Per-Play Pri…",
+  "exam": "RHCE (EX294)",
+  "words": 3037,
+  "sections": [
+    {
+      "title": "1. Writing and Running Playbooks",
+      "content": [
+        {
+          "level": 0,
+          "text": "An ad hoc command is one task, once. A playbook is a saved, shareable, version-controllable YAML file that can define many tasks, across many plays, applied to many different hosts — everything ad hoc commands can't do."
+        },
+        {
+          "level": 2,
+          "text": "YAML basics that actually matter"
+        },
+        {
+          "level": 0,
+          "text": "Rule"
+        },
+        {
+          "level": 0,
+          "text": "Detail"
+        },
+        {
+          "level": 0,
+          "text": "Indentation"
+        },
+        {
+          "level": 0,
+          "text": "Only SPACE characters — tabs are never allowed. Items at the same level need identical indentation; children must be indented further than their parent"
+        },
+        {
+          "level": 0,
+          "text": "Document start"
+        },
+        {
+          "level": 0,
+          "text": "A playbook begins with three dashes (---); an end marker (...) is legal but almost always omitted"
+        },
+        {
+          "level": 0,
+          "text": "Lists"
+        },
+        {
+          "level": 0,
+          "text": "Each item starts with a dash and a space (- item)"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Configure important user consistently"
+        },
+        {
+          "level": 0,
+          "text": "hosts: servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: newbie exists with UID 4000"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: newbie"
+        },
+        {
+          "level": 0,
+          "text": "uid: 4000"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "A play has three commonly-used top-level keys: name (an optional label — always use it, especially once a playbook has multiple plays), hosts (which inventory hosts/groups this play targets), and tasks (the ordered list of things to do)."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING A missing space after a colon is one of the most common YAML syntax errors — name:hosts (no space) is invalid YAML and will fail with a cryptic 'mapping values are not allowed in this context' error, not an obviously helpful one."
+        },
+        {
+          "level": 2,
+          "text": "Running a playbook"
+        },
+        {
+          "level": 0,
+          "text": "[student@workstation ~]$ ansible-playbook webserver.yml"
+        },
+        {
+          "level": 0,
+          "text": "PLAY [play to setup web server] ************************************"
+        },
+        {
+          "level": 0,
+          "text": "TASK [Gathering Facts] *********************************************"
+        },
+        {
+          "level": 0,
+          "text": "ok: [servera.lab.example.com]"
+        },
+        {
+          "level": 0,
+          "text": "TASK [latest httpd version installed] ******************************"
+        },
+        {
+          "level": 0,
+          "text": "changed: [servera.lab.example.com]"
+        },
+        {
+          "level": 0,
+          "text": "PLAY RECAP **********************************************************"
+        },
+        {
+          "level": 0,
+          "text": "servera.lab.example.com : ok=2 changed=1 unreachable=0 failed=0"
+        },
+        {
+          "level": 0,
+          "text": "Run the exact same playbook again and the task now reports ok instead of changed, with changed=0 in the recap — idempotence, visible directly in the output. Gathering Facts is a special automatic task (covered fully in Section 2.5) that runs before your first task in almost every play, whether you asked for it or not."
+        },
+        {
+          "level": 2,
+          "text": "Verbosity, syntax-checking, and dry runs"
+        },
+        {
+          "level": 0,
+          "text": "Flag"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "-v"
+        },
+        {
+          "level": 0,
+          "text": "Show task results"
+        },
+        {
+          "level": 0,
+          "text": "-vv"
+        },
+        {
+          "level": 0,
+          "text": "Task results AND task configuration"
+        },
+        {
+          "level": 0,
+          "text": "-vvv"
+        },
+        {
+          "level": 0,
+          "text": "Adds connection details to managed hosts"
+        },
+        {
+          "level": 0,
+          "text": "-vvvv"
+        },
+        {
+          "level": 0,
+          "text": "Adds connection plug-in internals — the remote user, scripts executed"
+        },
+        {
+          "level": 0,
+          "text": "--syntax-check"
+        },
+        {
+          "level": 0,
+          "text": "Parse the playbook for YAML/Ansible syntax errors WITHOUT running it"
+        },
+        {
+          "level": 0,
+          "text": "-C (or --check)"
+        },
+        {
+          "level": 0,
+          "text": "Dry run — reports what WOULD change, makes no actual changes"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT --syntax-check and -C (check mode) are two DIFFERENT safety nets and are often tested as a pair: syntax-check only catches YAML/structural errors (a missing colon, bad indentation) — it does NOT verify that tasks will actually succeed. -C mode actually connects to managed hosts and evaluates what each task WOULD do, without changing anything — which catches a much broader class of problems, but still isn't a full guarantee (a task that depends on another task's side effect can behave differently in a real run)."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Treating a clean --syntax-check as proof the playbook will work. It only proves the YAML parses — a task referencing a module that doesn't exist, or a host that isn't reachable, passes syntax-check without issue and only fails at actual run time (or shows up correctly under -C)."
+        }
+      ],
+      "words": 497
+    },
+    {
+      "title": "2. Multiple Plays, Per-Play Privilege, and YAML Variations",
+      "content": [
+        {
+          "level": 0,
+          "text": "A single playbook can contain multiple plays, each targeting different hosts — useful for orchestrating a deployment where different tiers need different tasks in sequence."
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: first play"
+        },
+        {
+          "level": 0,
+          "text": "hosts: web.example.com"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: latest httpd installed"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "- name: second play"
+        },
+        {
+          "level": 0,
+          "text": "hosts: database.example.com"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: mariadb enabled"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: mariadb"
+        },
+        {
+          "level": 0,
+          "text": "enabled: true"
+        },
+        {
+          "level": 0,
+          "text": "Each play runs completely — against all of its targeted hosts — before the next play begins."
+        },
+        {
+          "level": 2,
+          "text": "Overriding connection settings per play"
+        },
+        {
+          "level": 0,
+          "text": "Keyword (set at the play level)"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "remote_user: someuser"
+        },
+        {
+          "level": 0,
+          "text": "Overrides the default connection user for just this play"
+        },
+        {
+          "level": 0,
+          "text": "become: true / false"
+        },
+        {
+          "level": 0,
+          "text": "Overrides privilege escalation for just this play"
+        },
+        {
+          "level": 0,
+          "text": "become_method: sudo"
+        },
+        {
+          "level": 0,
+          "text": "Overrides HOW to escalate for just this play"
+        },
+        {
+          "level": 0,
+          "text": "become_user: someuser"
+        },
+        {
+          "level": 0,
+          "text": "Overrides WHICH user to become for just this play"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is exactly the same become/remote_user logic from Part 1's ansible.cfg — playbooks just let you override it per play instead of globally, for the (common) case where one play needs different privileges than another in the same file."
+        },
+        {
+          "level": 2,
+          "text": "Finding modules with ansible-doc"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible-doc -l"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible-doc firewalld"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible-doc -s firewalld"
+        },
+        {
+          "level": 0,
+          "text": "The -s option is worth using constantly — it prints a ready-to-copy YAML task skeleton for the module, showing every available option, instead of the full prose documentation."
+        },
+        {
+          "level": 2,
+          "text": "YAML syntax variations you'll see in the wild"
+        },
+        {
+          "level": 0,
+          "text": "Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "Recommendation"
+        },
+        {
+          "level": 0,
+          "text": "Comments"
+        },
+        {
+          "level": 0,
+          "text": "# everything after # is a comment"
+        },
+        {
+          "level": 0,
+          "text": "Use freely"
+        },
+        {
+          "level": 0,
+          "text": "Multiline (preserve newlines)"
+        },
+        {
+          "level": 0,
+          "text": "text: | then indented lines"
+        },
+        {
+          "level": 0,
+          "text": "Use for content like config file blocks"
+        },
+        {
+          "level": 0,
+          "text": "Multiline (fold into one line)"
+        },
+        {
+          "level": 0,
+          "text": "text: > then indented lines"
+        },
+        {
+          "level": 0,
+          "text": "Use for long human-readable messages"
+        },
+        {
+          "level": 0,
+          "text": "Inline dictionary"
+        },
+        {
+          "level": 0,
+          "text": "{name: x, port: 80}"
+        },
+        {
+          "level": 0,
+          "text": "Avoid — harder to read (except for role parameters, covered later)"
+        },
+        {
+          "level": 0,
+          "text": "Inline list"
+        },
+        {
+          "level": 0,
+          "text": "hosts: [a, b, c]"
+        },
+        {
+          "level": 0,
+          "text": "Avoid — harder to read than the dash-list form"
+        },
+        {
+          "level": 0,
+          "text": "Old key=value task shorthand"
+        },
+        {
+          "level": 0,
+          "text": "user: name=joe uid=4000"
+        },
+        {
+          "level": 0,
+          "text": "Recognize it in older playbooks; don't write new tasks this way"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Know that the key=value shorthand syntax for tasks still exists and still works — you will see it in older playbooks and documentation examples — but the modern, expected style is the nested YAML dictionary form used throughout this guide. The exam expects you to read both but write the modern form."
+        }
+      ],
+      "words": 374
+    },
+    {
+      "title": "3. Managing Variables",
+      "content": [
+        {
+          "level": 0,
+          "text": "Rule"
+        },
+        {
+          "level": 0,
+          "text": "Detail"
+        },
+        {
+          "level": 0,
+          "text": "Must start with"
+        },
+        {
+          "level": 0,
+          "text": "A letter"
+        },
+        {
+          "level": 0,
+          "text": "Can contain"
+        },
+        {
+          "level": 0,
+          "text": "Letters, numbers, underscores only"
+        },
+        {
+          "level": 0,
+          "text": "Cannot contain"
+        },
+        {
+          "level": 0,
+          "text": "Spaces, dots, dashes, or start with a number"
+        },
+        {
+          "level": 0,
+          "text": "Invalid"
+        },
+        {
+          "level": 0,
+          "text": "Valid"
+        },
+        {
+          "level": 0,
+          "text": "web server"
+        },
+        {
+          "level": 0,
+          "text": "web_server"
+        },
+        {
+          "level": 0,
+          "text": "remote.file"
+        },
+        {
+          "level": 0,
+          "text": "remote_file"
+        },
+        {
+          "level": 0,
+          "text": "1st_file"
+        },
+        {
+          "level": 0,
+          "text": "file_1"
+        },
+        {
+          "level": 2,
+          "text": "Three scope levels — narrower always wins"
+        },
+        {
+          "level": 0,
+          "text": "Scope"
+        },
+        {
+          "level": 0,
+          "text": "Set by"
+        },
+        {
+          "level": 0,
+          "text": "Precedence"
+        },
+        {
+          "level": 0,
+          "text": "Global"
+        },
+        {
+          "level": 0,
+          "text": "Command line (-e) or ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "Highest"
+        },
+        {
+          "level": 0,
+          "text": "Play"
+        },
+        {
+          "level": 0,
+          "text": "vars: / vars_files: in the playbook"
+        },
+        {
+          "level": 0,
+          "text": "Middle"
+        },
+        {
+          "level": 0,
+          "text": "Host/inventory"
+        },
+        {
+          "level": 0,
+          "text": "Inventory, group_vars/host_vars, facts, registered variables"
+        },
+        {
+          "level": 0,
+          "text": "Lowest"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Memorize the direction, not just the names: inventory-defined variables are overridden by playbook-defined variables, which are overridden by command-line extra variables (-e). A narrower, more specific scope always beats a wider one — this exact precedence question shows up directly on both RHCSA and RHCE-adjacent material."
+        },
+        {
+          "level": 2,
+          "text": "Defining and using variables in a playbook"
+        },
+        {
+          "level": 0,
+          "text": "- hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "user: joe"
+        },
+        {
+          "level": 0,
+          "text": "home: /home/joe"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Creates the user {{ user }}"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ user }}\""
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING When a value starts WITH a variable reference, quotes are mandatory: name: \"{{ user }}\" — without them, Ansible can misparse {{ as the start of a YAML dictionary and fail with a confusing error. A variable used in the MIDDLE of a string (Creates the user {{ user }}) does not need quotes."
+        },
+        {
+          "level": 0,
+          "text": "For a large or shared set of variables, vars_files pulls them from an external YAML file instead of inlining them:"
+        },
+        {
+          "level": 0,
+          "text": "- hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "vars_files:"
+        },
+        {
+          "level": 0,
+          "text": "- vars/users.yml"
+        },
+        {
+          "level": 2,
+          "text": "Host and group variables — the preferred pattern"
+        },
+        {
+          "level": 0,
+          "text": "Defining ansible_user=joe directly in the inventory file works, but is the OLD, discouraged approach — it mixes host data and variable data in one file. The preferred pattern is two sibling directories next to the inventory:"
+        },
+        {
+          "level": 0,
+          "text": "project/"
+        },
+        {
+          "level": 0,
+          "text": "├── ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "├── inventory"
+        },
+        {
+          "level": 0,
+          "text": "├── group_vars/"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── datacenters # applies to the whole datacenters group"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── datacenter1 # applies only to datacenter1"
+        },
+        {
+          "level": 0,
+          "text": "│ └── datacenter2 # applies only to datacenter2"
+        },
+        {
+          "level": 0,
+          "text": "├── host_vars/"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── demo1.example.com"
+        },
+        {
+          "level": 0,
+          "text": "│ └── demo2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "└── playbook.yml"
+        },
+        {
+          "level": 0,
+          "text": "A file's name must exactly match the group or host it applies to; its content is plain YAML key-value pairs, same as a vars: block."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Host variables (host_vars) take precedence over group variables (group_vars), which are overridden by variables defined directly in the playbook. This is the SAME narrower-wins principle as the three scope levels, just applied one level more granularly within the 'host/inventory' scope."
+        },
+        {
+          "level": 2,
+          "text": "Command-line overrides and registered variables"
+        },
+        {
+          "level": 0,
+          "text": "[user@demo ~]$ ansible-playbook main.yml -e \"package=apache\""
+        },
+        {
+          "level": 0,
+          "text": "register captures a task's result into a variable for later use — commonly paired with the debug module to inspect it:"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install the package"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: installed"
+        },
+        {
+          "level": 0,
+          "text": "register: install_result"
+        },
+        {
+          "level": 0,
+          "text": "- debug: var=install_result"
+        }
+      ],
+      "words": 426
+    },
+    {
+      "title": "4. Managing Secrets with Ansible Vault",
+      "content": [
+        {
+          "level": 0,
+          "text": "Playbooks often need real secrets — API keys, database passwords. Ansible Vault encrypts any structured data file (AES256) so secrets can live safely alongside the rest of a version-controlled project."
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault create FILE"
+        },
+        {
+          "level": 0,
+          "text": "Create a brand-new encrypted file (prompts for a password, opens $EDITOR)"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault view FILE"
+        },
+        {
+          "level": 0,
+          "text": "Read an encrypted file's contents WITHOUT decrypting it to disk"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault edit FILE"
+        },
+        {
+          "level": 0,
+          "text": "Decrypt to a temp file, let you edit, re-encrypt on save"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault encrypt FILE [FILE2...]"
+        },
+        {
+          "level": 0,
+          "text": "Encrypt one or more existing plaintext files"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault decrypt FILE"
+        },
+        {
+          "level": 0,
+          "text": "Permanently decrypt a file back to plaintext"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault rekey FILE"
+        },
+        {
+          "level": 0,
+          "text": "Change an encrypted file's password"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Using edit just to look at a file's contents. edit always rewrites the file on save (even if nothing meaningfully changed), which creates noisy diffs in version control. Use view for read-only inspection, every time."
+        },
+        {
+          "level": 2,
+          "text": "Running a playbook that touches Vault-encrypted files"
+        },
+        {
+          "level": 0,
+          "text": "Option"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "--vault-id @prompt"
+        },
+        {
+          "level": 0,
+          "text": "Prompt interactively for the password (the modern, Ansible 2.4+ syntax)"
+        },
+        {
+          "level": 0,
+          "text": "--ask-vault-pass"
+        },
+        {
+          "level": 0,
+          "text": "Older interactive-prompt syntax; still works if all encrypted files share one password"
+        },
+        {
+          "level": 0,
+          "text": "--vault-password-file=FILE"
+        },
+        {
+          "level": 0,
+          "text": "Read the password from a plaintext file (protect that file's permissions carefully)"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible-playbook --vault-id @prompt site.yml"
+        },
+        {
+          "level": 0,
+          "text": "Vault password (default): redhat"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Multiple different vault passwords can be used in one playbook run with repeated --vault-id id@prompt options. Without a password provided at all, ansible-playbook fails immediately with 'A vault password must be specified' — it never silently skips the encrypted content."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS The recommended real-world pattern: keep NON-sensitive variables in a plain group_vars/host_vars file, and put ONLY the sensitive ones in a separate file that gets encrypted with Vault (e.g. vars/secret.yml alongside vars/main.yml). This keeps most of your project readable and diff-friendly in version control, while still protecting the parts that actually matter."
+        }
+      ],
+      "words": 294
+    },
+    {
+      "title": "5. Managing Facts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Facts are variables Ansible automatically discovers ABOUT each managed host — hostname, kernel version, IP addresses, CPU count, free memory, and much more — collected before your first task runs, via the automatic Gathering Facts step (which runs the setup module behind the scenes)."
+        },
+        {
+          "level": 0,
+          "text": "- name: Print all facts"
+        },
+        {
+          "level": 0,
+          "text": "hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- debug:"
+        },
+        {
+          "level": 0,
+          "text": "var: ansible_facts"
+        },
+        {
+          "level": 0,
+          "text": "Fact you want"
+        },
+        {
+          "level": 0,
+          "text": "Modern syntax"
+        },
+        {
+          "level": 0,
+          "text": "Short hostname"
+        },
+        {
+          "level": 0,
+          "text": "ansible_facts['hostname']"
+        },
+        {
+          "level": 0,
+          "text": "Fully qualified domain name"
+        },
+        {
+          "level": 0,
+          "text": "ansible_facts['fqdn']"
+        },
+        {
+          "level": 0,
+          "text": "Main IPv4 address"
+        },
+        {
+          "level": 0,
+          "text": "ansible_facts['default_ipv4']['address']"
+        },
+        {
+          "level": 0,
+          "text": "All network interface names"
+        },
+        {
+          "level": 0,
+          "text": "ansible_facts['interfaces']"
+        },
+        {
+          "level": 0,
+          "text": "Currently running kernel version"
+        },
+        {
+          "level": 0,
+          "text": "ansible_facts['kernel']"
+        },
+        {
+          "level": 0,
+          "text": "Dictionary-style facts can also be written with dot notation: ansible_facts['default_ipv4']['address'] and ansible_facts.default_ipv4.address are equivalent."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION Older playbooks (and plenty of documentation) use facts 'injected as variables' directly — ansible_hostname instead of ansible_facts['hostname']. Both still work, but ansible_facts['name'] is the current recommended form; recognize the old style when you see it."
+        },
+        {
+          "level": 2,
+          "text": "Turning off automatic fact gathering"
+        },
+        {
+          "level": 0,
+          "text": "- name: This play gathers no facts automatically"
+        },
+        {
+          "level": 0,
+          "text": "hosts: large_farm"
+        },
+        {
+          "level": 0,
+          "text": "gather_facts: no"
+        },
+        {
+          "level": 0,
+          "text": "Disabling it speeds up plays that never reference facts, or is necessary when a managed host genuinely can't run the setup module yet (e.g. before a prerequisite is installed). Facts can still be gathered manually inside such a play with an explicit setup: task."
+        },
+        {
+          "level": 2,
+          "text": "Custom facts"
+        },
+        {
+          "level": 0,
+          "text": "Administrators can define their own custom facts on a managed host (as static INI/JSON files, or executable scripts producing JSON) placed under a facts.d directory — the setup module automatically folds these into the standard fact set, giving hosts a way to expose arbitrary local information to Ansible."
+        },
+        {
+          "level": 2,
+          "text": "Magic variables"
+        },
+        {
+          "level": 0,
+          "text": "Magic variable"
+        },
+        {
+          "level": 0,
+          "text": "Contains"
+        },
+        {
+          "level": 0,
+          "text": "hostvars"
+        },
+        {
+          "level": 0,
+          "text": "Every managed host's variables — lets one host's tasks reference ANOTHER host's variables/facts"
+        },
+        {
+          "level": 0,
+          "text": "group_names"
+        },
+        {
+          "level": 0,
+          "text": "The list of groups the CURRENT host belongs to"
+        },
+        {
+          "level": 0,
+          "text": "groups"
+        },
+        {
+          "level": 0,
+          "text": "Every group AND host defined in the whole inventory"
+        },
+        {
+          "level": 0,
+          "text": "inventory_hostname"
+        },
+        {
+          "level": 0,
+          "text": "The current host's name exactly as written in the inventory (which may differ from its real hostname fact)"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT hostvars is what makes cross-host configuration possible — e.g. a web server's config file template referencing the database server's IP address via hostvars['db1.example.com']['ansible_default_ipv4']['address']. This pattern is common in real playbooks and worth recognizing even before Part 4 covers templates in depth."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 2"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Run a playbook"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --syntax-check FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Check YAML/syntax only, run nothing"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook -C FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Dry run — show what would change"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook -v/-vv/-vvv/-vvvv FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Increasing levels of execution detail"
+        },
+        {
+          "level": 0,
+          "text": "ansible-doc -s MODULE"
+        },
+        {
+          "level": 0,
+          "text": "Print a ready-to-copy task skeleton for a module"
+        },
+        {
+          "level": 0,
+          "text": "ansible-vault create/view/edit/encrypt/decrypt/rekey"
+        },
+        {
+          "level": 0,
+          "text": "Manage encrypted secrets"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --vault-id @prompt FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Run a playbook needing a Vault password"
+        },
+        {
+          "level": 0,
+          "text": "ansible HOST -m setup"
+        },
+        {
+          "level": 0,
+          "text": "Manually gather and display all facts for a host"
+        }
+      ],
+      "words": 425
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: A Real Playbook with Variables, Facts, and a Secret",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Write a multi-play, variable-driven playbook that uses group_vars, a Vault-protected secret, a registered variable, and a fact-based debug message."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Provision two web servers and one database server. The web servers need a package installed (name varies by group_vars), and a debug message showing each host's detected IP address. The database server needs a sensitive root password set from an encrypted variable file."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "A control node with a project directory ~/ansible-lab2, an inventory with [webservers] (web1, web2) and [dbservers] (db1)"
+        },
+        {
+          "level": 0,
+          "text": "Ansible Vault available"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Create group_vars/webservers defining package: httpd"
+        },
+        {
+          "level": 0,
+          "text": "2. Create a Vault-encrypted file vars/db_secret.yml containing db_root_password: SomeSecretValue"
+        },
+        {
+          "level": 0,
+          "text": "3. Write a playbook with two plays: one for webservers (install {{ package }}, register the result, debug-print each host's ansible_facts['default_ipv4']['address']), one for dbservers (loads vars/db_secret.yml via vars_files, and uses a debug task to confirm the variable loaded — do NOT print the actual secret value)"
+        },
+        {
+          "level": 0,
+          "text": "4. Run --syntax-check, then a dry run (-C) with the vault password supplied, then a real run"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Print db_root_password itself only if you want it showing up in your terminal history and any logs — a debug task confirming a variable is 'defined' (using the Jinja2 test {{ db_root_password is defined }}) proves it loaded without echoing the secret."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: does your playbook run cleanly with --syntax-check but then fail at actual run time with 'a vault password must be specified'? That's expected and correct — syntax-check never touches Vault-encrypted content."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# group_vars/webservers"
+        },
+        {
+          "level": 0,
+          "text": "package: httpd"
+        },
+        {
+          "level": 0,
+          "text": "# vars/db_secret.yml (before encrypting)"
+        },
+        {
+          "level": 0,
+          "text": "db_root_password: SomeSecretValue"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab2]$ ansible-vault encrypt vars/db_secret.yml"
+        },
+        {
+          "level": 0,
+          "text": "# site.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Configure web servers"
+        },
+        {
+          "level": 0,
+          "text": "hosts: webservers"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install web package"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ package }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "register: pkg_result"
+        },
+        {
+          "level": 0,
+          "text": "- name: Show detected IP address"
+        },
+        {
+          "level": 0,
+          "text": "debug:"
+        },
+        {
+          "level": 0,
+          "text": "msg: \"{{ inventory_hostname }} has IP {{ ansible_facts['default_ipv4']['address'] }}\""
+        },
+        {
+          "level": 0,
+          "text": "- name: Configure database server"
+        },
+        {
+          "level": 0,
+          "text": "hosts: dbservers"
+        },
+        {
+          "level": 0,
+          "text": "vars_files:"
+        },
+        {
+          "level": 0,
+          "text": "- vars/db_secret.yml"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Confirm secret loaded without printing it"
+        },
+        {
+          "level": 0,
+          "text": "debug:"
+        },
+        {
+          "level": 0,
+          "text": "msg: \"db_root_password is defined: {{ db_root_password is defined }}\""
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab2]$ ansible-playbook --syntax-check site.yml"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab2]$ ansible-playbook -C --vault-id @prompt site.yml"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ansible-lab2]$ ansible-playbook --vault-id @prompt site.yml"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "group_vars/webservers means the package name is resolved automatically for any host in that group — no per-host repetition needed."
+        },
+        {
+          "level": 0,
+          "text": "vars_files inside the second play scopes the encrypted secret to ONLY that play, rather than loading it globally where the web server play could accidentally reference it too."
+        },
+        {
+          "level": 0,
+          "text": "The is defined Jinja2 test confirms the variable exists without ever putting its actual value into terminal output or logs — good practice for anything Vault-protected."
+        },
+        {
+          "level": 0,
+          "text": "register + a later debug task is the standard way to inspect what a task actually did, exactly as covered in Section 2.3."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "The webservers play's debug output should show a real IP address per host, sourced from gathered facts, not something you typed. Running the whole playbook a second time should show ok (not changed) for the package install task, proving idempotence held even with variables in play."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "Splitting non-sensitive config (group_vars) from sensitive config (a Vault-encrypted vars file loaded via vars_files, scoped to only the play that needs it) is exactly the recommended production pattern from Section 2.4 — this lab is that pattern, not a simplified version of it."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 2 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What character is NEVER allowed for indentation in a YAML playbook?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The tab character — only spaces are allowed."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What's the practical difference between --syntax-check and -C (dry run)?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: --syntax-check only validates YAML/structural syntax without connecting to any host; -C actually connects to managed hosts and reports what WOULD change, without making real changes."
+        },
+        {
+          "level": 0,
+          "text": "Q3. List the three variable scope levels from highest to lowest precedence."
+        },
+        {
+          "level": 0,
+          "text": "Answer: Global (command-line -e / ansible.cfg) → Play (vars:/vars_files: in the playbook) → Host/inventory (inventory, group_vars/host_vars, facts, registered variables)."
+        },
+        {
+          "level": 0,
+          "text": "Q4. When must a variable reference be wrapped in quotes in a task?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: When the variable reference STARTS the value, e.g. name: \"{{ user }}\" — without quotes, Ansible can misinterpret {{ as starting a YAML dictionary."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What are the two preferred directories for defining host and group variables, replacing the old inline inventory syntax?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: group_vars/ and host_vars/, as sibling directories next to the inventory file."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What's the difference between ansible-vault edit and ansible-vault view?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: edit decrypts to a temp file, lets you change it, and re-encrypts on save (always rewrites the file); view only displays contents without ever writing a decrypted copy or modifying the file."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What happens if you run ansible-playbook against a playbook that references a Vault-encrypted file, without providing any vault password option?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It fails immediately with an error stating a vault password must be specified — it never silently skips or ignores the encrypted content."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What does register do in a task, and what module is it typically paired with to inspect the result?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It captures the task's result into a named variable; typically paired with the debug module to print that variable's value."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What does the magic variable hostvars let you do that facts alone can't?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Access ANOTHER managed host's variables/facts from within a task running against a different host — enabling cross-host configuration (e.g. a web server referencing the database server's IP)."
+        },
+        {
+          "level": 0,
+          "text": "Q10. How do you disable automatic fact gathering for a play, and can facts still be gathered manually afterward?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Set gather_facts: no at the play level; facts can still be gathered manually at any point with an explicit task using the setup module."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 3: IMPLEMENTING TASK CONTROL"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 5 in full — loops, conditionals, handlers, and controlling exactly what counts as failure or change. This is the chapter that turns a playbook from a straight-line script into something that actually reasons about the state of each host it touches."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Real infrastructure is never uniform — some hosts need five users, some need two; some tasks should only run on RedHat, others only when a previous step actually changed something. Everything in this Part exists to handle that variation without writing a separate playbook for every possible combination."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

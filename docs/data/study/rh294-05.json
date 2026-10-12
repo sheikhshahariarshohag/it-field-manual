@@ -1,0 +1,1024 @@
+{
+  "id": "rh294-05",
+  "n": 5,
+  "sourceNumber": 5,
+  "kind": "part",
+  "title": "Part 5",
+  "display": "Part 5 — Selecting Hosts with Host Patterns; Managing Dynamic Invent…",
+  "exam": "RHCE (EX294)",
+  "words": 2703,
+  "sections": [
+    {
+      "title": "1. Selecting Hosts with Host Patterns",
+      "content": [
+        {
+          "level": 0,
+          "text": "hosts: in a play isn't limited to one group name — it accepts a genuine pattern language for precisely selecting who a play targets."
+        },
+        {
+          "level": 2,
+          "text": "Wildcards"
+        },
+        {
+          "level": 0,
+          "text": "Pattern"
+        },
+        {
+          "level": 0,
+          "text": "Matches"
+        },
+        {
+          "level": 0,
+          "text": "*.example.com"
+        },
+        {
+          "level": 0,
+          "text": "Any inventory name ending in .example.com"
+        },
+        {
+          "level": 0,
+          "text": "192.168.2.*"
+        },
+        {
+          "level": 0,
+          "text": "Any inventory name starting with 192.168.2."
+        },
+        {
+          "level": 0,
+          "text": "datacenter*"
+        },
+        {
+          "level": 0,
+          "text": "Any inventory name starting with datacenter"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Wildcards match against ALL inventory names — hostnames, IP addresses, AND group names alike, with no way to distinguish between them. A pattern like data* could unexpectedly also match a group literally named data, not just hosts named data.example.com — always check what actually resolves with --list-hosts before trusting a wildcard pattern in production."
+        },
+        {
+          "level": 2,
+          "text": "Lists — comma-separated OR logic"
+        },
+        {
+          "level": 0,
+          "text": "- hosts: labhost1.example.com,test2.example.com,192.168.2.2"
+        },
+        {
+          "level": 0,
+          "text": "A comma-separated list matches any host that matches ANY item in the list — hosts, groups, and even wildcards can all be mixed together in one list."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION A colon (:) works as the same separator in older playbooks, but the comma is now preferred — especially since a colon is ambiguous with IPv6 addresses used as host names. Recognize the colon syntax in older examples."
+        },
+        {
+          "level": 2,
+          "text": "Logical AND with &, logical NOT with !"
+        },
+        {
+          "level": 0,
+          "text": "Pattern"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "lab,&datacenter1"
+        },
+        {
+          "level": 0,
+          "text": "Hosts in the lab group AND in the datacenter1 group"
+        },
+        {
+          "level": 0,
+          "text": "datacenter,!test2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "All hosts in datacenter EXCEPT test2.example.com"
+        },
+        {
+          "level": 0,
+          "text": "all,!datacenter1"
+        },
+        {
+          "level": 0,
+          "text": "Every host in the inventory EXCEPT those in datacenter1"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT The & (AND / intersection) and ! (NOT / exclusion) prefixes on list items are directly exam-relevant and easy to blank on under pressure. Memorize by name: comma alone is OR, & prefix is AND, ! prefix is NOT."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Special host-pattern characters (*, !, &) also mean something to the shell. Always wrap a host pattern containing them in single quotes on the ansible/ansible-playbook command line, and in a playbook's hosts: line, to stop the shell (or YAML) from misinterpreting them before Ansible ever sees the pattern."
+        }
+      ],
+      "words": 309
+    },
+    {
+      "title": "2. Managing Dynamic Inventories",
+      "content": [
+        {
+          "level": 0,
+          "text": "A static inventory file is fine for a small, stable set of hosts. It breaks down in environments where machines come and go quickly — cloud auto-scaling groups, virtualization clusters, hosts tracked by an external CMDB. A dynamic inventory script queries that external source LIVE, every time Ansible runs, instead of relying on a hand-maintained text file that's always slightly out of date."
+        },
+        {
+          "level": 0,
+          "text": "Typical dynamic inventory sources"
+        },
+        {
+          "level": 0,
+          "text": "Examples"
+        },
+        {
+          "level": 0,
+          "text": "Directory/identity services"
+        },
+        {
+          "level": 0,
+          "text": "FreeIPA, Active Directory"
+        },
+        {
+          "level": 0,
+          "text": "Provisioning/lifecycle management"
+        },
+        {
+          "level": 0,
+          "text": "Red Hat Satellite, Cobbler, Foreman, Spacewalk"
+        },
+        {
+          "level": 0,
+          "text": "Cloud platforms"
+        },
+        {
+          "level": 0,
+          "text": "AWS EC2, OpenStack, Google Compute Engine"
+        },
+        {
+          "level": 0,
+          "text": "Virtualization platforms"
+        },
+        {
+          "level": 0,
+          "text": "Red Hat Virtualization (oVirt), VMware vSphere"
+        },
+        {
+          "level": 0,
+          "text": "Community-contributed scripts for most of these already exist (from the Ansible GitHub project, unofficial/unsupported by Red Hat). If nothing exists for a given environment, a custom script can be written in ANY language, as long as it outputs valid JSON when called with --list."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT How Ansible decides static vs. dynamic: if the inventory FILE IS EXECUTABLE, Ansible treats it as a dynamic inventory script and runs it. If it's not executable, Ansible treats it as a plain static inventory file. This is purely a file-permission check — nothing about the file's name or content decides it."
+        },
+        {
+          "level": 2,
+          "text": "Inspecting any inventory as JSON"
+        },
+        {
+          "level": 0,
+          "text": "[student@workstation ~]$ ansible-inventory -i inventory --list"
+        },
+        {
+          "level": 0,
+          "text": "ansible-inventory works against BOTH static and dynamic inventories, converting either into the same JSON structure — genuinely useful both for debugging a custom dynamic inventory script and for understanding exactly what Ansible sees before writing one yourself."
+        },
+        {
+          "level": 2,
+          "text": "Combining multiple inventory sources"
+        },
+        {
+          "level": 0,
+          "text": "An inventory location can be a DIRECTORY containing several files (some static, some dynamic scripts) — Ansible merges them all into one combined inventory, parsed in alphabetical order. If a static file references a group that's actually populated by a dynamic source, that static file still needs a placeholder entry for the group name, so the merge stays internally consistent regardless of parse order:"
+        },
+        {
+          "level": 0,
+          "text": "[cloud-east]"
+        },
+        {
+          "level": 0,
+          "text": "[servers]"
+        },
+        {
+          "level": 0,
+          "text": "test.demo.example.com"
+        },
+        {
+          "level": 0,
+          "text": "[servers:children]"
+        },
+        {
+          "level": 0,
+          "text": "cloud-east"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Assuming inventory files in a directory are parsed in the order that makes logical sense. They're parsed alphabetically by filename, regardless of dependencies between them — a naming convention (00-static, 10-dynamic-aws, etc.) is the practical fix when order genuinely matters."
+        }
+      ],
+      "words": 359
+    },
+    {
+      "title": "3. Configuring Parallelism",
+      "content": [
+        {
+          "level": 0,
+          "text": "Ansible doesn't connect to every managed host simultaneously by default — the forks setting (in ansible.cfg, default 5) caps how many connections run at once. With 10 hosts and forks=5, Ansible runs the first task on 5 hosts, then the same task on the remaining 5, THEN moves to the second task the same way."
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ grep forks ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "forks = 5"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible-playbook -f 20 site.yml # override for one run"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS forks=5 is deliberately conservative. If a control node is only managing Linux hosts (most modules run ON the managed host, not the control node), raising forks toward 100 is often a real, safe performance win. But if you're managing network devices where modules run ON the control node itself, the control node's own CPU/memory becomes the bottleneck — raise forks much more cautiously there."
+        },
+        {
+          "level": 2,
+          "text": "Rolling updates with serial"
+        },
+        {
+          "level": 0,
+          "text": "Even with forks tuned high, Ansible by default still waits for EVERY host to finish a task before ANY host moves to the next task — which, for something like a web server restart, could take every server in a load-balanced pool offline at the same instant. serial: makes Ansible run hosts through the WHOLE PLAY in small batches instead."
+        },
+        {
+          "level": 0,
+          "text": "- name: Rolling update"
+        },
+        {
+          "level": 0,
+          "text": "hosts: webservers"
+        },
+        {
+          "level": 0,
+          "text": "serial: 2"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: latest apache httpd package is installed"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "notify: restart apache"
+        },
+        {
+          "level": 0,
+          "text": "handlers:"
+        },
+        {
+          "level": 0,
+          "text": "- name: restart apache"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 0,
+          "text": "With five web servers and serial: 2, Ansible runs the ENTIRE play (every task, then any notified handlers) on the first 2 hosts, then repeats on the next 2, then the last 1 — so at most 2 servers are ever out of service simultaneously, and the majority stay available throughout."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Each serial batch is treated as if it were its OWN complete play. If an entire batch fails, the whole playbook run aborts immediately — the remaining, not-yet-processed hosts are simply never touched. This is intentional: it stops a bad rollout after a small, known-bad batch instead of pushing a broken change to every host."
+        },
+        {
+          "level": 0,
+          "text": "serial: can also be given as a percentage of the total host count instead of a fixed number — the batch size is always at least 1 host, regardless of how small the percentage rounds down to."
+        }
+      ],
+      "words": 386
+    },
+    {
+      "title": "4. Including and Importing Files",
+      "content": [
+        {
+          "level": 0,
+          "text": "A playbook that's grown into hundreds of lines is hard to review, hard to reuse pieces of, and hard to hand off to a teammate. Ansible has two distinct mechanisms for splitting content into separate files — import and include — and they behave meaningfully differently, not just stylistically."
+        },
+        {
+          "level": 0,
+          "text": "Mechanism"
+        },
+        {
+          "level": 0,
+          "text": "Timing"
+        },
+        {
+          "level": 0,
+          "text": "Behaves like"
+        },
+        {
+          "level": 0,
+          "text": "import_*"
+        },
+        {
+          "level": 0,
+          "text": "STATIC — resolved when the playbook is first PARSED, before the run starts"
+        },
+        {
+          "level": 0,
+          "text": "Content is copy-pasted in ahead of time"
+        },
+        {
+          "level": 0,
+          "text": "include_*"
+        },
+        {
+          "level": 0,
+          "text": "DYNAMIC — resolved at RUN TIME, only when that point in the play is actually reached"
+        },
+        {
+          "level": 0,
+          "text": "Content is fetched and run on the fly"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT This static-vs-dynamic distinction is one of the highest-value facts in this entire chapter, because it explains a whole list of behavioral differences the exam tests individually. Learn the ONE underlying reason (when is it resolved?) rather than memorizing each symptom separately."
+        },
+        {
+          "level": 2,
+          "text": "import_playbook — combining whole playbooks"
+        },
+        {
+          "level": 0,
+          "text": "- name: Prepare the web server"
+        },
+        {
+          "level": 0,
+          "text": "import_playbook: web.yml"
+        },
+        {
+          "level": 0,
+          "text": "- name: Prepare the database server"
+        },
+        {
+          "level": 0,
+          "text": "import_playbook: db.yml"
+        },
+        {
+          "level": 0,
+          "text": "import_playbook only works at the TOP LEVEL of a playbook (never inside a play), and imported playbooks run in the order listed — they can even be interleaved with normal plays defined directly in the master file."
+        },
+        {
+          "level": 2,
+          "text": "import_tasks vs. include_tasks"
+        },
+        {
+          "level": 0,
+          "text": "Both pull a flat list of tasks from a separate file into a play:"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- import_tasks: webserver_tasks.yml"
+        },
+        {
+          "level": 0,
+          "text": "# or"
+        },
+        {
+          "level": 0,
+          "text": "- include_tasks: webserver_tasks.yml"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "import_tasks (static)"
+        },
+        {
+          "level": 0,
+          "text": "include_tasks (dynamic)"
+        },
+        {
+          "level": 0,
+          "text": "when on the import/include itself"
+        },
+        {
+          "level": 0,
+          "text": "Applied to EACH task inside individually"
+        },
+        {
+          "level": 0,
+          "text": "Determines whether the WHOLE FILE is pulled in at all"
+        },
+        {
+          "level": 0,
+          "text": "loop support"
+        },
+        {
+          "level": 0,
+          "text": "NOT supported"
+        },
+        {
+          "level": 0,
+          "text": "Supported"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --list-tasks"
+        },
+        {
+          "level": 0,
+          "text": "Lists the INDIVIDUAL tasks from inside the file"
+        },
+        {
+          "level": 0,
+          "text": "Lists only the include_tasks line itself, not what's inside"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --start-at-task"
+        },
+        {
+          "level": 0,
+          "text": "CAN start mid-way inside the imported file"
+        },
+        {
+          "level": 0,
+          "text": "CANNOT start inside an included file"
+        },
+        {
+          "level": 0,
+          "text": "notify targeting a handler inside the file"
+        },
+        {
+          "level": 0,
+          "text": "N/A the same way — tasks are inserted directly"
+        },
+        {
+          "level": 0,
+          "text": "CANNOT target a handler defined inside the included file directly"
+        },
+        {
+          "level": 0,
+          "text": "Variable in filename (\"{{ var }}.yml\")"
+        },
+        {
+          "level": 0,
+          "text": "Cannot use a host/group inventory variable for the filename"
+        },
+        {
+          "level": 0,
+          "text": "Works, since it's resolved at actual run time"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Trying to use loop: on an import_tasks call. It silently doesn't work the way you'd expect, because import_tasks is resolved before the play even starts running — there's no 'current item' concept yet at that point. Use include_tasks whenever a task file genuinely needs to be looped."
+        },
+        {
+          "level": 2,
+          "text": "Parameterizing an imported/included task file"
+        },
+        {
+          "level": 0,
+          "text": "A task file becomes genuinely reusable once its specifics are turned into variables instead of hardcoded values:"
+        },
+        {
+          "level": 0,
+          "text": "# task.yml"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install the {{ package }} package"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ package }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "- name: Start the {{ service }} service"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ service }}\""
+        },
+        {
+          "level": 0,
+          "text": "enabled: true"
+        },
+        {
+          "level": 0,
+          "text": "state: started"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Import task file and set variables"
+        },
+        {
+          "level": 0,
+          "text": "import_tasks: task.yml"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "package: httpd"
+        },
+        {
+          "level": 0,
+          "text": "service: httpd"
+        },
+        {
+          "level": 0,
+          "text": "The same vars: pattern works on import_playbook too — a single reusable play/task file can be called multiple times with different variable values instead of copy-pasting near-identical files."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION Older Ansible material sometimes uses a single unified include directive for both playbooks and tasks, which behaved inconsistently across versions and is now deprecated in favor of the explicit import_*/include_* pairs covered here — recognize include in old documentation, but use the modern explicit forms."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 5"
+        },
+        {
+          "level": 0,
+          "text": "Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "hosts: pattern1,pattern2"
+        },
+        {
+          "level": 0,
+          "text": "OR — match any listed host/group/wildcard"
+        },
+        {
+          "level": 0,
+          "text": "hosts: group1,&group2"
+        },
+        {
+          "level": 0,
+          "text": "AND — intersection of two groups"
+        },
+        {
+          "level": 0,
+          "text": "hosts: group1,!host1"
+        },
+        {
+          "level": 0,
+          "text": "NOT — exclude a specific host"
+        },
+        {
+          "level": 0,
+          "text": "ansible-inventory -i INV --list"
+        },
+        {
+          "level": 0,
+          "text": "View any inventory (static or dynamic) as JSON"
+        },
+        {
+          "level": 0,
+          "text": "forks = N (ansible.cfg) / -f N"
+        },
+        {
+          "level": 0,
+          "text": "Max simultaneous connections"
+        },
+        {
+          "level": 0,
+          "text": "serial: N or N%"
+        },
+        {
+          "level": 0,
+          "text": "Run the whole play in host batches (rolling update)"
+        },
+        {
+          "level": 0,
+          "text": "import_playbook: FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Statically combine whole playbooks (top-level only)"
+        },
+        {
+          "level": 0,
+          "text": "import_tasks: FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Statically insert a task list at parse time"
+        },
+        {
+          "level": 0,
+          "text": "include_tasks: FILE.yml"
+        },
+        {
+          "level": 0,
+          "text": "Dynamically insert a task list at run time"
+        }
+      ],
+      "words": 632
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Precise Targeting + a Modular, Safe Rollout",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Use host pattern logic to target an exact subset of hosts, split a playbook into reusable task files, and perform a safe rolling update with serial."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Your inventory has a webservers group (5 hosts) and a canary group that overlaps with ONE of those web servers, used for testing changes early. You need to: (1) run a quick check against every webserver except the canary, (2) roll out a package update across all five web servers two at a time, and (3) move the actual installation steps into a separate, reusable task file."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "An inventory with [webservers] (5 hosts) and [canary] (1 host, also a member of webservers)"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Write an ad hoc-style play targeting webservers,!canary-hostname (adjust to your actual canary hostname) that just pings"
+        },
+        {
+          "level": 0,
+          "text": "2. Create tasks/webapp_install.yml as a parameterized task file (package and service as variables) installing and starting a service"
+        },
+        {
+          "level": 0,
+          "text": "3. Write a rollout playbook that imports that task file with vars: set, targets webservers, and uses serial: 2 so no more than 2 servers update at once"
+        },
+        {
+          "level": 0,
+          "text": "4. Add a notify to restart the service, with a matching handler in the main playbook"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "The task file needs to use import_tasks (not include_tasks) here specifically so a when placed on the import (if you add one later) would apply per-task — but note import_tasks can't be looped, which is fine since this task file isn't looping."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: run ansible webservers,!canary-hostname --list-hosts first to CONFIRM the pattern resolves to exactly 4 hosts (5 minus the canary) before trusting it in a real play."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# tasks/webapp_install.yml"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install the {{ package }} package"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ package }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "notify: restart webapp"
+        },
+        {
+          "level": 0,
+          "text": "- name: Ensure {{ service }} is enabled and started"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ service }}\""
+        },
+        {
+          "level": 0,
+          "text": "enabled: true"
+        },
+        {
+          "level": 0,
+          "text": "state: started"
+        },
+        {
+          "level": 0,
+          "text": "# check.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Quick check, excluding canary"
+        },
+        {
+          "level": 0,
+          "text": "hosts: 'webservers,!canary1.lab.example.com'"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- ping:"
+        },
+        {
+          "level": 0,
+          "text": "# rollout.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Rolling web server update"
+        },
+        {
+          "level": 0,
+          "text": "hosts: webservers"
+        },
+        {
+          "level": 0,
+          "text": "serial: 2"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Import install tasks"
+        },
+        {
+          "level": 0,
+          "text": "import_tasks: tasks/webapp_install.yml"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "package: httpd"
+        },
+        {
+          "level": 0,
+          "text": "service: httpd"
+        },
+        {
+          "level": 0,
+          "text": "handlers:"
+        },
+        {
+          "level": 0,
+          "text": "- name: restart webapp"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "'webservers,!canary1.lab.example.com' is a plain comma-list with a ! exclusion — matches every host in webservers EXCEPT the named canary."
+        },
+        {
+          "level": 0,
+          "text": "serial: 2 on the rollout play means at most 2 of the 5 web servers are mid-update (and thus possibly briefly unavailable) at any moment — the other 3+ stay in service."
+        },
+        {
+          "level": 0,
+          "text": "import_tasks pulls the parameterized file in at parse time, with vars: supplying package/service values so the same task file could be reused for a completely different piece of software elsewhere."
+        },
+        {
+          "level": 0,
+          "text": "The handler lives in the IMPORTING playbook, not the task file — notify from inside an imported task file correctly reaches a handler defined in the main playbook, since import_tasks flattens everything into one play at parse time."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "Watch the rollout playbook's output: hosts should be processed in visibly separate batches of 2 (then the final batch of 1), each batch completing its tasks AND any notified handler before the next batch begins — not all five hosts interleaved together."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This lab's shape — a canary-excluded sanity check, then a serial-batched rollout using a shared, parameterized task file — is genuinely how careful teams roll out changes to production web fleets: verify first, roll out gradually, keep the majority of capacity online throughout."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 5 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What host pattern targets every host in group A that is ALSO in group B?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: A,&B — the & prefix means logical AND / intersection."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What host pattern targets every host in the inventory EXCEPT those in group X?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: all,!X — the ! prefix means logical NOT / exclusion."
+        },
+        {
+          "level": 0,
+          "text": "Q3. How does Ansible decide whether an inventory source is treated as static or dynamic?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Purely by whether the inventory FILE IS EXECUTABLE — executable means it's run as a dynamic inventory script; non-executable means it's parsed as a static file."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What command converts any inventory (static or dynamic) into a JSON view for inspection?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ansible-inventory -i INVENTORY --list"
+        },
+        {
+          "level": 0,
+          "text": "Q5. What does the forks setting control, and what's its default value?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The maximum number of simultaneous connections Ansible opens to managed hosts per task; the default is 5."
+        },
+        {
+          "level": 0,
+          "text": "Q6. With serial: 2 across 5 hosts, if the FIRST batch of 2 fails, what happens to the remaining 3 hosts?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The entire playbook run aborts immediately — the remaining hosts are never processed, because each serial batch is treated as its own complete play."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What is the single underlying difference between import_* and include_*?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: import_* is STATIC — resolved when the playbook is parsed, before the run starts; include_* is DYNAMIC — resolved at actual run time, when that point in the play is reached."
+        },
+        {
+          "level": 0,
+          "text": "Q8. Can you use loop: on an import_tasks call?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — import_tasks is resolved at parse time, before any 'current item' concept exists; use include_tasks if the task file needs to be looped."
+        },
+        {
+          "level": 0,
+          "text": "Q9. Where must import_playbook be used — can it appear inside a play?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Only at the TOP LEVEL of a playbook — never inside a play, since it imports complete plays, not individual tasks."
+        },
+        {
+          "level": 0,
+          "text": "Q10. How do you make an imported/included task file genuinely reusable across different contexts?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Parameterize the hardcoded values as Jinja2 variables inside the task file, then supply different values via vars: on each import_tasks/include_tasks (or import_playbook) call."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 6: SIMPLIFYING PLAYBOOKS WITH ROLES"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 8 in full: what a role is and how it's structured, reusing Red Hat's own pre-built RHEL System Roles, creating your own roles from scratch, and finding/installing community roles with Ansible Galaxy."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Everything from Part 2 onward (variables, task control, templates, project structure) was really building toward this. A role packages all of it — tasks, handlers, variables, templates, files — into one reusable, shareable, drop-in unit. This is the single most production-relevant chapter in RH294: real Ansible codebases are organized almost entirely around roles, not flat playbooks."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

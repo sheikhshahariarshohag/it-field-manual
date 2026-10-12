@@ -1,0 +1,302 @@
+{
+  "id": "rh124-02",
+  "n": 2,
+  "sourceNumber": 1,
+  "kind": "chapter",
+  "title": "GETTING STARTED WITH RED HAT ENTERPRISE LINUX",
+  "display": "Ch 1 — GETTING STARTED WITH RED HAT ENTERPRISE LINUX",
+  "exam": "RHCSA (EX200)",
+  "words": 1324,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Book reference: Chapter 1, pages 1–11. No Guided Exercise or Lab — this chapter is entirely conceptual."
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Where this fits on the exam"
+        },
+        {
+          "level": 0,
+          "text": "Nothing in this chapter is directly tested as a hands-on task on the RHCSA exam (EX200) — there's no command here to practice. It's the context that makes the rest of the course make sense, and Section 1.4 (the subscription model) is worth remembering because you'll actually run those commands for real in Chapter 14."
+        }
+      ],
+      "words": 80
+    },
+    {
+      "title": "1.1 Why bother learning Linux",
+      "content": [
+        {
+          "level": 0,
+          "text": "Linux quietly runs a huge share of the infrastructure you already depend on — most of the public internet's servers, the majority of cloud instances at AWS/Azure/GCP, most embedded and IoT devices, and most of the world's supercomputers. In a modern data center, the two operating systems that matter are Linux and Windows, and Linux's share keeps growing. For someone building a sysadmin/DevOps career (like you are), that translates into a very concrete fact: cloud computing, containers, and automation tooling are built assuming Linux underneath, so Linux administration is a prerequisite skill, not an optional one."
+        }
+      ],
+      "words": 96
+    },
+    {
+      "title": "1.2 What actually makes Linux different",
+      "content": [
+        {
+          "level": 0,
+          "text": "Three traits explain most of why Linux ended up everywhere:"
+        },
+        {
+          "level": 0,
+          "text": "It's open source — anyone can read the code, change it, and redistribute their changes. That transparency is also a security property: bugs and backdoors get found by many eyes, not just one vendor's."
+        },
+        {
+          "level": 0,
+          "text": "It's designed around a scriptable command line — every administrative task can be done (and automated) from the shell. This is the single biggest reason Linux dominates automation and DevOps tooling: if a human can type it, a script can repeat it."
+        },
+        {
+          "level": 0,
+          "text": "It's modular — the same kernel scales from a stripped-down container image or embedded appliance up to a full graphical workstation, just by choosing which packages sit on top of it."
+        }
+      ],
+      "words": 117
+    },
+    {
+      "title": "1.3 Open source licensing, in the amount you need to know",
+      "content": [
+        {
+          "level": 0,
+          "text": "\"Open source\" isn't one license — it's a category, and the license attached to a project decides what you're allowed to do with its code. Two broad families matter:"
+        },
+        {
+          "level": 0,
+          "text": "License family"
+        },
+        {
+          "level": 0,
+          "text": "Rule of thumb"
+        },
+        {
+          "level": 0,
+          "text": "Examples"
+        },
+        {
+          "level": 0,
+          "text": "Copyleft (\"share-alike\")"
+        },
+        {
+          "level": 0,
+          "text": "If you redistribute the code — modified or not — you must pass along the same freedoms to whoever you give it to. Keeps improvements permanently open."
+        },
+        {
+          "level": 0,
+          "text": "GPL, LGPL (the Linux kernel itself is GPL)"
+        },
+        {
+          "level": 0,
+          "text": "Permissive"
+        },
+        {
+          "level": 0,
+          "text": "Reuse it almost however you like, including folding it into closed-source or proprietary products, as long as you keep the original copyright notice."
+        },
+        {
+          "level": 0,
+          "text": "MIT, BSD, Apache 2.0"
+        },
+        {
+          "level": 0,
+          "text": "The practical upside for you as a user of open source software: you can inspect exactly what code does (control), learn from real production-grade code (training), audit and patch security issues yourself if you need to (security), and the software doesn't disappear if the original author walks away, because anyone can pick the codebase back up (stability)."
+        }
+      ],
+      "words": 157
+    },
+    {
+      "title": "1.4 From kernel to distribution to RHEL",
+      "content": [
+        {
+          "level": 0,
+          "text": "The Linux kernel — the part Linus Torvalds first wrote in 1991 — only manages hardware, memory, and process scheduling. On its own it isn't a usable operating system. A distribution is what bundles the kernel together with everything else you need (shell, utilities, package manager, desktop environment, and so on) into something installable."
+        },
+        {
+          "level": 0,
+          "text": "Red Hat's own pipeline for building Red Hat Enterprise Linux runs through three stages:"
+        },
+        {
+          "level": 0,
+          "text": "1. Upstream contribution — Red Hat contributes code and engineering time directly to individual open source projects (the kernel, systemd, and many others), improving the software for the whole ecosystem, not just its own product."
+        },
+        {
+          "level": 0,
+          "text": "2. Fedora — Red Hat sponsors Fedora, a fast-moving, community-driven distribution that acts as the proving ground — new features land here first, roughly every six months, and each release is only supported for about a year. That pace is exactly why Fedora is great for trying new things and unsuitable for a production server."
+        },
+        {
+          "level": 0,
+          "text": "3. RHEL — Red Hat takes what has proven stable in Fedora, hardens it, and ships it as Red Hat Enterprise Linux — with multi-year support windows, certified hardware and software partners, and a support organization behind it."
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — The subscription model isn't a software license fee"
+        },
+        {
+          "level": 0,
+          "text": "RHEL itself is still open source — you're not paying for permission to run it. The subscription pays for support, tested and curated updates, security patches, access to Red Hat's Knowledgebase, and official certifications with third-party hardware/software. Practically: once you're on a given major version, you can move to new minor updates at your own pace, at no extra cost, for as long as your subscription is active. This is exactly what you registered your lab VMs for in Part 0."
+        }
+      ],
+      "words": 290
+    },
+    {
+      "title": "1.5 RHEL vs. community rebuilds (CentOS Stream, Rocky, Alma)",
+      "content": [
+        {
+          "level": 0,
+          "text": "Distributions like CentOS historically rebuilt RHEL's source packages and gave them away, free of the support relationship. The trade-offs are consistent across these community rebuilds:"
+        },
+        {
+          "level": 0,
+          "text": "Community rebuild (e.g. classic CentOS)"
+        },
+        {
+          "level": 0,
+          "text": "RHEL"
+        },
+        {
+          "level": 0,
+          "text": "Support"
+        },
+        {
+          "level": 0,
+          "text": "Self-support: forums, mailing lists, community wiki."
+        },
+        {
+          "level": 0,
+          "text": "Tiered support (business-hours to 24x7), SLAs, official Red Hat backing."
+        },
+        {
+          "level": 0,
+          "text": "Patch timing"
+        },
+        {
+          "level": 0,
+          "text": "Waits for upstream RHEL errata to be published first."
+        },
+        {
+          "level": 0,
+          "text": "Direct access to Red Hat's own hotfixes and errata, sometimes ahead of public release."
+        },
+        {
+          "level": 0,
+          "text": "ISV certification"
+        },
+        {
+          "level": 0,
+          "text": "Rarely certified by vendors like SAP, Oracle, SAS."
+        },
+        {
+          "level": 0,
+          "text": "Thousands of certified applications from official partners."
+        },
+        {
+          "level": 0,
+          "text": "Extended support"
+        },
+        {
+          "level": 0,
+          "text": "None beyond the standard maintenance window."
+        },
+        {
+          "level": 0,
+          "text": "Extended Update Support (EUS) and Extended Lifecycle Support (ELS) add years of coverage for older minor releases."
+        }
+      ],
+      "words": 115
+    },
+    {
+      "title": "1.6 How to actually get RHEL, free",
+      "content": [
+        {
+          "level": 0,
+          "text": "You already did this in Part 0, but for reference, the legitimate free routes to real RHEL are:"
+        },
+        {
+          "level": 0,
+          "text": "The Red Hat Developer Subscription for Individuals (developers.redhat.com) — free, up to 16 systems, real support-grade repositories. This is what your lab runs on."
+        },
+        {
+          "level": 0,
+          "text": "A time-limited evaluation copy from access.redhat.com, if you only need to trial it briefly."
+        },
+        {
+          "level": 0,
+          "text": "Official Red Hat AMIs on cloud marketplaces (AWS, Azure, GCP) if you'd rather run it in the cloud than locally."
+        }
+      ],
+      "words": 76
+    },
+    {
+      "title": "Review — check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "These are written in different words from the book's own quiz on purpose — if you can answer these without re-reading, you actually know the material rather than recognizing the phrasing."
+        },
+        {
+          "level": 0,
+          "text": "1. Q1 — Name two concrete advantages a user gets from software being open source (not just \"it's free\")."
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — What are the three stages Red Hat's development pipeline moves code through before it becomes RHEL?"
+        },
+        {
+          "level": 0,
+          "text": "3. Q3 — Your teammate says \"Linux is basically written by volunteers in their spare time, that's why it's free.\" What's wrong with that statement, and what does Linux's modularity actually let you do that a monolithic OS doesn't?"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — Control (you can inspect and change the code yourself) and stability (the project survives even if the original maintainer disappears, because anyone can fork it); training and security audits are the other two from the same list."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — Upstream project contribution → Fedora (fast-moving community proving ground) → RHEL (stabilized, long-term-supported release)."
+        },
+        {
+          "level": 0,
+          "text": "Q3 — Wrong because open source development today is overwhelmingly professional — companies (including Red Hat) pay engineers to work on it; \"free\" refers to freedom to use/modify/redistribute, not that it's unpaid hobby work. Modularity means the same kernel can be stripped down to a minimal appliance or single-purpose container image, or built up into a full graphical desktop, just by choosing which packages sit on top of it — a monolithic design can't shrink or grow like that."
+        }
+      ],
+      "words": 245
+    },
+    {
+      "title": "Chapter 1 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "Open source means anyone can use, study, modify, and redistribute the source code; copyleft licenses (GPL/LGPL) require sharing improvements back, permissive licenses (MIT/BSD/Apache) don't."
+        },
+        {
+          "level": 0,
+          "text": "A distribution bundles the Linux kernel with the user-space software needed to make it a usable OS."
+        },
+        {
+          "level": 0,
+          "text": "Red Hat's pipeline is upstream contribution → Fedora → RHEL, trading Fedora's speed for RHEL's stability and multi-year support."
+        },
+        {
+          "level": 0,
+          "text": "RHEL's subscription pays for support and curated updates, not a software license — the code is still open source."
+        },
+        {
+          "level": 0,
+          "text": "You get real, free RHEL for lab use through the Red Hat Developer Subscription for Individuals."
+        }
+      ],
+      "words": 95
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": []
+}

@@ -1,0 +1,700 @@
+{
+  "id": "rh124-06",
+  "n": 6,
+  "sourceNumber": 5,
+  "kind": "chapter",
+  "title": "CREATING, VIEWING, AND EDITING TEXT FILES",
+  "display": "Ch 5 — CREATING, VIEWING, AND EDITING TEXT FILES",
+  "exam": "RHCSA (EX200)",
+  "words": 1758,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Book reference: Chapter 5, pages 125–159. Guided Exercises: Editing Text Files from the Shell Prompt, Changing the Shell Environment. Lab: Creating, Viewing, and Editing Text Files."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+        },
+        {
+          "level": 0,
+          "text": "Vim is how you'll edit every configuration file on the RHCSA exam — there's no guaranteed graphical editor. Redirection and pipes are how you'll capture command output as proof of work and feed one command's results into another. Budget real practice time here."
+        }
+      ],
+      "words": 77
+    },
+    {
+      "title": "5.1 Standard input, output, and error",
+      "content": [
+        {
+          "level": 0,
+          "text": "Every process starts with three numbered communication channels (\"file descriptors\"):"
+        },
+        {
+          "level": 0,
+          "text": "#"
+        },
+        {
+          "level": 0,
+          "text": "Name"
+        },
+        {
+          "level": 0,
+          "text": "Default connection"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "stdin (standard input)"
+        },
+        {
+          "level": 0,
+          "text": "Keyboard"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "stdout (standard output)"
+        },
+        {
+          "level": 0,
+          "text": "Terminal"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "stderr (standard error)"
+        },
+        {
+          "level": 0,
+          "text": "Terminal"
+        },
+        {
+          "level": 0,
+          "text": "Redirection swaps a file in for the keyboard/terminal on either end. This is exactly why redirecting stdout alone doesn't hide error messages — they travel on channel 2, a separate pipe entirely, and keep going to your screen unless you redirect that too."
+        },
+        {
+          "level": 0,
+          "text": "Operator"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "> file"
+        },
+        {
+          "level": 0,
+          "text": "stdout overwrites file (creates it if missing)"
+        },
+        {
+          "level": 0,
+          "text": ">> file"
+        },
+        {
+          "level": 0,
+          "text": "stdout appends to file"
+        },
+        {
+          "level": 0,
+          "text": "2> file"
+        },
+        {
+          "level": 0,
+          "text": "stderr overwrites file"
+        },
+        {
+          "level": 0,
+          "text": "2> /dev/null"
+        },
+        {
+          "level": 0,
+          "text": "discard error messages entirely"
+        },
+        {
+          "level": 0,
+          "text": "> file 2>&1"
+        },
+        {
+          "level": 0,
+          "text": "stdout AND stderr both to file (order matters — see below)"
+        },
+        {
+          "level": 0,
+          "text": "&> file"
+        },
+        {
+          "level": 0,
+          "text": "same as above, shorter modern syntax"
+        },
+        {
+          "level": 0,
+          "text": "&>> file"
+        },
+        {
+          "level": 0,
+          "text": "stdout AND stderr both appended to file"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Order matters with 2>&1"
+        },
+        {
+          "level": 0,
+          "text": "> file 2>&1 means \"send stdout to file, then point stderr at wherever stdout is now pointing\" — both end up in file. Correct."
+        },
+        {
+          "level": 0,
+          "text": "2>&1 > file means \"point stderr at wherever stdout currently is (the terminal), then send stdout to file\" — stderr still prints to your screen. This is a classic mistake; the merging operators &> and &>> sidestep the ordering trap entirely, which is why many admins prefer them, though some scripting purists avoid them for portability to non-bash shells. Both styles are common in the field — know both."
+        },
+        {
+          "level": 0,
+          "text": "date > /tmp/saved-timestamp # save output"
+        },
+        {
+          "level": 0,
+          "text": "find /etc -name passwd 2> /tmp/errors # errors only to file, output stays on screen"
+        },
+        {
+          "level": 0,
+          "text": "find /etc -name passwd > /tmp/out 2> /tmp/errors # split output and errors into two files"
+        },
+        {
+          "level": 0,
+          "text": "find /etc -name passwd &> /tmp/both # both together"
+        },
+        {
+          "level": 0,
+          "text": "find /etc -name passwd > /tmp/out 2> /dev/null # keep output, throw errors away"
+        }
+      ],
+      "words": 291
+    },
+    {
+      "title": "5.2 Pipelines and tee",
+      "content": [
+        {
+          "level": 0,
+          "text": "| connects one command's stdout directly to the next command's stdin — no file touches disk in between."
+        },
+        {
+          "level": 0,
+          "text": "ls -l /usr/bin | less # page through long output"
+        },
+        {
+          "level": 0,
+          "text": "ls | wc -l # count how many files are in the current directory"
+        },
+        {
+          "level": 0,
+          "text": "ls -t | head -n 10 > recent.txt # newest 10 files, saved to a file"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — tee — save AND view at the same time"
+        },
+        {
+          "level": 0,
+          "text": "Putting > file in the middle of a pipeline sends output only to that file — nothing reaches the next command, which is rarely what you want. tee solves this: it copies its input to a file while also passing it straight through to stdout, so the pipeline keeps flowing."
+        },
+        {
+          "level": 0,
+          "text": "ls -l | tee /tmp/saved-output | less # saved to file AND shown on screen"
+        },
+        {
+          "level": 0,
+          "text": "One exception: &> and &>> cannot be used to pipe stderr — for that, put 2>&1 before the pipe: find / -name passwd 2>&1 | less."
+        }
+      ],
+      "words": 163
+    },
+    {
+      "title": "5.3 Editing files with Vim",
+      "content": [
+        {
+          "level": 0,
+          "text": "Every RHEL system ships at least a minimal vi; most also have vim-enhanced, which upgrades the plain vi command to full Vim automatically for regular users (root and other low-UID system accounts are deliberately excluded from that alias, so vi still means plain vi for root unless you type vim explicitly)."
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — Why Vim specifically, out of every editor that exists"
+        },
+        {
+          "level": 0,
+          "text": "vi is required by the POSIX standard, so some form of it is essentially guaranteed on any Linux/UNIX-like box you'll ever touch — including macOS. Learning it once means you're never stuck without an editor on an unfamiliar server, which is exactly the scenario the RHCSA exam is testing for."
+        },
+        {
+          "level": 3,
+          "text": "The three modes that matter"
+        },
+        {
+          "level": 0,
+          "text": "Mode"
+        },
+        {
+          "level": 0,
+          "text": "Enter with"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "Command mode"
+        },
+        {
+          "level": 0,
+          "text": "(default on open, or Esc from elsewhere)"
+        },
+        {
+          "level": 0,
+          "text": "Navigation, delete, copy/paste, undo"
+        },
+        {
+          "level": 0,
+          "text": "Insert mode"
+        },
+        {
+          "level": 0,
+          "text": "i"
+        },
+        {
+          "level": 0,
+          "text": "Typing becomes file content"
+        },
+        {
+          "level": 0,
+          "text": "Extended command mode"
+        },
+        {
+          "level": 0,
+          "text": ":"
+        },
+        {
+          "level": 0,
+          "text": "Save, quit, search/replace, and other whole-file operations"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Lost? Press Esc"
+        },
+        {
+          "level": 0,
+          "text": "If you're not sure what mode you're in, pressing Esc repeatedly is always safe and gets you back to command mode — it does nothing harmful if you're already there."
+        },
+        {
+          "level": 3,
+          "text": "The minimum survival command set"
+        },
+        {
+          "level": 0,
+          "text": "Keys"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "i"
+        },
+        {
+          "level": 0,
+          "text": "Enter insert mode at the cursor"
+        },
+        {
+          "level": 0,
+          "text": "Esc"
+        },
+        {
+          "level": 0,
+          "text": "Leave insert mode, back to command mode"
+        },
+        {
+          "level": 0,
+          "text": "x"
+        },
+        {
+          "level": 0,
+          "text": "Delete the character under the cursor"
+        },
+        {
+          "level": 0,
+          "text": "u"
+        },
+        {
+          "level": 0,
+          "text": "Undo the last change"
+        },
+        {
+          "level": 0,
+          "text": ":w"
+        },
+        {
+          "level": 0,
+          "text": "Write (save), stay open"
+        },
+        {
+          "level": 0,
+          "text": ":wq"
+        },
+        {
+          "level": 0,
+          "text": "Write and quit"
+        },
+        {
+          "level": 0,
+          "text": ":q!"
+        },
+        {
+          "level": 0,
+          "text": "Quit, discarding changes since the last save"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — This table is exam-day muscle memory"
+        },
+        {
+          "level": 0,
+          "text": "If you only memorize seven Vim keystrokes for the whole course, memorize these seven — every config-file edit on the exam runs through this exact set."
+        },
+        {
+          "level": 3,
+          "text": "Copy/paste and visual mode"
+        },
+        {
+          "level": 0,
+          "text": "Vim calls copy/paste \"yank and put\": y yanks a visual-mode selection into memory, p puts it at the cursor. Visual mode itself has three flavors:"
+        },
+        {
+          "level": 0,
+          "text": "Key"
+        },
+        {
+          "level": 0,
+          "text": "Selects"
+        },
+        {
+          "level": 0,
+          "text": "v"
+        },
+        {
+          "level": 0,
+          "text": "Character by character"
+        },
+        {
+          "level": 0,
+          "text": "Shift+V"
+        },
+        {
+          "level": 0,
+          "text": "Whole lines"
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+V"
+        },
+        {
+          "level": 0,
+          "text": "A rectangular block — ideal for editing a column across many lines at once"
+        },
+        {
+          "level": 0,
+          "text": "Practice these hands-on with the built-in tutorial, which ships with vim-enhanced:"
+        },
+        {
+          "level": 0,
+          "text": "vimtutor"
+        }
+      ],
+      "words": 343
+    },
+    {
+      "title": "5.4 Shell variables and environment variables",
+      "content": [
+        {
+          "level": 0,
+          "text": "VARNAME=value sets a shell variable — letters, digits, and underscore only in the name. It exists only in that one shell session; a second terminal or SSH login won't see it."
+        },
+        {
+          "level": 0,
+          "text": "COUNT=40"
+        },
+        {
+          "level": 0,
+          "text": "echo $COUNT # → 40"
+        },
+        {
+          "level": 0,
+          "text": "echo ${COUNT}x # braces protect the name when characters follow it directly"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Bare variable name vs. $-prefixed"
+        },
+        {
+          "level": 0,
+          "text": "echo COUNT prints the literal word \"COUNT\". echo $COUNT prints its value. This trips up almost everyone at least once."
+        },
+        {
+          "level": 3,
+          "text": "Shell variables you'll actually touch"
+        },
+        {
+          "level": 0,
+          "text": "Variable"
+        },
+        {
+          "level": 0,
+          "text": "Controls"
+        },
+        {
+          "level": 0,
+          "text": "PS1"
+        },
+        {
+          "level": 0,
+          "text": "The prompt's appearance — e.g. PS1='[\\u@\\h \\t \\w]$ ' adds user, host, time, working dir."
+        },
+        {
+          "level": 0,
+          "text": "HISTFILE / HISTFILESIZE"
+        },
+        {
+          "level": 0,
+          "text": "Where shell history is saved (default ~/.bash_history) and how many commands it keeps."
+        },
+        {
+          "level": 0,
+          "text": "Quoting rule: any value containing a space (like a PS1 string) must be quoted, single or double — this is not optional, and the recommended style also ends PS1 with a trailing space for readability."
+        },
+        {
+          "level": 3,
+          "text": "Turning a shell variable into an environment variable"
+        },
+        {
+          "level": 0,
+          "text": "Plain shell variables are invisible to programs you launch. export promotes one to an environment variable, which every child process inherits:"
+        },
+        {
+          "level": 0,
+          "text": "export EDITOR=vim # set and export in one step"
+        },
+        {
+          "level": 0,
+          "text": "echo $PATH # colon-separated list the shell searches, in order, for a command's executable"
+        },
+        {
+          "level": 0,
+          "text": "Variable"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "PATH"
+        },
+        {
+          "level": 0,
+          "text": "Directories searched (in order) to find a command's executable"
+        },
+        {
+          "level": 0,
+          "text": "HOME"
+        },
+        {
+          "level": 0,
+          "text": "Your home directory — set automatically at shell start"
+        },
+        {
+          "level": 0,
+          "text": "EDITOR"
+        },
+        {
+          "level": 0,
+          "text": "Default command-line editor many programs invoke"
+        },
+        {
+          "level": 0,
+          "text": "LANG"
+        },
+        {
+          "level": 0,
+          "text": "Locale — language, character set, date/number formatting"
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — Why PS1 and HISTFILE never get exported"
+        },
+        {
+          "level": 0,
+          "text": "Only the shell itself reads those two — no external program needs them — so exporting them would accomplish nothing. PATH, EDITOR, and LANG matter precisely because other programs (not just the shell) read them, which is the entire purpose of export."
+        },
+        {
+          "level": 0,
+          "text": "env lists every environment variable currently set. unset VARNAME removes a variable entirely; export -n VARNAME keeps the variable but un-exports it (the shell keeps it, child programs stop seeing it)."
+        },
+        {
+          "level": 3,
+          "text": "Making it permanent: Bash startup files"
+        },
+        {
+          "level": 0,
+          "text": "Variables set directly at the prompt vanish when that shell exits. To make a setting stick for every future login, put it in a startup file instead:"
+        },
+        {
+          "level": 0,
+          "text": "Scope"
+        },
+        {
+          "level": 0,
+          "text": "Edit this file"
+        },
+        {
+          "level": 0,
+          "text": "Just your account, every interactive shell"
+        },
+        {
+          "level": 0,
+          "text": "~/.bashrc"
+        },
+        {
+          "level": 0,
+          "text": "Every account on the system"
+        },
+        {
+          "level": 0,
+          "text": "A new .sh file in /etc/profile.d/ (root required)"
+        },
+        {
+          "level": 0,
+          "text": "# added to ~/.bashrc:"
+        },
+        {
+          "level": 0,
+          "text": "export EDITOR=nano"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Persisting PS1 in the lab"
+        },
+        {
+          "level": 0,
+          "text": "Editing ~/.bashrc to add a PS1 line, then logging out and back in to confirm it took effect, is precisely the kind of task-plus-verification pattern the exam rewards — don't just make a change, prove it worked."
+        }
+      ],
+      "words": 435
+    },
+    {
+      "title": "Hands-on: practice these on your own lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. find /etc -name '*.conf' > /tmp/out 2> /tmp/errors — inspect both files afterward with less."
+        },
+        {
+          "level": 0,
+          "text": "2. ls -l /etc | tee /tmp/etc-listing | wc -l — confirm the file was written AND the count printed."
+        },
+        {
+          "level": 0,
+          "text": "3. vim ~/practice.txt — type a few lines in insert mode, Esc, then :wq. Reopen it with vim to confirm it saved."
+        },
+        {
+          "level": 0,
+          "text": "4. In vim, select three lines with Shift+V, y to yank, move the cursor, p to put — confirm the copy."
+        },
+        {
+          "level": 0,
+          "text": "5. export GREETING=\"hello lab\"; echo $GREETING, then open a second SSH session to the same box and echo $GREETING again — confirm it's empty there, proving variables are per-session."
+        },
+        {
+          "level": 0,
+          "text": "6. Add export EDITOR=vim to ~/.bashrc, log out, log back in, then echo $EDITOR to confirm it persisted."
+        }
+      ],
+      "words": 126
+    },
+    {
+      "title": "Review — check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. Q1 — Write a single command that runs a find command, keeps normal output on the screen, but throws away only the error messages."
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — You run somecommand > out.txt | less and out.txt fills up but less shows nothing. Why, and what command fixes it while keeping both behaviors?"
+        },
+        {
+          "level": 0,
+          "text": "3. Q3 — You're mid-edit in vim and can't remember if you're in insert or command mode. What's the safe move, and why is it safe?"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — find /some/path 2> /dev/null (redirect only channel 2 to the null device; stdout is untouched and still prints)."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — Redirection is set up before the pipe connects, so > out.txt claims all of stdout for the file and nothing is left to flow into less. Fix: tee — somecommand | tee out.txt | less sends output both to the file and onward through the pipe."
+        },
+        {
+          "level": 0,
+          "text": "Q3 — Press Esc. In command mode Esc does nothing harmful, and from insert mode it simply exits to command mode — so pressing it (even repeatedly, even if you're unsure) can never make things worse."
+        }
+      ],
+      "words": 186
+    },
+    {
+      "title": "Chapter 5 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "Every process has stdin/stdout/stderr on channels 0/1/2; redirecting one doesn't affect the others unless you explicitly merge them (2>&1, &>)."
+        },
+        {
+          "level": 0,
+          "text": "Pipes (|) connect commands directly; tee lets you save to a file and keep the pipeline flowing at the same time."
+        },
+        {
+          "level": 0,
+          "text": "Vim's three core modes are command, insert (i), and extended command (:) — i / Esc / x / u / :w / :wq / :q! covers the exam-critical minimum."
+        },
+        {
+          "level": 0,
+          "text": "Shell variables live in one session only; export promotes one to an environment variable that child processes inherit."
+        },
+        {
+          "level": 0,
+          "text": "~/.bashrc makes a setting persistent for your account; /etc/profile.d/*.sh makes it system-wide."
+        }
+      ],
+      "words": 101
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": []
+}

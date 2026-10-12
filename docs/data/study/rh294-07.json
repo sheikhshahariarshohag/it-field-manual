@@ -1,0 +1,812 @@
+{
+  "id": "rh294-07",
+  "n": 7,
+  "sourceNumber": 7,
+  "kind": "part",
+  "title": "Part 7",
+  "display": "Part 7 — Troubleshooting Playbooks; Troubleshooting Ansible Managed …",
+  "exam": "RHCE (EX294)",
+  "words": 2481,
+  "sections": [
+    {
+      "title": "1. Troubleshooting Playbooks",
+      "content": [
+        {
+          "level": 2,
+          "text": "Logging Ansible's output"
+        },
+        {
+          "level": 0,
+          "text": "By default, Ansible logs nothing to disk — output only ever goes to the terminal. Persistent logging is opt-in, via either setting in ansible.cfg:"
+        },
+        {
+          "level": 0,
+          "text": "[defaults]"
+        },
+        {
+          "level": 0,
+          "text": "log_path = /var/log/ansible.log"
+        },
+        {
+          "level": 0,
+          "text": "or the equivalent $ANSIBLE_LOG_PATH environment variable. Once configured, BOTH the ansible and ansible-playbook commands log to that same file."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING If you point log_path at /var/log/, set up logrotate for it — Ansible itself never rotates or truncates its own log file, and a busy control node's log can grow unbounded."
+        },
+        {
+          "level": 2,
+          "text": "The debug module"
+        },
+        {
+          "level": 0,
+          "text": "debug prints a message or a variable's value at a specific point in a play — the single most useful tool for understanding what a variable actually contains mid-playbook, especially when one task's output feeds into a later task."
+        },
+        {
+          "level": 0,
+          "text": "- name: Display free memory"
+        },
+        {
+          "level": 0,
+          "text": "debug:"
+        },
+        {
+          "level": 0,
+          "text": "msg: \"Free memory for this system is {{ ansible_facts['memfree_mb'] }}\""
+        },
+        {
+          "level": 0,
+          "text": "- name: Display the \"output\" variable"
+        },
+        {
+          "level": 0,
+          "text": "debug:"
+        },
+        {
+          "level": 0,
+          "text": "var: output"
+        },
+        {
+          "level": 0,
+          "text": "verbosity: 2"
+        },
+        {
+          "level": 0,
+          "text": "The verbosity: setting on a debug task is a nice trick for keeping normal runs quiet — that particular debug task only actually prints when ansible-playbook is run with at least that many -v flags (verbosity: 2 needs -vv or higher)."
+        },
+        {
+          "level": 2,
+          "text": "Catching syntax problems before they run"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook play.yml --syntax-check"
+        },
+        {
+          "level": 0,
+          "text": "Validate YAML/Ansible syntax without running anything (from Part 2)"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook play.yml --step"
+        },
+        {
+          "level": 0,
+          "text": "Interactively confirm EACH task before it runs — pause-and-approve, one task at a time"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook play.yml --start-at-task=\"task name\""
+        },
+        {
+          "level": 0,
+          "text": "Resume a playbook from a specific named task, skipping everything before it"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS --step and --start-at-task are exactly what you want after a long playbook fails partway through: --step lets you walk through it live and watch exactly where it breaks; --start-at-task lets you re-run from the failure point instead of re-running the whole thing (including already-succeeded, time-consuming tasks) from scratch."
+        },
+        {
+          "level": 2,
+          "text": "Reading run output and increasing verbosity"
+        },
+        {
+          "level": 0,
+          "text": "PLAY [Service Deployment] ***************************************************"
+        },
+        {
+          "level": 0,
+          "text": "TASK: [Install a service] ***************************************************"
+        },
+        {
+          "level": 0,
+          "text": "ok: [demoservera]"
+        },
+        {
+          "level": 0,
+          "text": "ok: [demoserverb]"
+        },
+        {
+          "level": 0,
+          "text": "PLAY RECAP ******************************************************************"
+        },
+        {
+          "level": 0,
+          "text": "demoservera : ok=2 changed=0 unreachable=0 failed=0"
+        },
+        {
+          "level": 0,
+          "text": "demoserverb : ok=2 changed=0 unreachable=0 failed=0"
+        },
+        {
+          "level": 0,
+          "text": "Each managed host's per-task result appears as one of four states: ok, changed, fatal, or skipping. The PLAY RECAP totals those states across the whole run, per host."
+        },
+        {
+          "level": 0,
+          "text": "Flag"
+        },
+        {
+          "level": 0,
+          "text": "Adds"
+        },
+        {
+          "level": 0,
+          "text": "-v"
+        },
+        {
+          "level": 0,
+          "text": "Output data"
+        },
+        {
+          "level": 0,
+          "text": "-vv"
+        },
+        {
+          "level": 0,
+          "text": "Output AND input data"
+        },
+        {
+          "level": 0,
+          "text": "-vvv"
+        },
+        {
+          "level": 0,
+          "text": "Connection details to managed hosts"
+        },
+        {
+          "level": 0,
+          "text": "-vvvv"
+        },
+        {
+          "level": 0,
+          "text": "Scripts executed on the remote host, and which user ran them"
+        },
+        {
+          "level": 2,
+          "text": "Recommended practices that prevent problems later"
+        },
+        {
+          "level": 0,
+          "text": "Give every play and task a clear, specific name — it's what shows up in the run output and is often the fastest clue to where something broke."
+        },
+        {
+          "level": 0,
+          "text": "Use comments for anything non-obvious."
+        },
+        {
+          "level": 0,
+          "text": "Use vertical whitespace generously — one attribute per line, organized for readability, not compactness."
+        },
+        {
+          "level": 0,
+          "text": "Consistent indentation with SPACES only — configure your editor to insert spaces on Tab."
+        },
+        {
+          "level": 0,
+          "text": "Keep playbooks as simple as the job actually requires — use only the features you need."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Treating 'looks fine to me' as sufficient before running a playbook against real infrastructure. --syntax-check plus a --check dry run (Section 7.2) together catch the overwhelming majority of embarrassing mistakes before they touch a real host."
+        }
+      ],
+      "words": 510
+    },
+    {
+      "title": "2. Troubleshooting Ansible Managed Hosts",
+      "content": [
+        {
+          "level": 2,
+          "text": "Check mode — a safe dry run"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible-playbook --check playbook.yml"
+        },
+        {
+          "level": 0,
+          "text": "With --check, a module that SUPPORTS check mode reports what it WOULD change without actually changing it. A module that doesn't support check mode simply takes no action at all under --check (and reports nothing useful either way)."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING --check can behave unreliably on playbooks that use conditionals — a when clause testing a fact or a registered variable that a real run would have SET may evaluate differently (or not at all) in a dry run where nothing actually changed. Don't treat --check output as gospel on a heavily conditional playbook without also reading it carefully."
+        },
+        {
+          "level": 2,
+          "text": "Forcing individual tasks in or out of check mode"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: task always in check mode"
+        },
+        {
+          "level": 0,
+          "text": "shell: uname -a"
+        },
+        {
+          "level": 0,
+          "text": "check_mode: yes"
+        },
+        {
+          "level": 0,
+          "text": "- name: task always runs even in check mode"
+        },
+        {
+          "level": 0,
+          "text": "shell: uname -a"
+        },
+        {
+          "level": 0,
+          "text": "check_mode: no"
+        },
+        {
+          "level": 0,
+          "text": "check_mode: yes forces a task to ALWAYS run in check mode, whether or not --check was passed. check_mode: no forces a task to ALWAYS run for real, even during a --check dry run — useful for gathering facts or setting variables that later conditionals need to evaluate sensibly, without those particular tasks making any real change themselves."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT This is a genuinely important, easy-to-miss exam trap: passing ansible-playbook --check does NOT guarantee zero changes to a managed host. Any task explicitly marked check_mode: no still runs for real, dry-run flag or not. Never assume --check is a safety net without first checking whether the playbook itself overrides that behavior task-by-task."
+        },
+        {
+          "level": 0,
+          "text": "A task can test whether it's currently running under check mode via the magic variable ansible_check_mode (true/false) — useful for a task that needs to behave conditionally based on dry-run status."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION Older playbooks may use always_run: yes instead of check_mode: no — always_run was deprecated starting in Ansible 2.6. Recognize it in old material, but use check_mode: no in anything you write."
+        },
+        {
+          "level": 2,
+          "text": "Seeing exactly what would change: --diff"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible-playbook --check --diff playbook.yml"
+        },
+        {
+          "level": 0,
+          "text": "--diff shows the actual before/after content differences for template-managed files — combined with --check, you get a real preview of exactly what text would change, without anything actually changing."
+        },
+        {
+          "level": 2,
+          "text": "Modules that are genuinely useful for testing/debugging"
+        },
+        {
+          "level": 0,
+          "text": "Module"
+        },
+        {
+          "level": 0,
+          "text": "Testing use"
+        },
+        {
+          "level": 0,
+          "text": "uri"
+        },
+        {
+          "level": 0,
+          "text": "Check that a REST API endpoint is reachable and returns expected content"
+        },
+        {
+          "level": 0,
+          "text": "script"
+        },
+        {
+          "level": 0,
+          "text": "Run a script from the control node on the managed host; fails automatically on a nonzero return code"
+        },
+        {
+          "level": 0,
+          "text": "stat"
+        },
+        {
+          "level": 0,
+          "text": "Check whether a file exists / get its details, without failing if it's missing — perfect for a lock-file or marker-file check feeding into a later conditional"
+        },
+        {
+          "level": 0,
+          "text": "assert"
+        },
+        {
+          "level": 0,
+          "text": "An alternative to fail — takes a list of conditions (that:) and fails if any are false, with customizable success_msg/fail_msg"
+        },
+        {
+          "level": 0,
+          "text": "- name: Check if /var/run/app.lock exists"
+        },
+        {
+          "level": 0,
+          "text": "stat:"
+        },
+        {
+          "level": 0,
+          "text": "path: /var/run/app.lock"
+        },
+        {
+          "level": 0,
+          "text": "register: lock"
+        },
+        {
+          "level": 0,
+          "text": "- name: Fail if the application is running"
+        },
+        {
+          "level": 0,
+          "text": "fail:"
+        },
+        {
+          "level": 0,
+          "text": "when: lock.stat.exists"
+        },
+        {
+          "level": 2,
+          "text": "Troubleshooting connection and privilege problems"
+        },
+        {
+          "level": 0,
+          "text": "Most real managed-host failures trace back to one of three things:"
+        },
+        {
+          "level": 0,
+          "text": "Symptom"
+        },
+        {
+          "level": 0,
+          "text": "Check this"
+        },
+        {
+          "level": 0,
+          "text": "Authentication failing"
+        },
+        {
+          "level": 0,
+          "text": "remote_user is correct; the right SSH key is deployed, or the right password is being supplied"
+        },
+        {
+          "level": 0,
+          "text": "Privilege escalation failing"
+        },
+        {
+          "level": 0,
+          "text": "become is actually set; become_user is correct (root by default); the sudo password is right; sudo itself is configured correctly on that managed host"
+        },
+        {
+          "level": 0,
+          "text": "Connecting to the wrong address entirely"
+        },
+        {
+          "level": 0,
+          "text": "The inventory's ansible_host variable, if set, may point somewhere other than the inventory NAME implies"
+        },
+        {
+          "level": 0,
+          "text": "web4.phx.example.com ansible_host=192.0.2.4"
+        },
+        {
+          "level": 0,
+          "text": "ansible_host lets an inventory use a clean, readable name while actually connecting to a different address or hostname — extremely useful for a multi-homed server, but also a subtle source of 'wrong host' bugs if that mapping is stale or wrong."
+        },
+        {
+          "level": 2,
+          "text": "Quick ad hoc diagnostics"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible demohost -m ping"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible demohost -m ping --become"
+        },
+        {
+          "level": 0,
+          "text": "Running ping WITHOUT --become tests basic connectivity/authentication only; adding --become additionally tests whether privilege escalation itself is configured correctly — a failure that only appears with --become isolates the problem to sudo/become configuration, not SSH."
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible demohost -m command -a 'df'"
+        },
+        {
+          "level": 0,
+          "text": "[student@demo ~]$ ansible demohost -m command -a 'free -m'"
+        },
+        {
+          "level": 0,
+          "text": "Quick, no-playbook-needed checks for disk space and memory on a specific managed host — often faster than writing a whole diagnostic play for a one-off question."
+        },
+        {
+          "level": 2,
+          "text": "The correct level of testing"
+        },
+        {
+          "level": 0,
+          "text": "Ansible modules are themselves designed to detect and report failure reliably — and a play stops immediately the moment any task reports a failure. Because of this, playbooks generally do NOT need extra tasks to double-check that a module's own change actually worked."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Know where the line sits: it's reasonable to add a targeted health check (stat, uri, a quick command) when troubleshooting a SPECIFIC known problem, or as a deliberate pre-flight/post-flight check. It's a mistake to habitually wrap every module call in extra verification tasks 'just in case' — that adds complexity and maintenance burden without meaningfully increasing reliability, since the module's own success/failure reporting is already the reliable signal."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 7"
+        },
+        {
+          "level": 0,
+          "text": "Command / Setting"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "log_path (ansible.cfg) / $ANSIBLE_LOG_PATH"
+        },
+        {
+          "level": 0,
+          "text": "Enable persistent logging (off by default)"
+        },
+        {
+          "level": 0,
+          "text": "debug: msg=/var=/verbosity="
+        },
+        {
+          "level": 0,
+          "text": "Print a message or variable value at a point in the play"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --step"
+        },
+        {
+          "level": 0,
+          "text": "Confirm each task interactively before running it"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --start-at-task=\"NAME\""
+        },
+        {
+          "level": 0,
+          "text": "Resume from a specific task"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --check"
+        },
+        {
+          "level": 0,
+          "text": "Dry run — report what would change (per-module support varies)"
+        },
+        {
+          "level": 0,
+          "text": "check_mode: yes / no (on a task)"
+        },
+        {
+          "level": 0,
+          "text": "Force a task always into / always out of check mode"
+        },
+        {
+          "level": 0,
+          "text": "ansible_check_mode"
+        },
+        {
+          "level": 0,
+          "text": "Magic variable — true when currently running in check mode"
+        },
+        {
+          "level": 0,
+          "text": "ansible-playbook --check --diff"
+        },
+        {
+          "level": 0,
+          "text": "Dry run that also shows exact file content changes"
+        },
+        {
+          "level": 0,
+          "text": "stat / uri / script / assert"
+        },
+        {
+          "level": 0,
+          "text": "Modules commonly used for testing/diagnostics"
+        },
+        {
+          "level": 0,
+          "text": "ansible HOST -m ping [--become]"
+        },
+        {
+          "level": 0,
+          "text": "Test connectivity, and separately, privilege escalation"
+        }
+      ],
+      "words": 942
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Diagnose a Broken Playbook and a Broken Host",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Practice the full troubleshooting toolkit: catch a syntax problem, safely preview a risky change, and isolate a connection/privilege failure on a specific host."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "A teammate's playbook (deploy.yml) fails on your inventory. Separately, one host in that inventory (demohost) intermittently fails during plays that need root privileges, but works fine for ordinary tasks."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "A playbook deploy.yml with a deliberately introduced YAML indentation error"
+        },
+        {
+          "level": 0,
+          "text": "An inventory including demohost, reachable over SSH as a normal user"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Run --syntax-check against deploy.yml, find and fix the indentation problem"
+        },
+        {
+          "level": 0,
+          "text": "2. Once it parses, dry-run it with --check --diff and review what it WOULD change before running for real"
+        },
+        {
+          "level": 0,
+          "text": "3. Isolate whether demohost's problem is connectivity or privilege escalation, using two separate ad hoc ping commands"
+        },
+        {
+          "level": 0,
+          "text": "4. Once isolated, use ansible -m command against demohost to check its free disk space and memory as an extra sanity check"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "The privilege-escalation isolation trick is exactly the ping/ping --become pairing from Section 7.2 — if the first succeeds and the second fails, the problem is specifically in become/sudo configuration, not SSH or authentication."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: did you actually READ the --check --diff output before running the real playbook, or did you just glance at 'no errors' and move on? The point of this step is reviewing the actual proposed changes, not just confirming the command exits cleanly."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible-playbook deploy.yml --syntax-check"
+        },
+        {
+          "level": 0,
+          "text": "# fix the reported indentation issue in deploy.yml, re-run --syntax-check until clean"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible-playbook --check --diff deploy.yml"
+        },
+        {
+          "level": 0,
+          "text": "# review the reported changes carefully before proceeding"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible demohost -m ping"
+        },
+        {
+          "level": 0,
+          "text": "demohost | SUCCESS => { \"changed\": false, \"ping\": \"pong\" }"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible demohost -m ping --become"
+        },
+        {
+          "level": 0,
+          "text": "demohost | FAILED! => { \"module_stderr\": \"sudo: a password is required\\n\" ... }"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible demohost -m command -a 'df'"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible demohost -m command -a 'free -m'"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "The first ping succeeding and the --become ping failing with a sudo-specific error PROVES the issue is privilege escalation configuration on demohost, not SSH connectivity or basic authentication — exactly the diagnostic value of running the two checks separately."
+        },
+        {
+          "level": 0,
+          "text": "--check --diff before the real run is the safe-preview habit from Section 7.2 — catching an unexpected proposed change here is far cheaper than discovering it after the real run already happened."
+        },
+        {
+          "level": 0,
+          "text": "The df/free ad hoc checks are quick, no-playbook-needed sanity checks — useful once connectivity is confirmed working, to rule out resource exhaustion as a contributing factor."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "The fixed deploy.yml should pass --syntax-check cleanly and show a sensible, reviewed diff under --check --diff. The become-specific ping failure, isolated from the successful plain ping, is itself the verification that the problem is scoped correctly."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "The plain-ping vs. ping---become pairing is one of the fastest real diagnostic techniques in day-to-day Ansible work — it turns a vague 'this host is broken' report into a precise 'this host's sudo config is broken' finding in about ten seconds, before you've opened a single log file."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 7 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. Does Ansible log its output to a file by default?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — logging is off by default; it must be explicitly enabled via log_path in ansible.cfg or the $ANSIBLE_LOG_PATH environment variable."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What does the verbosity: setting on a debug task control?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The minimum number of -v flags (on ansible-playbook) required for that specific debug task to actually print its output — letting you keep normal runs quiet while still having detailed debug info available on demand."
+        },
+        {
+          "level": 0,
+          "text": "Q3. What's the difference between --step and --start-at-task?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: --step interactively confirms EVERY task before it runs, one at a time; --start-at-task resumes execution from one specific named task, skipping everything before it."
+        },
+        {
+          "level": 0,
+          "text": "Q4. If a playbook is run with --check, is it guaranteed that NOTHING changes on the managed hosts?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — any task explicitly marked check_mode: no still runs for real regardless of the --check flag; --check alone is not a guaranteed safety net without checking the playbook's own task-level overrides."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What does check_mode: yes on a specific task do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Forces that one task to ALWAYS run in check mode (report-only, no real change), regardless of whether --check was passed to ansible-playbook."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What magic variable lets a task detect whether it's currently running under check mode?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ansible_check_mode (a boolean)."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What does --diff add when combined with --check?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Shows the actual before/after content differences for template-managed files, without making the changes — a real preview of exactly what text would change."
+        },
+        {
+          "level": 0,
+          "text": "Q8. How do you isolate whether a managed host's failure is due to SSH/authentication versus privilege escalation (sudo/become)?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Run ansible HOST -m ping first (tests basic connectivity/auth), then ansible HOST -m ping --become (additionally tests privilege escalation) — a failure that only appears with --become isolates the problem to become/sudo configuration."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What does the ansible_host inventory variable do, and why can it cause subtle bugs?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It overrides the actual address/hostname Ansible connects to, independent of the readable inventory name — if that mapping becomes stale or wrong, Ansible silently connects to the wrong place while the inventory name looks correct."
+        },
+        {
+          "level": 0,
+          "text": "Q10. Why does Ansible generally not need extra tasks to double-check that a module's own change succeeded?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Modules are designed to reliably detect and report their own failures, and a play stops immediately on any task failure — so the module's own success/failure signal is already the reliable source of truth, and excessive extra verification adds complexity without meaningfully improving reliability."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 8: AUTOMATING LINUX ADMINISTRATION TASKS"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 10 — the big integration chapter. Five domains, all things you already know how to do BY HAND from RH124/RH134: software and subscriptions, users and authentication, boot/scheduling, storage, and networking. Every module here just gives Ansible the vocabulary to do what you already understand."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the payoff chapter for the entire curriculum. Nothing here is a new concept — it's RH134's manual skills, expressed as Ansible tasks. If a module or parameter ever feels unfamiliar, the fix is to ask what the equivalent manual command was, not to memorize the module in isolation."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

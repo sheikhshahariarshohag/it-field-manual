@@ -1,0 +1,1599 @@
+{
+  "id": "rh294-08",
+  "n": 8,
+  "sourceNumber": 8,
+  "kind": "part",
+  "title": "Part 8",
+  "display": "Part 8 — Managing Software and Subscriptions; Managing Users and Aut…",
+  "exam": "RHCE (EX294)",
+  "words": 2929,
+  "sections": [
+    {
+      "title": "1. Managing Software and Subscriptions",
+      "content": [
+        {
+          "level": 0,
+          "text": "- name: Install the httpd package"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "state value"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "present"
+        },
+        {
+          "level": 0,
+          "text": "Install if not already installed"
+        },
+        {
+          "level": 0,
+          "text": "absent"
+        },
+        {
+          "level": 0,
+          "text": "Remove if installed"
+        },
+        {
+          "level": 0,
+          "text": "latest"
+        },
+        {
+          "level": 0,
+          "text": "Install if missing, OR update if not already at the newest available version"
+        },
+        {
+          "level": 2,
+          "text": "Installing multiple packages efficiently"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install the packages"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name:"
+        },
+        {
+          "level": 0,
+          "text": "- httpd"
+        },
+        {
+          "level": 0,
+          "text": "- mod_ssl"
+        },
+        {
+          "level": 0,
+          "text": "- httpd-tools"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Looping a yum task over a package list instead of passing the whole list to name: in one task. Looping runs one SEPARATE transaction per package (slower, three times the overhead); passing a list runs everything in ONE Yum transaction — same end result, meaningfully less efficient the loop way."
+        },
+        {
+          "level": 0,
+          "text": "package_facts gathers installed-package details into ansible_facts.packages, register-able and inspectable with debug — useful for a pre-flight check on what's already on a host before deciding what else to install."
+        },
+        {
+          "level": 2,
+          "text": "Cross-distribution package management"
+        },
+        {
+          "level": 0,
+          "text": "yum only works where Yum/DNF is the package manager. Other operating systems need their own module — dnf (Fedora), apt (Debian/Ubuntu), win_package (Windows) — or, for a single task that should work anywhere, the generic package module, which auto-detects the right backend:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install httpd"
+        },
+        {
+          "level": 0,
+          "text": "package:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT package is convenient but NOT a complete substitute for the specific module — it doesn't expose every specialized option yum/dnf/apt do, AND it doesn't solve the different-package-names problem (httpd on RHEL is apache2 on Ubuntu). A conditional selecting the right module AND the right package name per OS is still often necessary."
+        },
+        {
+          "level": 2,
+          "text": "Registering systems with Red Hat Subscription Management"
+        },
+        {
+          "level": 0,
+          "text": "- name: Register and subscribe the system"
+        },
+        {
+          "level": 0,
+          "text": "redhat_subscription:"
+        },
+        {
+          "level": 0,
+          "text": "username: yourusername"
+        },
+        {
+          "level": 0,
+          "text": "password: yourpassword"
+        },
+        {
+          "level": 0,
+          "text": "pool_ids: poolID"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "One module call replaces both subscription-manager register and subscription-manager attach --pool= — state: present does both; state: absent unregisters."
+        },
+        {
+          "level": 0,
+          "text": "- name: Enable Red Hat repositories"
+        },
+        {
+          "level": 0,
+          "text": "rhsm_repository:"
+        },
+        {
+          "level": 0,
+          "text": "name:"
+        },
+        {
+          "level": 0,
+          "text": "- rhel-8-for-x86_64-baseos-rpms"
+        },
+        {
+          "level": 0,
+          "text": "- rhel-8-for-x86_64-baseos-debug-rpms"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 2,
+          "text": "Adding a third-party repository"
+        },
+        {
+          "level": 0,
+          "text": "- name: Ensure Example Repo exists"
+        },
+        {
+          "level": 0,
+          "text": "yum_repository:"
+        },
+        {
+          "level": 0,
+          "text": "file: example"
+        },
+        {
+          "level": 0,
+          "text": "name: example-internal"
+        },
+        {
+          "level": 0,
+          "text": "description: Example Inc. Internal YUM repo"
+        },
+        {
+          "level": 0,
+          "text": "baseurl: http://materials.example.com/yum/repository/"
+        },
+        {
+          "level": 0,
+          "text": "enabled: yes"
+        },
+        {
+          "level": 0,
+          "text": "gpgcheck: yes"
+        },
+        {
+          "level": 0,
+          "text": "file: names the .repo file created under /etc/yum.repos.d/ (the extension is added automatically). With gpgcheck: yes, the required GPG public key must ALSO be installed separately with the rpm_key module — enabling the check without importing the key just makes every install from that repo fail signature verification."
+        }
+      ],
+      "words": 378
+    },
+    {
+      "title": "2. Managing Users and Authentication",
+      "content": [
+        {
+          "level": 0,
+          "text": "- name: Add new user to the development machine and assign the appropriate groups"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: devops_user"
+        },
+        {
+          "level": 0,
+          "text": "shell: /bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "groups: sys_admins, developers"
+        },
+        {
+          "level": 0,
+          "text": "append: yes"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT append: yes is the single most important detail in this whole section. Without it, groups: OVERWRITES the user's supplementary group membership entirely — any existing group not in the list gets silently removed. With append: yes, the listed groups are ADDED to whatever the user already belongs to. Forgetting append: yes is a classic way to accidentally strip a user's existing access."
+        },
+        {
+          "level": 0,
+          "text": "- name: Create a SSH key for user1"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: user1"
+        },
+        {
+          "level": 0,
+          "text": "generate_ssh_key: yes"
+        },
+        {
+          "level": 0,
+          "text": "ssh_key_bits: 2048"
+        },
+        {
+          "level": 0,
+          "text": "ssh_key_file: .ssh/id_my_rsa"
+        },
+        {
+          "level": 0,
+          "text": "generate_ssh_key never overwrites an existing key — safe to leave in a playbook that runs repeatedly."
+        },
+        {
+          "level": 0,
+          "text": "Parameter"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "groups vs group"
+        },
+        {
+          "level": 0,
+          "text": "groups: supplementary group LIST; group: the PRIMARY group (singular, one value)"
+        },
+        {
+          "level": 0,
+          "text": "create_home"
+        },
+        {
+          "level": 0,
+          "text": "yes/no — whether to create a home directory"
+        },
+        {
+          "level": 0,
+          "text": "system"
+        },
+        {
+          "level": 0,
+          "text": "yes marks this a system account — cannot be changed on an EXISTING user afterward"
+        },
+        {
+          "level": 0,
+          "text": "uid"
+        },
+        {
+          "level": 0,
+          "text": "Set a specific UID"
+        },
+        {
+          "level": 2,
+          "text": "The group module"
+        },
+        {
+          "level": 0,
+          "text": "- name: Verify that auditors group exists"
+        },
+        {
+          "level": 0,
+          "text": "group:"
+        },
+        {
+          "level": 0,
+          "text": "name: auditors"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "gid sets a specific GID; system: yes marks it a system group; local forces local (non-centralized) group commands on platforms that distinguish the two."
+        },
+        {
+          "level": 2,
+          "text": "known_hosts and authorized_key — managing SSH trust at scale"
+        },
+        {
+          "level": 0,
+          "text": "- name: copy host keys to remote servers"
+        },
+        {
+          "level": 0,
+          "text": "known_hosts:"
+        },
+        {
+          "level": 0,
+          "text": "path: /etc/ssh/ssh_known_hosts"
+        },
+        {
+          "level": 0,
+          "text": "name: user1"
+        },
+        {
+          "level": 0,
+          "text": "key: \"{{ lookup('file', 'pubkeys/user1') }}\""
+        },
+        {
+          "level": 0,
+          "text": "- name: Set authorized key"
+        },
+        {
+          "level": 0,
+          "text": "authorized_key:"
+        },
+        {
+          "level": 0,
+          "text": "user: user1"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "key: \"{{ lookup('file', '/home/user1/.ssh/id_rsa.pub') }}\""
+        },
+        {
+          "level": 0,
+          "text": "Both use the lookup() plugin to read a key's content directly from a file on the CONTROL NODE at task-run time — a key can also be sourced straight from a URL (e.g. a GitHub public-keys URL) instead of a local file."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This pair is what makes onboarding/offboarding a team across dozens of servers a single playbook run instead of a manual, error-prone, per-server chore: authorized_key grants a new hire's key everywhere at once; removing it (state: absent) revokes it everywhere at once."
+        }
+      ],
+      "words": 335
+    },
+    {
+      "title": "3. Managing the Boot Process and Scheduled Processes",
+      "content": [
+        {
+          "level": 2,
+          "text": "One-time scheduling: the at module"
+        },
+        {
+          "level": 0,
+          "text": "- name: remove tempuser"
+        },
+        {
+          "level": 0,
+          "text": "at:"
+        },
+        {
+          "level": 0,
+          "text": "command: userdel -r tempuser"
+        },
+        {
+          "level": 0,
+          "text": "count: 20"
+        },
+        {
+          "level": 0,
+          "text": "units: minutes"
+        },
+        {
+          "level": 0,
+          "text": "unique: yes"
+        },
+        {
+          "level": 0,
+          "text": "Parameter"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "count + units"
+        },
+        {
+          "level": 0,
+          "text": "How far in the future (must be used together — minutes/hours/days/weeks)"
+        },
+        {
+          "level": 0,
+          "text": "script_file"
+        },
+        {
+          "level": 0,
+          "text": "Run an existing script instead of an inline command"
+        },
+        {
+          "level": 0,
+          "text": "unique"
+        },
+        {
+          "level": 0,
+          "text": "yes = don't schedule a duplicate if an equivalent job is already pending"
+        },
+        {
+          "level": 0,
+          "text": "state"
+        },
+        {
+          "level": 0,
+          "text": "present/absent — schedule or cancel"
+        },
+        {
+          "level": 2,
+          "text": "Recurring scheduling: the cron module"
+        },
+        {
+          "level": 0,
+          "text": "- cron:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"Flush Bolt\""
+        },
+        {
+          "level": 0,
+          "text": "user: \"root\""
+        },
+        {
+          "level": 0,
+          "text": "minute: 45"
+        },
+        {
+          "level": 0,
+          "text": "hour: 11"
+        },
+        {
+          "level": 0,
+          "text": "job: \"php ./app/nut cache:clear\""
+        },
+        {
+          "level": 0,
+          "text": "This writes directly into the named user's crontab, in correct crontab syntax, automatically — no manual cron.d file editing required. special_time (reboot/yearly/monthly/weekly/daily/hourly) is a convenient shorthand for the common recurring schedules instead of spelling out minute/hour/day fields."
+        },
+        {
+          "level": 2,
+          "text": "Managing services: service vs. systemd"
+        },
+        {
+          "level": 0,
+          "text": "Module"
+        },
+        {
+          "level": 0,
+          "text": "Capability"
+        },
+        {
+          "level": 0,
+          "text": "service"
+        },
+        {
+          "level": 0,
+          "text": "Basic: start/stop/restart/enable — works across older init systems too"
+        },
+        {
+          "level": 0,
+          "text": "systemd"
+        },
+        {
+          "level": 0,
+          "text": "Everything service does, PLUS daemon-reload and other systemd-specific behavior"
+        },
+        {
+          "level": 0,
+          "text": "- name: start nginx"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: nginx"
+        },
+        {
+          "level": 0,
+          "text": "state: started"
+        },
+        {
+          "level": 0,
+          "text": "- name: reload web server"
+        },
+        {
+          "level": 0,
+          "text": "systemd:"
+        },
+        {
+          "level": 0,
+          "text": "name: apache2"
+        },
+        {
+          "level": 0,
+          "text": "state: reload"
+        },
+        {
+          "level": 0,
+          "text": "daemon-reload: yes"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Recognize the direct RH134 parallel: daemon-reload: yes here is exactly systemctl daemon-reload from RH134 Part 2 — same requirement, same reason (pick up a changed unit file), just expressed as a module parameter instead of a typed command."
+        },
+        {
+          "level": 2,
+          "text": "The reboot module — safer than a raw reboot command"
+        },
+        {
+          "level": 0,
+          "text": "- name: \"Reboot after patching\""
+        },
+        {
+          "level": 0,
+          "text": "reboot:"
+        },
+        {
+          "level": 0,
+          "text": "reboot_timeout: 180"
+        },
+        {
+          "level": 0,
+          "text": "reboot shuts the managed host down, WAITS until it's back up and reachable again, then lets the play continue — a raw shell: reboot task would disconnect Ansible immediately and likely fail the play, since the connection drops before Ansible can confirm anything."
+        },
+        {
+          "level": 2,
+          "text": "shell vs. command, and safely quoting variables"
+        },
+        {
+          "level": 0,
+          "text": "command is more restricted (no pipes, redirection, or shell features) but safer; shell allows full shell syntax but opens the door to injection if a variable's value isn't sanitized:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Run a templated variable (always use quote filter to avoid injection)"
+        },
+        {
+          "level": 0,
+          "text": "shell: \"cat {{ myfile | quote }}\""
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Piping an untrusted or externally-sourced variable straight into a shell task without the | quote filter is a real injection risk — a filename or value containing shell metacharacters could execute something you never intended. Default to {{ var | quote }} any time a shell task's argument comes from a variable, not a literal."
+        }
+      ],
+      "words": 387
+    },
+    {
+      "title": "4. Managing Storage",
+      "content": [
+        {
+          "level": 0,
+          "text": "This section is the RH134 Part 4 storage stack (partition → PV → VG → LV → filesystem → mount), expressed as Ansible modules instead of typed commands — the mental model doesn't change at all."
+        },
+        {
+          "level": 2,
+          "text": "Partitioning: the parted module"
+        },
+        {
+          "level": 0,
+          "text": "- name: New 10GB partition"
+        },
+        {
+          "level": 0,
+          "text": "parted:"
+        },
+        {
+          "level": 0,
+          "text": "device: /dev/vdb"
+        },
+        {
+          "level": 0,
+          "text": "number: 1"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "part_end: 10GB"
+        },
+        {
+          "level": 2,
+          "text": "LVM: the lvg and lvol modules"
+        },
+        {
+          "level": 0,
+          "text": "- name: Creates a volume group"
+        },
+        {
+          "level": 0,
+          "text": "lvg:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vg1"
+        },
+        {
+          "level": 0,
+          "text": "pvs: /dev/vda1"
+        },
+        {
+          "level": 0,
+          "text": "pesize: 32"
+        },
+        {
+          "level": 0,
+          "text": "Adding a physical volume to an existing VG is simply listing MORE devices in pvs: — lvg resizes the VG to match:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Resize a volume group"
+        },
+        {
+          "level": 0,
+          "text": "lvg:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vg1"
+        },
+        {
+          "level": 0,
+          "text": "pvs: /dev/vdb1,/dev/vdc1"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create a logical volume of 2GB"
+        },
+        {
+          "level": 0,
+          "text": "lvol:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vg1"
+        },
+        {
+          "level": 0,
+          "text": "lv: lv1"
+        },
+        {
+          "level": 0,
+          "text": "size: 2g"
+        },
+        {
+          "level": 0,
+          "text": "lvol's resizefs: yes and shrink parameters map directly onto RH134's lvextend + xfs_growfs/resize2fs two-step from Part 4 — but as ONE module call instead of two separate commands."
+        },
+        {
+          "level": 2,
+          "text": "Filesystems and mounting"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create an XFS filesystem"
+        },
+        {
+          "level": 0,
+          "text": "filesystem:"
+        },
+        {
+          "level": 0,
+          "text": "fstype: xfs"
+        },
+        {
+          "level": 0,
+          "text": "dev: /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "- name: Mount device with ID"
+        },
+        {
+          "level": 0,
+          "text": "mount:"
+        },
+        {
+          "level": 0,
+          "text": "path: /data"
+        },
+        {
+          "level": 0,
+          "text": "src: UUID=a8063676-44dd-409a-b584-68be2c9f5570"
+        },
+        {
+          "level": 0,
+          "text": "fstype: xfs"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT mount's state: present configures the /etc/fstab entry but does NOT mount it immediately; state: mounted both writes the fstab entry AND mounts it right now. This is directly analogous to the /etc/fstab-then-mount two-step from RH134 Part 4 — know which state value you actually need."
+        },
+        {
+          "level": 0,
+          "text": "- name: Mount NFS share"
+        },
+        {
+          "level": 0,
+          "text": "mount:"
+        },
+        {
+          "level": 0,
+          "text": "path: /nfsshare"
+        },
+        {
+          "level": 0,
+          "text": "src: 172.25.250.100:/share"
+        },
+        {
+          "level": 0,
+          "text": "fstype: nfs"
+        },
+        {
+          "level": 0,
+          "text": "opts: defaults,nobootwait"
+        },
+        {
+          "level": 0,
+          "text": "state: mounted"
+        },
+        {
+          "level": 2,
+          "text": "Swap: no dedicated module, same manual steps"
+        },
+        {
+          "level": 0,
+          "text": "Ansible has no swap-specific module — the RH134 manual sequence (create LV, mkswap, swapon) is simply expressed via lvg/lvol plus command tasks for the parts with no module:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create new swap VG"
+        },
+        {
+          "level": 0,
+          "text": "lvg:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vgswap"
+        },
+        {
+          "level": 0,
+          "text": "pvs: /dev/vda1"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create new swap LV"
+        },
+        {
+          "level": 0,
+          "text": "lvol:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vgswap"
+        },
+        {
+          "level": 0,
+          "text": "lv: lvswap"
+        },
+        {
+          "level": 0,
+          "text": "size: 10g"
+        },
+        {
+          "level": 0,
+          "text": "- name: Format swap LV"
+        },
+        {
+          "level": 0,
+          "text": "command: mkswap /dev/vgswap/lvswap"
+        },
+        {
+          "level": 0,
+          "text": "when: ansible_swaptotal_mb < 128"
+        },
+        {
+          "level": 0,
+          "text": "ansible_swaptotal_mb (a standard fact) makes this idempotent-ish in intent — the mkswap task only runs when swap is genuinely low, though command itself still isn't natively idempotent (Part 3's caveat about command/shell modules applies directly here)."
+        }
+      ],
+      "words": 348
+    },
+    {
+      "title": "5. Managing Network Configuration",
+      "content": [
+        {
+          "level": 0,
+          "text": "Two approaches, same as storage had two approaches (manual modules vs. Stratis): the network RHEL System Role (declarative, recommended), or individual modules (nmcli, hostname, firewalld) for finer-grained control."
+        },
+        {
+          "level": 2,
+          "text": "The network system role"
+        },
+        {
+          "level": 0,
+          "text": "network_provider: nm"
+        },
+        {
+          "level": 0,
+          "text": "network_connections:"
+        },
+        {
+          "level": 0,
+          "text": "- name: ens4"
+        },
+        {
+          "level": 0,
+          "text": "type: ethernet"
+        },
+        {
+          "level": 0,
+          "text": "ip:"
+        },
+        {
+          "level": 0,
+          "text": "address:"
+        },
+        {
+          "level": 0,
+          "text": "- 172.25.250.30/24"
+        },
+        {
+          "level": 0,
+          "text": "network_provider selects the backend — nm (NetworkManager, the RHEL 8 default) or initscripts (RHEL 6-style, requires the network service). network_connections is a list of connection dictionaries, each with state (up/down — runtime) and persistent_state (present/absent — survives reboot) as separate, independently-controllable settings."
+        },
+        {
+          "level": 0,
+          "text": "- name: NIC Configuration"
+        },
+        {
+          "level": 0,
+          "text": "hosts: webservers"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "network_connections:"
+        },
+        {
+          "level": 0,
+          "text": "- name: ens4"
+        },
+        {
+          "level": 0,
+          "text": "type: ethernet"
+        },
+        {
+          "level": 0,
+          "text": "ip:"
+        },
+        {
+          "level": 0,
+          "text": "address:"
+        },
+        {
+          "level": 0,
+          "text": "- 172.25.250.30/24"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- rhel-system-roles.network"
+        },
+        {
+          "level": 2,
+          "text": "Module-based alternative: nmcli, hostname, firewalld"
+        },
+        {
+          "level": 0,
+          "text": "- name: NIC configuration"
+        },
+        {
+          "level": 0,
+          "text": "nmcli:"
+        },
+        {
+          "level": 0,
+          "text": "conn_name: ens4-conn"
+        },
+        {
+          "level": 0,
+          "text": "ifname: ens4"
+        },
+        {
+          "level": 0,
+          "text": "type: ethernet"
+        },
+        {
+          "level": 0,
+          "text": "ip4: 172.25.250.30/24"
+        },
+        {
+          "level": 0,
+          "text": "gw4: 172.25.250.1"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "- name: Change hostname"
+        },
+        {
+          "level": 0,
+          "text": "hostname:"
+        },
+        {
+          "level": 0,
+          "text": "name: managedhost1"
+        },
+        {
+          "level": 0,
+          "text": "hostname sets ONLY the system hostname — it deliberately does NOT touch /etc/hosts, so a stale /etc/hosts entry can still cause DNS-adjacent confusion after a rename unless handled separately."
+        },
+        {
+          "level": 0,
+          "text": "- name: Enabling http rule"
+        },
+        {
+          "level": 0,
+          "text": "firewalld:"
+        },
+        {
+          "level": 0,
+          "text": "service: http"
+        },
+        {
+          "level": 0,
+          "text": "permanent: yes"
+        },
+        {
+          "level": 0,
+          "text": "state: enabled"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT The firewalld module has the exact same permanent-vs-immediate trap as firewall-cmd from RH134 Part 6: permanent: yes alone saves the change for future boots but does NOT necessarily apply it to the CURRENTLY running firewall. Add immediate: yes to also apply it right now, in the same task — mirroring firewall-cmd --permanent needing --reload."
+        },
+        {
+          "level": 2,
+          "text": "Facts for network configuration"
+        },
+        {
+          "level": 0,
+          "text": "[user@controlnode ~]$ ansible webservers -m setup -a 'gather_subset=network filter=ansible_interfaces'"
+        },
+        {
+          "level": 0,
+          "text": "host.lab.example.com | SUCCESS => {"
+        },
+        {
+          "level": 0,
+          "text": "\"ansible_facts\": { \"ansible_interfaces\": [\"ens4\", \"lo\", \"ens3\"] },"
+        },
+        {
+          "level": 0,
+          "text": "\"changed\": false"
+        },
+        {
+          "level": 0,
+          "text": "}"
+        },
+        {
+          "level": 0,
+          "text": "gather_subset narrows fact-gathering to just one category (faster than gathering everything); filter then narrows further to one specific fact name using shell-style wildcards. ansible_NICNAME (e.g. ansible_ens4) gives full per-interface detail — IPv4/IPv6 addresses, MAC, MTU, active state — for a specific named interface."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 8"
+        },
+        {
+          "level": 0,
+          "text": "Module"
+        },
+        {
+          "level": 0,
+          "text": "Domain"
+        },
+        {
+          "level": 0,
+          "text": "yum / dnf / apt / package"
+        },
+        {
+          "level": 0,
+          "text": "Software"
+        },
+        {
+          "level": 0,
+          "text": "redhat_subscription / rhsm_repository / yum_repository"
+        },
+        {
+          "level": 0,
+          "text": "Subscriptions and repos"
+        },
+        {
+          "level": 0,
+          "text": "user / group / known_hosts / authorized_key"
+        },
+        {
+          "level": 0,
+          "text": "Users and authentication"
+        },
+        {
+          "level": 0,
+          "text": "at / cron / service / systemd / reboot"
+        },
+        {
+          "level": 0,
+          "text": "Scheduling and boot/service management"
+        },
+        {
+          "level": 0,
+          "text": "parted / lvg / lvol / filesystem / mount"
+        },
+        {
+          "level": 0,
+          "text": "Storage"
+        },
+        {
+          "level": 0,
+          "text": "rhel-system-roles.network / nmcli / hostname / firewalld"
+        },
+        {
+          "level": 0,
+          "text": "Networking"
+        },
+        {
+          "level": 0,
+          "text": "setup -a 'gather_subset=X filter=Y'"
+        },
+        {
+          "level": 0,
+          "text": "Narrowed fact gathering, any domain"
+        }
+      ],
+      "words": 376
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Provision a Complete Web Server — End to End",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Combine all five domains from this Part into one playbook: software, a service account, boot/scheduling, storage, and network/firewall — a realistic, complete server-provisioning play."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Provision a new web server from a bare RHEL 8 host: install and enable httpd, create a dedicated service account with correct group membership, mount a dedicated LVM-backed volume for web content, schedule a nightly log rotation reminder, and open the firewall correctly — permanently AND immediately."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 managed host with an unused virtual disk /dev/vdb, reachable via Ansible"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Install httpd, mod_ssl, httpd-tools in one efficient yum task (list form, not a loop)"
+        },
+        {
+          "level": 0,
+          "text": "2. Create a service account webadmin, added to the apache group with append: yes (so any existing groups aren't wiped)"
+        },
+        {
+          "level": 0,
+          "text": "3. Build a full storage stack for /var/www/content: partition /dev/vdb, PV/VG (vg_web), LV (lv_web, 1g), XFS filesystem, mounted persistently (state: mounted, not just present)"
+        },
+        {
+          "level": 0,
+          "text": "4. Add a cron job running a log-check script nightly at 02:00 as webadmin"
+        },
+        {
+          "level": 0,
+          "text": "5. Open the http service in firewalld, both permanent AND immediate"
+        },
+        {
+          "level": 0,
+          "text": "6. Start and enable httpd with the systemd module"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Remember the mount module's two relevant state values from Section 8.4 — present only configures fstab, mounted configures fstab AND mounts right now. You want the content directory usable immediately, not just after a future reboot."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: did you remember immediate: yes on the firewalld task? Without it, the http rule is correctly saved for next boot but the CURRENTLY running firewall keeps blocking it — exactly the RH134 --permanent/--reload trap, just under a different module."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Provision web server"
+        },
+        {
+          "level": 0,
+          "text": "hosts: webserver_new"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install web packages"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name:"
+        },
+        {
+          "level": 0,
+          "text": "- httpd"
+        },
+        {
+          "level": 0,
+          "text": "- mod_ssl"
+        },
+        {
+          "level": 0,
+          "text": "- httpd-tools"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create webadmin service account"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: webadmin"
+        },
+        {
+          "level": 0,
+          "text": "groups: apache"
+        },
+        {
+          "level": 0,
+          "text": "append: yes"
+        },
+        {
+          "level": 0,
+          "text": "- name: Partition /dev/vdb"
+        },
+        {
+          "level": 0,
+          "text": "parted:"
+        },
+        {
+          "level": 0,
+          "text": "device: /dev/vdb"
+        },
+        {
+          "level": 0,
+          "text": "number: 1"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "part_end: 1GB"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create web content volume group"
+        },
+        {
+          "level": 0,
+          "text": "lvg:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vg_web"
+        },
+        {
+          "level": 0,
+          "text": "pvs: /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create web content logical volume"
+        },
+        {
+          "level": 0,
+          "text": "lvol:"
+        },
+        {
+          "level": 0,
+          "text": "vg: vg_web"
+        },
+        {
+          "level": 0,
+          "text": "lv: lv_web"
+        },
+        {
+          "level": 0,
+          "text": "size: 1g"
+        },
+        {
+          "level": 0,
+          "text": "- name: Create XFS filesystem"
+        },
+        {
+          "level": 0,
+          "text": "filesystem:"
+        },
+        {
+          "level": 0,
+          "text": "fstype: xfs"
+        },
+        {
+          "level": 0,
+          "text": "dev: /dev/vg_web/lv_web"
+        },
+        {
+          "level": 0,
+          "text": "- name: Mount web content volume"
+        },
+        {
+          "level": 0,
+          "text": "mount:"
+        },
+        {
+          "level": 0,
+          "text": "path: /var/www/content"
+        },
+        {
+          "level": 0,
+          "text": "src: /dev/vg_web/lv_web"
+        },
+        {
+          "level": 0,
+          "text": "fstype: xfs"
+        },
+        {
+          "level": 0,
+          "text": "state: mounted"
+        },
+        {
+          "level": 0,
+          "text": "- name: Schedule nightly log check"
+        },
+        {
+          "level": 0,
+          "text": "cron:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"Nightly log check\""
+        },
+        {
+          "level": 0,
+          "text": "user: webadmin"
+        },
+        {
+          "level": 0,
+          "text": "minute: 0"
+        },
+        {
+          "level": 0,
+          "text": "hour: 2"
+        },
+        {
+          "level": 0,
+          "text": "job: \"/usr/local/bin/check_web_logs.sh\""
+        },
+        {
+          "level": 0,
+          "text": "- name: Open http in firewalld"
+        },
+        {
+          "level": 0,
+          "text": "firewalld:"
+        },
+        {
+          "level": 0,
+          "text": "service: http"
+        },
+        {
+          "level": 0,
+          "text": "permanent: yes"
+        },
+        {
+          "level": 0,
+          "text": "immediate: yes"
+        },
+        {
+          "level": 0,
+          "text": "state: enabled"
+        },
+        {
+          "level": 0,
+          "text": "- name: Start and enable httpd"
+        },
+        {
+          "level": 0,
+          "text": "systemd:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: started"
+        },
+        {
+          "level": 0,
+          "text": "enabled: yes"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "The yum task installs all three packages in one transaction — deliberately not a loop, per Section 8.1's efficiency guidance."
+        },
+        {
+          "level": 0,
+          "text": "append: yes on the user task means webadmin's group membership only ever grows via this playbook — it never wipes an unrelated group added by someone else."
+        },
+        {
+          "level": 0,
+          "text": "state: mounted (not present) on the mount task ensures /var/www/content is usable the moment this playbook finishes, not only after a future reboot."
+        },
+        {
+          "level": 0,
+          "text": "immediate: yes alongside permanent: yes on the firewalld task means the currently-running firewall opens the port THIS run, not just on next boot."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "curl http://<host> should succeed immediately after the playbook finishes (proving httpd is running AND the firewall is genuinely open right now, not just configured for later). df -h /var/www/content should show the new LVM volume mounted. Running the whole playbook a second time should report changed=0 across every task."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This lab is, functionally, a complete real-world server-provisioning playbook — the same shape (packages, accounts, storage, scheduling, firewall, service) that a genuine production onboarding playbook would have, just scaled down. Everything from RH124 through this Part has been building toward exactly this kind of end-to-end automation."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 8 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. Why is passing a list to yum's name: parameter more efficient than looping the yum task over a list?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: A list installs everything in ONE Yum transaction; looping runs one SEPARATE transaction per package, with more overhead."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What does the generic package module trade away for its cross-distribution convenience?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It doesn't expose every specialized option the OS-specific modules (yum/dnf/apt) do, and it doesn't solve differing package names across distributions — a conditional may still be needed for that."
+        },
+        {
+          "level": 0,
+          "text": "Q3. What does forgetting append: yes on a user task's groups: parameter actually do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It OVERWRITES the user's supplementary group membership — any existing group not in the list gets silently removed, instead of the listed groups being added to what's already there."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What's the practical difference between the service and systemd Ansible modules?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: service offers the basic start/stop/restart/enable set and works across older init systems; systemd offers everything service does plus systemd-specific behavior like daemon-reload."
+        },
+        {
+          "level": 0,
+          "text": "Q5. Why is the reboot module safer than a shell: reboot task?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: reboot shuts the host down and WAITS until it's back up and reachable before continuing the play; a raw shell reboot disconnects Ansible immediately and would likely fail the task/play."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What's the security risk of putting an unsanitized variable directly into a shell task, and how is it mitigated?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Shell metacharacters in the variable's value could cause unintended command execution (injection); mitigate with the quote filter, e.g. {{ var | quote }}."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What's the difference between mount's state: present and state: mounted?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: present only configures the /etc/fstab entry; mounted configures fstab AND mounts the device immediately."
+        },
+        {
+          "level": 0,
+          "text": "Q8. Does Ansible have a dedicated module for configuring swap space?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — swap is configured using the same lvg/lvol modules as any other LVM storage, plus command tasks for mkswap/swapon, which have no dedicated module."
+        },
+        {
+          "level": 0,
+          "text": "Q9. In the network system role, what's the difference between a connection's state and persistent_state?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: state (up/down) is the connection's RUNTIME status right now; persistent_state (present/absent) controls whether the connection profile survives a reboot."
+        },
+        {
+          "level": 0,
+          "text": "Q10. What must be added to a firewalld module task alongside permanent: yes to make the change take effect on the CURRENTLY running firewall, not just after the next reboot?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: immediate: yes — the same permanent-vs-apply-now trap as firewall-cmd --permanent needing --reload in RH134."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 9: COMPREHENSIVE REVIEW + CAPSTONE PROJECT"
+        },
+        {
+          "level": 0,
+          "text": "This closes out the RH294 guide — and with it, the full RH124 → RH134 → RH294 curriculum. Like RH134 Part 8, this isn't new material: a condensed cross-chapter review, one large capstone playbook that forces every RH294 chapter to work together, an automation skill checklist, and a final mixed quiz."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS A real Ansible project never exercises just one chapter's worth of knowledge — a single playbook touches inventory, variables, task control, templates, roles, and troubleshooting all at once. This Part is built the same way, on purpose."
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "rhel-service-apache-httpd",
+      "why": "Provision a Complete Web Server — End to End"
+    },
+    {
+      "id": "rhel-service-postgresql",
+      "why": "Provision a Complete Web Server — End to End"
+    },
+    {
+      "id": "rhel-service-sssd",
+      "why": "Managing Users and Authentication"
+    }
+  ],
+  "currency": []
+}

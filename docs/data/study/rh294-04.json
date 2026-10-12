@@ -1,0 +1,1044 @@
+{
+  "id": "rh294-04",
+  "n": 4,
+  "sourceNumber": 4,
+  "kind": "part",
+  "title": "Part 4",
+  "display": "Part 4 — Managing Files with the Files Modules; Introduction to Jinj…",
+  "exam": "RHCE (EX294)",
+  "words": 2341,
+  "sections": [
+    {
+      "title": "1. Managing Files with the Files Modules",
+      "content": [
+        {
+          "level": 0,
+          "text": "Module"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "file"
+        },
+        {
+          "level": 0,
+          "text": "Set permissions/ownership/SELinux context/timestamps on files, symlinks, hard links, directories; also creates or removes them"
+        },
+        {
+          "level": 0,
+          "text": "copy"
+        },
+        {
+          "level": 0,
+          "text": "Copy a file from the control node (or another remote location) to a managed host; can also set attributes like file does"
+        },
+        {
+          "level": 0,
+          "text": "fetch"
+        },
+        {
+          "level": 0,
+          "text": "The REVERSE of copy — pulls a file FROM a managed host back to the control node, organized into a directory tree by hostname"
+        },
+        {
+          "level": 0,
+          "text": "lineinfile"
+        },
+        {
+          "level": 0,
+          "text": "Ensure one specific line exists in a file, or replace an existing line via a regex back-reference"
+        },
+        {
+          "level": 0,
+          "text": "blockinfile"
+        },
+        {
+          "level": 0,
+          "text": "Insert/update/remove a whole block of multi-line text, marked by customizable comment markers"
+        },
+        {
+          "level": 0,
+          "text": "stat"
+        },
+        {
+          "level": 0,
+          "text": "Retrieve status information about a file — similar to the Linux stat command"
+        },
+        {
+          "level": 0,
+          "text": "synchronize"
+        },
+        {
+          "level": 0,
+          "text": "A simplified wrapper around rsync for common file-sync tasks"
+        },
+        {
+          "level": 2,
+          "text": "Touching a file and setting its attributes"
+        },
+        {
+          "level": 0,
+          "text": "- name: Touch a file and set permissions"
+        },
+        {
+          "level": 0,
+          "text": "file:"
+        },
+        {
+          "level": 0,
+          "text": "path: /path/to/file"
+        },
+        {
+          "level": 0,
+          "text": "owner: user1"
+        },
+        {
+          "level": 0,
+          "text": "group: group1"
+        },
+        {
+          "level": 0,
+          "text": "mode: 0640"
+        },
+        {
+          "level": 0,
+          "text": "state: touch"
+        },
+        {
+          "level": 0,
+          "text": "state: touch behaves like the touch command — creates an empty file if missing, or just updates its modification time if it already exists — while also enforcing the given owner/group/mode either way."
+        },
+        {
+          "level": 2,
+          "text": "Copying, fetching, and patching files"
+        },
+        {
+          "level": 0,
+          "text": "- name: Copy a file to managed hosts"
+        },
+        {
+          "level": 0,
+          "text": "copy:"
+        },
+        {
+          "level": 0,
+          "text": "src: file"
+        },
+        {
+          "level": 0,
+          "text": "dest: /path/to/file"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING copy defaults to force: yes — it overwrites the remote file if its content differs from the source, every run. Set force: no if the intent is 'only place this file if it doesn't already exist,' otherwise a managed host's local edits are silently overwritten on the next play."
+        },
+        {
+          "level": 0,
+          "text": "- name: Retrieve SSH key from reference host"
+        },
+        {
+          "level": 0,
+          "text": "fetch:"
+        },
+        {
+          "level": 0,
+          "text": "src: \"/home/{{ user }}/.ssh/id_rsa.pub\""
+        },
+        {
+          "level": 0,
+          "text": "dest: \"files/keys/{{ user }}.pub\""
+        },
+        {
+          "level": 0,
+          "text": "- name: Add a line of text to a file"
+        },
+        {
+          "level": 0,
+          "text": "lineinfile:"
+        },
+        {
+          "level": 0,
+          "text": "path: /path/to/file"
+        },
+        {
+          "level": 0,
+          "text": "line: 'Add this line to the file'"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "- name: Add additional lines to a file"
+        },
+        {
+          "level": 0,
+          "text": "blockinfile:"
+        },
+        {
+          "level": 0,
+          "text": "path: /path/to/file"
+        },
+        {
+          "level": 0,
+          "text": "block: |"
+        },
+        {
+          "level": 0,
+          "text": "First line in the additional block of text"
+        },
+        {
+          "level": 0,
+          "text": "Second line in the additional block of text"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "blockinfile automatically wraps its inserted content in # BEGIN ANSIBLE MANAGED BLOCK / # END ANSIBLE MANAGED BLOCK comment markers, specifically so re-running the task is idempotent — it can find and replace its own previous block instead of appending duplicates. The marker parameter lets you customize those comment characters for file types that don't use #."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Always set state explicitly (present or absent) even when a module's documentation lists a default — module defaults have changed between versions before, and an explicit state makes the playbook's INTENT unambiguous to the next person (or future you) reading it."
+        },
+        {
+          "level": 2,
+          "text": "Removing files, and checking file status"
+        },
+        {
+          "level": 0,
+          "text": "- name: Make sure a file does not exist on managed hosts"
+        },
+        {
+          "level": 0,
+          "text": "file:"
+        },
+        {
+          "level": 0,
+          "text": "dest: /path/to/file"
+        },
+        {
+          "level": 0,
+          "text": "state: absent"
+        },
+        {
+          "level": 0,
+          "text": "stat retrieves detailed file status into a registered variable — existence, size, checksum, permissions — for use in later conditionals:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Get file status"
+        },
+        {
+          "level": 0,
+          "text": "stat:"
+        },
+        {
+          "level": 0,
+          "text": "path: /etc/myapp.conf"
+        },
+        {
+          "level": 0,
+          "text": "register: conf_status"
+        },
+        {
+          "level": 0,
+          "text": "- debug:"
+        },
+        {
+          "level": 0,
+          "text": "var: conf_status"
+        }
+      ],
+      "words": 475
+    },
+    {
+      "title": "2. Introduction to Jinja2 Templates",
+      "content": [
+        {
+          "level": 0,
+          "text": "A template is a source file that gets customized for each managed host at deploy time, using variables and facts — instead of a static file that's identical everywhere. Ansible uses the Jinja2 templating engine, the same one used for variable references inside playbooks themselves."
+        },
+        {
+          "level": 0,
+          "text": "Delimiter"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "{{ EXPR }}"
+        },
+        {
+          "level": 0,
+          "text": "Output — renders a variable or expression's VALUE into the file"
+        },
+        {
+          "level": 0,
+          "text": "{% EXPR %}"
+        },
+        {
+          "level": 0,
+          "text": "Logic — loops, conditionals; produces no visible output itself"
+        },
+        {
+          "level": 0,
+          "text": "{# COMMENT #}"
+        },
+        {
+          "level": 0,
+          "text": "A comment — stripped entirely from the rendered output, never shown to the end user"
+        },
+        {
+          "level": 0,
+          "text": "{# /etc/hosts line #}"
+        },
+        {
+          "level": 0,
+          "text": "{{ ansible_facts['default_ipv4']['address'] }} {{ ansible_facts['hostname'] }}"
+        },
+        {
+          "level": 0,
+          "text": "A template file needs no particular extension to work — .j2 is just a strong convention that makes template files instantly recognizable in a project."
+        },
+        {
+          "level": 2,
+          "text": "A realistic example: templating sshd_config"
+        },
+        {
+          "level": 0,
+          "text": "# {{ ansible_managed }}"
+        },
+        {
+          "level": 0,
+          "text": "# DO NOT MAKE LOCAL MODIFICATIONS TO THIS FILE AS THEY WILL BE LOST"
+        },
+        {
+          "level": 0,
+          "text": "Port {{ ssh_port }}"
+        },
+        {
+          "level": 0,
+          "text": "ListenAddress {{ ansible_facts['default_ipv4']['address'] }}"
+        },
+        {
+          "level": 0,
+          "text": "PermitRootLogin {{ root_allowed }}"
+        },
+        {
+          "level": 0,
+          "text": "AllowGroups {{ groups_allowed }}"
+        },
+        {
+          "level": 0,
+          "text": "PasswordAuthentication {{ passwords_allowed }}"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This one template file can produce a DIFFERENT sshd_config for every managed host — different listen address per host automatically (from facts), different port/policy per host or group (from variables) — while staying a single, readable, version-controlled source file instead of dozens of near-identical hand-maintained configs."
+        },
+        {
+          "level": 2,
+          "text": "Deploying a template with the template module"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: template render"
+        },
+        {
+          "level": 0,
+          "text": "template:"
+        },
+        {
+          "level": 0,
+          "text": "src: /tmp/j2-template.j2"
+        },
+        {
+          "level": 0,
+          "text": "dest: /tmp/dest-config-file.txt"
+        },
+        {
+          "level": 0,
+          "text": "Like copy and file, the template module also accepts owner, group, mode, and SELinux context. It additionally supports validate, which runs an arbitrary command against the rendered file BEFORE it's put in place — e.g. validate: 'visudo -c -f %s' rejects a broken sudoers file instead of deploying it and breaking sudo."
+        },
+        {
+          "level": 2,
+          "text": "Marking managed files as managed"
+        },
+        {
+          "level": 0,
+          "text": "A best practice: include a comment at the top of every template noting it's Ansible-managed, so nobody wastes time hand-editing a file that will just be overwritten on the next play run. The ansible_managed directive (set in ansible.cfg) provides ready-made text for exactly this:"
+        },
+        {
+          "level": 0,
+          "text": "ansible_managed = Ansible managed"
+        },
+        {
+          "level": 0,
+          "text": "# inside the template:"
+        },
+        {
+          "level": 0,
+          "text": "{{ ansible_managed }}"
+        }
+      ],
+      "words": 348
+    },
+    {
+      "title": "3. Control Structures Inside Templates",
+      "content": [
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT This is one of the most exam-relevant facts in the whole chapter: Jinja2 for-loops and if-conditionals work INSIDE TEMPLATE FILES, but NOT inside Ansible playbooks. Playbooks get their iteration and branching from the loop and when task keywords covered in Part 3 — a template's for/if are a completely separate mechanism that only exists inside .j2 files."
+        },
+        {
+          "level": 2,
+          "text": "Loops in a template"
+        },
+        {
+          "level": 0,
+          "text": "A practical example — generating a full /etc/hosts file from every host's facts in the inventory:"
+        },
+        {
+          "level": 0,
+          "text": "{% for host in groups['all'] %}"
+        },
+        {
+          "level": 0,
+          "text": "{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }}"
+        },
+        {
+          "level": 0,
+          "text": "{% endfor %}"
+        },
+        {
+          "level": 0,
+          "text": "Paired with a simple playbook task:"
+        },
+        {
+          "level": 0,
+          "text": "- name: /etc/hosts is up to date"
+        },
+        {
+          "level": 0,
+          "text": "hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "gather_facts: yes"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Deploy /etc/hosts"
+        },
+        {
+          "level": 0,
+          "text": "template:"
+        },
+        {
+          "level": 0,
+          "text": "src: templates/hosts.j2"
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/hosts"
+        },
+        {
+          "level": 0,
+          "text": "hostvars[host] (from Part 2's magic variables) is what makes this possible — each pass through the loop reaches into a DIFFERENT host's facts, letting one template describe every host in the inventory at once."
+        },
+        {
+          "level": 2,
+          "text": "Conditionals in a template"
+        },
+        {
+          "level": 0,
+          "text": "{% if finished %}"
+        },
+        {
+          "level": 0,
+          "text": "{{ result }}"
+        },
+        {
+          "level": 0,
+          "text": "{% endif %}"
+        },
+        {
+          "level": 0,
+          "text": "The line inside only appears in the rendered file at all if finished evaluates true — this is a genuinely different mechanism from a task's when, which decides whether the WHOLE TASK runs, not which lines of a file get written."
+        }
+      ],
+      "words": 213
+    },
+    {
+      "title": "4. Variable Filters and Tests",
+      "content": [
+        {
+          "level": 0,
+          "text": "A filter transforms an expression's output format, applied with the pipe character:"
+        },
+        {
+          "level": 0,
+          "text": "Filter"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "to_json / to_yaml"
+        },
+        {
+          "level": 0,
+          "text": "Format the expression's output as compact JSON / YAML"
+        },
+        {
+          "level": 0,
+          "text": "to_nice_json / to_nice_yaml"
+        },
+        {
+          "level": 0,
+          "text": "Same, but pretty-printed/human-readable"
+        },
+        {
+          "level": 0,
+          "text": "from_json / from_yaml"
+        },
+        {
+          "level": 0,
+          "text": "Parse a JSON/YAML-formatted STRING back into a usable structure"
+        },
+        {
+          "level": 0,
+          "text": "{{ output | to_json }}"
+        },
+        {
+          "level": 0,
+          "text": "{{ output | to_nice_yaml }}"
+        },
+        {
+          "level": 2,
+          "text": "Tests — used inside when conditions"
+        },
+        {
+          "level": 0,
+          "text": "A test checks something about a value and returns true/false — most commonly used inside a when clause on a task that follows a register:"
+        },
+        {
+          "level": 0,
+          "text": "Test"
+        },
+        {
+          "level": 0,
+          "text": "True when the registered result was..."
+        },
+        {
+          "level": 0,
+          "text": "failed"
+        },
+        {
+          "level": 0,
+          "text": "A failure"
+        },
+        {
+          "level": 0,
+          "text": "changed"
+        },
+        {
+          "level": 0,
+          "text": "A change"
+        },
+        {
+          "level": 0,
+          "text": "succeeded"
+        },
+        {
+          "level": 0,
+          "text": "A success"
+        },
+        {
+          "level": 0,
+          "text": "skipped"
+        },
+        {
+          "level": 0,
+          "text": "Skipped (its own when was false)"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "..."
+        },
+        {
+          "level": 0,
+          "text": "- debug:"
+        },
+        {
+          "level": 0,
+          "text": "msg: \"the execution was aborted\""
+        },
+        {
+          "level": 0,
+          "text": "when: returnvalue is failed"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Confusing a Jinja2 FILTER (| to_json, transforms a value) with a Jinja2 TEST (is failed, returns true/false, used in conditions). They use different syntax (pipe vs. is) and solve different problems — one reshapes data, the other asks a yes/no question about it."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 4"
+        },
+        {
+          "level": 0,
+          "text": "Module / Syntax"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "file: state=touch/absent"
+        },
+        {
+          "level": 0,
+          "text": "Create/touch or remove a file; set attributes"
+        },
+        {
+          "level": 0,
+          "text": "copy: src= dest="
+        },
+        {
+          "level": 0,
+          "text": "Copy a file to managed hosts (force: yes by default)"
+        },
+        {
+          "level": 0,
+          "text": "fetch: src= dest="
+        },
+        {
+          "level": 0,
+          "text": "Pull a file FROM a managed host to the control node"
+        },
+        {
+          "level": 0,
+          "text": "lineinfile: path= line="
+        },
+        {
+          "level": 0,
+          "text": "Ensure one specific line exists/is replaced"
+        },
+        {
+          "level": 0,
+          "text": "blockinfile: path= block="
+        },
+        {
+          "level": 0,
+          "text": "Insert/update a marked multi-line block"
+        },
+        {
+          "level": 0,
+          "text": "stat: path="
+        },
+        {
+          "level": 0,
+          "text": "Retrieve detailed file status into a variable"
+        },
+        {
+          "level": 0,
+          "text": "template: src= dest="
+        },
+        {
+          "level": 0,
+          "text": "Render and deploy a Jinja2 template"
+        },
+        {
+          "level": 0,
+          "text": "{{ EXPR }} / {% EXPR %} / {# ... #}"
+        },
+        {
+          "level": 0,
+          "text": "Output / logic / comment delimiters (templates only)"
+        },
+        {
+          "level": 0,
+          "text": "{% for x in list %} ... {% endfor %}"
+        },
+        {
+          "level": 0,
+          "text": "Loop — TEMPLATES ONLY, not playbooks"
+        },
+        {
+          "level": 0,
+          "text": "{% if cond %} ... {% endif %}"
+        },
+        {
+          "level": 0,
+          "text": "Conditional — TEMPLATES ONLY, not playbooks"
+        },
+        {
+          "level": 0,
+          "text": "\\| to_json / to_yaml / from_json / from_yaml"
+        },
+        {
+          "level": 0,
+          "text": "Filters — reshape a value's format"
+        },
+        {
+          "level": 0,
+          "text": "is failed/changed/succeeded/skipped"
+        },
+        {
+          "level": 0,
+          "text": "Tests — ask a yes/no question about a registered result"
+        }
+      ],
+      "words": 322
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Templated Configs + File Management",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Deploy a per-host-customized configuration via a Jinja2 template that loops over the inventory, and manage a supporting file with the Files modules."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Every host in your small inventory needs an /etc/hosts file listing every OTHER host by IP, hostname, and FQDN — generated automatically instead of hand-maintained. Separately, each host needs a marked banner block added to /etc/motd, and a stale legacy file removed."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "An inventory of at least three hosts, all in the [all] group, reachable with facts gatherable"
+        },
+        {
+          "level": 0,
+          "text": "A pre-existing /etc/legacy-app.conf on each host that should no longer exist"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Write templates/hosts.j2 using a Jinja2 for loop over groups['all'] to generate IP/FQDN/hostname lines for every host, prefixed with an ansible_managed comment"
+        },
+        {
+          "level": 0,
+          "text": "2. Deploy it to /etc/hosts with the template module"
+        },
+        {
+          "level": 0,
+          "text": "3. Use blockinfile to add a banner block to /etc/motd on every host"
+        },
+        {
+          "level": 0,
+          "text": "4. Use the file module to ensure /etc/legacy-app.conf does NOT exist, with state made explicit"
+        },
+        {
+          "level": 0,
+          "text": "5. Run the playbook twice and confirm the second run reports ok (not changed) for every task"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Remember the exam-critical distinction from Section 4.3: the for loop belongs INSIDE the .j2 template file, not inside the playbook's tasks: list. The playbook task itself is just a normal template: call with no loop keyword needed."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: did you accidentally try to put {% for %} inside the playbook YAML instead of the template file? That's the single most common mistake when first learning this chapter — the playbook stays simple; all the looping logic lives in the .j2 file."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# templates/hosts.j2"
+        },
+        {
+          "level": 0,
+          "text": "{{ ansible_managed }}"
+        },
+        {
+          "level": 0,
+          "text": "127.0.0.1 localhost"
+        },
+        {
+          "level": 0,
+          "text": "{% for host in groups['all'] %}"
+        },
+        {
+          "level": 0,
+          "text": "{{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }} {{ hostvars[host]['ansible_facts']['fqdn'] }} {{ hostvars[host]['ansible_facts']['hostname'] }}"
+        },
+        {
+          "level": 0,
+          "text": "{% endfor %}"
+        },
+        {
+          "level": 0,
+          "text": "# playbook.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Fleet hosts file and housekeeping"
+        },
+        {
+          "level": 0,
+          "text": "hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Deploy generated /etc/hosts"
+        },
+        {
+          "level": 0,
+          "text": "template:"
+        },
+        {
+          "level": 0,
+          "text": "src: templates/hosts.j2"
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/hosts"
+        },
+        {
+          "level": 0,
+          "text": "- name: Add banner to motd"
+        },
+        {
+          "level": 0,
+          "text": "blockinfile:"
+        },
+        {
+          "level": 0,
+          "text": "path: /etc/motd"
+        },
+        {
+          "level": 0,
+          "text": "block: |"
+        },
+        {
+          "level": 0,
+          "text": "This system is managed by Ansible."
+        },
+        {
+          "level": 0,
+          "text": "Unauthorized changes will be overwritten."
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "- name: Remove legacy application config"
+        },
+        {
+          "level": 0,
+          "text": "file:"
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/legacy-app.conf"
+        },
+        {
+          "level": 0,
+          "text": "state: absent"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "hostvars[host] inside the for loop reaches into EACH host's own gathered facts in turn — this is what lets one template describe the whole fleet."
+        },
+        {
+          "level": 0,
+          "text": "blockinfile's automatic BEGIN/END markers are what make the second run report ok instead of duplicating the banner text."
+        },
+        {
+          "level": 0,
+          "text": "state: absent on the file task is explicit on purpose — matching Section 4.1's guidance to always state intent clearly rather than relying on a module default."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/hosts on any host should list every OTHER host's real IP/FQDN/hostname, sourced from facts, not hardcoded. A second playbook run should show changed=0 across the board — proof the template, the blockinfile markers, and the file removal are all correctly idempotent."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "Generating /etc/hosts (or similar fleet-wide reference files) from live inventory facts is a genuinely common real pattern — it means the file is always accurate the moment a host is added to or removed from the inventory, with zero manual synchronization required."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 4 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What's the key difference between lineinfile/blockinfile and templating an entire file?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: lineinfile/blockinfile patch part of an existing file (fragile for complex changes); a template generates the WHOLE file fresh each run from variables/facts, which is more reliable and readable for anything beyond a small tweak."
+        },
+        {
+          "level": 0,
+          "text": "Q2. Which module is the reverse of copy, pulling a file FROM a managed host back to the control node?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: fetch"
+        },
+        {
+          "level": 0,
+          "text": "Q3. What does copy's default force: yes actually do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Overwrites the remote file's content if it differs from the source file, every run — set force: no to only copy when the destination doesn't already exist."
+        },
+        {
+          "level": 0,
+          "text": "Q4. How does blockinfile achieve idempotence across repeated runs?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It wraps its inserted content in automatic BEGIN/END comment markers, letting it find and replace its own previous block instead of appending duplicates."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What are the three Jinja2 delimiter types, and what does each do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: {{ }} outputs a value; {% %} contains logic (loops/conditionals); {# #} is a comment, stripped from output entirely."
+        },
+        {
+          "level": 0,
+          "text": "Q6. Can Jinja2 {% for %} loops be used directly inside an Ansible playbook's tasks list?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — Jinja2 for-loops and if-conditionals work only INSIDE template files; playbooks use the loop and when task keywords instead."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What does the ansible_managed directive provide, and where is it configured?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Standard text (set in ansible.cfg) meant to be placed in a template's header comment, warning that the file is managed by Ansible and shouldn't be hand-edited."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What does the validate option on the template module do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Runs an arbitrary command against the RENDERED file before it's put in place, letting you reject a broken config (e.g. visudo -c) instead of deploying it."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What's the difference between a Jinja2 filter and a Jinja2 test?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: A filter (| to_json) transforms/reshapes a value's output format; a test (is failed) asks a true/false question about a value, typically inside a when condition."
+        },
+        {
+          "level": 0,
+          "text": "Q10. In a template that loops with hostvars[host][...], what does hostvars make possible that plain ansible_facts alone couldn't?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Reaching into ANOTHER host's facts from within a single template render — letting one file (like a generated /etc/hosts) describe every host in the inventory, not just the one it's being deployed to."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 5: MANAGING LARGE PROJECTS"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 7 in full: precisely targeting hosts with pattern syntax, dynamic inventories for environments that change too fast for a static file, tuning how many hosts Ansible touches at once, and splitting large playbooks into manageable, reusable pieces."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Everything so far has run against a handful of lab hosts. This Part is about what changes once you're managing dozens or hundreds of real servers — targeting exactly the right subset, not hammering them all at once, and not maintaining one unmanageable 2,000-line playbook file."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

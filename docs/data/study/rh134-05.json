@@ -1,0 +1,849 @@
+{
+  "id": "rh134-05",
+  "n": 5,
+  "sourceNumber": 5,
+  "kind": "part",
+  "title": "Part 5",
+  "display": "Part 5 — Managing Layered Storage with Stratis; Compressing and Dedu…",
+  "exam": "RHCSA (EX200)",
+  "words": 2371,
+  "sections": [
+    {
+      "title": "1. Managing Layered Storage with Stratis",
+      "content": [
+        {
+          "level": 0,
+          "text": "LVM works, but every layer — PV, VG, LV, filesystem — is managed with its own separate command family, and growing a filesystem is always a two-step dance (grow the LV, then grow the filesystem). Stratis is Red Hat's answer to that friction: a single tool that manages block devices, pools, and filesystems together, with thin provisioning and easy snapshots built in from the start."
+        },
+        {
+          "level": 2,
+          "text": "Stratis architecture in one sentence"
+        },
+        {
+          "level": 0,
+          "text": "A pool is built from one or more block devices; any number of filesystems can be created inside that pool, each one thinly provisioned and able to grow on demand, without you ever running a separate 'extend' command the way you do with LVM."
+        },
+        {
+          "level": 0,
+          "text": "Stratis term"
+        },
+        {
+          "level": 0,
+          "text": "Roughly equivalent LVM concept"
+        },
+        {
+          "level": 0,
+          "text": "Pool"
+        },
+        {
+          "level": 0,
+          "text": "Volume Group — a collection of block devices"
+        },
+        {
+          "level": 0,
+          "text": "Filesystem (inside a pool)"
+        },
+        {
+          "level": 0,
+          "text": "Logical Volume + filesystem, combined into one object"
+        },
+        {
+          "level": 2,
+          "text": "Setting up Stratis"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum install stratis-cli stratisd"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl enable --now stratisd"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "stratis pool create pool1 /dev/vdb"
+        },
+        {
+          "level": 0,
+          "text": "Create a pool from one or more block devices"
+        },
+        {
+          "level": 0,
+          "text": "stratis pool list"
+        },
+        {
+          "level": 0,
+          "text": "Show pools with total/used physical size"
+        },
+        {
+          "level": 0,
+          "text": "stratis pool add-data pool1 /dev/vdc"
+        },
+        {
+          "level": 0,
+          "text": "Add another block device to an existing pool"
+        },
+        {
+          "level": 0,
+          "text": "stratis blockdev list pool1"
+        },
+        {
+          "level": 0,
+          "text": "Show which devices belong to a pool"
+        },
+        {
+          "level": 0,
+          "text": "stratis filesystem create pool1 fs1"
+        },
+        {
+          "level": 0,
+          "text": "Create a thinly-provisioned filesystem inside a pool"
+        },
+        {
+          "level": 0,
+          "text": "stratis filesystem snapshot pool1 fs1 snap1"
+        },
+        {
+          "level": 0,
+          "text": "Create an independent snapshot of a filesystem"
+        },
+        {
+          "level": 0,
+          "text": "stratis filesystem list"
+        },
+        {
+          "level": 0,
+          "text": "Show filesystems across all pools"
+        },
+        {
+          "level": 0,
+          "text": "A pool's filesystems appear as symlinks under /stratis/poolname/, and can be mounted like any other block device once you know the UUID:"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lsblk --output=UUID /stratis/pool1/filesystem1"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL A Stratis fstab entry MUST include the x-systemd.requires=stratisd.service mount option, or the machine will boot to emergency.target on the next reboot — because systemd will try to mount the filesystem before the stratisd service that makes it available has even started."
+        },
+        {
+          "level": 0,
+          "text": "UUID=31b9...8c55 /dir1 xfs defaults,x-systemd.requires=stratisd.service 0 0"
+        }
+      ],
+      "words": 316
+    },
+    {
+      "title": "2. Compressing and Deduplicating Storage with VDO",
+      "content": [
+        {
+          "level": 0,
+          "text": "VDO (Virtual Data Optimizer) solves a completely different problem from Stratis: not 'make storage easier to manage', but 'make the storage you already have go further' by eliminating waste before it's written to disk."
+        },
+        {
+          "level": 2,
+          "text": "The three-phase pipeline"
+        },
+        {
+          "level": 0,
+          "text": "Phase"
+        },
+        {
+          "level": 0,
+          "text": "What it does"
+        },
+        {
+          "level": 0,
+          "text": "1. Zero-Block Elimination"
+        },
+        {
+          "level": 0,
+          "text": "Blocks that are pure zeros are never actually written — only recorded in metadata. This is what makes thin provisioning possible."
+        },
+        {
+          "level": 0,
+          "text": "2. Deduplication"
+        },
+        {
+          "level": 0,
+          "text": "Identical data blocks (e.g. multiple copies of the same file) are detected and stored once, with everything else pointing back to that one copy — handled by the uds kernel module."
+        },
+        {
+          "level": 0,
+          "text": "3. Compression"
+        },
+        {
+          "level": 0,
+          "text": "Whatever's left is compressed with LZ4 and packed into 4KB blocks — handled by the kvdo kernel module."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS VDO sits BELOW LVM and filesystems in the stack, on top of a raw block device — a VDO volume can itself become an LVM physical volume. This layering is why VDO shows up heavily in virtualization hosts: dozens of near-identical VM disk images compress and deduplicate extremely well."
+        },
+        {
+          "level": 2,
+          "text": "Creating and checking a VDO volume"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum install vdo kmod-kvdo"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vdo create --name=vdo1 --device=/dev/vdd --vdoLogicalSize=50G"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkfs.xfs /dev/mapper/vdo1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vdo status --name=vdo1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vdo list"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Setting --vdoLogicalSize larger than the physical device (as in the example — 50G logical on possibly much smaller physical storage) means the volume can report more free space than physically exists. If real data doesn't compress or deduplicate as well as hoped, you can run out of actual disk before the filesystem thinks it's full."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL vdostats --verbose is how you proactively monitor real physical usage on a thinly-provisioned VDO volume — this is not optional monitoring, it's the only way to see the gap between logical and physical space before it becomes an outage."
+        }
+      ],
+      "words": 303
+    },
+    {
+      "title": "3. Mounting Network-Attached Storage with NFS",
+      "content": [
+        {
+          "level": 0,
+          "text": "Everything so far in RH134 has been local storage. NFS (Network File System) is the standard way RHEL clients mount storage that physically lives on another server — the client sees a normal-looking directory, but every read and write travels over the network."
+        },
+        {
+          "level": 0,
+          "text": "Fact"
+        },
+        {
+          "level": 0,
+          "text": "Detail"
+        },
+        {
+          "level": 0,
+          "text": "Default version in RHEL 8"
+        },
+        {
+          "level": 0,
+          "text": "NFSv4.2"
+        },
+        {
+          "level": 0,
+          "text": "Protocol"
+        },
+        {
+          "level": 0,
+          "text": "NFSv4 uses TCP only; older versions could also use UDP"
+        },
+        {
+          "level": 0,
+          "text": "Server side"
+        },
+        {
+          "level": 0,
+          "text": "Exports directories (shares)"
+        },
+        {
+          "level": 0,
+          "text": "Client side"
+        },
+        {
+          "level": 0,
+          "text": "Mounts an exported share onto a local, already-existing mount point"
+        },
+        {
+          "level": 2,
+          "text": "Discovering and mounting shares"
+        },
+        {
+          "level": 0,
+          "text": "You can explore what an NFSv4 server exports by mounting its root and browsing (as root — this doesn't grant real access to Kerberos-protected shares, but does reveal their names):"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkdir mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount serverb:/ mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ls mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "A temporary, non-persistent mount for testing or one-off access:"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount -t nfs -o rw,sync serverb:/share mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "A persistent mount, added to /etc/fstab exactly like local storage:"
+        },
+        {
+          "level": 0,
+          "text": "serverb:/share /mountpoint nfs rw,soft 0 0"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount /mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Forgetting that the mount point must already exist as a local directory before mounting — NFS doesn't create it for you the way autofs does. mkdir it first."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION The nfsconf tool (nfsconf --set / --unset) manages settings in /etc/nfs.conf for the various NFS client and server daemons — worth knowing it exists for tuning beyond basic mount/export behavior, though this course keeps the focus on client-side mounting."
+        }
+      ],
+      "words": 237
+    },
+    {
+      "title": "4. Automounting Network-Attached Storage",
+      "content": [
+        {
+          "level": 0,
+          "text": "A permanent /etc/fstab NFS mount stays connected even when nobody's using it — tying up a network connection and, if the server goes down, potentially hanging commands like df on the client. The automounter (autofs) instead mounts shares ON DEMAND, the moment someone accesses the path, and unmounts them automatically after a period of inactivity."
+        },
+        {
+          "level": 0,
+          "text": "Automounter benefit"
+        },
+        {
+          "level": 0,
+          "text": "Why it matters"
+        },
+        {
+          "level": 0,
+          "text": "No root required by end users"
+        },
+        {
+          "level": 0,
+          "text": "Regular users trigger the mount just by accessing the path"
+        },
+        {
+          "level": 0,
+          "text": "Configured entirely client-side"
+        },
+        {
+          "level": 0,
+          "text": "No server-side changes needed"
+        },
+        {
+          "level": 0,
+          "text": "Mount points created/removed automatically"
+        },
+        {
+          "level": 0,
+          "text": "Nothing lingers when not in use — saves network and system resources"
+        },
+        {
+          "level": 2,
+          "text": "Building an indirect map (the common case)"
+        },
+        {
+          "level": 0,
+          "text": "Three files work together: a master map (which base directory maps to which mapping file), a mapping file (the actual mount details), and the autofs service itself."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum install autofs"
+        },
+        {
+          "level": 0,
+          "text": "# /etc/auto.master.d/demo.autofs (master map)"
+        },
+        {
+          "level": 0,
+          "text": "/shares /etc/auto.demo"
+        },
+        {
+          "level": 0,
+          "text": "# /etc/auto.demo (mapping file)"
+        },
+        {
+          "level": 0,
+          "text": "work -rw,sync serverb:/shares/work"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "Accessing /shares/work triggers autofs to create that directory on the fly, mount serverb:/shares/work onto it, and remove the directory again once it's idle — you never manually mkdir or mount anything."
+        },
+        {
+          "level": 2,
+          "text": "Direct maps vs. indirect maps"
+        },
+        {
+          "level": 0,
+          "text": "Map type"
+        },
+        {
+          "level": 0,
+          "text": "Master map entry"
+        },
+        {
+          "level": 0,
+          "text": "Use case"
+        },
+        {
+          "level": 0,
+          "text": "Indirect (default)"
+        },
+        {
+          "level": 0,
+          "text": "/shares /etc/auto.demo"
+        },
+        {
+          "level": 0,
+          "text": "Mount points live under one common base directory autofs manages entirely"
+        },
+        {
+          "level": 0,
+          "text": "Direct"
+        },
+        {
+          "level": 0,
+          "text": "/- /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "Mount points are existing absolute paths anywhere on the filesystem, not confined to one base directory"
+        },
+        {
+          "level": 0,
+          "text": "A direct map's mapping file uses the full absolute path as the key instead of a relative name:"
+        },
+        {
+          "level": 0,
+          "text": "# /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "/mnt/docs -rw,sync serverb:/shares/docs"
+        },
+        {
+          "level": 2,
+          "text": "Indirect wildcard maps — one entry for many subdirectories"
+        },
+        {
+          "level": 0,
+          "text": "When a server exports several subdirectories that all use the same mount options, a single wildcard entry handles all of them:"
+        },
+        {
+          "level": 0,
+          "text": "# /etc/auto.demo"
+        },
+        {
+          "level": 0,
+          "text": "* -rw,sync serverb:/shares/&"
+        },
+        {
+          "level": 0,
+          "text": "The * matches whatever name is accessed under /shares/, and & substitutes that same name into the source path — so accessing /shares/anything automatically maps to serverb:/shares/anything, with no per-directory configuration needed."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Know the three master-map/mapping-file patterns cold: plain indirect (/base → mapping file with named keys), direct (/- → mapping file with absolute-path keys), and indirect wildcard (* key with & substitution). The exam expects you to build any of the three from a written scenario."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Advanced Storage + NFS"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "stratis pool create / filesystem create"
+        },
+        {
+          "level": 0,
+          "text": "Build a Stratis pool and filesystem"
+        },
+        {
+          "level": 0,
+          "text": "stratis filesystem snapshot"
+        },
+        {
+          "level": 0,
+          "text": "Create an independent snapshot"
+        },
+        {
+          "level": 0,
+          "text": "vdo create --device= --vdoLogicalSize="
+        },
+        {
+          "level": 0,
+          "text": "Create a VDO volume"
+        },
+        {
+          "level": 0,
+          "text": "vdo status / vdo list / vdostats --verbose"
+        },
+        {
+          "level": 0,
+          "text": "Inspect VDO volume health and real usage"
+        },
+        {
+          "level": 0,
+          "text": "mount -t nfs -o opts server:/share mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "Manual NFS mount"
+        },
+        {
+          "level": 0,
+          "text": "yum install autofs / systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "Install and activate the automounter"
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.master.d/*.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Master map — defines base dir → mapping file"
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.NAME"
+        },
+        {
+          "level": 0,
+          "text": "Mapping file — defines mount point, options, source"
+        }
+      ],
+      "words": 466
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Advanced Storage + Automounted NFS",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Build a Stratis-backed filesystem with correct boot-safe persistence, and configure an indirect autofs wildcard map for an NFS export."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Your team wants a quick, easy-to-grow filesystem for build artifacts using Stratis (rather than the multi-step LVM dance from Part 4). Separately, a shared NFS server (serverb) exports several per-team subdirectories under /shares, and you want any of them automatically available under /shares/<team> on demand, without hand-configuring each one."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM with an unused virtual disk /dev/vdc for Stratis, sudo access"
+        },
+        {
+          "level": 0,
+          "text": "An NFS server named serverb exporting /shares/dev, /shares/qa, /shares/ops with matching permissions"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part A (Stratis)"
+        },
+        {
+          "level": 0,
+          "text": "1. Install and enable stratisd, create a pool named buildpool from /dev/vdc"
+        },
+        {
+          "level": 0,
+          "text": "2. Create a filesystem named artifacts inside that pool"
+        },
+        {
+          "level": 0,
+          "text": "3. Add a persistent /etc/fstab entry for it that will NOT put the machine into emergency mode on reboot"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part B (autofs)"
+        },
+        {
+          "level": 0,
+          "text": "1. Install and enable autofs"
+        },
+        {
+          "level": 0,
+          "text": "2. Configure an indirect WILDCARD map so /shares/dev, /shares/qa, /shares/ops (and any future team directory) all automount without editing config again"
+        },
+        {
+          "level": 0,
+          "text": "3. Verify by accessing one of the paths and confirming it mounts on demand"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Part A: the fstab mount option that prevents the emergency-boot problem was covered in Section 5.1 — it's not optional. Part B: a wildcard map uses * as the key and & to echo that match into the source path, exactly once per line."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: if you rebooted right now, would the Stratis filesystem mount cleanly, or would the machine drop to emergency mode? If you're not 100% sure, re-check your fstab line against Section 5.1 before moving on — this is not a mistake you want to make on real hardware."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# Part A — Stratis"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum install stratis-cli stratisd -y"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl enable --now stratisd"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# stratis pool create buildpool /dev/vdc"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# stratis filesystem create buildpool artifacts"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lsblk --output=UUID /stratis/buildpool/artifacts"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# echo 'UUID=<uuid> /build xfs defaults,x-systemd.requires=stratisd.service 0 0' >> /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkdir /build && systemctl daemon-reload && mount /build"
+        },
+        {
+          "level": 0,
+          "text": "# Part B — autofs"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum install autofs -y"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# echo '/shares /etc/auto.teams' > /etc/auto.master.d/teams.autofs"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# echo '* -rw,sync serverb:/shares/&' > /etc/auto.teams"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ls /shares/dev # triggers on-demand mount"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "x-systemd.requires=stratisd.service is the whole reason this fstab entry is safe — it tells systemd to wait for stratisd before attempting the mount, avoiding the emergency-boot trap."
+        },
+        {
+          "level": 0,
+          "text": "The wildcard map's single line (* serverb:/shares/&) covers dev, qa, ops, and any future team directory the NFS server adds — no autofs config change needed when a new team shows up."
+        },
+        {
+          "level": 0,
+          "text": "ls /shares/dev is what actually triggers the mount — autofs mounts are lazy, so nothing happens until the path is accessed."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "mount | grep stratis and mount | grep shares/dev should both show active mounts. Waiting past the idle timeout and checking mount again should show the autofs entry gone (unmounted automatically) while the Stratis mount remains — the key behavioral difference between the two."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This pairing — an easy-to-grow local filesystem for build output, plus on-demand NFS for shared team resources — is a genuinely common CI/build-server pattern. Stratis in particular is worth knowing even outside the exam: as Red Hat continues investing in it, it's positioned as the long-term easier alternative to hand-managing LVM for straightforward cases."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 5 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What's the core difference in what problem Stratis solves versus what problem VDO solves?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Stratis makes storage management SIMPLER (combining pool/volume/filesystem management into one tool); VDO makes existing storage go FURTHER (compression and deduplication) — they solve different problems and can even be combined."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What critical mount option must a Stratis fstab entry include, and what happens if you omit it?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: x-systemd.requires=stratisd.service — without it, the machine boots to emergency.target because systemd tries to mount before stratisd is running."
+        },
+        {
+          "level": 0,
+          "text": "Q3. Name VDO's three data-reduction phases in order."
+        },
+        {
+          "level": 0,
+          "text": "Answer: Zero-Block Elimination, Deduplication, Compression."
+        },
+        {
+          "level": 0,
+          "text": "Q4. Why must you monitor vdostats --verbose on a thinly-provisioned VDO volume?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The logical size can exceed physical size — real usage can approach the physical limit even while the filesystem still reports free logical space."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What's the default NFS version in RHEL 8, and what transport protocol does it use exclusively?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: NFSv4.2, using TCP only (unlike older NFS versions which could also use UDP)."
+        },
+        {
+          "level": 0,
+          "text": "Q6. Does an NFS client need the mount point directory to already exist before mounting?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Yes — unlike autofs, a manual or fstab NFS mount requires the local mount point directory to already exist."
+        },
+        {
+          "level": 0,
+          "text": "Q7. Name three benefits of using autofs over a permanent /etc/fstab NFS mount."
+        },
+        {
+          "level": 0,
+          "text": "Answer: Any three of: no root required for regular users, mounts only exist when actually in use (saving resources), mount points are created/removed automatically, entirely client-side configuration."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What master map entry marks a mapping file as using DIRECT maps rather than indirect?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: /- (a literal slash-dash) as the base directory."
+        },
+        {
+          "level": 0,
+          "text": "Q9. In the wildcard map line * -rw,sync serverb:/shares/&, what does the & do?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It substitutes whatever name matched the * wildcard into the source path — so accessing /shares/dev maps to serverb:/shares/dev automatically."
+        },
+        {
+          "level": 0,
+          "text": "Q10. Why is autofs generally preferred over a plain fstab entry for NFS shares that aren't used constantly?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It avoids tying up a permanent network connection and system resources for a share that's only occasionally needed, and avoids commands hanging if the NFS server becomes unreachable while the share sits unused."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 6: THE BOOT PROCESS + NETWORK SECURITY"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH134 Chapter 10 (Controlling the Boot Process) and Chapter 11 (Managing Network Security). Both chapters are about the moments admins dread most: a system that won't boot, and a firewall that's blocking something it shouldn't (or letting through something it should block)."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Root password recovery and fstab boot-failure repair are hands-on RHCSA tasks, not theory — you will be asked to actually fix a broken boot on the exam. firewalld and SELinux port labeling are the natural conclusion of Part 3's SELinux material: a service can have correct permissions, correct SELinux file context, AND still fail — because the firewall or the SELinux port label is wrong. This Part closes that loop."
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "rhel-service-nfs",
+      "why": "Advanced Storage + Automounted NFS"
+    },
+    {
+      "id": "rhel-service-samba-smb",
+      "why": "Advanced Storage — network file services"
+    },
+    {
+      "id": "rhel-service-autofs",
+      "why": "Advanced Storage + Automounted NFS"
+    }
+  ],
+  "currency": []
+}

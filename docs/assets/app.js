@@ -55,7 +55,7 @@ async function loadCorpus() {
 
     // Exam objectives and the Knowledge Map are single objects, not lists, so
   // they are loaded separately from the per-kind groups.
-  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"]]) {
+  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"], ["study", "study-manual"]]) {
     try {
       const res = await fetch(`${base}/${file}.json`, { cache: "no-cache" });
       if (res.ok) out[key] = await res.json();
@@ -102,6 +102,7 @@ function buildNav() {
   navPracticeList.appendChild(navLink("My progress", "progress"));
 
   clear(navProject);
+  navProject.appendChild(navLink("Study Manual", "study"));
   navProject.appendChild(navLink("Projects", "projects", { count: st.projects }));
   navProject.appendChild(navLink("Exam objectives", "objectives"));
   navProject.appendChild(navLink("Verification status", "verify"));
@@ -392,6 +393,7 @@ async function render() {
     case "verify": node = V.verifyView(); break;
     case "objectives": node = V.objectivesView(); break;
     case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
+    case "study": node = rest.length ? V.studyUnitView({ id: rest[0] }) : V.studyManualView(); break;
     default: node = V.homeView();
   }
 
@@ -431,6 +433,8 @@ async function boot() {
   route("objectives", () => render());
   route("km", () => render());
   route("km/:id", () => render());
+  route("study", () => render());
+  route("study/:id", () => render());
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);

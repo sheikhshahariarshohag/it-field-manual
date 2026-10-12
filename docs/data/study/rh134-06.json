@@ -1,0 +1,1205 @@
+{
+  "id": "rh134-06",
+  "n": 6,
+  "sourceNumber": 6,
+  "kind": "part",
+  "title": "Part 6",
+  "display": "Part 6 — The Boot Process, Step by Step; Selecting the Boot Target; …",
+  "exam": "RHCSA (EX200)",
+  "words": 3207,
+  "sections": [
+    {
+      "title": "1. The Boot Process, Step by Step",
+      "content": [
+        {
+          "level": 0,
+          "text": "A high-level walk from powered-off to a login prompt:"
+        },
+        {
+          "level": 0,
+          "text": "Stage"
+        },
+        {
+          "level": 0,
+          "text": "What happens"
+        },
+        {
+          "level": 0,
+          "text": "Firmware (UEFI/BIOS)"
+        },
+        {
+          "level": 0,
+          "text": "Power-On Self Test, then searches for a bootable device"
+        },
+        {
+          "level": 0,
+          "text": "Boot loader (GRUB2)"
+        },
+        {
+          "level": 0,
+          "text": "Firmware hands off to GRUB2, which reads /boot/grub2/grub.cfg and shows the kernel-selection menu"
+        },
+        {
+          "level": 0,
+          "text": "Kernel + initramfs load"
+        },
+        {
+          "level": 0,
+          "text": "GRUB2 loads the chosen kernel and its initramfs (a self-contained mini-system with drivers and init scripts) into memory"
+        },
+        {
+          "level": 0,
+          "text": "Kernel executes /sbin/init"
+        },
+        {
+          "level": 0,
+          "text": "The kernel hands off to /sbin/init (a symlink to systemd) as PID 1, running from the initramfs"
+        },
+        {
+          "level": 0,
+          "text": "initrd.target"
+        },
+        {
+          "level": 0,
+          "text": "This systemd instance mounts the real root filesystem onto /sysroot (per /etc/fstab)"
+        },
+        {
+          "level": 0,
+          "text": "Pivot + re-exec"
+        },
+        {
+          "level": 0,
+          "text": "The kernel switches root from initramfs to /sysroot, and systemd re-executes itself using the copy installed on disk"
+        },
+        {
+          "level": 0,
+          "text": "Default target"
+        },
+        {
+          "level": 0,
+          "text": "systemd starts whatever units the default target requires, resolving dependencies automatically, ending at a login prompt"
+        },
+        {
+          "level": 0,
+          "text": "GRUB2's config file itself is generated, not hand-edited: grub2-mkconfig reads /etc/default/grub and the scripts in /etc/grub.d/ to produce /boot/grub2/grub.cfg."
+        },
+        {
+          "level": 2,
+          "text": "Powering off and rebooting"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "systemctl poweroff / poweroff"
+        },
+        {
+          "level": 0,
+          "text": "Stops services, unmounts filesystems, powers down"
+        },
+        {
+          "level": 0,
+          "text": "systemctl reboot / reboot"
+        },
+        {
+          "level": 0,
+          "text": "Stops services, unmounts filesystems, reboots"
+        },
+        {
+          "level": 0,
+          "text": "systemctl halt / halt"
+        },
+        {
+          "level": 0,
+          "text": "Brings the system to a safe-to-power-off state, but does NOT power off automatically"
+        }
+      ],
+      "words": 194
+    },
+    {
+      "title": "2. Selecting the Boot Target",
+      "content": [
+        {
+          "level": 0,
+          "text": "A systemd target is a named collection of units the system activates to reach a desired state — the RHEL 8 replacement for old-style SysV runlevels."
+        },
+        {
+          "level": 0,
+          "text": "Target"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "graphical.target"
+        },
+        {
+          "level": 0,
+          "text": "Multi-user, graphical and text logins"
+        },
+        {
+          "level": 0,
+          "text": "multi-user.target"
+        },
+        {
+          "level": 0,
+          "text": "Multi-user, text-based logins only"
+        },
+        {
+          "level": 0,
+          "text": "rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "sulogin prompt, after basic system initialization completes"
+        },
+        {
+          "level": 0,
+          "text": "emergency.target"
+        },
+        {
+          "level": 0,
+          "text": "sulogin prompt, immediately after the initramfs pivot — root mounted read-only, almost nothing else started"
+        },
+        {
+          "level": 0,
+          "text": "Targets nest — graphical.target requires multi-user.target, which requires basic.target, and so on. See the full chain with:"
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ systemctl list-dependencies graphical.target | grep target"
+        },
+        {
+          "level": 2,
+          "text": "Switching targets"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "systemctl isolate TARGET"
+        },
+        {
+          "level": 0,
+          "text": "Switch to a target NOW — stops everything not required by it, starts anything required that isn't running"
+        },
+        {
+          "level": 0,
+          "text": "systemctl get-default"
+        },
+        {
+          "level": 0,
+          "text": "Show the current default (boot) target"
+        },
+        {
+          "level": 0,
+          "text": "systemctl set-default TARGET"
+        },
+        {
+          "level": 0,
+          "text": "Change the default target persistently"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Not every target can be isolated — only ones with AllowIsolate=yes in their unit file (check with systemctl cat TARGET). graphical.target and rescue.target qualify; something like cryptsetup.target does not, because isolating it wouldn't make sense as a standalone system state."
+        },
+        {
+          "level": 2,
+          "text": "Booting into a different target for ONE boot only"
+        },
+        {
+          "level": 0,
+          "text": "Interrupt the GRUB menu, press e to edit the entry, find the line starting with linux, and append:"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit=rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "Then press Ctrl+x to boot with that change. This affects only this one boot — nothing persists, making it the safe way to test a problem target without risking a misconfigured default."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL The full GRUB edit sequence — interrupt countdown, e to edit, find the linux line, append the option, Ctrl+x to boot — must be committed to memory. This exact mechanic is reused for rd.break (root password reset) and systemd.unit=emergency.target (fstab repair), both covered next."
+        }
+      ],
+      "words": 279
+    },
+    {
+      "title": "3. Resetting the Root Password",
+      "content": [
+        {
+          "level": 0,
+          "text": "When nobody is logged in and the root password is lost, RHEL 8's method uses rd.break — a kernel argument that pauses the initramfs just before it hands control to the real system, dropping you into a root shell with the real filesystem mounted (but read-only) on /sysroot."
+        },
+        {
+          "level": 2,
+          "text": "The procedure"
+        },
+        {
+          "level": 0,
+          "text": "1. Reboot the system."
+        },
+        {
+          "level": 0,
+          "text": "2. Interrupt the GRUB countdown (any key except Enter)."
+        },
+        {
+          "level": 0,
+          "text": "3. Press e to edit the boot entry."
+        },
+        {
+          "level": 0,
+          "text": "4. Find the line starting with linux, and append rd.break."
+        },
+        {
+          "level": 0,
+          "text": "5. Press Ctrl+x to boot with the change."
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# mount -o remount,rw /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# chroot /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# passwd root"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# exit"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# exit"
+        },
+        {
+          "level": 0,
+          "text": "Step"
+        },
+        {
+          "level": 0,
+          "text": "Why it's needed"
+        },
+        {
+          "level": 0,
+          "text": "mount -o remount,rw /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "/sysroot starts read-only; you can't change the password on a read-only filesystem"
+        },
+        {
+          "level": 0,
+          "text": "chroot /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "Treats /sysroot as the root of the filesystem tree so passwd edits the REAL /etc/shadow, not the initramfs's own"
+        },
+        {
+          "level": 0,
+          "text": "touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "SELinux isn't active yet at this point, so any file passwd rewrites (it replaces /etc/shadow rather than editing in place) has NO SELinux context — this flag forces a full relabel on the next boot to fix that"
+        },
+        {
+          "level": 0,
+          "text": "exit (twice)"
+        },
+        {
+          "level": 0,
+          "text": "First exit leaves the chroot, second exit leaves the initramfs debug shell and lets the boot continue"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Forgetting touch /.autorelabel is the single most common mistake here. The password change itself will work, but /etc/shadow will be left with no (or an incorrect) SELinux context, which can cause login/authentication failures even though the password is technically correct — SELinux denies access before the password is ever checked."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING The autorelabel triggers a FULL filesystem relabel on the next boot, which can take a noticeably long time on a large disk — don't assume the system has hung if the next boot takes longer than usual after this procedure."
+        }
+      ],
+      "words": 303
+    },
+    {
+      "title": "4. Repairing systemd and Filesystem Boot Issues",
+      "content": [
+        {
+          "level": 2,
+          "text": "Diagnostic tools"
+        },
+        {
+          "level": 0,
+          "text": "Tool"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable debug-shell.service"
+        },
+        {
+          "level": 0,
+          "text": "Spawns a root shell on TTY9 (Ctrl+Alt+F9), auto-logged-in as root, very early in boot — for live debugging"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit=rescue.target / emergency.target (GRUB edit)"
+        },
+        {
+          "level": 0,
+          "text": "Boots straight into a recovery shell instead of the normal target — both require the root password"
+        },
+        {
+          "level": 0,
+          "text": "systemctl list-jobs"
+        },
+        {
+          "level": 0,
+          "text": "Shows startup jobs stuck as 'running', which block other jobs listed as 'waiting'"
+        },
+        {
+          "level": 0,
+          "text": "journalctl -b -p err"
+        },
+        {
+          "level": 0,
+          "text": "Shows all error-or-worse messages from the current (or specified) boot"
+        },
+        {
+          "level": 0,
+          "text": "rescue.target vs emergency.target"
+        },
+        {
+          "level": 0,
+          "text": "Key difference"
+        },
+        {
+          "level": 0,
+          "text": "rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "Waits for sysinit.target first — more of the system is up (logging, filesystems mounted)"
+        },
+        {
+          "level": 0,
+          "text": "emergency.target"
+        },
+        {
+          "level": 0,
+          "text": "Spawns immediately after the initramfs pivot — root filesystem mounted READ-ONLY, almost nothing else initialized"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Never leave debug-shell.service enabled after you're done — it's an unauthenticated root shell available to anyone with local console access. Disable it as soon as debugging is finished."
+        },
+        {
+          "level": 2,
+          "text": "Common /etc/fstab problems and how systemd reacts"
+        },
+        {
+          "level": 0,
+          "text": "Problem"
+        },
+        {
+          "level": 0,
+          "text": "Result"
+        },
+        {
+          "level": 0,
+          "text": "Corrupt filesystem"
+        },
+        {
+          "level": 0,
+          "text": "systemd attempts an automatic repair; if too severe, drops to emergency shell"
+        },
+        {
+          "level": 0,
+          "text": "Nonexistent device/UUID in fstab"
+        },
+        {
+          "level": 0,
+          "text": "Waits a timeout period for the device to appear, then drops to emergency shell"
+        },
+        {
+          "level": 0,
+          "text": "Nonexistent mount point directory"
+        },
+        {
+          "level": 0,
+          "text": "Drops straight to emergency shell"
+        },
+        {
+          "level": 0,
+          "text": "Incorrect mount option"
+        },
+        {
+          "level": 0,
+          "text": "Drops straight to emergency shell"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# mount -o remount,rw /"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# vim /etc/fstab # fix the bad entry"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# exit"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Two steps people forget under exam pressure: remounting / read-write BEFORE editing fstab (the emergency shell mounts it read-only), and systemctl daemon-reload AFTER editing it — without the reload, systemd may still be using the old, broken configuration in memory even though the file on disk is fixed."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Reaching for nofail as a general-purpose fix for a flaky mount. nofail lets the boot continue even if that filesystem fails to mount — which means an application can start with its storage silently missing. It's a deliberate design choice for genuinely optional mounts, not a workaround for a mount you actually need working."
+        }
+      ],
+      "words": 327
+    },
+    {
+      "title": "5. Managing Server Firewalls with firewalld",
+      "content": [
+        {
+          "level": 0,
+          "text": "firewalld is a dynamic firewall manager — a friendlier front end over the kernel's netfilter/nftables packet filtering, organized around zones rather than raw rule chains. Rules can be added and removed without dropping active connections, which is the whole point of 'dynamic.'"
+        },
+        {
+          "level": 2,
+          "text": "Zones: trust levels for network interfaces"
+        },
+        {
+          "level": 0,
+          "text": "Every network interface belongs to exactly one zone at a time, and each zone has its own list of allowed services/ports. public is the default zone for newly added interfaces; the loopback interface (lo) is mapped to trusted."
+        },
+        {
+          "level": 0,
+          "text": "Zone"
+        },
+        {
+          "level": 0,
+          "text": "Default behavior"
+        },
+        {
+          "level": 0,
+          "text": "trusted"
+        },
+        {
+          "level": 0,
+          "text": "Allow ALL incoming traffic"
+        },
+        {
+          "level": 0,
+          "text": "home / internal"
+        },
+        {
+          "level": 0,
+          "text": "Reject incoming unless related to outgoing, or matching ssh, mdns, ipp-client, samba-client, dhcpv6-client"
+        },
+        {
+          "level": 0,
+          "text": "work"
+        },
+        {
+          "level": 0,
+          "text": "Reject incoming unless related to outgoing, or matching ssh, ipp-client, dhcpv6-client"
+        },
+        {
+          "level": 0,
+          "text": "public"
+        },
+        {
+          "level": 0,
+          "text": "Reject incoming unless related to outgoing, or matching ssh, dhcpv6-client — the default zone for new interfaces"
+        },
+        {
+          "level": 0,
+          "text": "external"
+        },
+        {
+          "level": 0,
+          "text": "Same as public, PLUS masquerades (NAT) outgoing IPv4 traffic to look like it came from the outgoing interface"
+        },
+        {
+          "level": 0,
+          "text": "dmz"
+        },
+        {
+          "level": 0,
+          "text": "Reject incoming unless related to outgoing, or matching ssh"
+        },
+        {
+          "level": 0,
+          "text": "block"
+        },
+        {
+          "level": 0,
+          "text": "Reject ALL incoming traffic"
+        },
+        {
+          "level": 0,
+          "text": "drop"
+        },
+        {
+          "level": 0,
+          "text": "DROP all incoming traffic — no response at all, not even an ICMP rejection"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the practical reason zones exist: a laptop's Wi-Fi interface on a coffee-shop network wants the strict public zone, while the same laptop's interface on your home LAN can safely use the more permissive home zone — same machine, different trust level per interface, switched automatically or manually as needed."
+        },
+        {
+          "level": 2,
+          "text": "Configuring firewalld from the command line"
+        },
+        {
+          "level": 0,
+          "text": "Most firewall-cmd commands affect the RUNTIME configuration only, unless you add --permanent — which writes to the persistent configuration but does NOT take effect immediately. You need both, or a --reload, to make a permanent change active right now."
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --get-default-zone"
+        },
+        {
+          "level": 0,
+          "text": "Show the current default zone"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --set-default-zone=ZONE"
+        },
+        {
+          "level": 0,
+          "text": "Change the default zone (runtime AND permanent)"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --get-active-zones"
+        },
+        {
+          "level": 0,
+          "text": "Show zones currently tied to an interface/source"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --list-all [--zone=Z]"
+        },
+        {
+          "level": 0,
+          "text": "Show everything configured for a zone"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --add-service=SVC [--zone=Z]"
+        },
+        {
+          "level": 0,
+          "text": "Allow a predefined service"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --add-port=PORT/PROTO [--zone=Z]"
+        },
+        {
+          "level": 0,
+          "text": "Allow a specific port/protocol"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --remove-service / --remove-port"
+        },
+        {
+          "level": 0,
+          "text": "Reverse the above"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --add-source=CIDR [--zone=Z]"
+        },
+        {
+          "level": 0,
+          "text": "Route all traffic from an IP/network into a specific zone"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "Discard runtime config, reapply the permanent config"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --permanent --zone=internal --add-source=192.168.0.0/24"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --permanent --zone=internal --add-service=mysql"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL A firewall-cmd command WITHOUT --permanent takes effect immediately but is lost on reboot or reload. A command WITH --permanent survives reboot but does nothing right now until you also run --reload (or reboot). Forgetting one half of this pair is the #1 firewalld mistake — 'it worked in my test, then vanished' means you forgot --permanent; 'I added the rule and it's still not working' often means you forgot --reload."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION Rich rules and Direct Configuration (raw nft syntax) exist for firewall logic firewall-cmd's basic syntax can't express — out of scope for this chapter, but worth knowing they exist for real-world edge cases."
+        }
+      ],
+      "words": 494
+    },
+    {
+      "title": "6. Controlling SELinux Port Labeling",
+      "content": [
+        {
+          "level": 0,
+          "text": "The firewall isn't the only gatekeeper for network access — SELinux labels ports too, independently. Port 22/TCP carries the label ssh_port_t; ports 80 and 443 carry http_port_t. When a process tries to bind a port, SELinux checks whether that process's domain is allowed to bind a port with that label — completely separately from whether the firewall allows the traffic."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This closes the loop from Part 3: a service can have correct file permissions, correct SELinux file context, AND a correctly open firewall port, and STILL fail — because it's trying to listen on a port SELinux hasn't labeled for its domain. Running a web server on a nonstandard port like 8088 instead of 80 is the classic trigger."
+        },
+        {
+          "level": 2,
+          "text": "Listing and managing port labels"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -l | grep http"
+        },
+        {
+          "level": 0,
+          "text": "http_port_t tcp 80, 81, 443, 488, 8008, 8009, 8443, 9000"
+        },
+        {
+          "level": 0,
+          "text": "Notice 8008 and 8009 are already labeled http_port_t — meaning httpd can already bind those out of the box. A truly nonstandard port needs an explicit label added:"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -a -t http_port_t -p tcp 8088"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -l -C # show only LOCAL changes to the default policy"
+        },
+        {
+          "level": 0,
+          "text": "Flag"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "-l"
+        },
+        {
+          "level": 0,
+          "text": "List current port label assignments"
+        },
+        {
+          "level": 0,
+          "text": "-a"
+        },
+        {
+          "level": 0,
+          "text": "Add a new port to a label"
+        },
+        {
+          "level": 0,
+          "text": "-d"
+        },
+        {
+          "level": 0,
+          "text": "Delete a port from a label (same syntax as -a)"
+        },
+        {
+          "level": 0,
+          "text": "-t"
+        },
+        {
+          "level": 0,
+          "text": "The SELinux port type/label"
+        },
+        {
+          "level": 0,
+          "text": "-p"
+        },
+        {
+          "level": 0,
+          "text": "Protocol — tcp or udp"
+        },
+        {
+          "level": 0,
+          "text": "-C"
+        },
+        {
+          "level": 0,
+          "text": "Show only local customizations, not the full default policy"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL If a service returns 'permission denied' on a nonstandard port even though the firewall is open and file permissions are fine, semanage port -l | grep TYPE is your next move — check whether the port already carries the right label before assuming you need to add one."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING semanage port only works for ports NOT already claimed by another service's official SELinux policy module — you cannot use it to reassign a port that belongs to a different, already-labeled service; that requires actually replacing the policy module, which is out of scope here."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Boot + Network Security"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "systemctl isolate TARGET / get-default / set-default"
+        },
+        {
+          "level": 0,
+          "text": "Switch / view / persistently set the boot target"
+        },
+        {
+          "level": 0,
+          "text": "rd.break (GRUB kernel line)"
+        },
+        {
+          "level": 0,
+          "text": "Break into initramfs shell for root password reset"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit=emergency.target (GRUB kernel line)"
+        },
+        {
+          "level": 0,
+          "text": "Boot straight to emergency shell for fstab repair"
+        },
+        {
+          "level": 0,
+          "text": "touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "Force full SELinux relabel on next boot"
+        },
+        {
+          "level": 0,
+          "text": "systemctl list-jobs"
+        },
+        {
+          "level": 0,
+          "text": "Find startup jobs stuck and blocking boot"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --add-service/--add-port [--permanent]"
+        },
+        {
+          "level": 0,
+          "text": "Allow traffic; add --permanent for persistence, --reload to apply it now"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --list-all --zone=Z"
+        },
+        {
+          "level": 0,
+          "text": "Show everything configured for a zone"
+        },
+        {
+          "level": 0,
+          "text": "semanage port -a -t TYPE -p tcp|udp PORT"
+        },
+        {
+          "level": 0,
+          "text": "Label a port for SELinux to allow a service to bind it"
+        }
+      ],
+      "words": 456
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Boot Recovery + Firewall/SELinux Port",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Recover from a lost root password, repair a broken fstab entry from emergency mode, and get a web server working on a nonstandard port past both the firewall and SELinux."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "A departing colleague never shared the root password, and someone else added a bad NFS entry to /etc/fstab that's now stopping the system from booting normally. Separately, your team wants httpd listening on port 8088 instead of 80, and right now that fails silently even though the process starts."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM with sudo access to a non-root account for setup/verification (but pretend root is inaccessible for Part A)"
+        },
+        {
+          "level": 0,
+          "text": "httpd installed, SELinux enforcing, firewalld running"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part A (root password reset)"
+        },
+        {
+          "level": 0,
+          "text": "1. Reboot and use rd.break to reach the initramfs shell"
+        },
+        {
+          "level": 0,
+          "text": "2. Remount /sysroot read-write, chroot into it, and set a new root password"
+        },
+        {
+          "level": 0,
+          "text": "3. Force a relabel on next boot, exit cleanly, and let the system finish booting"
+        },
+        {
+          "level": 0,
+          "text": "4. Confirm you can log in as root with the new password after the relabel completes"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part B (fstab repair)"
+        },
+        {
+          "level": 0,
+          "text": "1. Add a deliberately broken line to /etc/fstab (e.g. a nonexistent UUID) and reboot to confirm it drops to emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "2. From the emergency shell, remount / read-write, fix or remove the bad line, and reload systemd"
+        },
+        {
+          "level": 0,
+          "text": "3. Reboot again and confirm the system now boots normally"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part C (firewall + SELinux port)"
+        },
+        {
+          "level": 0,
+          "text": "1. Configure httpd to listen on port 8088 (assume the config change is already made)"
+        },
+        {
+          "level": 0,
+          "text": "2. Open port 8088/tcp on the active firewall zone, permanently, and apply it"
+        },
+        {
+          "level": 0,
+          "text": "3. Check whether SELinux already allows httpd to bind 8088; if not, label it correctly"
+        },
+        {
+          "level": 0,
+          "text": "4. Confirm with curl that the service is reachable on the new port"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Part A: don't forget the autorelabel — without it the new password may not authenticate correctly even though it's set. Part C: check semanage port -l | grep http BEFORE adding a new label — 8008 and 8009 already carry http_port_t in the default policy, so verify 8088 actually needs a new entry rather than assuming it does."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: for Part C, did you remember BOTH --permanent and --reload on the firewall-cmd command? A rule added without --permanent disappears on the next reload or reboot — and a --permanent rule without --reload doesn't apply until then either."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# Part A (from the rd.break initramfs shell)"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# mount -o remount,rw /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# chroot /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# passwd root"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# exit"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# exit"
+        },
+        {
+          "level": 0,
+          "text": "# Part B (from the emergency shell after reboot)"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# mount -o remount,rw /"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# vim /etc/fstab # remove or fix the bad line"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# exit"
+        },
+        {
+          "level": 0,
+          "text": "# Part C"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --permanent --add-port=8088/tcp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -l | grep 8088"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -a -t http_port_t -p tcp 8088 # only if not already listed"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl restart httpd"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# curl http://localhost:8088"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "The autorelabel in Part A exists specifically because passwd, run before SELinux is active, leaves /etc/shadow without a valid context — skip it and authentication can fail mysteriously even with the right password."
+        },
+        {
+          "level": 0,
+          "text": "Part B's daemon-reload matters because systemd may have already parsed the broken fstab into memory; editing the file on disk alone doesn't force it to re-read that in-memory state."
+        },
+        {
+          "level": 0,
+          "text": "Part C runs both the firewall fix and the SELinux fix because they are two INDEPENDENT gatekeepers — fixing only one still leaves the service unreachable."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "Part A/B: a full clean reboot with normal login proves both fixes stuck. Part C: curl http://localhost:8088 returning actual page content (not a timeout or connection refused) proves both the firewall and SELinux are correctly configured."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "Root password recovery and fstab emergency repair are exactly the kind of skill you hope to never need but absolutely must have cold when a production box won't boot at 3am. The firewall+SELinux port pairing in Part C is one of the most common 'why won't my service work on this port' tickets in real RHEL environments — always check both layers, never assume it's just one."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 6 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What is the correct order of stages: firmware, kernel, boot loader, initramfs?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Firmware → boot loader (GRUB2) → kernel + initramfs load → kernel executes /sbin/init from initramfs → pivot to real root."
+        },
+        {
+          "level": 0,
+          "text": "Q2. What's the difference between systemctl halt and systemctl poweroff?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: halt brings the system to a safe-to-power-off state but does NOT power off automatically; poweroff does both."
+        },
+        {
+          "level": 0,
+          "text": "Q3. How do you boot into rescue.target for a SINGLE boot only, without changing the persistent default?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Interrupt GRUB, press e, append systemd.unit=rescue.target to the linux line, press Ctrl+x."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What kernel argument drops you into an initramfs shell for resetting a lost root password?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: rd.break"
+        },
+        {
+          "level": 0,
+          "text": "Q5. Why is touch /.autorelabel necessary after resetting the root password with rd.break?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: SELinux isn't active yet at that point, so passwd's rewrite of /etc/shadow leaves it without a valid SELinux context; autorelabel forces a full relabel on next boot to fix that."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What's the key difference between rescue.target and emergency.target?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: rescue.target waits for sysinit.target first (more of the system is initialized); emergency.target spawns immediately with root mounted read-only and almost nothing else started."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What must you run after fixing a bad /etc/fstab entry from the emergency shell, before exiting?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: systemctl daemon-reload — otherwise systemd may keep using the old broken configuration already parsed into memory."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What's the difference between a firewall-cmd command with --permanent and one without it?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Without --permanent, the change is immediate but lost on reboot/reload; with --permanent, it's saved persistently but doesn't take effect until --reload (or a reboot)."
+        },
+        {
+          "level": 0,
+          "text": "Q9. A web server on port 8088 fails even though the firewall port is open and file permissions are correct. What's the next thing to check?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: SELinux port labeling — semanage port -l | grep 8088 (or the relevant type) — the port may not be labeled for the httpd domain to bind."
+        },
+        {
+          "level": 0,
+          "text": "Q10. Can semanage port be used to take a port label away from another already-labeled official service and reassign it?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — semanage port only manages ports not already claimed by another service's official SELinux policy module; reassigning those requires replacing the policy module itself."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 7: INSTALLING RHEL, KICKSTART, AND VIRTUAL MACHINES"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH134 Chapter 12 — everything from a manual graphical install with Anaconda, through fully automating that install with Kickstart, to configuring a RHEL host to run its own virtual machines with KVM."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Every lab you've done in Parts 1-6 assumed a RHEL system already existed. This chapter is about how that system gets there in the first place — and, more importantly, how to stop doing it by hand every time. Kickstart is the direct ancestor of the 'automate everything' mindset RH294 builds on next."
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "rhel-service-firewalld",
+      "why": "Boot Recovery + Firewall/SELinux Port"
+    }
+  ],
+  "currency": []
+}

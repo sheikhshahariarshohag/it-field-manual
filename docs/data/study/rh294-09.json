@@ -1,0 +1,847 @@
+{
+  "id": "rh294-09",
+  "n": 9,
+  "sourceNumber": 9,
+  "kind": "part",
+  "title": "Part 9",
+  "display": "Part 9 — Condensed Chapter-by-Chapter Review; Capstone: Automated Se…",
+  "exam": "RHCE (EX294)",
+  "words": 1340,
+  "sections": [
+    {
+      "title": "1. Condensed Chapter-by-Chapter Review",
+      "content": [
+        {
+          "level": 0,
+          "text": "Ch"
+        },
+        {
+          "level": 0,
+          "text": "Topic"
+        },
+        {
+          "level": 0,
+          "text": "Core skill"
+        },
+        {
+          "level": 0,
+          "text": "One thing people forget"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "Introducing Ansible"
+        },
+        {
+          "level": 0,
+          "text": "Architecture, control node/managed host, idempotence"
+        },
+        {
+          "level": 0,
+          "text": "Idempotence is a module property, not automatic for command/shell"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "Deploying Ansible"
+        },
+        {
+          "level": 0,
+          "text": "Inventory, ansible.cfg, ad hoc commands"
+        },
+        {
+          "level": 0,
+          "text": "ansible.cfg precedence: ANSIBLE_CONFIG > ./ansible.cfg > ~/.ansible.cfg > /etc/ansible/ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "Implementing Playbooks"
+        },
+        {
+          "level": 0,
+          "text": "YAML, multiple plays, --syntax-check vs -C"
+        },
+        {
+          "level": 0,
+          "text": "key=value shorthand still works but isn't the modern style"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "Variables, Facts, Vault"
+        },
+        {
+          "level": 0,
+          "text": "3-level scope precedence, group_vars/host_vars, Vault"
+        },
+        {
+          "level": 0,
+          "text": "Narrower scope always wins; host_vars beats group_vars beats playbook"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "Task Control"
+        },
+        {
+          "level": 0,
+          "text": "loop, when, handlers, block/rescue/always"
+        },
+        {
+          "level": 0,
+          "text": "Handlers only fire on changed, never on ok"
+        },
+        {
+          "level": 0,
+          "text": "6"
+        },
+        {
+          "level": 0,
+          "text": "Deploying Files/Templates"
+        },
+        {
+          "level": 0,
+          "text": "Files modules, Jinja2 {{ }}/{% %}"
+        },
+        {
+          "level": 0,
+          "text": "for/if work ONLY inside templates, never inside playbooks"
+        },
+        {
+          "level": 0,
+          "text": "7"
+        },
+        {
+          "level": 0,
+          "text": "Large Projects"
+        },
+        {
+          "level": 0,
+          "text": "Host patterns, dynamic inventory, serial"
+        },
+        {
+          "level": 0,
+          "text": "import_*=static/parse-time, include_*=dynamic/run-time"
+        },
+        {
+          "level": 0,
+          "text": "8"
+        },
+        {
+          "level": 0,
+          "text": "Roles"
+        },
+        {
+          "level": 0,
+          "text": "Role structure, System Roles, Galaxy"
+        },
+        {
+          "level": 0,
+          "text": "defaults=low precedence/overridable, vars=high precedence/internal"
+        },
+        {
+          "level": 0,
+          "text": "9"
+        },
+        {
+          "level": 0,
+          "text": "Troubleshooting"
+        },
+        {
+          "level": 0,
+          "text": "debug, --check, --diff, connection isolation"
+        },
+        {
+          "level": 0,
+          "text": "check_mode: no tasks still run for real even under --check"
+        },
+        {
+          "level": 0,
+          "text": "10"
+        },
+        {
+          "level": 0,
+          "text": "Automating Admin Tasks"
+        },
+        {
+          "level": 0,
+          "text": "Software/users/boot/storage/network modules"
+        },
+        {
+          "level": 0,
+          "text": "firewalld needs permanent AND immediate to apply right now"
+        }
+      ],
+      "words": 163
+    },
+    {
+      "title": "2. Capstone: Automated Secure Web Tier",
+      "content": [
+        {
+          "level": 0,
+          "text": "One project touching nine of the ten RH294 chapters. Build it as a real project directory, not a single flat file — this is also good practice for how production Ansible projects are actually organized."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Deploy a small, secured, rolling-updatable web tier across three servers, with a Vault-protected admin password, a reusable role for the web config, and a pre-flight connectivity/privilege check before anything touches real hosts."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "Three managed hosts in an inventory group [webtier]"
+        },
+        {
+          "level": 0,
+          "text": "sudo/become access on all three"
+        },
+        {
+          "level": 3,
+          "text": "Project structure to build"
+        },
+        {
+          "level": 0,
+          "text": "capstone/"
+        },
+        {
+          "level": 0,
+          "text": "├── ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "├── inventory"
+        },
+        {
+          "level": 0,
+          "text": "├── group_vars/"
+        },
+        {
+          "level": 0,
+          "text": "│ └── webtier"
+        },
+        {
+          "level": 0,
+          "text": "├── roles/"
+        },
+        {
+          "level": 0,
+          "text": "│ └── web_secure/"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── defaults/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── tasks/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "│ ├── handlers/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "│ └── templates/index.html.j2"
+        },
+        {
+          "level": 0,
+          "text": "├── vars/"
+        },
+        {
+          "level": 0,
+          "text": "│ └── secret.yml (Vault-encrypted)"
+        },
+        {
+          "level": 0,
+          "text": "└── site.yml"
+        },
+        {
+          "level": 3,
+          "text": "Task — build it in this order"
+        },
+        {
+          "level": 0,
+          "text": "1. ansible.cfg: project-local, inventory pointed at ./inventory, become=true (Ch2)"
+        },
+        {
+          "level": 0,
+          "text": "2. inventory + group_vars/webtier: web_package: httpd (Ch2, Ch4)"
+        },
+        {
+          "level": 0,
+          "text": "3. vars/secret.yml: admin_password: <value>, then ansible-vault encrypt it (Ch4)"
+        },
+        {
+          "level": 0,
+          "text": "4. roles/web_secure (ansible-galaxy init): defaults/main.yml holds a default index message variable; tasks/main.yml installs {{ web_package }}, deploys templates/index.html.j2, opens firewalld for http (permanent AND immediate), and notifies a handler; handlers/main.yml restarts httpd (Ch6, Ch8, Ch10)"
+        },
+        {
+          "level": 0,
+          "text": "5. templates/index.html.j2: uses a Jinja2 for loop over groups['webtier'] to list every web tier host's hostname and IP on the page (Ch6)"
+        },
+        {
+          "level": 0,
+          "text": "6. site.yml: a pre_tasks connectivity+privilege check (ping, then ping --become equivalent via a become-required task), then the web_secure role applied with serial: 2 for a rolling rollout, then vars_files loading the Vault secret scoped to a task that just confirms it loaded (Ch5, Ch7, Ch9)"
+        },
+        {
+          "level": 0,
+          "text": "7. Run --syntax-check, then --check --diff with the vault password supplied, then the real run, twice (to confirm idempotence)"
+        },
+        {
+          "level": 3,
+          "text": "Solution — key files"
+        },
+        {
+          "level": 0,
+          "text": "# ansible.cfg"
+        },
+        {
+          "level": 0,
+          "text": "[defaults]"
+        },
+        {
+          "level": 0,
+          "text": "inventory = ./inventory"
+        },
+        {
+          "level": 0,
+          "text": "[privilege_escalation]"
+        },
+        {
+          "level": 0,
+          "text": "become = true"
+        },
+        {
+          "level": 0,
+          "text": "# group_vars/webtier"
+        },
+        {
+          "level": 0,
+          "text": "web_package: httpd"
+        },
+        {
+          "level": 0,
+          "text": "# roles/web_secure/defaults/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "index_message: \"Served by Ansible\""
+        },
+        {
+          "level": 0,
+          "text": "# roles/web_secure/tasks/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install web package"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ web_package }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "- name: Deploy index page"
+        },
+        {
+          "level": 0,
+          "text": "template:"
+        },
+        {
+          "level": 0,
+          "text": "src: index.html.j2"
+        },
+        {
+          "level": 0,
+          "text": "dest: /var/www/html/index.html"
+        },
+        {
+          "level": 0,
+          "text": "notify: restart web service"
+        },
+        {
+          "level": 0,
+          "text": "- name: Open firewall for http"
+        },
+        {
+          "level": 0,
+          "text": "firewalld:"
+        },
+        {
+          "level": 0,
+          "text": "service: http"
+        },
+        {
+          "level": 0,
+          "text": "permanent: yes"
+        },
+        {
+          "level": 0,
+          "text": "immediate: yes"
+        },
+        {
+          "level": 0,
+          "text": "state: enabled"
+        },
+        {
+          "level": 0,
+          "text": "# roles/web_secure/handlers/main.yml"
+        },
+        {
+          "level": 0,
+          "text": "- name: restart web service"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ web_package }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 0,
+          "text": "# roles/web_secure/templates/index.html.j2"
+        },
+        {
+          "level": 0,
+          "text": "<h1>{{ index_message }}</h1>"
+        },
+        {
+          "level": 0,
+          "text": "<ul>"
+        },
+        {
+          "level": 0,
+          "text": "{% for host in groups['webtier'] %}"
+        },
+        {
+          "level": 0,
+          "text": "<li>{{ hostvars[host]['ansible_facts']['hostname'] }} - {{ hostvars[host]['ansible_facts']['default_ipv4']['address'] }}</li>"
+        },
+        {
+          "level": 0,
+          "text": "{% endfor %}"
+        },
+        {
+          "level": 0,
+          "text": "</ul>"
+        },
+        {
+          "level": 0,
+          "text": "# site.yml"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Capstone web tier"
+        },
+        {
+          "level": 0,
+          "text": "hosts: webtier"
+        },
+        {
+          "level": 0,
+          "text": "pre_tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Confirm connectivity and privilege escalation"
+        },
+        {
+          "level": 0,
+          "text": "command: whoami"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "register: whoami_result"
+        },
+        {
+          "level": 0,
+          "text": "changed_when: false"
+        },
+        {
+          "level": 0,
+          "text": "roles:"
+        },
+        {
+          "level": 0,
+          "text": "- web_secure"
+        },
+        {
+          "level": 0,
+          "text": "serial: 2"
+        },
+        {
+          "level": 0,
+          "text": "vars_files:"
+        },
+        {
+          "level": 0,
+          "text": "- vars/secret.yml"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Confirm admin secret loaded"
+        },
+        {
+          "level": 0,
+          "text": "debug:"
+        },
+        {
+          "level": 0,
+          "text": "msg: \"admin_password is defined: {{ admin_password is defined }}\""
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "curl http://<any webtier host> shows all three hostnames/IPs, sourced from facts via the template loop."
+        },
+        {
+          "level": 0,
+          "text": "A second full run reports changed=0 across every task — true idempotence, with Vault, roles, templates, and firewall all in play together."
+        },
+        {
+          "level": 0,
+          "text": "During the real run, at most 2 of 3 hosts are mid-update at any moment, confirmed by watching the serial batches in the output."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS If this capstone works end to end, it's genuine proof — not just a passed quiz — that the RH294 material is usable, not just memorized. This is close to what a real small-team production deployment playbook actually looks like."
+        }
+      ],
+      "words": 536
+    },
+    {
+      "title": "3. Automation Skill Checklist",
+      "content": [
+        {
+          "level": 0,
+          "text": "Mark each honestly — 'can perform' means from memory, without reopening this guide."
+        },
+        {
+          "level": 0,
+          "text": "Skill"
+        },
+        {
+          "level": 0,
+          "text": "Can perform without notes?"
+        },
+        {
+          "level": 0,
+          "text": "Build a static inventory with groups, nested groups, and a range"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Explain the ansible.cfg 4-location precedence order"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Write a multi-play playbook with per-play become/remote_user"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Explain variable scope precedence (global > play > host/inventory)"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Encrypt, view, edit, and run a playbook against a Vault file"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Write a loop over a list of dictionaries"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Explain exactly when a handler does and doesn't fire"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Use block/rescue/always for error recovery"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Write a Jinja2 template with a for loop and an if conditional"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Explain the static-vs-dynamic difference between import_* and include_*"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Build a role from scratch with ansible-galaxy init"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Explain defaults vs. vars precedence in a role"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Use --check, --diff, and check_mode: no/yes correctly"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Isolate a connection vs. privilege-escalation failure"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Write tasks covering software, users, storage, and network in one playbook"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT If more than two or three of these are still shaky, revisit that Part's lab before calling yourself RH294-ready. The real exam (and real production work) combines these constantly — isolated familiarity with each one individually isn't the same as being able to combine them under time pressure."
+        }
+      ],
+      "words": 209
+    },
+    {
+      "title": "4. Final Mixed Quiz — All RH294 Chapters",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What's the ansible.cfg search order, highest to lowest precedence?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ANSIBLE_CONFIG environment variable → ./ansible.cfg → ~/.ansible.cfg → /etc/ansible/ansible.cfg."
+        },
+        {
+          "level": 0,
+          "text": "Q2. A task reports ok and has a notify: pointing to a handler. Does the handler run?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — handlers only fire when the notifying task reports changed."
+        },
+        {
+          "level": 0,
+          "text": "Q3. Can a Jinja2 {% for %} loop be used directly in a playbook's tasks list?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — for/if work only inside template files; playbooks use the loop and when task keywords instead."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What's the single underlying difference between import_tasks and include_tasks?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: import_tasks is STATIC (resolved at parse time); include_tasks is DYNAMIC (resolved at run time) — this one fact explains the loop-support, --list-tasks, and --start-at-task differences between them."
+        },
+        {
+          "level": 0,
+          "text": "Q5. In a role, which variable file is meant to be easily overridden — defaults/main.yml or vars/main.yml?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: defaults/main.yml — it's low precedence by design; vars/main.yml is high precedence and meant for the role's internal use."
+        },
+        {
+          "level": 0,
+          "text": "Q6. Does passing --check to ansible-playbook guarantee zero changes to managed hosts?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — any task explicitly marked check_mode: no still runs for real regardless of the --check flag."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What two ad hoc commands isolate a connectivity failure from a privilege-escalation failure?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ansible HOST -m ping (connectivity/auth only), then ansible HOST -m ping --become (adds privilege escalation) — a failure only on the second isolates the problem to sudo/become."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What module parameter trap does firewalld share with RH134's firewall-cmd?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: permanent: yes alone doesn't apply the change to the currently running firewall — immediate: yes is also needed, mirroring --permanent needing --reload."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What's missing if a user task's groups: list silently removed a user's existing group membership?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: append: yes — without it, groups: overwrites supplementary group membership instead of adding to it."
+        },
+        {
+          "level": 0,
+          "text": "Q10. What's the correct order of execution in a play containing pre_tasks, roles, tasks, and post_tasks?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: pre_tasks → roles → tasks → post_tasks, with handlers firing after each stage that notified them."
+        }
+      ],
+      "words": 328
+    },
+    {
+      "title": "5. RH294 Complete — What This Curriculum Covered",
+      "content": [
+        {
+          "level": 0,
+          "text": "The full arc, start to finish:"
+        },
+        {
+          "level": 0,
+          "text": "Stage"
+        },
+        {
+          "level": 0,
+          "text": "What it gave you"
+        },
+        {
+          "level": 0,
+          "text": "RH124"
+        },
+        {
+          "level": 0,
+          "text": "Foundational RHEL administration — the command line, users, permissions, processes, services, networking, software, storage mounting"
+        },
+        {
+          "level": 0,
+          "text": "RH134"
+        },
+        {
+          "level": 0,
+          "text": "Advanced administration — Bash scripting, scheduling, performance, ACLs, SELinux, LVM, advanced storage, NFS, boot recovery, firewalld, installation/Kickstart"
+        },
+        {
+          "level": 0,
+          "text": "RH294"
+        },
+        {
+          "level": 0,
+          "text": "Automation — Ansible architecture, playbooks, variables/facts/Vault, task control, templates, large-project structure, roles, troubleshooting, and automating everything RH134 taught manually"
+        },
+        {
+          "level": 0,
+          "text": "Per the earlier file strategy, all 8 RH134 Parts and all 9 RH294 Parts are ready to merge into two master guide docx files, matching the finished RH124 guide's format — say the word when you'd like that done."
+        }
+      ],
+      "words": 104
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [
+    {
+      "id": "rhel-service-podman",
+      "why": "Automation skill checklist and capstone"
+    }
+  ],
+  "currency": []
+}

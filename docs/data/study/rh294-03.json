@@ -1,0 +1,1356 @@
+{
+  "id": "rh294-03",
+  "n": 3,
+  "sourceNumber": 3,
+  "kind": "part",
+  "title": "Part 3",
+  "display": "Part 3 — Task Iteration with Loops; Running Tasks Conditionally; Imp…",
+  "exam": "RHCE (EX294)",
+  "words": 2694,
+  "sections": [
+    {
+      "title": "1. Task Iteration with Loops",
+      "content": [
+        {
+          "level": 0,
+          "text": "Instead of writing one task per item, loop iterates a single task once for every item in a list. Inside the loop, the special variable item holds the current value."
+        },
+        {
+          "level": 0,
+          "text": "- name: Postfix and Dovecot are running"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ item }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: started"
+        },
+        {
+          "level": 0,
+          "text": "loop:"
+        },
+        {
+          "level": 0,
+          "text": "- postfix"
+        },
+        {
+          "level": 0,
+          "text": "- dovecot"
+        },
+        {
+          "level": 0,
+          "text": "The list can come from a variable instead of being inlined:"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "mail_services:"
+        },
+        {
+          "level": 0,
+          "text": "- postfix"
+        },
+        {
+          "level": 0,
+          "text": "- dovecot"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Postfix and Dovecot are running"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ item }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: started"
+        },
+        {
+          "level": 0,
+          "text": "loop: \"{{ mail_services }}\""
+        },
+        {
+          "level": 2,
+          "text": "Looping over a list of dictionaries"
+        },
+        {
+          "level": 0,
+          "text": "A loop's items don't have to be simple strings — each item can be a small dictionary with several keys, accessed as item.keyname:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Users exist and are in the correct groups"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ item.name }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "groups: \"{{ item.groups }}\""
+        },
+        {
+          "level": 0,
+          "text": "loop:"
+        },
+        {
+          "level": 0,
+          "text": "- name: jane"
+        },
+        {
+          "level": 0,
+          "text": "groups: wheel"
+        },
+        {
+          "level": 0,
+          "text": "- name: joe"
+        },
+        {
+          "level": 0,
+          "text": "groups: root"
+        },
+        {
+          "level": 2,
+          "text": "Earlier-style with_* loops"
+        },
+        {
+          "level": 0,
+          "text": "Before Ansible 2.5, loops used with_ prefixed keywords instead of loop. You will see this constantly in existing/older playbooks — recognize it even though you should write new loops with loop."
+        },
+        {
+          "level": 0,
+          "text": "Old keyword"
+        },
+        {
+          "level": 0,
+          "text": "Behavior"
+        },
+        {
+          "level": 0,
+          "text": "with_items"
+        },
+        {
+          "level": 0,
+          "text": "Same as loop for simple lists — but flattens nested lists-of-lists into one level, which loop does not do"
+        },
+        {
+          "level": 0,
+          "text": "with_file"
+        },
+        {
+          "level": 0,
+          "text": "Requires a list of control-node file names; item holds each file's CONTENT"
+        },
+        {
+          "level": 0,
+          "text": "with_sequence"
+        },
+        {
+          "level": 0,
+          "text": "Generates a numeric sequence instead of requiring a literal list; item holds each generated number"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT You are expected to READ with_items-style playbooks fluently, even though loop is the recommended style for anything you write yourself. Both are valid in this course, and existing production playbooks and roles are full of with_* syntax that isn't going away soon."
+        },
+        {
+          "level": 2,
+          "text": "Registering the result of a loop"
+        },
+        {
+          "level": 0,
+          "text": "register still works on a looping task — but the captured variable's structure changes: instead of one result, it becomes a dictionary with a results key holding a list of one result per iteration."
+        },
+        {
+          "level": 0,
+          "text": "- name: Looping Echo Task"
+        },
+        {
+          "level": 0,
+          "text": "shell: \"echo This is my item: {{ item }}\""
+        },
+        {
+          "level": 0,
+          "text": "loop:"
+        },
+        {
+          "level": 0,
+          "text": "- one"
+        },
+        {
+          "level": 0,
+          "text": "- two"
+        },
+        {
+          "level": 0,
+          "text": "register: echo_results"
+        },
+        {
+          "level": 0,
+          "text": "- debug:"
+        },
+        {
+          "level": 0,
+          "text": "var: echo_results.results"
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Treating a registered loop variable the same as a registered single-task variable. echo_results.stdout does NOT exist on a looped task's register — you need echo_results.results[0].stdout (or loop over echo_results.results) to reach individual iteration outputs."
+        }
+      ],
+      "words": 378
+    },
+    {
+      "title": "2. Running Tasks Conditionally",
+      "content": [
+        {
+          "level": 0,
+          "text": "The when keyword runs a task only if a condition evaluates true — testing playbook variables, registered variables, or Ansible facts. If false, the task is cleanly skipped (not failed)."
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "run_my_task: true"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: httpd package is installed"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "when: run_my_task"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING when is placed at the SAME indentation level as the task's name and module — never nested inside the module's own arguments. It's a property of the task itself, not a module option."
+        },
+        {
+          "level": 2,
+          "text": "Common conditional operators"
+        },
+        {
+          "level": 0,
+          "text": "Operation"
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "Equal (string)"
+        },
+        {
+          "level": 0,
+          "text": "ansible_machine == \"x86_64\""
+        },
+        {
+          "level": 0,
+          "text": "Equal (numeric)"
+        },
+        {
+          "level": 0,
+          "text": "max_memory == 512"
+        },
+        {
+          "level": 0,
+          "text": "Less than / greater than"
+        },
+        {
+          "level": 0,
+          "text": "min_memory < 128 / min_memory > 256"
+        },
+        {
+          "level": 0,
+          "text": "Not equal"
+        },
+        {
+          "level": 0,
+          "text": "min_memory != 512"
+        },
+        {
+          "level": 0,
+          "text": "Variable exists / doesn't"
+        },
+        {
+          "level": 0,
+          "text": "min_memory is defined / min_memory is not defined"
+        },
+        {
+          "level": 0,
+          "text": "Boolean true / false"
+        },
+        {
+          "level": 0,
+          "text": "memory_available / not memory_available"
+        },
+        {
+          "level": 0,
+          "text": "Value in a list"
+        },
+        {
+          "level": 0,
+          "text": "ansible_distribution in supported_distros"
+        },
+        {
+          "level": 0,
+          "text": "vars:"
+        },
+        {
+          "level": 0,
+          "text": "supported_distros:"
+        },
+        {
+          "level": 0,
+          "text": "- RedHat"
+        },
+        {
+          "level": 0,
+          "text": "- Fedora"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Install httpd, where supported"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "when: ansible_distribution in supported_distros"
+        },
+        {
+          "level": 2,
+          "text": "Combining multiple conditions"
+        },
+        {
+          "level": 0,
+          "text": "Logic"
+        },
+        {
+          "level": 0,
+          "text": "Syntax"
+        },
+        {
+          "level": 0,
+          "text": "OR — either condition true"
+        },
+        {
+          "level": 0,
+          "text": "when: ansible_distribution == \"RedHat\" or ansible_distribution == \"Fedora\""
+        },
+        {
+          "level": 0,
+          "text": "AND — both conditions true"
+        },
+        {
+          "level": 0,
+          "text": "when: ansible_distribution_version == \"7.5\" and ansible_kernel == \"3.10.0-327.el7.x86_64\""
+        },
+        {
+          "level": 0,
+          "text": "AND — list form (each item ANDed)"
+        },
+        {
+          "level": 0,
+          "text": "when:\\n - ansible_distribution_version == \"7.5\"\\n - ansible_kernel == \"3.10.0-327.el7.x86_64\""
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT A YAML LIST passed to when is automatically ANDed together — every item must be true. This is easy to misremember as OR logic since it visually resembles a list of alternatives; it is not."
+        },
+        {
+          "level": 2,
+          "text": "Combining loops and conditionals"
+        },
+        {
+          "level": 0,
+          "text": "A task can use loop and when together — the when condition is evaluated separately for EACH loop iteration, not once for the whole loop:"
+        },
+        {
+          "level": 0,
+          "text": "- name: mariadb-server installed if enough memory per host"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: mariadb-server"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "loop: \"{{ groups['databases'] }}\""
+        },
+        {
+          "level": 0,
+          "text": "when: hostvars[item]['ansible_memtotal_mb'] >= min_memory"
+        }
+      ],
+      "words": 296
+    },
+    {
+      "title": "3. Implementing Handlers",
+      "content": [
+        {
+          "level": 0,
+          "text": "Sometimes a task's change needs a FOLLOW-UP action — updating a service's config file, then reloading that service so the change actually takes effect. Handlers are tasks that stay dormant until explicitly triggered by a notify from another task."
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: copy demo.example.conf configuration template"
+        },
+        {
+          "level": 0,
+          "text": "template:"
+        },
+        {
+          "level": 0,
+          "text": "src: /var/lib/templates/demo.example.conf.template"
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/httpd/conf.d/demo.example.conf"
+        },
+        {
+          "level": 0,
+          "text": "notify:"
+        },
+        {
+          "level": 0,
+          "text": "- restart apache"
+        },
+        {
+          "level": 0,
+          "text": "handlers:"
+        },
+        {
+          "level": 0,
+          "text": "- name: restart apache"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: httpd"
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 0,
+          "text": "One task can notify several handlers at once — notify accepts a list, and Ansible calls each named handler in turn."
+        },
+        {
+          "level": 2,
+          "text": "Handler behavior rules — all five matter"
+        },
+        {
+          "level": 0,
+          "text": "Handlers run in the ORDER LISTED in the handlers: section — not the order they were notified, and not the order tasks appear in."
+        },
+        {
+          "level": 0,
+          "text": "Handlers normally run only after ALL tasks in the play complete (a few advanced exceptions exist, out of scope here)."
+        },
+        {
+          "level": 0,
+          "text": "Handler names live in a per-PLAY namespace — two handlers accidentally sharing a name means only one actually runs."
+        },
+        {
+          "level": 0,
+          "text": "A handler runs AT MOST ONCE per play, no matter how many tasks notify it."
+        },
+        {
+          "level": 0,
+          "text": "A task only notifies its handler when it reports changed — a task reporting ok (nothing needed changing) never triggers its handler."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT Rule five is the one most people get wrong under pressure: if the config file was ALREADY correct and the template task reports ok instead of changed, the notified handler simply does not run that time — this is correct, intentional behavior, not a bug to work around."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Handlers exist to perform a side-effect of a task's change (restart a service, reboot a host) — they are not a substitute for a normal task, and shouldn't be used to do primary configuration work."
+        }
+      ],
+      "words": 280
+    },
+    {
+      "title": "4. Handling Task Failure",
+      "content": [
+        {
+          "level": 0,
+          "text": "By default, a failed task immediately aborts the rest of the play ON THAT HOST — every later task is skipped for that host (other hosts in the same play continue independently)."
+        },
+        {
+          "level": 2,
+          "text": "Letting the play continue anyway"
+        },
+        {
+          "level": 0,
+          "text": "- name: Latest version of notapkg is installed"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: notapkg"
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "ignore_errors: yes"
+        },
+        {
+          "level": 0,
+          "text": "With ignore_errors: yes, the task is still marked failed in the play recap, but execution continues to the next task on that host."
+        },
+        {
+          "level": 2,
+          "text": "Forcing handlers to run despite a later failure"
+        },
+        {
+          "level": 0,
+          "text": "Normally, if a later task fails and aborts the play, handlers already notified earlier NEVER run. force_handlers: yes at the play level overrides that:"
+        },
+        {
+          "level": 0,
+          "text": "- hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "force_handlers: yes"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: a task which always notifies its handler"
+        },
+        {
+          "level": 0,
+          "text": "command: /bin/true"
+        },
+        {
+          "level": 0,
+          "text": "notify: restart the database"
+        },
+        {
+          "level": 0,
+          "text": "- name: a task which fails because the package doesn't exist"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: notapkg"
+        },
+        {
+          "level": 0,
+          "text": "state: latest"
+        },
+        {
+          "level": 0,
+          "text": "handlers:"
+        },
+        {
+          "level": 0,
+          "text": "- name: restart the database"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: mariadb"
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 2,
+          "text": "Redefining what counts as failed or changed"
+        },
+        {
+          "level": 0,
+          "text": "failed_when overrides the default success/fail logic — useful when a command exits 0 but its OUTPUT actually indicates a problem:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Run user creation script"
+        },
+        {
+          "level": 0,
+          "text": "shell: /usr/local/bin/create_users.sh"
+        },
+        {
+          "level": 0,
+          "text": "register: command_result"
+        },
+        {
+          "level": 0,
+          "text": "failed_when: \"'Password missing' in command_result.stdout\""
+        },
+        {
+          "level": 0,
+          "text": "The same outcome can also be expressed as two tasks using the dedicated fail module — useful when you want a clear custom failure message, or need other tasks to run before failing (a rollback step, for instance):"
+        },
+        {
+          "level": 0,
+          "text": "- name: Run user creation script"
+        },
+        {
+          "level": 0,
+          "text": "shell: /usr/local/bin/create_users.sh"
+        },
+        {
+          "level": 0,
+          "text": "register: command_result"
+        },
+        {
+          "level": 0,
+          "text": "ignore_errors: yes"
+        },
+        {
+          "level": 0,
+          "text": "- name: Report script failure"
+        },
+        {
+          "level": 0,
+          "text": "fail:"
+        },
+        {
+          "level": 0,
+          "text": "msg: \"The password is missing in the output\""
+        },
+        {
+          "level": 0,
+          "text": "when: \"'Password missing' in command_result.stdout\""
+        },
+        {
+          "level": 0,
+          "text": "changed_when overrides whether a task reports changed (and therefore whether it notifies handlers) — useful for commands that ALWAYS technically 'run' but shouldn't always count as a change:"
+        },
+        {
+          "level": 0,
+          "text": "- name: get Kerberos credentials as \"admin\""
+        },
+        {
+          "level": 0,
+          "text": "shell: echo \"{{ krb_admin_pass }}\" | kinit -f admin"
+        },
+        {
+          "level": 0,
+          "text": "changed_when: false"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCE-RELEVANT failed_when and changed_when are direct exam material because they force you to understand that Ansible's default success/change detection is a HEURISTIC, not magic — command and shell in particular often need one or both to behave sensibly, since they don't know your intent, only an exit code and some output."
+        },
+        {
+          "level": 2,
+          "text": "Blocks: grouping tasks with rescue and always"
+        },
+        {
+          "level": 0,
+          "text": "A block groups several tasks so a shared when (or other directive) applies to all of them at once — instead of repeating when on every single task:"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: installing and configuring Yum versionlock plugin"
+        },
+        {
+          "level": 0,
+          "text": "block:"
+        },
+        {
+          "level": 0,
+          "text": "- name: package needed by yum"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: yum-plugin-versionlock"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "- name: lock version of tzdata"
+        },
+        {
+          "level": 0,
+          "text": "lineinfile:"
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/yum/pluginconf.d/versionlock.list"
+        },
+        {
+          "level": 0,
+          "text": "line: tzdata-2016j-1"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "when: ansible_distribution == \"RedHat\""
+        },
+        {
+          "level": 0,
+          "text": "Clause"
+        },
+        {
+          "level": 0,
+          "text": "Runs when"
+        },
+        {
+          "level": 0,
+          "text": "block"
+        },
+        {
+          "level": 0,
+          "text": "The main tasks — always attempted first"
+        },
+        {
+          "level": 0,
+          "text": "rescue"
+        },
+        {
+          "level": 0,
+          "text": "Only if something in block failed — a chance to recover/roll back"
+        },
+        {
+          "level": 0,
+          "text": "always"
+        },
+        {
+          "level": 0,
+          "text": "Every time, regardless of whether block succeeded, failed, or rescue ran"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Upgrade DB"
+        },
+        {
+          "level": 0,
+          "text": "block:"
+        },
+        {
+          "level": 0,
+          "text": "- name: upgrade the database"
+        },
+        {
+          "level": 0,
+          "text": "shell:"
+        },
+        {
+          "level": 0,
+          "text": "cmd: /usr/local/lib/upgrade-database"
+        },
+        {
+          "level": 0,
+          "text": "rescue:"
+        },
+        {
+          "level": 0,
+          "text": "- name: revert the database upgrade"
+        },
+        {
+          "level": 0,
+          "text": "shell:"
+        },
+        {
+          "level": 0,
+          "text": "cmd: /usr/local/lib/revert-database"
+        },
+        {
+          "level": 0,
+          "text": "always:"
+        },
+        {
+          "level": 0,
+          "text": "- name: always restart the database"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: mariadb"
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS block/rescue/always is Ansible's version of try/rescue/finally from general programming — and a when on the block cascades down to rescue and always too. This is the closest thing RH294 has to real error-recovery logic, not just error-tolerance (ignore_errors)."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Part 3"
+        },
+        {
+          "level": 0,
+          "text": "Directive"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "loop: [...]"
+        },
+        {
+          "level": 0,
+          "text": "Iterate a task once per list item (item variable)"
+        },
+        {
+          "level": 0,
+          "text": "with_items / with_file / with_sequence"
+        },
+        {
+          "level": 0,
+          "text": "Older loop syntax — read fluently, don't write new"
+        },
+        {
+          "level": 0,
+          "text": "when: condition"
+        },
+        {
+          "level": 0,
+          "text": "Run a task only if the condition is true"
+        },
+        {
+          "level": 0,
+          "text": "and / or / [list]"
+        },
+        {
+          "level": 0,
+          "text": "Combine conditions (a list is ANDed)"
+        },
+        {
+          "level": 0,
+          "text": "notify: handler-name"
+        },
+        {
+          "level": 0,
+          "text": "Trigger a handler — only fires if the task reports changed"
+        },
+        {
+          "level": 0,
+          "text": "ignore_errors: yes"
+        },
+        {
+          "level": 0,
+          "text": "Continue the play on that host despite this task failing"
+        },
+        {
+          "level": 0,
+          "text": "force_handlers: yes"
+        },
+        {
+          "level": 0,
+          "text": "Run already-notified handlers even if a later task aborts the play"
+        },
+        {
+          "level": 0,
+          "text": "failed_when: condition"
+        },
+        {
+          "level": 0,
+          "text": "Override what counts as failure for this task"
+        },
+        {
+          "level": 0,
+          "text": "changed_when: condition"
+        },
+        {
+          "level": 0,
+          "text": "Override what counts as a change for this task"
+        },
+        {
+          "level": 0,
+          "text": "block / rescue / always"
+        },
+        {
+          "level": 0,
+          "text": "Group tasks with shared conditions and structured error recovery"
+        }
+      ],
+      "words": 678
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Resilient Multi-Host Configuration",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Write a playbook using loops, a conditional, a handler, and a block with rescue/always — the full task-control toolkit in one scenario."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Configure a small fleet: ensure three users exist on all hosts (with different group memberships), install and configure a mail service only on hosts tagged as mail servers, restart it only when its config actually changes, and wrap a risky migration step in a block that rolls back cleanly on failure."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "An inventory with [mailservers] group containing at least one host, plus other unrelated hosts in [all]"
+        },
+        {
+          "level": 0,
+          "text": "A template file mail.conf.j2 (assume it exists) for the mail service config"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Using loop over a list of dictionaries, ensure three users exist (alice→wheel, bob→users, carol→users) on all hosts"
+        },
+        {
+          "level": 0,
+          "text": "2. Using when with the in operator, install postfix only on hosts in the mailservers group"
+        },
+        {
+          "level": 0,
+          "text": "3. Deploy mail.conf.j2 to /etc/postfix/main.cf and notify a restart postfix handler — but only actually restart when the file changes"
+        },
+        {
+          "level": 0,
+          "text": "4. Wrap a (simulated) database migration shell command in a block with a rescue that runs a rollback command, and an always that logs completion regardless of outcome"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "For step 2, ansible_distribution in supported_distros from Section 3.2 uses the same in operator you need — but here you're testing group membership. group_names (a magic variable from Part 2) is a list of groups the CURRENT host belongs to, so \"mailservers\" in group_names is the pattern you want."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: did your handler actually get SKIPPED on a second run where the template hadn't changed? If it fired every time regardless, re-check that notify only triggers on a changed result — verify your template task genuinely reports ok the second run."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "- name: Fleet configuration"
+        },
+        {
+          "level": 0,
+          "text": "hosts: all"
+        },
+        {
+          "level": 0,
+          "text": "become: true"
+        },
+        {
+          "level": 0,
+          "text": "tasks:"
+        },
+        {
+          "level": 0,
+          "text": "- name: Required users exist with correct groups"
+        },
+        {
+          "level": 0,
+          "text": "user:"
+        },
+        {
+          "level": 0,
+          "text": "name: \"{{ item.name }}\""
+        },
+        {
+          "level": 0,
+          "text": "groups: \"{{ item.groups }}\""
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "loop:"
+        },
+        {
+          "level": 0,
+          "text": "- { name: alice, groups: wheel }"
+        },
+        {
+          "level": 0,
+          "text": "- { name: bob, groups: users }"
+        },
+        {
+          "level": 0,
+          "text": "- { name: carol, groups: users }"
+        },
+        {
+          "level": 0,
+          "text": "- name: Postfix installed on mail servers only"
+        },
+        {
+          "level": 0,
+          "text": "yum:"
+        },
+        {
+          "level": 0,
+          "text": "name: postfix"
+        },
+        {
+          "level": 0,
+          "text": "state: present"
+        },
+        {
+          "level": 0,
+          "text": "when: \"'mailservers' in group_names\""
+        },
+        {
+          "level": 0,
+          "text": "- name: Deploy postfix configuration"
+        },
+        {
+          "level": 0,
+          "text": "template:"
+        },
+        {
+          "level": 0,
+          "text": "src: mail.conf.j2"
+        },
+        {
+          "level": 0,
+          "text": "dest: /etc/postfix/main.cf"
+        },
+        {
+          "level": 0,
+          "text": "when: \"'mailservers' in group_names\""
+        },
+        {
+          "level": 0,
+          "text": "notify: restart postfix"
+        },
+        {
+          "level": 0,
+          "text": "- name: Database migration with rollback"
+        },
+        {
+          "level": 0,
+          "text": "block:"
+        },
+        {
+          "level": 0,
+          "text": "- name: run migration"
+        },
+        {
+          "level": 0,
+          "text": "shell: /usr/local/bin/migrate-db.sh"
+        },
+        {
+          "level": 0,
+          "text": "rescue:"
+        },
+        {
+          "level": 0,
+          "text": "- name: roll back migration"
+        },
+        {
+          "level": 0,
+          "text": "shell: /usr/local/bin/rollback-db.sh"
+        },
+        {
+          "level": 0,
+          "text": "always:"
+        },
+        {
+          "level": 0,
+          "text": "- name: log migration attempt"
+        },
+        {
+          "level": 0,
+          "text": "shell: \"echo migration attempt finished >> /var/log/migration.log\""
+        },
+        {
+          "level": 0,
+          "text": "handlers:"
+        },
+        {
+          "level": 0,
+          "text": "- name: restart postfix"
+        },
+        {
+          "level": 0,
+          "text": "service:"
+        },
+        {
+          "level": 0,
+          "text": "name: postfix"
+        },
+        {
+          "level": 0,
+          "text": "state: restarted"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "The user loop uses inline dictionaries ({ name: ..., groups: ... }) — functionally identical to the multi-line dictionary style, just more compact for short lists."
+        },
+        {
+          "level": 0,
+          "text": "'mailservers' in group_names correctly scopes both the install and the config deployment to only hosts in that group, without needing a separate play."
+        },
+        {
+          "level": 0,
+          "text": "notify: restart postfix only fires the handler on runs where the template task genuinely changes the file — a second run with no config drift reports ok and the handler stays dormant."
+        },
+        {
+          "level": 0,
+          "text": "The block/rescue/always guarantees the log entry always gets written, and a failed migration triggers an automatic rollback attempt — neither depends on the other succeeding."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "Run the playbook twice. First run: users created (changed), postfix installed and configured (changed) on mail servers, handler fires. Second run: everything reports ok except perhaps the migration/log block (which always runs its always clause) — confirming idempotence held throughout."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This lab's shape — conditional targeting by group, change-gated handlers, and block-based rollback — is close to how real production playbooks are actually structured. The failure-tolerant migration pattern in particular (block/rescue/always) is standard practice for any playbook step that could leave a system in a bad state if it fails partway through."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 3 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What variable holds the current value inside a loop?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: item"
+        },
+        {
+          "level": 0,
+          "text": "Q2. What's the key structural difference between loop and the older with_items when both are given a list of lists?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: with_items automatically flattens nested lists into one level; loop does not."
+        },
+        {
+          "level": 0,
+          "text": "Q3. When a task uses both loop and register, how do you access the individual results?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Through the .results list on the registered variable, e.g. myvar.results[0].stdout — not myvar.stdout directly."
+        },
+        {
+          "level": 0,
+          "text": "Q4. Is a plain YAML list passed to when combined with AND or OR logic?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: AND — every item in the list must be true for the condition to pass."
+        },
+        {
+          "level": 0,
+          "text": "Q5. A task reports ok (no change needed) but has a notify: pointing to a handler. Does the handler run?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — handlers are only triggered when the notifying task reports changed, never on ok or failed."
+        },
+        {
+          "level": 0,
+          "text": "Q6. In what order do multiple triggered handlers run?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: In the order they are LISTED in the handlers: section — not the order they were notified, and not the task order."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What does ignore_errors: yes actually do — does it make the task succeed?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — the task is still recorded as failed in the play recap; it simply lets execution continue to the next task on that host instead of aborting the play."
+        },
+        {
+          "level": 0,
+          "text": "Q8. What's the difference between failed_when and changed_when?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: failed_when overrides what counts as FAILURE for a task; changed_when overrides what counts as a CHANGE (which also controls whether handlers get notified)."
+        },
+        {
+          "level": 0,
+          "text": "Q9. In a block/rescue/always structure, when does the rescue clause run, and when does always run?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: rescue runs only if a task in the block clause fails; always runs every time, regardless of whether block succeeded, failed, or rescue executed."
+        },
+        {
+          "level": 0,
+          "text": "Q10. Does a when condition placed on a block also apply to that block's rescue and always clauses?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Yes — a when on the block cascades down to its rescue and always clauses as well."
+        },
+        {
+          "level": 0,
+          "text": "RH294 — RED HAT SYSTEM ADMINISTRATION III: LINUX AUTOMATION"
+        },
+        {
+          "level": 0,
+          "text": "PART 4: DEPLOYING FILES WITH JINJA2 TEMPLATES"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH294 Chapter 6 in full: the Files modules (file, copy, lineinfile, blockinfile, stat, synchronize, fetch) for direct file management, and Jinja2 templating for configuration files that adapt themselves to each managed host."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS lineinfile and blockinfile can patch an existing file, but they get fragile fast — one wrong regex and you've mangled someone's config. A template, by contrast, is the WHOLE file, generated fresh every run from variables and facts. For anything beyond a one-line tweak, templating is the more reliable, more readable approach — and it's how most real production configs get deployed."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

@@ -1,0 +1,837 @@
+{
+  "id": "rh124-13",
+  "n": 13,
+  "sourceNumber": 12,
+  "kind": "chapter",
+  "title": "MANAGING NETWORKING",
+  "display": "Ch 12 — MANAGING NETWORKING",
+  "exam": "RHCSA (EX200)",
+  "words": 2078,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Book reference: Chapter 12, pages 389–445. Guided Exercises: Validating Network Configuration, Configuring Networking from the Command Line, Editing Network Configuration Files, Configuring Host Names and Name Resolution. Lab: Managing Networking."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+        },
+        {
+          "level": 0,
+          "text": "Setting a static IP with nmcli, setting the hostname, and configuring name resolution are core, hands-on RHCSA tasks — arguably as central to the exam as user management and permissions."
+        }
+      ],
+      "words": 68
+    },
+    {
+      "title": "12.1 The TCP/IP model, briefly",
+      "content": [
+        {
+          "level": 0,
+          "text": "Layer"
+        },
+        {
+          "level": 0,
+          "text": "Job"
+        },
+        {
+          "level": 0,
+          "text": "Examples"
+        },
+        {
+          "level": 0,
+          "text": "Application"
+        },
+        {
+          "level": 0,
+          "text": "How programs talk to each other"
+        },
+        {
+          "level": 0,
+          "text": "SSH, HTTPS, NFS/CIFS, SMTP"
+        },
+        {
+          "level": 0,
+          "text": "Transport"
+        },
+        {
+          "level": 0,
+          "text": "TCP (reliable, connection-oriented) or UDP (connectionless) — combined with an IP address, a port forms a socket"
+        },
+        {
+          "level": 0,
+          "text": "Port list in /etc/services"
+        },
+        {
+          "level": 0,
+          "text": "Internet"
+        },
+        {
+          "level": 0,
+          "text": "Moves data from source host to destination host; routers connect networks"
+        },
+        {
+          "level": 0,
+          "text": "IPv4, IPv6"
+        },
+        {
+          "level": 0,
+          "text": "Link"
+        },
+        {
+          "level": 0,
+          "text": "Physical/local-segment delivery; each device has a hardware MAC address"
+        },
+        {
+          "level": 0,
+          "text": "Ethernet (802.3), WLAN (802.11)"
+        },
+        {
+          "level": 3,
+          "text": "Interface naming — why eth0 went away"
+        },
+        {
+          "level": 0,
+          "text": "Older RHEL used eth0, eth1... based purely on detection order — but detection order isn't guaranteed to stay consistent across reboots or hardware changes, so names could shift unpredictably. RHEL 7+ names interfaces from firmware/PCI-topology information instead, so a given physical port keeps the same name permanently:"
+        },
+        {
+          "level": 0,
+          "text": "Prefix/pattern"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "en / wl / ww"
+        },
+        {
+          "level": 0,
+          "text": "Ethernet / WLAN / WWAN (mobile broadband)"
+        },
+        {
+          "level": 0,
+          "text": "eno1"
+        },
+        {
+          "level": 0,
+          "text": "On-board Ethernet device, firmware index 1"
+        },
+        {
+          "level": 0,
+          "text": "ens3"
+        },
+        {
+          "level": 0,
+          "text": "Ethernet card in PCI hotplug slot 3"
+        },
+        {
+          "level": 0,
+          "text": "enp0s1"
+        },
+        {
+          "level": 0,
+          "text": "Ethernet, PCI bus 0, slot 1"
+        },
+        {
+          "level": 0,
+          "text": "enp0s1f0 / enp0s1f1"
+        },
+        {
+          "level": 0,
+          "text": "Function 0 / function 1 of a multi-port card at that same bus/slot"
+        },
+        {
+          "level": 0,
+          "text": "NOTE —"
+        },
+        {
+          "level": 0,
+          "text": "The trade-off of persistent naming: you can no longer assume a single-NIC machine will be called eth0 (or even ens3) — check with ip link show rather than guessing from convention."
+        }
+      ],
+      "words": 203
+    },
+    {
+      "title": "12.2 IPv4 addressing",
+      "content": [
+        {
+          "level": 0,
+          "text": "A 32-bit address, written as four dot-separated octets (0–255 each), splits into a network part and a host part. The prefix (netmask) says how many leading bits belong to the network. All hosts sharing a network part can reach each other directly, with no router needed; every host part must be unique within that network."
+        },
+        {
+          "level": 0,
+          "text": "Address"
+        },
+        {
+          "level": 0,
+          "text": "Prefix"
+        },
+        {
+          "level": 0,
+          "text": "Network address"
+        },
+        {
+          "level": 0,
+          "text": "Broadcast address"
+        },
+        {
+          "level": 0,
+          "text": "192.168.1.107"
+        },
+        {
+          "level": 0,
+          "text": "/24 (255.255.255.0)"
+        },
+        {
+          "level": 0,
+          "text": "192.168.1.0"
+        },
+        {
+          "level": 0,
+          "text": "192.168.1.255"
+        },
+        {
+          "level": 0,
+          "text": "10.1.1.18"
+        },
+        {
+          "level": 0,
+          "text": "/8 (255.0.0.0)"
+        },
+        {
+          "level": 0,
+          "text": "10.0.0.0"
+        },
+        {
+          "level": 0,
+          "text": "10.255.255.255"
+        },
+        {
+          "level": 0,
+          "text": "172.16.181.23"
+        },
+        {
+          "level": 0,
+          "text": "/19 (255.255.224.0)"
+        },
+        {
+          "level": 0,
+          "text": "172.16.160.0"
+        },
+        {
+          "level": 0,
+          "text": "172.16.191.255"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Be fluent converting prefix ↔ netmask ↔ network/broadcast address without a calculator"
+        },
+        {
+          "level": 0,
+          "text": "The network address is the host part all-zeros; the broadcast address is the host part all-ones. This exact calculation is a standard exam sub-task inside larger networking questions — practice it on odd prefixes like /19 and /27, not just the easy /24 and /8."
+        },
+        {
+          "level": 0,
+          "text": "127.0.0.1 (and the whole 127.0.0.0/8 network) always refers back to the local system itself — \"localhost\" — regardless of any real network interface."
+        },
+        {
+          "level": 3,
+          "text": "IPv4 routing"
+        },
+        {
+          "level": 0,
+          "text": "Every host keeps a routing table: destination network, which local interface to send through, and (if needed) an intermediate router's address. The most specific matching entry wins — if two routes both match a destination, the one with the longer/more specific prefix is used. Anything matching nothing more specific falls to the default route, 0.0.0.0/0, which points at a router reachable via one of the host's own more-specific routes."
+        },
+        {
+          "level": 0,
+          "text": "ip route"
+        },
+        {
+          "level": 0,
+          "text": "# default via 192.168.5.254 dev enp3s0 proto static metric 1024"
+        },
+        {
+          "level": 0,
+          "text": "# 192.168.5.0/24 dev enp3s0 proto kernel scope link src 192.168.5.10"
+        },
+        {
+          "level": 0,
+          "text": "A router does the same lookup as any host, but instead of discarding traffic not addressed to it, forwards that traffic onward per its own table — this forward-and-repeat process is exactly how a packet crosses multiple networks to reach a distant destination."
+        }
+      ],
+      "words": 297
+    },
+    {
+      "title": "12.3 IPv6, briefly",
+      "content": [
+        {
+          "level": 0,
+          "text": "128 bits, written as eight colon-separated groups of four hex digits. RHEL runs dual-stack by default — IPv4 and IPv6 active side by side on the same interface."
+        },
+        {
+          "level": 0,
+          "text": "Shortening rule"
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "Leading zeros in a group may be dropped"
+        },
+        {
+          "level": 0,
+          "text": "2001:0db8:0000:0010:0000:0000:0000:0001 → 2001:db8:0:10:0:0:0:1"
+        },
+        {
+          "level": 0,
+          "text": "One run of consecutive all-zero groups may collapse to :: (once per address, maximum)"
+        },
+        {
+          "level": 0,
+          "text": "2001:db8:0:10:0:0:0:1 → 2001:db8:0:10::1"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — A port after an IPv6 address needs brackets"
+        },
+        {
+          "level": 0,
+          "text": "[2001:db8:0:10::1]:80 — without the brackets, the port number looks like it's part of the address itself and parses incorrectly."
+        },
+        {
+          "level": 0,
+          "text": "Address / network"
+        },
+        {
+          "level": 0,
+          "text": "IPv4 equivalent"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "::1/128"
+        },
+        {
+          "level": 0,
+          "text": "127.0.0.1"
+        },
+        {
+          "level": 0,
+          "text": "localhost"
+        },
+        {
+          "level": 0,
+          "text": "::"
+        },
+        {
+          "level": 0,
+          "text": "0.0.0.0"
+        },
+        {
+          "level": 0,
+          "text": "The unspecified address — e.g. a service listening on every configured address"
+        },
+        {
+          "level": 0,
+          "text": "::/0"
+        },
+        {
+          "level": 0,
+          "text": "0.0.0.0/0"
+        },
+        {
+          "level": 0,
+          "text": "The default route"
+        },
+        {
+          "level": 0,
+          "text": "Unlike IPv4, IPv6 uses a standard /64 subnet size almost everywhere — half the address is network prefix, half is interface ID, leaving effectively unlimited hosts per subnet. A provider typically allocates a shorter prefix (e.g. /48) to an organization, leaving room to carve out many /64 subnets from it."
+        }
+      ],
+      "words": 167
+    },
+    {
+      "title": "12.4 Inspecting and testing the network",
+      "content": [
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Shows"
+        },
+        {
+          "level": 0,
+          "text": "ip link show"
+        },
+        {
+          "level": 0,
+          "text": "Every interface, its state (UP/DOWN), and MAC address"
+        },
+        {
+          "level": 0,
+          "text": "ip addr show [dev]"
+        },
+        {
+          "level": 0,
+          "text": "IPv4/IPv6 addresses and prefixes on one or all interfaces"
+        },
+        {
+          "level": 0,
+          "text": "ip -s link show dev"
+        },
+        {
+          "level": 0,
+          "text": "RX/TX packet, error, and drop counters — a first stop for suspected network issues"
+        },
+        {
+          "level": 0,
+          "text": "ping -c3 host"
+        },
+        {
+          "level": 0,
+          "text": "Basic reachability (IPv4); ping6 for IPv6 — always use -c to cap the count, or it runs until Ctrl+C"
+        },
+        {
+          "level": 0,
+          "text": "ip route / ip -6 route"
+        },
+        {
+          "level": 0,
+          "text": "The IPv4 / IPv6 routing table"
+        },
+        {
+          "level": 0,
+          "text": "tracepath host"
+        },
+        {
+          "level": 0,
+          "text": "Traces the hop-by-hop path to a destination — identifies which router along the way is the problem"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Pinging a link-local address needs a zone identifier"
+        },
+        {
+          "level": 0,
+          "text": "ping6 ff02::1%ens3 — link-local addresses aren't globally unique, so you must tell ping6 which interface to send out of (after the %). Omitting it produces \"connect: Invalid argument\"."
+        }
+      ],
+      "words": 136
+    },
+    {
+      "title": "12.5 NetworkManager and nmcli",
+      "content": [
+        {
+          "level": 0,
+          "text": "NetworkManager is the daemon that owns network configuration; nmcli is the command-line tool that talks to it. Two concepts to keep straight:"
+        },
+        {
+          "level": 0,
+          "text": "Term"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "Device"
+        },
+        {
+          "level": 0,
+          "text": "A physical or virtual network interface (e.g. ens3)"
+        },
+        {
+          "level": 0,
+          "text": "Connection"
+        },
+        {
+          "level": 0,
+          "text": "A named bundle of settings that CAN be applied to a device — only one connection is active per device at a time, but several can exist for the same device (e.g. \"work-wifi\" vs. \"home-wifi\" for the same wireless card)"
+        },
+        {
+          "level": 0,
+          "text": "Configuration is saved under /etc/sysconfig/network-scripts/ifcfg-<name>, named after the connection, not the device."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — The core nmcli command set — memorize this table"
+        },
+        {
+          "level": 0,
+          "text": "Every row here is a standalone exam-relevant task."
+        },
+        {
+          "level": 0,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Show all devices and their state"
+        },
+        {
+          "level": 0,
+          "text": "nmcli dev status"
+        },
+        {
+          "level": 0,
+          "text": "List all connections"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con show"
+        },
+        {
+          "level": 0,
+          "text": "List only active connections"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con show --active"
+        },
+        {
+          "level": 0,
+          "text": "Show every setting for one connection"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con show NAME"
+        },
+        {
+          "level": 0,
+          "text": "Create a DHCP connection"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con add con-name NAME type ethernet ifname DEV"
+        },
+        {
+          "level": 0,
+          "text": "Create a static IPv4 connection"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con add con-name NAME type ethernet ifname DEV ip4 IP/PREFIX gw4 GATEWAY"
+        },
+        {
+          "level": 0,
+          "text": "Modify a setting on an EXISTING connection"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con mod NAME ipv4.addresses \"IP/PREFIX GATEWAY\""
+        },
+        {
+          "level": 0,
+          "text": "Add one value without replacing the list"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con mod NAME +ipv4.dns IP"
+        },
+        {
+          "level": 0,
+          "text": "Activate a connection"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con up NAME"
+        },
+        {
+          "level": 0,
+          "text": "Deactivate AND disconnect a device (the correct way to bring an interface down)"
+        },
+        {
+          "level": 0,
+          "text": "nmcli dev dis DEV"
+        },
+        {
+          "level": 0,
+          "text": "Reload config files after manual edits"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con reload"
+        },
+        {
+          "level": 0,
+          "text": "Delete a connection (and its ifcfg file)"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con del NAME"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — nmcli con down vs. nmcli dev disconnect — a genuine gotcha"
+        },
+        {
+          "level": 0,
+          "text": "Most wired connections have autoconnect enabled by default. nmcli con down NAME brings the connection down, but since the device is still present and available, NetworkManager immediately reactivates it (or another matching connection) right back up. nmcli dev disconnect DEV is the command that actually keeps an interface down, because it disconnects the device itself, not just one connection bound to it."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Switching from DHCP to static requires changing the method, not just adding an address"
+        },
+        {
+          "level": 0,
+          "text": "Setting ipv4.addresses on a connection that's still ipv4.method auto doesn't fully switch it to static — the connection may hang, fail to activate cleanly, or end up with BOTH a DHCP-assigned address and your static one. Always set ipv4.method manual (or ipv6.method manual) explicitly when moving off DHCP."
+        },
+        {
+          "level": 0,
+          "text": "nmcli con show NAME output distinguishes two kinds of settings by case: lowercase fields (like ipv4.addresses) are static properties you set and that persist in the ifcfg file; ALL-CAPS fields are live, temporary values (e.g. from DHCP) that aren't stored anywhere permanent."
+        },
+        {
+          "level": 0,
+          "text": "Who can change network settings: root always can. A regular user logged in AT the physical console (not over SSH) can also make many changes — the reasoning is that physical presence at a laptop/workstation implies a legitimate need to switch wifi networks on the fly; SSH-connected regular users cannot, without becoming root. nmcli gen permissions shows exactly what your current session is allowed to do."
+        }
+      ],
+      "words": 494
+    },
+    {
+      "title": "12.6 Hostname and name resolution",
+      "content": [
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "hostname"
+        },
+        {
+          "level": 0,
+          "text": "Shows (or, given an argument, TEMPORARILY changes) the current hostname — doesn't survive reboot"
+        },
+        {
+          "level": 0,
+          "text": "hostnamectl set-hostname NAME"
+        },
+        {
+          "level": 0,
+          "text": "Sets the PERSISTENT static hostname, stored in /etc/hostname"
+        },
+        {
+          "level": 0,
+          "text": "hostnamectl status"
+        },
+        {
+          "level": 0,
+          "text": "Full detail: static hostname, OS, kernel, virtualization, machine/boot IDs"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — hostname alone doesn't persist — a real, testable distinction"
+        },
+        {
+          "level": 0,
+          "text": "sudo hostname newname changes the running system's hostname immediately, but /etc/hostname is untouched — reboot and the old name comes right back. Only hostnamectl set-hostname updates /etc/hostname for a change that survives a reboot."
+        },
+        {
+          "level": 3,
+          "text": "Name resolution order"
+        },
+        {
+          "level": 0,
+          "text": "The stub resolver checks /etc/hosts FIRST (order controlled by /etc/nsswitch.conf), then falls back to DNS servers listed in /etc/resolv.conf if no match is found there."
+        },
+        {
+          "level": 0,
+          "text": "# /etc/hosts:"
+        },
+        {
+          "level": 0,
+          "text": "127.0.0.1 localhost"
+        },
+        {
+          "level": 0,
+          "text": "172.25.250.10 servera.lab.example.com servera"
+        },
+        {
+          "level": 0,
+          "text": "# /etc/resolv.conf (normally generated by NetworkManager — don't hand-edit if using DHCP/nmcli):"
+        },
+        {
+          "level": 0,
+          "text": "search example.com"
+        },
+        {
+          "level": 0,
+          "text": "nameserver 172.25.254.254"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "getent hosts NAME"
+        },
+        {
+          "level": 0,
+          "text": "Tests resolution specifically via /etc/hosts"
+        },
+        {
+          "level": 0,
+          "text": "host NAME"
+        },
+        {
+          "level": 0,
+          "text": "Tests resolution via DNS directly, forward or reverse"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con mod NAME ipv4.dns IP"
+        },
+        {
+          "level": 0,
+          "text": "Set the DNS server(s) for a connection (replaces the list — use +ipv4.dns to add one instead)"
+        },
+        {
+          "level": 0,
+          "text": "nmcli con mod NAME ipv4.ignore-auto-dns yes"
+        },
+        {
+          "level": 0,
+          "text": "Stop DHCP from overwriting your manually-set DNS servers in /etc/resolv.conf"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — A DNS change needs a con down/up (or reload) to actually take effect"
+        },
+        {
+          "level": 0,
+          "text": "Editing DNS settings with nmcli con mod alone updates the ifcfg file, but the running connection doesn't pick it up until you reactivate it — nmcli con down NAME; nmcli con up NAME (or nmcli con reload for file-based edits)."
+        }
+      ],
+      "words": 253
+    },
+    {
+      "title": "Hands-on: practice these on your own lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. ssh student@servera; ip addr show — identify the interface name, current IP, and prefix."
+        },
+        {
+          "level": 0,
+          "text": "2. sudo nmcli con show — note the connection NAME (often not identical to the device name)."
+        },
+        {
+          "level": 0,
+          "text": "3. sudo nmcli con mod <NAME> ipv4.method manual ipv4.addresses \"172.25.250.10/24\" ipv4.gateway 172.25.250.254 — then nmcli con down <NAME>; nmcli con up <NAME> to apply it."
+        },
+        {
+          "level": 0,
+          "text": "4. ip addr show to confirm the static address took effect; ping -c3 workstation to confirm connectivity survived the change."
+        },
+        {
+          "level": 0,
+          "text": "5. hostnamectl status — confirm the static hostname matches servera.lab.example.com from Part 0's setup."
+        },
+        {
+          "level": 0,
+          "text": "6. getent hosts bastion and host bastion.lab.example.com — compare /etc/hosts-based vs DNS-style resolution on your lab (which has no real DNS server, so only the /etc/hosts lookup will succeed)."
+        }
+      ],
+      "words": 120
+    },
+    {
+      "title": "Review — check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. Q1 — Calculate the network address and broadcast address for 10.20.30.40/22."
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — You run nmcli con down office-wifi to take a laptop's wifi offline, but it reconnects within a second. What's actually happening, and what command achieves what you intended?"
+        },
+        {
+          "level": 0,
+          "text": "3. Q3 — You set ipv4.addresses on a connection to a static IP but leave ipv4.method as auto. What goes wrong, and what's the fix?"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — /22 = 255.255.252.0. 30 in binary is 00011110; the /22 boundary falls within the third octet, masking to 00011100 = 28. Network address: 10.20.28.0. Broadcast address (host part all-ones): 10.20.31.255."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — Autoconnect is enabled on that connection, so as soon as NetworkManager sees the device is still present and available, it reactivates the connection right back up. nmcli dev disconnect <device-name> disconnects the DEVICE itself, which actually stays down."
+        },
+        {
+          "level": 0,
+          "text": "Q3 — The connection may fail to activate cleanly, hang, or end up with both a DHCP address and the static one simultaneously, since it's still trying to also negotiate DHCP. Fix: explicitly set ipv4.method manual alongside the static address."
+        }
+      ],
+      "words": 183
+    },
+    {
+      "title": "Chapter 12 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "The TCP/IP model (application/transport/internet/link) describes how data moves between hosts; modern RHEL interface names (en/wl/ww + firmware/PCI info) are persistent, unlike the old eth0-style detection-order names."
+        },
+        {
+          "level": 0,
+          "text": "An IPv4 address + prefix determines its network and broadcast address; the most specific matching route wins, with 0.0.0.0/0 as the catch-all default."
+        },
+        {
+          "level": 0,
+          "text": "IPv6 uses 128-bit addresses, mostly /64 subnets, and RHEL runs IPv4/IPv6 dual-stack by default."
+        },
+        {
+          "level": 0,
+          "text": "nmcli manages devices (physical/virtual interfaces) and connections (named setting bundles) — con mod for static settings, dev disconnect (not con down) to actually keep an interface offline, and ipv4.method manual whenever moving off DHCP."
+        },
+        {
+          "level": 0,
+          "text": "hostnamectl set-hostname persists to /etc/hostname; plain hostname does not. /etc/hosts is checked before /etc/resolv.conf's DNS servers for name resolution."
+        }
+      ],
+      "words": 116
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [
+    {
+      "id": "rhel-service-bind-named",
+      "why": "Managing Networking — name resolution"
+    },
+    {
+      "id": "rhel-service-dhcp",
+      "why": "Managing Networking"
+    }
+  ],
+  "currency": []
+}

@@ -557,6 +557,67 @@ const ROUTES = {
   }
 }
 
+/* ------------------------------------------------------ study manual */
+
+{
+  const idxPath = join(APP, "data", "study-manual.json");
+  if (!existsSync(idxPath)) {
+    fail("data/study-manual.json is missing — run scripts/extract-docx.mjs --all then scripts/build-study-manual.mjs");
+  } else {
+    let m = null;
+    try { m = JSON.parse(readFileSync(idxPath, "utf8")); } catch (e) {
+      fail(`data/study-manual.json is not valid JSON: ${e.message}`);
+    }
+    if (m) {
+      const dir = join(APP, "data", "study");
+      if (!existsSync(dir)) {
+        fail("data/study/ is missing — the study manual renders nothing without it");
+      } else {
+        const onDisk = new Set(readdirSync(dir).filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, "")));
+        const inIndex = new Set();
+        let words = 0;
+        for (const b of m.books || []) {
+          for (const u of b.units || []) {
+            inIndex.add(u.id);
+            words += u.words || 0;
+            const p = join(dir, `${u.id}.json`);
+            if (!existsSync(p)) { fail(`data/study/${u.id}.json is missing but the index lists "${u.display}"`); continue; }
+            try {
+              const rec = JSON.parse(readFileSync(p, "utf8"));
+              if (!rec.sections || !rec.sections.length) fail(`data/study/${u.id}.json has no sections`);
+              // The order in the index must match the file, or "next chapter"
+              // navigates somewhere the learner has not reached.
+              if (rec.id !== u.id) fail(`data/study/${u.id}.json declares id "${rec.id}"`);
+            } catch (e) {
+              fail(`data/study/${u.id}.json is not valid JSON: ${e.message}`);
+            }
+          }
+        }
+        for (const f of onDisk) if (!inIndex.has(f)) fail(`data/study/${f}.json is orphaned — not listed in the index`);
+        const total = (m.books || []).reduce((a, b) => a + b.units.length, 0);
+        console.log(`  study manual   ${m.books.length} courses, ${total} units, ${(words / 1000).toFixed(0)}k words`);
+
+        // Every service profile must be nested under a chapter, per the brief.
+        const placed = new Set();
+        for (const b of m.books || []) {
+          for (const u of b.units || []) {
+            const p = join(dir, `${u.id}.json`);
+            if (existsSync(p)) {
+              for (const s of (JSON.parse(readFileSync(p, "utf8")).services || [])) placed.add(s.id);
+            }
+          }
+        }
+        const svcFile = join(APP, "data", "lessons", "services.json");
+        if (existsSync(svcFile)) {
+          for (const s of JSON.parse(readFileSync(svcFile, "utf8"))) {
+            if (!placed.has(s.id)) warn(`service profile "${s.id}" is not nested under any study chapter`);
+          }
+        }
+      }
+    }
+  }
+}
+
 /* ------------------------------------------------- repo-level privacy guard */
 
 const gi = join(ROOT, ".gitignore");

@@ -1,0 +1,410 @@
+{
+  "id": "rh124-03",
+  "n": 3,
+  "sourceNumber": 2,
+  "kind": "chapter",
+  "title": "ACCESSING THE COMMAND LINE",
+  "display": "Ch 2 — ACCESSING THE COMMAND LINE",
+  "exam": "RHCSA (EX200)",
+  "words": 1291,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Book reference: Chapter 2, pages 13–46. Guided Exercise: Accessing the Command Line Using the Desktop. Lab: Accessing the Command Line."
+        }
+      ],
+      "words": 20
+    },
+    {
+      "title": "2.1 The shell, the prompt, and logging in",
+      "content": [
+        {
+          "level": 0,
+          "text": "The shell is the program that reads commands you type and runs them. RHEL's default is bash (the GNU Bourne-Again Shell). When bash is waiting for input, it shows a prompt: a regular user sees a line ending in $, root sees one ending in # — that character swap is a deliberate, load-bearing visual cue that you're one typo away from affecting the whole system as root."
+        },
+        {
+          "level": 0,
+          "text": "Command: the program to run (e.g. usermod)."
+        },
+        {
+          "level": 0,
+          "text": "Option(s): adjust its behavior, usually starting with - or -- (e.g. -L)."
+        },
+        {
+          "level": 0,
+          "text": "Argument(s): the target the command acts on (e.g. student)."
+        },
+        {
+          "level": 0,
+          "text": "Example: usermod -L student — command usermod, option -L, argument student. Locks student's password."
+        },
+        {
+          "level": 3,
+          "text": "Getting a shell prompt"
+        },
+        {
+          "level": 0,
+          "text": "Physical console — a real keyboard/screen wired to the machine. RHEL 8 supports 6 virtual consoles (switch with Ctrl+Alt+F1 through F6); tty1 runs the graphical login if a desktop is installed, tty2–tty6 give text logins."
+        },
+        {
+          "level": 0,
+          "text": "Headless servers (no keyboard/screen — most real servers and every VM) are normally reached over the network with SSH, or in an emergency via a serial console."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Logging in with SSH"
+        },
+        {
+          "level": 0,
+          "text": "This is the command you'll use constantly on the exam and in this lab: ssh student@servera logs you into servera as student, prompting for a password unless key-based auth is already set up (which it is, on your practice lab, after Part 0). Exit a session with exit or Ctrl+D."
+        },
+        {
+          "level": 0,
+          "text": "First-ever connection to a host shows a host-key fingerprint prompt (\"Are you sure you want to continue connecting (yes/no)?\") — type yes. This fingerprint is how ssh detects if someone is impersonating that server later (a man-in-the-middle attack); if a saved fingerprint ever stops matching, ssh refuses to connect automatically rather than silently trusting the new one."
+        },
+        {
+          "level": 0,
+          "text": "ssh student@servera"
+        },
+        {
+          "level": 0,
+          "text": "# first connection only:"
+        },
+        {
+          "level": 0,
+          "text": "# The authenticity of host 'servera (172.25.250.10)' can't be established."
+        },
+        {
+          "level": 0,
+          "text": "# Are you sure you want to continue connecting (yes/no)? yes"
+        },
+        {
+          "level": 0,
+          "text": "Key-based login (no password prompt) works by you holding a private key file and the server holding the matching public key in that account. ssh -i mylab.pem user@host picks a specific private key; the key file itself must be readable only by you (chmod 600 mylab.pem) or ssh will refuse to use it."
+        }
+      ],
+      "words": 372
+    },
+    {
+      "title": "2.2 The GNOME desktop, briefly",
+      "content": [
+        {
+          "level": 0,
+          "text": "RHEL 8's default graphical environment is GNOME 3. You mostly need three things about it for this course: the Activities button (top-left, or press Super) opens an overview to launch apps and switch windows; a graphical terminal (search \"Terminal\" from Activities) is where your actual shell prompt lives; and the system menu (top-right) has lock screen, log out, and power off. Since your practice lab VMs typically run minimal installs without a desktop (Part 0 used Minimal Install), you'll do virtually everything in this guide over SSH from a terminal instead — which is also exactly how real RHEL servers are administered."
+        },
+        {
+          "level": 0,
+          "text": "NOTE —"
+        },
+        {
+          "level": 0,
+          "text": "If you'd like the desktop experience for this one section, install it with sudo dnf groupinstall \"Server with GUI\" on the workstation VM only — it's optional and every exercise in this guide works fine without it."
+        }
+      ],
+      "words": 141
+    },
+    {
+      "title": "2.3 Running commands efficiently in Bash",
+      "content": [
+        {
+          "level": 0,
+          "text": "A handful of shortcuts turn slow, error-prone typing into fast, reliable typing. These aren't exam objectives by themselves, but every minute you save here is a minute back for the tasks that are graded."
+        },
+        {
+          "level": 3,
+          "text": "A few commands worth knowing cold"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "What it does"
+        },
+        {
+          "level": 0,
+          "text": "date"
+        },
+        {
+          "level": 0,
+          "text": "Shows current date/time. date +%R gives 24h HH:MM, date +%r gives 12h time, date +%F gives YYYY-MM-DD."
+        },
+        {
+          "level": 0,
+          "text": "passwd"
+        },
+        {
+          "level": 0,
+          "text": "Changes your own password (asks for the current one first); root can change anyone's."
+        },
+        {
+          "level": 0,
+          "text": "file <path>"
+        },
+        {
+          "level": 0,
+          "text": "Reports what type of file something is, without relying on its extension."
+        },
+        {
+          "level": 0,
+          "text": "cat <file>"
+        },
+        {
+          "level": 0,
+          "text": "Dumps a file's whole contents to the screen."
+        },
+        {
+          "level": 0,
+          "text": "less <file>"
+        },
+        {
+          "level": 0,
+          "text": "Pages through a file — arrows to scroll, q to quit. Use this instead of cat for anything long."
+        },
+        {
+          "level": 0,
+          "text": "head / tail <file>"
+        },
+        {
+          "level": 0,
+          "text": "First / last 10 lines by default; -n <N> to change the count."
+        },
+        {
+          "level": 0,
+          "text": "wc <file>"
+        },
+        {
+          "level": 0,
+          "text": "Counts lines/words/bytes; -l, -w, or -c to show just one of those."
+        },
+        {
+          "level": 3,
+          "text": "Multiple commands on one line"
+        },
+        {
+          "level": 0,
+          "text": "command1 ; command2 # runs both in order, regardless of whether the first succeeds"
+        },
+        {
+          "level": 3,
+          "text": "Tab completion"
+        },
+        {
+          "level": 0,
+          "text": "Type a few characters of a command, file name, or option and press Tab — bash fills in the rest if what you typed is unique. If it's not unique, press Tab twice to see every match. This works for commands, paths, and even long option names (useradd --gr[Tab] → --groups), which is invaluable for commands with dozens of options."
+        },
+        {
+          "level": 3,
+          "text": "Command history"
+        },
+        {
+          "level": 0,
+          "text": "history — lists your previous commands with numbers."
+        },
+        {
+          "level": 0,
+          "text": "!42 — re-runs command number 42 from that list."
+        },
+        {
+          "level": 0,
+          "text": "!ls — re-runs the most recent command that started with \"ls\"."
+        },
+        {
+          "level": 0,
+          "text": "!! — re-runs the immediately previous command (handy for sudo !! after forgetting sudo)."
+        },
+        {
+          "level": 0,
+          "text": "UpArrow / DownArrow — step backward/forward through history; edit before pressing Enter."
+        },
+        {
+          "level": 3,
+          "text": "Command-line editing shortcuts"
+        },
+        {
+          "level": 0,
+          "text": "Shortcut"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+A"
+        },
+        {
+          "level": 0,
+          "text": "Jump to the start of the line."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+E"
+        },
+        {
+          "level": 0,
+          "text": "Jump to the end of the line."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+U"
+        },
+        {
+          "level": 0,
+          "text": "Delete from the cursor to the start of the line."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+K"
+        },
+        {
+          "level": 0,
+          "text": "Delete from the cursor to the end of the line."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+← / Ctrl+→"
+        },
+        {
+          "level": 0,
+          "text": "Jump a whole word left / right."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+R"
+        },
+        {
+          "level": 0,
+          "text": "Search backward through history by typing part of a command."
+        },
+        {
+          "level": 0,
+          "text": "Esc+. (or Alt+.)"
+        },
+        {
+          "level": 0,
+          "text": "Insert the last argument of the previous command — repeat to step further back."
+        },
+        {
+          "level": 0,
+          "text": "Example workflow: wc zcat then head Esc+. reuses \"zcat\" as head's argument without retyping it."
+        },
+        {
+          "level": 3,
+          "text": "Splitting a long command across lines"
+        },
+        {
+          "level": 0,
+          "text": "End a line with a backslash \\ and bash treats the next line as a continuation, prompting with > until the command is complete:"
+        },
+        {
+          "level": 0,
+          "text": "head -n 3 \\"
+        },
+        {
+          "level": 0,
+          "text": "> /usr/share/dict/words \\"
+        },
+        {
+          "level": 0,
+          "text": "> /usr/share/dict/linux.words"
+        }
+      ],
+      "words": 425
+    },
+    {
+      "title": "Hands-on: practice these on your own lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Adapted from the book's Lab so you can run it on your own workstation VM (no lab script needed — these are ordinary files, not graded):"
+        },
+        {
+          "level": 0,
+          "text": "1. Run date, then date +%r to see 12-hour time."
+        },
+        {
+          "level": 0,
+          "text": "2. Create a scratch file: cp /etc/services ~/practice_file, then run file practice_file — what type does it report?"
+        },
+        {
+          "level": 0,
+          "text": "3. Run wc practice_file to see its line/word/byte counts."
+        },
+        {
+          "level": 0,
+          "text": "4. Run head practice_file, then tail Esc+. to reuse the filename without retyping it."
+        },
+        {
+          "level": 0,
+          "text": "5. Run tail practice_file, then press UpArrow + Enter to repeat it exactly."
+        },
+        {
+          "level": 0,
+          "text": "6. Run history and note a command's number, then re-run it with !<number>."
+        }
+      ],
+      "words": 103
+    },
+    {
+      "title": "Review — check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. Q1 — You type ssh -i mylab.pem student@servera and get a permission error about the key file itself, not a login failure. What's the likely cause and the fix?"
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — What's the difference between pressing Tab once versus twice?"
+        },
+        {
+          "level": 0,
+          "text": "3. Q3 — You want to run the exact same command you ran two commands ago. Name two different ways to do it."
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — SSH refuses to use a private key file that other users can read (chmod 600 mylab.pem fixes it) — this is a real security check, not a bug."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — Once: completes as far as it can unambiguously. Twice (when the first press didn't finish the word): lists every possible match so you can type more distinguishing characters."
+        },
+        {
+          "level": 0,
+          "text": "Q3 — history to find its number then !<number>, or press UpArrow twice then Enter."
+        }
+      ],
+      "words": 143
+    },
+    {
+      "title": "Chapter 2 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "Bash is RHEL's default shell; commands break down into command, options, and arguments."
+        },
+        {
+          "level": 0,
+          "text": "ssh user@host is the standard way to reach a remote shell; key-based auth needs a private key readable only by you."
+        },
+        {
+          "level": 0,
+          "text": "Tab completion, !!/!string/!number history recall, and Ctrl-based editing shortcuts are what separate slow typing from fast, low-error command-line work."
+        }
+      ],
+      "words": 53
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": []
+}

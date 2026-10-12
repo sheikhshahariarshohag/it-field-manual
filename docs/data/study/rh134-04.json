@@ -1,0 +1,1114 @@
+{
+  "id": "rh134-04",
+  "n": 4,
+  "sourceNumber": 4,
+  "kind": "part",
+  "title": "Part 4",
+  "display": "Part 4 — Partitioning a Disk; Creating Filesystems and Persistent Mo…",
+  "exam": "RHCSA (EX200)",
+  "words": 2610,
+  "sections": [
+    {
+      "title": "1. Partitioning a Disk",
+      "content": [
+        {
+          "level": 0,
+          "text": "Before a disk can store a filesystem, it needs a partition table describing how the disk is divided. RHEL 8 supports two partitioning schemes:"
+        },
+        {
+          "level": 0,
+          "text": "Scheme"
+        },
+        {
+          "level": 0,
+          "text": "Key facts"
+        },
+        {
+          "level": 0,
+          "text": "MBR (msdos)"
+        },
+        {
+          "level": 0,
+          "text": "Legacy BIOS standard. Maximum 4 primary partitions per disk — need a 5th? Convert one primary to an extended partition and create logical partitions inside it. 2TB size limit per partition."
+        },
+        {
+          "level": 0,
+          "text": "GPT"
+        },
+        {
+          "level": 0,
+          "text": "Modern UEFI standard. Up to 128 partitions with no primary/extended distinction, and no practical size limit. Use this by default on new systems."
+        },
+        {
+          "level": 2,
+          "text": "Managing partitions with parted"
+        },
+        {
+          "level": 0,
+          "text": "parted takes a whole-disk device as its argument. Run it with a subcommand for one-shot changes, or with no subcommand for an interactive session."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted /dev/vdb print"
+        },
+        {
+          "level": 0,
+          "text": "Model: Virtio Block Device (virtblk)"
+        },
+        {
+          "level": 0,
+          "text": "Disk /dev/vdb: 5369MB"
+        },
+        {
+          "level": 0,
+          "text": "Partition Table: gpt"
+        },
+        {
+          "level": 0,
+          "text": "Number Start End Size File system Name Flags"
+        },
+        {
+          "level": 0,
+          "text": "1 1049kB 1001MB 1000MB data"
+        },
+        {
+          "level": 0,
+          "text": "Creating a partition non-interactively in one line:"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted /dev/vdb mkpart primary xfs 2048s 1000MB"
+        },
+        {
+          "level": 0,
+          "text": "Or interactively, where parted prompts for each value:"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted /dev/vdb"
+        },
+        {
+          "level": 0,
+          "text": "(parted) mkpart"
+        },
+        {
+          "level": 0,
+          "text": "Partition type? primary/extended? primary"
+        },
+        {
+          "level": 0,
+          "text": "File system type? [ext2]? xfs"
+        },
+        {
+          "level": 0,
+          "text": "Start? 2048s"
+        },
+        {
+          "level": 0,
+          "text": "End? 1000MB"
+        },
+        {
+          "level": 0,
+          "text": "(parted) quit"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL mkpart's 'file system type' prompt does NOT create a filesystem — it only tags the partition type. You still have to run mkfs afterward. This distinction is exactly the kind of thing the exam tests: parted partitions, mkfs formats — two separate steps, always."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING After creating or deleting a partition, run udevadm settle before using the new device — it waits until the kernel has actually created the /dev entry. Skipping this and immediately running mkfs against a device that doesn't exist yet is a common source of confusing failures."
+        }
+      ],
+      "words": 282
+    },
+    {
+      "title": "2. Creating Filesystems and Persistent Mounts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Creates"
+        },
+        {
+          "level": 0,
+          "text": "mkfs.xfs /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "XFS filesystem (RHEL 8 default)"
+        },
+        {
+          "level": 0,
+          "text": "mkfs.ext4 /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "ext4 filesystem"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount /dev/vdb1 /mnt"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount | grep vdb1"
+        },
+        {
+          "level": 0,
+          "text": "/dev/vdb1 on /mnt type xfs (rw,relatime,seclabel,attr2,inode64,noquota)"
+        },
+        {
+          "level": 0,
+          "text": "A manual mount like this doesn't survive a reboot. For that, add a line to /etc/fstab — six whitespace-delimited fields."
+        },
+        {
+          "level": 0,
+          "text": "Field #"
+        },
+        {
+          "level": 0,
+          "text": "Content"
+        },
+        {
+          "level": 0,
+          "text": "Notes"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "Device (UUID=... preferred, or /dev/path)"
+        },
+        {
+          "level": 0,
+          "text": "UUID survives device-name reordering across reboots; the device path might not"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "Mount point"
+        },
+        {
+          "level": 0,
+          "text": "Must already exist — create with mkdir first"
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "Filesystem type"
+        },
+        {
+          "level": 0,
+          "text": "xfs, ext4, swap, etc."
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "Options"
+        },
+        {
+          "level": 0,
+          "text": "defaults covers the common case"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "Dump flag"
+        },
+        {
+          "level": 0,
+          "text": "Almost always 0 — only the dump backup utility uses this"
+        },
+        {
+          "level": 0,
+          "text": "6"
+        },
+        {
+          "level": 0,
+          "text": "fsck order"
+        },
+        {
+          "level": 0,
+          "text": "0 for XFS (doesn't use fsck); for ext4: 1 for root, 2 for everything else"
+        },
+        {
+          "level": 0,
+          "text": "UUID=a8063676-44dd-409a-b584-68be2c9f5570 / xfs defaults 0 0"
+        },
+        {
+          "level": 0,
+          "text": "UUID=7a20315d-ed8b-4e75-a5b6-24ff9e1f9838 /dbdata xfs defaults 0 0"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lsblk --fs # find UUIDs for every block device"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Always run systemctl daemon-reload after editing /etc/fstab, and ALWAYS verify with mount /mountpoint (or findmnt --verify) BEFORE rebooting. A broken fstab entry can leave a machine unable to boot to a normal login — this is one of the few RH134 mistakes with real consequences, and it's exactly why RH134 Chapter 10 later teaches you how to recover from it."
+        }
+      ],
+      "words": 215
+    },
+    {
+      "title": "3. Managing Swap Space",
+      "content": [
+        {
+          "level": 0,
+          "text": "Swap is disk space the kernel uses to hold memory pages that don't fit in RAM. It's a safety net, not a performance feature — swap is always dramatically slower than RAM."
+        },
+        {
+          "level": 0,
+          "text": "Physical RAM"
+        },
+        {
+          "level": 0,
+          "text": "Recommended swap"
+        },
+        {
+          "level": 0,
+          "text": "Swap if hibernation needed"
+        },
+        {
+          "level": 0,
+          "text": "2 GiB or less"
+        },
+        {
+          "level": 0,
+          "text": "Twice the RAM"
+        },
+        {
+          "level": 0,
+          "text": "Three times the RAM"
+        },
+        {
+          "level": 0,
+          "text": "2-8 GiB"
+        },
+        {
+          "level": 0,
+          "text": "Same as RAM"
+        },
+        {
+          "level": 0,
+          "text": "Twice the RAM"
+        },
+        {
+          "level": 0,
+          "text": "8-64 GiB"
+        },
+        {
+          "level": 0,
+          "text": "At least 4 GiB"
+        },
+        {
+          "level": 0,
+          "text": "1.5x RAM"
+        },
+        {
+          "level": 0,
+          "text": "More than 64 GiB"
+        },
+        {
+          "level": 0,
+          "text": "At least 4 GiB"
+        },
+        {
+          "level": 0,
+          "text": "Hibernation not recommended"
+        },
+        {
+          "level": 2,
+          "text": "Creating and activating swap"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted /dev/vdb mkpart primary linux-swap 1001MB 1257MB"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# udevadm settle"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkswap /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# swapon /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# free"
+        },
+        {
+          "level": 0,
+          "text": "For persistence, /etc/fstab uses swap as a placeholder in the mount-point field (swap has no directory location):"
+        },
+        {
+          "level": 0,
+          "text": "UUID=39e2667a-9458-42fe-9665-c5c854605881 swap swap defaults 0 0"
+        },
+        {
+          "level": 0,
+          "text": "Multiple swap devices are used in series by default — the kernel fills the first before touching the second. Override that with the pri= mount option; higher priority is used first, and equal priorities round-robin."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Setting the fs-type tag when partitioning swap and assuming that alone activates it. Modern tools don't look at the partition type flag to decide anything — you still need mkswap to write the actual swap signature, and swapon (or an fstab entry) to activate it."
+        }
+      ],
+      "words": 212
+    },
+    {
+      "title": "4. LVM Concepts and Creating Logical Volumes",
+      "content": [
+        {
+          "level": 0,
+          "text": "Partitions are fixed the moment you create them — resizing usually means backing up data, deleting, and recreating. LVM adds a flexible layer in between so storage can grow (and sometimes shrink) without that disruption."
+        },
+        {
+          "level": 0,
+          "text": "Layer"
+        },
+        {
+          "level": 0,
+          "text": "What it is"
+        },
+        {
+          "level": 0,
+          "text": "Physical device"
+        },
+        {
+          "level": 0,
+          "text": "A raw disk or partition"
+        },
+        {
+          "level": 0,
+          "text": "Physical Volume (PV)"
+        },
+        {
+          "level": 0,
+          "text": "A physical device labeled for LVM use, chopped into fixed-size Physical Extents (PEs)"
+        },
+        {
+          "level": 0,
+          "text": "Volume Group (VG)"
+        },
+        {
+          "level": 0,
+          "text": "A pool of PEs combined from one or more PVs — functionally 'a virtual disk'"
+        },
+        {
+          "level": 0,
+          "text": "Logical Volume (LV)"
+        },
+        {
+          "level": 0,
+          "text": "A chunk of a VG's PEs, presented as a block device you format and mount like any partition"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS The entire value proposition of LVM in one sentence: a VG can span multiple physical disks, and an LV can be grown any time the VG has free PEs — no unmounting, no data migration, often no downtime at all."
+        },
+        {
+          "level": 2,
+          "text": "Building the stack: pvcreate → vgcreate → lvcreate"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 769MiB"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb set 1 lvm on"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# pvcreate /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgcreate vg01 /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lvcreate -n lv01 -L 700M vg01"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkfs -t xfs /dev/vg01/lv01"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkdir /mnt/data"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount /dev/vg01/lv01 /mnt/data"
+        },
+        {
+          "level": 0,
+          "text": "lvcreate sizing option"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "-L 128M"
+        },
+        {
+          "level": 0,
+          "text": "Exactly 128 MiB"
+        },
+        {
+          "level": 0,
+          "text": "-l 128"
+        },
+        {
+          "level": 0,
+          "text": "Exactly 128 physical extents"
+        },
+        {
+          "level": 0,
+          "text": "-l +50%FREE"
+        },
+        {
+          "level": 0,
+          "text": "Add 50% of the VG's current free space"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL An LV device shows up under two equally valid names: /dev/vgname/lvname (traditional) and /dev/mapper/vgname-lvname (device-mapper). Different commands and different output favor one or the other — recognize both as the same device."
+        },
+        {
+          "level": 2,
+          "text": "Status commands"
+        },
+        {
+          "level": 0,
+          "text": "Level"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Physical Volume"
+        },
+        {
+          "level": 0,
+          "text": "pvdisplay / pvs"
+        },
+        {
+          "level": 0,
+          "text": "Volume Group"
+        },
+        {
+          "level": 0,
+          "text": "vgdisplay / vgs"
+        },
+        {
+          "level": 0,
+          "text": "Logical Volume"
+        },
+        {
+          "level": 0,
+          "text": "lvdisplay / lvs"
+        },
+        {
+          "level": 0,
+          "text": "The long-form display commands (pvdisplay, vgdisplay, lvdisplay) give full detail on one item at a time; the short-form (pvs, vgs, lvs) give a compact one-line-per-item summary — reach for the short form when scanning many volumes at once."
+        },
+        {
+          "level": 2,
+          "text": "Removing the stack (reverse order)"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# umount /mnt/data"
+        },
+        {
+          "level": 0,
+          "text": "# remove the /etc/fstab entry"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lvremove /dev/vg01/lv01"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgremove vg01"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# pvremove /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING lvremove destroys the LV's data immediately once confirmed. Back up or move anything worth keeping before you run it — there's no undo."
+        }
+      ],
+      "words": 372
+    },
+    {
+      "title": "5. Extending Volume Groups and Logical Volumes",
+      "content": [
+        {
+          "level": 0,
+          "text": "This is the single most exam-relevant LVM skill: grow storage live, without unmounting, without downtime."
+        },
+        {
+          "level": 2,
+          "text": "Extending a volume group"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1027MiB 1539MiB"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb set 3 lvm on"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# pvcreate /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgextend vg01 /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgdisplay vg01 # confirm 'Free PE / Size' is non-zero"
+        },
+        {
+          "level": 2,
+          "text": "Reducing a volume group (removing a PV)"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# pvmove /dev/vdb3 # relocate extents to other PVs first"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgreduce vg01 /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING pvmove requires enough free space on the VG's OTHER physical volumes to receive everything being moved off — and an interrupted pvmove (e.g. a power loss mid-move) risks leaving the VG in an inconsistent state. Back up before running it."
+        },
+        {
+          "level": 2,
+          "text": "Extending a logical volume + its filesystem"
+        },
+        {
+          "level": 0,
+          "text": "Two separate operations, always in this order: grow the LV first, then grow the filesystem living on it. The filesystem step differs by filesystem type — this is the detail the exam loves to test."
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgdisplay vg01 # confirm free PE / size first"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lvextend -L +300M /dev/vg01/lv01"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# xfs_growfs /mnt/data # XFS: takes the MOUNT POINT"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# resize2fs /dev/vg01/lv01 # ext4: takes the LV DEVICE"
+        },
+        {
+          "level": 0,
+          "text": "lvextend sizing option"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "-L 128M"
+        },
+        {
+          "level": 0,
+          "text": "Resize to exactly 128 MiB total"
+        },
+        {
+          "level": 0,
+          "text": "-L +128M"
+        },
+        {
+          "level": 0,
+          "text": "Add 128 MiB to current size"
+        },
+        {
+          "level": 0,
+          "text": "-l +128"
+        },
+        {
+          "level": 0,
+          "text": "Add 128 extents"
+        },
+        {
+          "level": 0,
+          "text": "-l +50%FREE"
+        },
+        {
+          "level": 0,
+          "text": "Add 50% of the VG's current free space"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL xfs_growfs takes the MOUNT POINT as its argument. resize2fs takes the LOGICAL VOLUME DEVICE. Mixing these up is the single most common mistake in this entire chapter — and both commands work while the filesystem stays mounted and in use, no downtime required."
+        },
+        {
+          "level": 0,
+          "text": "🔎 REAL-WORLD EXTENSION lvextend -r combines 'grow the LV' and 'grow the filesystem' into one command, using fsadm under the hood — it works for both XFS and ext4. It's genuinely useful in real work, but know the two-step manual process cold, since that's what the exam and this chapter emphasize."
+        },
+        {
+          "level": 0,
+          "text": "Swap logical volumes extend differently — you can't grow a swap LV in place while it's active. The pattern is: swapoff, lvextend, mkswap again (which re-labels it), then swapon."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Storage + LVM"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "parted DEVICE mkpart TYPE FS-TYPE START END"
+        },
+        {
+          "level": 0,
+          "text": "Create a partition"
+        },
+        {
+          "level": 0,
+          "text": "mkfs.xfs / mkfs.ext4 DEVICE"
+        },
+        {
+          "level": 0,
+          "text": "Format a partition or LV with a filesystem"
+        },
+        {
+          "level": 0,
+          "text": "mount DEVICE MOUNTPOINT"
+        },
+        {
+          "level": 0,
+          "text": "Mount manually (non-persistent)"
+        },
+        {
+          "level": 0,
+          "text": "/etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Persistent mount config — 6 fields, verify with mount before reboot"
+        },
+        {
+          "level": 0,
+          "text": "mkswap DEVICE / swapon DEVICE"
+        },
+        {
+          "level": 0,
+          "text": "Format / activate swap"
+        },
+        {
+          "level": 0,
+          "text": "pvcreate / vgcreate / lvcreate"
+        },
+        {
+          "level": 0,
+          "text": "Build the PV → VG → LV stack"
+        },
+        {
+          "level": 0,
+          "text": "pvs / vgs / lvs"
+        },
+        {
+          "level": 0,
+          "text": "Quick status at each layer"
+        },
+        {
+          "level": 0,
+          "text": "vgextend VG PV"
+        },
+        {
+          "level": 0,
+          "text": "Add a physical volume to a volume group"
+        },
+        {
+          "level": 0,
+          "text": "lvextend -L +SIZE LV"
+        },
+        {
+          "level": 0,
+          "text": "Grow a logical volume"
+        },
+        {
+          "level": 0,
+          "text": "xfs_growfs MOUNTPOINT / resize2fs LV"
+        },
+        {
+          "level": 0,
+          "text": "Grow the filesystem after the LV (XFS takes mountpoint, ext4 takes device)"
+        }
+      ],
+      "words": 480
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Storage + LVM End-to-End",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Build a complete LVM stack from a raw disk to a mounted, persistent filesystem — then extend it live without unmounting."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "A new application needs 500 MiB of persistent storage at /data. Six months later, it's grown and needs another 300 MiB — and you're not allowed to take it offline to do it."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM with a second, unused virtual disk attached — /dev/vdb, entirely empty"
+        },
+        {
+          "level": 0,
+          "text": "sudo/root access"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part A (build)"
+        },
+        {
+          "level": 0,
+          "text": "1. Partition /dev/vdb (GPT), mark it for LVM use, and create a PV"
+        },
+        {
+          "level": 0,
+          "text": "2. Create a volume group named appvg from that PV"
+        },
+        {
+          "level": 0,
+          "text": "3. Create a 500 MiB logical volume named datalv in appvg"
+        },
+        {
+          "level": 0,
+          "text": "4. Format it XFS, create /data, mount it, and make the mount persistent via /etc/fstab (UUID-based)"
+        },
+        {
+          "level": 0,
+          "text": "5. Verify the mount survives by testing with mount /data after unmounting — WITHOUT rebooting"
+        },
+        {
+          "level": 3,
+          "text": "Task — Part B (extend live)"
+        },
+        {
+          "level": 0,
+          "text": "1. Confirm free space exists in appvg with vgdisplay (there should be leftover PEs from the original disk size)"
+        },
+        {
+          "level": 0,
+          "text": "2. Extend datalv by 300 MiB"
+        },
+        {
+          "level": 0,
+          "text": "3. Grow the XFS filesystem to use the new space, with /data still mounted"
+        },
+        {
+          "level": 0,
+          "text": "4. Verify the new total size with df -h /data"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "Part A's persistence check is important: don't just trust that the fstab line 'looks right' — actually unmount and remount using only the fstab entry (umount /data; mount /data) to prove it works, exactly as the chapter recommends doing before ever rebooting a real machine."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: which command grows the XFS filesystem in Part B — the mount point or the device name? If you're not sure without looking it up, re-read Section 4.5 before continuing — this is the exam's favorite trap in this whole chapter."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "# Part A"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb mklabel gpt"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 100%"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb set 1 lvm on"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# udevadm settle"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# pvcreate /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgcreate appvg /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lvcreate -n datalv -L 500M appvg"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkfs.xfs /dev/appvg/datalv"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkdir /data"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lsblk --fs | grep datalv # grab the UUID"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# echo 'UUID=<uuid> /data xfs defaults 0 0' >> /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount /data"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# umount /data && mount /data # prove the fstab entry works alone"
+        },
+        {
+          "level": 0,
+          "text": "# Part B"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgdisplay appvg | grep Free"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lvextend -L +300M /dev/appvg/datalv"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# xfs_growfs /data"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# df -h /data"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "parted mkpart primary 1MiB 100% uses the whole remaining disk in one partition — a common real-world pattern for a disk dedicated entirely to LVM."
+        },
+        {
+          "level": 0,
+          "text": "udevadm settle before pvcreate avoids a race where LVM tools try to use a device node the kernel hasn't finished creating yet."
+        },
+        {
+          "level": 0,
+          "text": "The umount/mount cycle in Part A is the exact 'verify before reboot' habit the chapter recommends — catching a broken fstab entry now is vastly better than catching it after a reboot leaves the system unbootable."
+        },
+        {
+          "level": 0,
+          "text": "xfs_growfs takes /data (the mount point), not the LV device — get this backwards and the command simply fails with an error rather than silently doing the wrong thing."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "df -h /data should show approximately 800M total after Part B, and the filesystem should have remained mounted and writable throughout the entire extension — confirm with a quick touch /data/testfile before and after."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This exact workflow — start small, extend later, zero downtime — is why LVM is still the default storage layer under most RHEL deployments even with newer options like Stratis available (covered in Part 5). The ability to grow storage live without a maintenance window is worth the extra abstraction layer in almost every production scenario."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 4 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What's the maximum number of primary partitions on an MBR disk, and how do you work around that limit?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: 4 — work around it by making one of them an extended partition, inside which you create logical partitions."
+        },
+        {
+          "level": 0,
+          "text": "Q2. Does parted's mkpart command create a filesystem on the new partition?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: No — it only tags the partition's intended filesystem type. You still need to run mkfs separately."
+        },
+        {
+          "level": 0,
+          "text": "Q3. Why is UUID preferred over a device path like /dev/vdb1 in /etc/fstab?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Device names can change (different boot order, cloud storage changes) but the UUID stored in the filesystem's superblock stays constant."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What should you do BEFORE rebooting after editing /etc/fstab?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Run systemctl daemon-reload, then verify the entry works with mount /mountpoint (or findmnt --verify) — a bad entry can make the system fail to boot normally."
+        },
+        {
+          "level": 0,
+          "text": "Q5. What are the four layers of the LVM stack, from bottom to top?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Physical device → Physical Volume (PV) → Volume Group (VG) → Logical Volume (LV)."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What are the two equally valid device paths for an LV named lv01 in VG vg01?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: /dev/vg01/lv01 and /dev/mapper/vg01-lv01."
+        },
+        {
+          "level": 0,
+          "text": "Q7. What command shows whether a volume group has free physical extents available to extend an LV?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: vgdisplay VGNAME — check the 'Free PE / Size' line."
+        },
+        {
+          "level": 0,
+          "text": "Q8. After lvextend, which command grows an XFS filesystem, and what argument does it take?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: xfs_growfs, and it takes the MOUNT POINT, not the device."
+        },
+        {
+          "level": 0,
+          "text": "Q9. Which command grows an ext4 filesystem after lvextend, and what argument does IT take?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: resize2fs, and it takes the LOGICAL VOLUME DEVICE, not the mount point."
+        },
+        {
+          "level": 0,
+          "text": "Q10. Can you extend a mounted XFS filesystem while it's actively in use?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Yes — both lvextend and xfs_growfs work on a live, mounted, in-use filesystem with no downtime required."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 5: ADVANCED STORAGE (STRATIS/VDO) + NFS/AUTOFS"
+        },
+        {
+          "level": 0,
+          "text": "This Part covers RH134 Chapter 8 (Implementing Advanced Storage Features — Stratis and VDO) and Chapter 9 (Accessing Network-Attached Storage — NFS and the automounter). Both chapters are narrower in scope than Part 4's LVM material, but each introduces a genuinely different storage philosophy worth understanding on its own terms."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS These four technologies represent four different answers to 'how do I manage storage?' — LVM (manual layer management), Stratis (an easier LVM-like experience), VDO (squeeze more out of existing space), and NFS (storage that isn't even local). Knowing which philosophy fits which problem is the actual skill here, more than any single command."
+        }
+      ]
+    }
+  ],
+  "services": [],
+  "currency": []
+}

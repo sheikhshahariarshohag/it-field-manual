@@ -1,0 +1,883 @@
+{
+  "id": "rh134-07",
+  "n": 7,
+  "sourceNumber": 7,
+  "kind": "part",
+  "title": "Part 7",
+  "display": "Part 7 — Selecting Installation Media and Installing Manually; Autom…",
+  "exam": "RHCSA (EX200)",
+  "words": 2014,
+  "sections": [
+    {
+      "title": "1. Selecting Installation Media and Installing Manually",
+      "content": [
+        {
+          "level": 0,
+          "text": "RHEL installation media comes as a binary DVD (includes all packages) or a smaller boot ISO (downloads packages from a network repository during install). Red Hat's Image Builder (Composer) can also build custom, ready-to-deploy system images instead of installing from scratch each time."
+        },
+        {
+          "level": 2,
+          "text": "The Anaconda Installation Summary screen"
+        },
+        {
+          "level": 0,
+          "text": "Booting the DVD/ISO launches Anaconda, RHEL's graphical installer, centered on one screen where every configurable item is an icon you can visit in any order."
+        },
+        {
+          "level": 0,
+          "text": "Item"
+        },
+        {
+          "level": 0,
+          "text": "What it configures"
+        },
+        {
+          "level": 0,
+          "text": "Keyboard / Language Support"
+        },
+        {
+          "level": 0,
+          "text": "Layouts and additional installable languages"
+        },
+        {
+          "level": 0,
+          "text": "Time & Date"
+        },
+        {
+          "level": 0,
+          "text": "Timezone — set explicitly even if using NTP"
+        },
+        {
+          "level": 0,
+          "text": "Installation Source"
+        },
+        {
+          "level": 0,
+          "text": "Where Anaconda pulls packages from (already set if booted from DVD)"
+        },
+        {
+          "level": 0,
+          "text": "Software Selection"
+        },
+        {
+          "level": 0,
+          "text": "Base environment (e.g. Minimal Install = only essential packages) plus add-ons"
+        },
+        {
+          "level": 0,
+          "text": "Installation Destination"
+        },
+        {
+          "level": 0,
+          "text": "Disk selection and partitioning — automatic partitioning uses all available space by default"
+        },
+        {
+          "level": 0,
+          "text": "KDUMP"
+        },
+        {
+          "level": 0,
+          "text": "Enable/disable the crash-dump collection feature"
+        },
+        {
+          "level": 0,
+          "text": "Network & Host Name"
+        },
+        {
+          "level": 0,
+          "text": "Configure detected network connections"
+        },
+        {
+          "level": 0,
+          "text": "Security Policy"
+        },
+        {
+          "level": 0,
+          "text": "Apply a compliance profile (e.g. PCI-DSS) during install"
+        },
+        {
+          "level": 0,
+          "text": "System Purpose"
+        },
+        {
+          "level": 0,
+          "text": "Declare intended system use for entitlement matching"
+        },
+        {
+          "level": 0,
+          "text": "Items Anaconda flags with a warning triangle are mandatory — the orange status bar at the bottom won't clear (and Begin Installation stays unavailable) until they're resolved. Root Password and User Creation are prompted for WHILE the install is running, not on the summary screen."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL The install cannot finish without a root password being set at some point during the process — Anaconda blocks completion until this happens. Creating a non-root user is optional but strongly recommended practice, not a requirement."
+        },
+        {
+          "level": 2,
+          "text": "Troubleshooting a stuck install"
+        },
+        {
+          "level": 0,
+          "text": "Key sequence"
+        },
+        {
+          "level": 0,
+          "text": "Access"
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+Alt+F1"
+        },
+        {
+          "level": 0,
+          "text": "tmux terminal multiplexer — a real shell for inspecting the system mid-install"
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+Alt+F6"
+        },
+        {
+          "level": 0,
+          "text": "Back to the graphical Anaconda screen (the default view)"
+        },
+        {
+          "level": 0,
+          "text": "Inside tmux, Ctrl+b then a number key switches windows (a shell prompt, log windows, etc.) — Alt+Tab also rotates focus between them."
+        }
+      ],
+      "words": 308
+    },
+    {
+      "title": "2. Automating Installation with Kickstart",
+      "content": [
+        {
+          "level": 0,
+          "text": "A Kickstart file is a plain-text answer sheet that pre-fills every Anaconda decision, so an installation runs unattended from boot to finished system. This is the single most direct link between everything you've learned about RHEL administration and the automation mindset RH294 builds on next."
+        },
+        {
+          "level": 2,
+          "text": "Kickstart command categories"
+        },
+        {
+          "level": 0,
+          "text": "Category"
+        },
+        {
+          "level": 0,
+          "text": "Example commands"
+        },
+        {
+          "level": 0,
+          "text": "Installation"
+        },
+        {
+          "level": 0,
+          "text": "url (network install source), repo (extra package repos), text, vnc"
+        },
+        {
+          "level": 0,
+          "text": "Partitioning"
+        },
+        {
+          "level": 0,
+          "text": "clearpart, part, autopart, ignoredisk, bootloader, volgroup/logvol (LVM), zerombr"
+        },
+        {
+          "level": 0,
+          "text": "Network"
+        },
+        {
+          "level": 0,
+          "text": "network (device + bootproto), firewall"
+        },
+        {
+          "level": 0,
+          "text": "Location & Security"
+        },
+        {
+          "level": 0,
+          "text": "lang, keyboard, timezone, authselect, rootpw, selinux, services, group/user"
+        },
+        {
+          "level": 0,
+          "text": "Miscellaneous"
+        },
+        {
+          "level": 0,
+          "text": "logging, firstboot, reboot/poweroff/halt"
+        },
+        {
+          "level": 0,
+          "text": "#version=RHEL8"
+        },
+        {
+          "level": 0,
+          "text": "ignoredisk --only-use=vda"
+        },
+        {
+          "level": 0,
+          "text": "bootloader --location=mbr --boot-drive=vda --timeout=1"
+        },
+        {
+          "level": 0,
+          "text": "zerombr"
+        },
+        {
+          "level": 0,
+          "text": "clearpart --all --initlabel"
+        },
+        {
+          "level": 0,
+          "text": "text"
+        },
+        {
+          "level": 0,
+          "text": "url --url=\"http://server.example.com/content/rhel8/x86_64/dvd/\""
+        },
+        {
+          "level": 0,
+          "text": "keyboard --vckeymap=us --xlayouts=''"
+        },
+        {
+          "level": 0,
+          "text": "lang en_US.UTF-8"
+        },
+        {
+          "level": 0,
+          "text": "timezone --utc Asia/Dhaka"
+        },
+        {
+          "level": 0,
+          "text": "rootpw --iscrypted $6$KUnFfrTzO8jv...XDR1UuchoMG1"
+        },
+        {
+          "level": 0,
+          "text": "selinux --enforcing"
+        },
+        {
+          "level": 0,
+          "text": "firewall --enabled --service=ssh"
+        },
+        {
+          "level": 0,
+          "text": "network --device=eth0 --bootproto=dhcp"
+        },
+        {
+          "level": 0,
+          "text": "autopart"
+        },
+        {
+          "level": 0,
+          "text": "reboot"
+        },
+        {
+          "level": 0,
+          "text": "%packages"
+        },
+        {
+          "level": 0,
+          "text": "@^minimal-environment"
+        },
+        {
+          "level": 0,
+          "text": "vim-enhanced"
+        },
+        {
+          "level": 0,
+          "text": "-firewalld"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "Package list syntax"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "packagename"
+        },
+        {
+          "level": 0,
+          "text": "Install this individual package"
+        },
+        {
+          "level": 0,
+          "text": "@groupname"
+        },
+        {
+          "level": 0,
+          "text": "Install a package group"
+        },
+        {
+          "level": 0,
+          "text": "@^environmentgroup"
+        },
+        {
+          "level": 0,
+          "text": "Install a whole environment group (a group of groups)"
+        },
+        {
+          "level": 0,
+          "text": "-packagename"
+        },
+        {
+          "level": 0,
+          "text": "Exclude — though mandatory dependencies of other requested packages may still install anyway"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL Primary commands must come BEFORE the %pre, %post, and %packages sections — but %pre, %post, and %packages can appear in any order relative to each other. %pre runs before disk partitioning; %post runs after the base install completes."
+        },
+        {
+          "level": 2,
+          "text": "Creating, validating, and publishing the file"
+        },
+        {
+          "level": 0,
+          "text": "Writing a Kickstart file from scratch is rarely worth it — every completed installation leaves a ready-made starting point at /root/anaconda-ks.cfg, containing exactly the choices that install used."
+        },
+        {
+          "level": 0,
+          "text": "[user@host ~]$ ksvalidator /root/anaconda-ks.cfg"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator (from the pykickstart package) catches syntax errors — unknown commands, invalid options — but it does NOT verify that a URL actually resolves, that a package actually exists in the repo, or that a %post script will succeed."
+        },
+        {
+          "level": 0,
+          "text": "✗ COMMON MISTAKE Treating a clean ksvalidator run as proof the install will succeed. It only checks Kickstart SYNTAX — a perfectly valid firewall --enabled --service=ssh line pointing at a repo URL that's offline will pass validation and still fail during the actual install."
+        },
+        {
+          "level": 2,
+          "text": "The three-step Kickstart workflow"
+        },
+        {
+          "level": 0,
+          "text": "1. Create the Kickstart file (edit a copy of anaconda-ks.cfg, or generate one)."
+        },
+        {
+          "level": 0,
+          "text": "2. Publish it somewhere the installer can reach: an HTTP/FTP/NFS server (best for iterating — one file update serves every future install), USB/CD-ROM (requires rebuilding media on every change), or a local disk."
+        },
+        {
+          "level": 0,
+          "text": "3. Boot Anaconda and point it at the file using the inst.ks= kernel parameter."
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=http://server.example.com/kickstart/ks.cfg"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=nfs:server.example.com:/kickstart/ks.cfg"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=hd:sda1:/ks.cfg"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS This is the exact pattern you'll see again in RH294 with Ansible: write the desired state once (the Kickstart file, or later a playbook), publish it somewhere reachable, then point automation at it — instead of repeating manual steps for every new system."
+        }
+      ],
+      "words": 447
+    },
+    {
+      "title": "3. Installing and Configuring Virtual Machines",
+      "content": [
+        {
+          "level": 0,
+          "text": "RHEL 8 includes KVM (Kernel-based Virtual Machine), a full virtualization solution built directly into the kernel — no separate hypervisor product needed to turn a RHEL box into a virtualization host."
+        },
+        {
+          "level": 0,
+          "text": "Where KVM shows up"
+        },
+        {
+          "level": 0,
+          "text": "Context"
+        },
+        {
+          "level": 0,
+          "text": "Standalone RHEL host"
+        },
+        {
+          "level": 0,
+          "text": "A 'thick host' — runs VMs alongside its own normal services"
+        },
+        {
+          "level": 0,
+          "text": "Red Hat Virtualization (RHV)"
+        },
+        {
+          "level": 0,
+          "text": "Centralized management across many KVM hosts, with migration/HA"
+        },
+        {
+          "level": 0,
+          "text": "Red Hat OpenStack Platform"
+        },
+        {
+          "level": 0,
+          "text": "Full public/private cloud built on the same KVM foundation"
+        },
+        {
+          "level": 2,
+          "text": "Turning a RHEL system into a virtualization host"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# yum module install virt"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# virt-host-validate"
+        },
+        {
+          "level": 0,
+          "text": "virt-host-validate checks that the hardware actually supports virtualization — Intel VT-x/Intel 64 or AMD-V/AMD64 extensions, /dev/kvm accessibility, and the cgroup controllers KVM depends on. Every check must PASS for the system to reliably host VMs."
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING Running RHEL itself inside a VM (as in most home-lab setups) to then host NESTED VMs is possible but requires nested virtualization to be explicitly enabled on the outer hypervisor — virt-host-validate will fail the hardware virtualization check otherwise, and this is a common home-lab stumbling block worth checking early."
+        },
+        {
+          "level": 2,
+          "text": "Managing VMs"
+        },
+        {
+          "level": 0,
+          "text": "Tool"
+        },
+        {
+          "level": 0,
+          "text": "Interface"
+        },
+        {
+          "level": 0,
+          "text": "virsh"
+        },
+        {
+          "level": 0,
+          "text": "Command-line management of KVM guests — start/stop/list/define VMs"
+        },
+        {
+          "level": 0,
+          "text": "Cockpit — Virtual Machines"
+        },
+        {
+          "level": 0,
+          "text": "Web console GUI for creating and managing VMs without memorizing virsh syntax"
+        },
+        {
+          "level": 0,
+          "text": "Cockpit's Virtual Machines page lets you create a new VM by specifying a name, install media (ISO or network source), memory, and storage — functionally the same decisions Anaconda's Installation Summary screen asks for, just wrapped in a VM-creation dialog instead of a bare-metal install screen."
+        },
+        {
+          "level": 3,
+          "text": "Command Reference — Install, Kickstart, VMs"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator FILE"
+        },
+        {
+          "level": 0,
+          "text": "Check a Kickstart file for syntax errors (not logical/network correctness)"
+        },
+        {
+          "level": 0,
+          "text": "/root/anaconda-ks.cfg"
+        },
+        {
+          "level": 0,
+          "text": "Auto-generated Kickstart file from the last install — best starting point for a new one"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=LOCATION"
+        },
+        {
+          "level": 0,
+          "text": "Kernel boot parameter telling Anaconda where to find the Kickstart file"
+        },
+        {
+          "level": 0,
+          "text": "yum module install virt"
+        },
+        {
+          "level": 0,
+          "text": "Install the virtualization package group"
+        },
+        {
+          "level": 0,
+          "text": "virt-host-validate"
+        },
+        {
+          "level": 0,
+          "text": "Verify hardware/kernel support for KVM"
+        },
+        {
+          "level": 0,
+          "text": "virsh"
+        },
+        {
+          "level": 0,
+          "text": "Command-line VM management"
+        },
+        {
+          "level": 0,
+          "text": "Cockpit → Virtual Machines"
+        },
+        {
+          "level": 0,
+          "text": "GUI VM management"
+        }
+      ],
+      "words": 328
+    }
+  ],
+  "labs": [
+    {
+      "title": "Lab: Building a Kickstart File",
+      "content": [
+        {
+          "level": 3,
+          "text": "Objective"
+        },
+        {
+          "level": 0,
+          "text": "Take an existing anaconda-ks.cfg, adapt it into a reusable Kickstart profile for a specific server role, and validate it before ever using it against real hardware."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "Your team repeatedly builds identical minimal web-server VMs by hand. You're asked to produce a Kickstart file that installs a minimal environment, opens only SSH and HTTP through the firewall, uses LVM with a dedicated /var partition, and disables the graphical firstboot wizard."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "A RHEL 8 VM with an existing /root/anaconda-ks.cfg from a prior install (or a blank starting point)"
+        },
+        {
+          "level": 0,
+          "text": "pykickstart installed (for ksvalidator)"
+        },
+        {
+          "level": 3,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "1. Start from a copy of anaconda-ks.cfg (or write from scratch using this Part's command reference)"
+        },
+        {
+          "level": 0,
+          "text": "2. Set clearpart --all --initlabel and build an LVM layout with a root LV and a separate /var LV using volgroup/logvol"
+        },
+        {
+          "level": 0,
+          "text": "3. Add firewall --enabled --service=ssh,http"
+        },
+        {
+          "level": 0,
+          "text": "4. Add firstboot --disabled"
+        },
+        {
+          "level": 0,
+          "text": "5. Add a %packages section installing @^minimal-environment plus httpd, and excluding firewalld's competing service if any (illustrative — use -sendmail as the exclusion example)"
+        },
+        {
+          "level": 0,
+          "text": "6. Run ksvalidator against the finished file and fix any errors it reports"
+        },
+        {
+          "level": 3,
+          "text": "Hint"
+        },
+        {
+          "level": 0,
+          "text": "LVM partitioning in Kickstart uses THREE related commands together: part pv.01 (create the physical volume), volgroup (build the VG from that PV), logvol (create each LV). Miss one and the others have nothing to attach to."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint"
+        },
+        {
+          "level": 0,
+          "text": "Before checking the solution: does your file's %packages section correctly use @^ for the environment group (not a bare @) and a plain package name for httpd? Mixing up @ and @^ is an easy, easy-to-miss mistake."
+        },
+        {
+          "level": 3,
+          "text": "Solution"
+        },
+        {
+          "level": 0,
+          "text": "#version=RHEL8"
+        },
+        {
+          "level": 0,
+          "text": "ignoredisk --only-use=vda"
+        },
+        {
+          "level": 0,
+          "text": "bootloader --location=mbr --boot-drive=vda"
+        },
+        {
+          "level": 0,
+          "text": "zerombr"
+        },
+        {
+          "level": 0,
+          "text": "clearpart --all --initlabel"
+        },
+        {
+          "level": 0,
+          "text": "text"
+        },
+        {
+          "level": 0,
+          "text": "url --url=\"http://server.example.com/content/rhel8/x86_64/dvd/\""
+        },
+        {
+          "level": 0,
+          "text": "keyboard --vckeymap=us --xlayouts=''"
+        },
+        {
+          "level": 0,
+          "text": "lang en_US.UTF-8"
+        },
+        {
+          "level": 0,
+          "text": "timezone --utc Asia/Dhaka"
+        },
+        {
+          "level": 0,
+          "text": "rootpw --plaintext changeme"
+        },
+        {
+          "level": 0,
+          "text": "selinux --enforcing"
+        },
+        {
+          "level": 0,
+          "text": "firewall --enabled --service=ssh,http"
+        },
+        {
+          "level": 0,
+          "text": "firstboot --disabled"
+        },
+        {
+          "level": 0,
+          "text": "network --device=eth0 --bootproto=dhcp"
+        },
+        {
+          "level": 0,
+          "text": "part pv.01 --size=8192 --grow"
+        },
+        {
+          "level": 0,
+          "text": "volgroup vg00 pv.01"
+        },
+        {
+          "level": 0,
+          "text": "logvol / --vgname=vg00 --fstype=xfs --size=4096 --name=rootvol"
+        },
+        {
+          "level": 0,
+          "text": "logvol /var --vgname=vg00 --fstype=xfs --size=2048 --name=varvol"
+        },
+        {
+          "level": 0,
+          "text": "reboot"
+        },
+        {
+          "level": 0,
+          "text": "%packages"
+        },
+        {
+          "level": 0,
+          "text": "@^minimal-environment"
+        },
+        {
+          "level": 0,
+          "text": "httpd"
+        },
+        {
+          "level": 0,
+          "text": "-sendmail"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 3,
+          "text": "Explanation"
+        },
+        {
+          "level": 0,
+          "text": "part pv.01 creates the physical volume placeholder; volgroup vg00 pv.01 turns it into a volume group; each logvol line then carves a logical volume from that group — the same PV→VG→LV chain from Part 4, just declared instead of typed interactively."
+        },
+        {
+          "level": 0,
+          "text": "firewall --enabled --service=ssh,http pre-configures exactly the two services the role needs — nothing more, following least-privilege by default."
+        },
+        {
+          "level": 0,
+          "text": "firstboot --disabled skips the graphical Initial Setup wizard entirely, appropriate for a server that will never have anyone sitting at its console."
+        },
+        {
+          "level": 0,
+          "text": "@^minimal-environment plus an explicit httpd line gives you a genuinely minimal base PLUS only the one extra package this role actually needs."
+        },
+        {
+          "level": 3,
+          "text": "Verification"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator ks.cfg should return with no output (silence means no syntax errors found). Manually re-read the file once more anyway — remember ksvalidator can't catch a typo'd repo URL or a package name that doesn't actually exist."
+        },
+        {
+          "level": 3,
+          "text": "Real-world note"
+        },
+        {
+          "level": 0,
+          "text": "This exact exercise — turn a repeated manual build into a declarative file — is precisely the mindset RH294 formalizes with Ansible playbooks. Kickstart handles 'get a system from nothing to booted,' Ansible typically takes over from there for ongoing configuration — the two are complementary, not competing, in most real pipelines."
+        }
+      ]
+    }
+  ],
+  "quizzes": [
+    {
+      "title": "Quiz: Part 7 Checkpoint",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. What's blocked from completing an Anaconda install until it's set, even though it's not on the main Installation Summary screen?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The root password — Anaconda prompts for it while the install is running and won't let the process finish without it."
+        },
+        {
+          "level": 0,
+          "text": "Q2. Which key sequence gives you a real shell (via tmux) during a stuck graphical install, and which returns you to the graphical screen?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Ctrl+Alt+F1 for the tmux shell; Ctrl+Alt+F6 back to the graphical Anaconda screen."
+        },
+        {
+          "level": 0,
+          "text": "Q3. What three Kickstart commands work together to set up LVM, and in what order do they build on each other?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: part pv.01 (create the PV) → volgroup (build a VG from that PV) → logvol (carve LVs from that VG)."
+        },
+        {
+          "level": 0,
+          "text": "Q4. What does ksvalidator actually check, and what does it NOT check?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: It checks Kickstart SYNTAX (valid commands/options) only — it does not verify that URLs resolve, packages exist, or %pre/%post scripts will succeed."
+        },
+        {
+          "level": 0,
+          "text": "Q5. Where does a freshly-installed RHEL system automatically save the exact Kickstart directives used for that install?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: /root/anaconda-ks.cfg"
+        },
+        {
+          "level": 0,
+          "text": "Q6. What kernel parameter tells the installer where to find a Kickstart file, and give one example value."
+        },
+        {
+          "level": 0,
+          "text": "Answer: inst.ks=LOCATION, e.g. inst.ks=http://server/dir/file"
+        },
+        {
+          "level": 0,
+          "text": "Q7. In a Kickstart %packages section, what's the difference between @groupname and @^groupname?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: @ marks a package GROUP; @^ marks an ENVIRONMENT group (a group of groups, e.g. @^minimal-environment)."
+        },
+        {
+          "level": 0,
+          "text": "Q8. Where must the primary Kickstart commands (url, clearpart, network, etc.) appear relative to %pre/%post/%packages?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Before them — primary commands must come first, though %pre/%post/%packages can appear in any order relative to EACH OTHER."
+        },
+        {
+          "level": 0,
+          "text": "Q9. What command verifies a physical system actually has the hardware/kernel support needed to be a KVM virtualization host?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: virt-host-validate"
+        },
+        {
+          "level": 0,
+          "text": "Q10. Name the two tools RHEL provides for managing KVM virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Answer: virsh (command-line) and Cockpit's Virtual Machines page (GUI)."
+        },
+        {
+          "level": 0,
+          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+        },
+        {
+          "level": 0,
+          "text": "PART 8: COMPREHENSIVE REVIEW + RHCSA READINESS CHECKPOINT"
+        },
+        {
+          "level": 0,
+          "text": "This closes out the RH134 guide. It's not new material — it's the RH134 half of RHCSA readiness pulled together into one condensed reference, one large integrated lab that forces every chapter to work together, an updated skill map, and a mixed-topic final quiz. RH294 (Ansible) starts fresh after this."
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS The real exam never asks 'what does setfacl -m do' in isolation — it hands you a partially-broken server and expects you to combine ACLs, SELinux, storage, boot, and firewall knowledge to fix it. This Part is deliberately built the same way, because that's the actual skill being tested."
+        }
+      ]
+    }
+  ],
+  "services": [
+    {
+      "id": "rhel-service-libvirt-kvm-qemu",
+      "why": "Installing and Configuring Virtual Machines"
+    }
+  ],
+  "currency": []
+}

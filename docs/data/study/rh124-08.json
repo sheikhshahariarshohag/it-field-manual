@@ -1,0 +1,724 @@
+{
+  "id": "rh124-08",
+  "n": 8,
+  "sourceNumber": 7,
+  "kind": "chapter",
+  "title": "CONTROLLING ACCESS TO FILES",
+  "display": "Ch 7 — CONTROLLING ACCESS TO FILES",
+  "exam": "RHCSA (EX200)",
+  "words": 1941,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Book reference: Chapter 7, pages 205–238. Guided Exercises: Managing File System Permissions from the Command Line, Managing Default Permissions and File Access. Lab: Controlling Access to Files."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+        },
+        {
+          "level": 0,
+          "text": "Reading, setting, and reasoning about permissions — including special permissions and umask — is core RHCSA material tested directly and constantly relied on in every later chapter (services, networking, storage all lean on correct permissions)."
+        }
+      ],
+      "words": 70
+    },
+    {
+      "title": "7.1 The permission model",
+      "content": [
+        {
+          "level": 0,
+          "text": "Every file has exactly one owning user and one owning group. Permissions are set separately for three categories — owning user, owning group, and everyone else (\"other\") — and the most specific category that applies to you wins: your user permissions override your group permissions, which override other."
+        },
+        {
+          "level": 0,
+          "text": "Permission"
+        },
+        {
+          "level": 0,
+          "text": "Effect on a file"
+        },
+        {
+          "level": 0,
+          "text": "Effect on a directory"
+        },
+        {
+          "level": 0,
+          "text": "r (read)"
+        },
+        {
+          "level": 0,
+          "text": "Contents can be read"
+        },
+        {
+          "level": 0,
+          "text": "Directory's file names can be listed"
+        },
+        {
+          "level": 0,
+          "text": "w (write)"
+        },
+        {
+          "level": 0,
+          "text": "Contents can be changed"
+        },
+        {
+          "level": 0,
+          "text": "Files inside can be created or deleted"
+        },
+        {
+          "level": 0,
+          "text": "x (execute)"
+        },
+        {
+          "level": 0,
+          "text": "Can be run as a command"
+        },
+        {
+          "level": 0,
+          "text": "Directory can be entered (cd) and its files accessed, if their own permissions allow it"
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — Why directories need both r and x to be useful"
+        },
+        {
+          "level": 0,
+          "text": "r alone on a directory lets you list file names but nothing else about them (no sizes, dates, or permissions, and you can't open them even if you already know a name). x alone lets you access a file inside if you already know its exact name, but you can't list what's there at all. Normal usable directory access needs both together — r+x is the practical minimum for \"browse this directory.\""
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Deleting a file is a directory permission, not a file permission"
+        },
+        {
+          "level": 0,
+          "text": "Anyone with write permission on the directory containing a file can delete that file — regardless of the file's own permissions or who owns it. This surprises people coming from Windows. (The sticky bit, covered below, is the one exception.)"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Not like Windows NTFS"
+        },
+        {
+          "level": 0,
+          "text": "Linux permissions on a directory are NOT inherited by new subdirectories or files automatically — they only affect access to that one directory itself, though restrictive permissions higher up the tree can still block reaching what's below."
+        },
+        {
+          "level": 3,
+          "text": "Reading permissions with ls -l"
+        },
+        {
+          "level": 0,
+          "text": "-rw-rw-r--. 1 student student 0 Feb 8 17:36 test"
+        },
+        {
+          "level": 0,
+          "text": "drwxr-xr-x. 5 root root 4096 Jan 31 22:00 /home (ls -ld /home)"
+        },
+        {
+          "level": 0,
+          "text": "Position"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "1st character"
+        },
+        {
+          "level": 0,
+          "text": "File type: - regular file, d directory, l soft link (b/c/p/s = device or special files)"
+        },
+        {
+          "level": 0,
+          "text": "Characters 2-4"
+        },
+        {
+          "level": 0,
+          "text": "Owning user's rwx"
+        },
+        {
+          "level": 0,
+          "text": "Characters 5-7"
+        },
+        {
+          "level": 0,
+          "text": "Owning group's rwx"
+        },
+        {
+          "level": 0,
+          "text": "Characters 8-10"
+        },
+        {
+          "level": 0,
+          "text": "Other's rwx"
+        },
+        {
+          "level": 0,
+          "text": "After the link count"
+        },
+        {
+          "level": 0,
+          "text": "Owning user, then owning group"
+        },
+        {
+          "level": 3,
+          "text": "Worked example — tracing actual access"
+        },
+        {
+          "level": 0,
+          "text": "rfile1 is owned by user database1, group consultant1, permissions -rw-rw-r--. User operator1 (who is a member of consultant1 but not the owner) can therefore read AND write it — group permissions apply since he's not the owning user. User database2 (in neither the owning user nor the owning group) only gets the other row — read only."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — The trap: group permission can be MORE restrictive than other"
+        },
+        {
+          "level": 0,
+          "text": "If a file is -rw-r--rw- (group has only read, other has read+write), a member of the owning group is still capped at read — even though a random unrelated user would have write. Most-specific-applies means YOUR most specific category applies, whether it happens to be more generous or more restrictive than a broader one. Don't assume group access is always ≥ other access."
+        }
+      ],
+      "words": 499
+    },
+    {
+      "title": "7.2 Changing permissions and ownership",
+      "content": [
+        {
+          "level": 3,
+          "text": "chmod — symbolic method"
+        },
+        {
+          "level": 0,
+          "text": "chmod WhoWhatWhich file — Who = u/g/o/a (user/group/other/all), What = +/-/= (add/remove/set exactly), Which = r/w/x."
+        },
+        {
+          "level": 0,
+          "text": "chmod go-rw file1 # remove read+write from group and other"
+        },
+        {
+          "level": 0,
+          "text": "chmod a+x file2 # add execute for everyone"
+        },
+        {
+          "level": 0,
+          "text": "chmod -R g+rwX demodir # recursive; capital X only adds execute to directories, or to files that already have execute somewhere"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Capital X vs lowercase x in recursive chmod"
+        },
+        {
+          "level": 0,
+          "text": "Lowercase x would blindly make every plain data file executable too. Capital X is the safe recursive choice: it sets execute on directories (so they stay navigable) and on files that already have execute for someone, but leaves ordinary non-executable files alone."
+        },
+        {
+          "level": 3,
+          "text": "chmod — numeric (octal) method"
+        },
+        {
+          "level": 0,
+          "text": "Each of the three digits (user, group, other) is a sum: read=4, write=2, execute=1."
+        },
+        {
+          "level": 0,
+          "text": "Symbolic"
+        },
+        {
+          "level": 0,
+          "text": "Calculation"
+        },
+        {
+          "level": 0,
+          "text": "Digit"
+        },
+        {
+          "level": 0,
+          "text": "rwx"
+        },
+        {
+          "level": 0,
+          "text": "4+2+1"
+        },
+        {
+          "level": 0,
+          "text": "7"
+        },
+        {
+          "level": 0,
+          "text": "rw-"
+        },
+        {
+          "level": 0,
+          "text": "4+2"
+        },
+        {
+          "level": 0,
+          "text": "6"
+        },
+        {
+          "level": 0,
+          "text": "r-x"
+        },
+        {
+          "level": 0,
+          "text": "4+1"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "r--"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "---"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "chmod 644 samplefile # rw-r--r-- (owner read/write, everyone else read-only)"
+        },
+        {
+          "level": 0,
+          "text": "chmod 750 sampledir # rwxr-x--- (owner full, group read+enter, other nothing)"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Numeric is what experienced admins actually type"
+        },
+        {
+          "level": 0,
+          "text": "Faster to type and say aloud than the symbolic form, and it sets the complete permission set in one shot — worth being fully fluent translating in both directions (750 → rwxr-x--- and back) without a calculator."
+        },
+        {
+          "level": 3,
+          "text": "chown / chgrp — changing ownership"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Effect"
+        },
+        {
+          "level": 0,
+          "text": "chown user file"
+        },
+        {
+          "level": 0,
+          "text": "Change owning user (root only)"
+        },
+        {
+          "level": 0,
+          "text": "chown :group file"
+        },
+        {
+          "level": 0,
+          "text": "Change owning group (root, or the file's own owner if they belong to that group)"
+        },
+        {
+          "level": 0,
+          "text": "chown user:group file"
+        },
+        {
+          "level": 0,
+          "text": "Change both at once"
+        },
+        {
+          "level": 0,
+          "text": "chown -R user:group dir"
+        },
+        {
+          "level": 0,
+          "text": "Recursively, through a whole directory tree"
+        },
+        {
+          "level": 0,
+          "text": "chgrp group file"
+        },
+        {
+          "level": 0,
+          "text": "Change owning group only — same effect as chown :group"
+        },
+        {
+          "level": 0,
+          "text": "⚠ WARNING — Always use a colon, never a period, in owner:group"
+        },
+        {
+          "level": 0,
+          "text": "chown owner.group file is a legacy syntax that still works but is genuinely ambiguous: a period is a VALID character inside a username. If a user literally named enoch.root exists, chown enoch.root file could be interpreted as that single username rather than user enoch, group root — with no error, just the wrong result. The colon form is unambiguous because a colon can never appear in a username. Always use the colon."
+        }
+      ],
+      "words": 367
+    },
+    {
+      "title": "7.3 Special permissions — setuid, setgid, sticky bit",
+      "content": [
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Special permissions"
+        },
+        {
+          "level": 0,
+          "text": "Recognizing these in an ls -l listing, and setting/removing them yourself, is directly tested — this is not optional background material."
+        },
+        {
+          "level": 0,
+          "text": "Special permission"
+        },
+        {
+          "level": 0,
+          "text": "Symbolic"
+        },
+        {
+          "level": 0,
+          "text": "Octal"
+        },
+        {
+          "level": 0,
+          "text": "Effect on files"
+        },
+        {
+          "level": 0,
+          "text": "Effect on directories"
+        },
+        {
+          "level": 0,
+          "text": "setuid"
+        },
+        {
+          "level": 0,
+          "text": "u+s"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "Runs as the file's owning user, not whoever ran it"
+        },
+        {
+          "level": 0,
+          "text": "No effect"
+        },
+        {
+          "level": 0,
+          "text": "setgid"
+        },
+        {
+          "level": 0,
+          "text": "g+s"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "Runs as the file's owning group"
+        },
+        {
+          "level": 0,
+          "text": "New files inside inherit the DIRECTORY's group, not the creating user's primary group"
+        },
+        {
+          "level": 0,
+          "text": "sticky bit"
+        },
+        {
+          "level": 0,
+          "text": "o+t"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "No effect"
+        },
+        {
+          "level": 0,
+          "text": "Users can only delete their OWN files here, even with directory write access"
+        },
+        {
+          "level": 0,
+          "text": "Classic real examples: /usr/bin/passwd is setuid root (so any user can update their own encrypted entry in the root-owned /etc/shadow); /usr/bin/locate is setgid slocate; /tmp has the sticky bit so any user can create files there but nobody can delete someone else's."
+        },
+        {
+          "level": 0,
+          "text": "In ls -l, look for"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "s where owner's x would be (e.g. rws)"
+        },
+        {
+          "level": 0,
+          "text": "setuid set — lowercase s means execute was also set, uppercase S means execute was NOT set for owner"
+        },
+        {
+          "level": 0,
+          "text": "s where group's x would be"
+        },
+        {
+          "level": 0,
+          "text": "setgid set — same uppercase/lowercase execute-present rule"
+        },
+        {
+          "level": 0,
+          "text": "t where other's x would be"
+        },
+        {
+          "level": 0,
+          "text": "sticky bit set — lowercase t = execute present for other, uppercase T = not present"
+        },
+        {
+          "level": 0,
+          "text": "chmod g+s directory # symbolic: add setgid"
+        },
+        {
+          "level": 0,
+          "text": "chmod 2770 directory # numeric: leading 2 = setgid, then rwxrwx---"
+        },
+        {
+          "level": 0,
+          "text": "💡 Why this matters — Why setgid on a shared directory is the standard collaboration trick"
+        },
+        {
+          "level": 0,
+          "text": "New files normally inherit the CREATING USER's primary group — usually their own private group, which nobody else can access. Setgid on the shared directory overrides that: every new file automatically belongs to the directory's group instead, so a whole team keeps working on shared files without anyone needing to remember to chgrp manually after every single file they create."
+        }
+      ],
+      "words": 298
+    },
+    {
+      "title": "7.4 Default permissions and umask",
+      "content": [
+        {
+          "level": 0,
+          "text": "New files and directories don't start from nothing — they start from a fixed baseline, then get restricted by your shell's umask:"
+        },
+        {
+          "level": 0,
+          "text": "Object"
+        },
+        {
+          "level": 0,
+          "text": "Starting permissions before umask"
+        },
+        {
+          "level": 0,
+          "text": "New directory"
+        },
+        {
+          "level": 0,
+          "text": "0777 (rwxrwxrwx)"
+        },
+        {
+          "level": 0,
+          "text": "New regular file"
+        },
+        {
+          "level": 0,
+          "text": "0666 (rw-rw-rw-) — execute is never included by default, even after umask, specifically so a compromised service can't accidentally create and immediately run a malicious file"
+        },
+        {
+          "level": 0,
+          "text": "umask is a bitmask of permissions to REMOVE from that starting point — the opposite sense from chmod. A umask digit works the same 4/2/1 arithmetic as chmod, but subtracts rather than adds."
+        },
+        {
+          "level": 0,
+          "text": "umask"
+        },
+        {
+          "level": 0,
+          "text": "New file result"
+        },
+        {
+          "level": 0,
+          "text": "New directory result"
+        },
+        {
+          "level": 0,
+          "text": "0002"
+        },
+        {
+          "level": 0,
+          "text": "rw-rw-r-- (the common regular-user default)"
+        },
+        {
+          "level": 0,
+          "text": "rwxrwxr-x"
+        },
+        {
+          "level": 0,
+          "text": "0000"
+        },
+        {
+          "level": 0,
+          "text": "rw-rw-rw-"
+        },
+        {
+          "level": 0,
+          "text": "rwxrwxrwx"
+        },
+        {
+          "level": 0,
+          "text": "0007"
+        },
+        {
+          "level": 0,
+          "text": "rw-rw----"
+        },
+        {
+          "level": 0,
+          "text": "rwxrwx---"
+        },
+        {
+          "level": 0,
+          "text": "0027"
+        },
+        {
+          "level": 0,
+          "text": "rw-r-----"
+        },
+        {
+          "level": 0,
+          "text": "rwxr-x---"
+        },
+        {
+          "level": 0,
+          "text": "umask alone (no argument) shows the current shell's value; umask 027 sets it for that shell session only. The default is normally 002 when a regular user's UID is ≥200 and their username matches their primary group name (the standard user-private-group setup), or 022 otherwise."
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL — Making a umask change permanent"
+        },
+        {
+          "level": 0,
+          "text": "A bare umask 027 typed at the prompt only lasts for that one shell. To persist it for one user, add the line to their ~/.bashrc. To change it system-wide, create a new file under /etc/profile.d/ (e.g. /etc/profile.d/local-umask.sh) containing the umask command — and remember the user must log out and back in for it to take effect; it does not apply retroactively to already-open shells."
+        }
+      ],
+      "words": 237
+    },
+    {
+      "title": "Hands-on: practice these on your own lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. ssh student@servera, mkdir permtest, touch permtest/file1 — check its default permissions with ls -l."
+        },
+        {
+          "level": 0,
+          "text": "2. chmod 640 permtest/file1; chmod u+x permtest/file1; ls -l to watch the mode change both ways."
+        },
+        {
+          "level": 0,
+          "text": "3. sudo groupadd -g 30500 sharedteam; sudo chown :sharedteam permtest; sudo chmod g+s permtest — confirm the setgid s shows in ls -ld permtest."
+        },
+        {
+          "level": 0,
+          "text": "4. As a different member of sharedteam, create a file inside permtest and confirm it inherits the sharedteam group automatically, without anyone running chgrp."
+        },
+        {
+          "level": 0,
+          "text": "5. umask 027; touch permtest/tightfile; ls -l to see the tighter default; then umask 002 to restore the normal default for the rest of your session."
+        },
+        {
+          "level": 0,
+          "text": "6. ls -ld /tmp — find the sticky bit t and connect it back to why two different users can both create files there but never delete each other's."
+        }
+      ],
+      "words": 134
+    },
+    {
+      "title": "Review — check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. Q1 — A file is -rw-r--rw-, owned by alice:staff. Bob is in the staff group but isn't alice. Can bob write to this file? Why or why not?"
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — You want everyone on a shared team to automatically get group-write on new files created in one specific directory, without each person remembering to chmod every time. What single permission solves this, and where do you set it?"
+        },
+        {
+          "level": 0,
+          "text": "3. Q3 — Convert the permission string rwxr-xr-- to its three-digit octal form."
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — No. Bob matches the GROUP category (staff), which here is r-- (read only) — more restrictive than other's rw- in this example. Most-specific-applies means bob is capped at group permissions even though a random unrelated user would actually have write access here."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — setgid (g+s / numeric leading 2) on the shared directory. New files then inherit the directory's group automatically instead of the creating user's own primary group, so the whole team keeps write access without manual chgrp after every file."
+        },
+        {
+          "level": 0,
+          "text": "Q3 — 754 (rwx=7, r-x=5, r--=4)."
+        }
+      ],
+      "words": 177
+    },
+    {
+      "title": "Chapter 7 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "Every file has one owning user and one owning group; the most specific matching category (user > group > other) is the one that applies to you."
+        },
+        {
+          "level": 0,
+          "text": "chmod changes permissions symbolically (u/g/o/a, +/-/=, r/w/x) or numerically (4/2/1 per digit); chown/chgrp change ownership — always with a colon, never a period, when setting user and group together."
+        },
+        {
+          "level": 0,
+          "text": "setuid/setgid/sticky (numeric 4/2/1 as a leading fourth digit) are special permissions: setuid/setgid change what identity a program runs as (or what group new files in a directory inherit); sticky restricts deletion in a shared directory to each file's own owner."
+        },
+        {
+          "level": 0,
+          "text": "New files start at 0666, new directories at 0777, before umask subtracts permissions from that baseline; ~/.bashrc persists a umask per user, /etc/profile.d/ persists it system-wide."
+        }
+      ],
+      "words": 122
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": []
+}

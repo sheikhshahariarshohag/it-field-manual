@@ -1,0 +1,782 @@
+{
+  "id": "rh134-08",
+  "n": 8,
+  "sourceNumber": 8,
+  "kind": "part",
+  "title": "Part 8",
+  "display": "Part 8 — Condensed Chapter-by-Chapter Review; Integrated Lab: The Br…",
+  "exam": "RHCSA (EX200)",
+  "words": 1666,
+  "sections": [
+    {
+      "title": "1. Condensed Chapter-by-Chapter Review",
+      "content": [
+        {
+          "level": 0,
+          "text": "Ch"
+        },
+        {
+          "level": 0,
+          "text": "Topic"
+        },
+        {
+          "level": 0,
+          "text": "Core skill"
+        },
+        {
+          "level": 0,
+          "text": "One thing people forget"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "CLI Productivity"
+        },
+        {
+          "level": 0,
+          "text": "Bash scripts, for loops, test/if, grep+regex"
+        },
+        {
+          "level": 0,
+          "text": "Single quotes block variable expansion; brackets need spaces"
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "Scheduling"
+        },
+        {
+          "level": 0,
+          "text": "at, crontab, cron.d, systemd timers, tmpfiles"
+        },
+        {
+          "level": 0,
+          "text": "day-of-month/day-of-week in cron is OR, not AND"
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "Performance"
+        },
+        {
+          "level": 0,
+          "text": "tuned-adm profiles, nice/renice"
+        },
+        {
+          "level": 0,
+          "text": "Unprivileged users can raise nice but never lower it"
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "ACLs"
+        },
+        {
+          "level": 0,
+          "text": "getfacl/setfacl, mask, default ACLs"
+        },
+        {
+          "level": 0,
+          "text": "The mask is a ceiling, not a grant"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "SELinux"
+        },
+        {
+          "level": 0,
+          "text": "modes, contexts, booleans, troubleshooting"
+        },
+        {
+          "level": 0,
+          "text": "mv keeps old context; cp inherits destination's"
+        },
+        {
+          "level": 0,
+          "text": "6"
+        },
+        {
+          "level": 0,
+          "text": "Basic Storage"
+        },
+        {
+          "level": 0,
+          "text": "parted, mkfs, fstab, swap"
+        },
+        {
+          "level": 0,
+          "text": "parted's fs-type prompt tags type only — mkfs still required"
+        },
+        {
+          "level": 0,
+          "text": "7"
+        },
+        {
+          "level": 0,
+          "text": "LVM"
+        },
+        {
+          "level": 0,
+          "text": "pv/vg/lv, extending live"
+        },
+        {
+          "level": 0,
+          "text": "xfs_growfs takes the mount point; resize2fs takes the device"
+        },
+        {
+          "level": 0,
+          "text": "8"
+        },
+        {
+          "level": 0,
+          "text": "Stratis/VDO"
+        },
+        {
+          "level": 0,
+          "text": "pools/filesystems, dedup pipeline"
+        },
+        {
+          "level": 0,
+          "text": "Stratis fstab entries need x-systemd.requires=stratisd.service"
+        },
+        {
+          "level": 0,
+          "text": "9"
+        },
+        {
+          "level": 0,
+          "text": "NFS/Autofs"
+        },
+        {
+          "level": 0,
+          "text": "manual mounts, indirect/direct/wildcard maps"
+        },
+        {
+          "level": 0,
+          "text": "Autofs mount points must NOT already exist as plain directories"
+        },
+        {
+          "level": 0,
+          "text": "10"
+        },
+        {
+          "level": 0,
+          "text": "Boot"
+        },
+        {
+          "level": 0,
+          "text": "targets, rd.break, emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "touch /.autorelabel after passwd under rd.break"
+        },
+        {
+          "level": 0,
+          "text": "11"
+        },
+        {
+          "level": 0,
+          "text": "Network Security"
+        },
+        {
+          "level": 0,
+          "text": "firewalld zones, semanage port"
+        },
+        {
+          "level": 0,
+          "text": "--permanent needs --reload (or reboot) to actually apply"
+        },
+        {
+          "level": 0,
+          "text": "12"
+        },
+        {
+          "level": 0,
+          "text": "Install/Kickstart/VMs"
+        },
+        {
+          "level": 0,
+          "text": "Anaconda, kickstart commands, KVM"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator checks syntax only, never logic"
+        }
+      ],
+      "words": 177
+    },
+    {
+      "title": "2. Integrated Lab: The Broken Application Server",
+      "content": [
+        {
+          "level": 0,
+          "text": "A single scenario touching seven of the twelve RH134 chapters. Work top to bottom — later steps assume earlier ones are fixed, exactly like a real incident."
+        },
+        {
+          "level": 3,
+          "text": "Scenario"
+        },
+        {
+          "level": 0,
+          "text": "A colleague handed you a RHEL 8 VM that's supposed to run a small internal web app off a dedicated LVM-backed volume, with a nightly backup job, before leaving the company without documenting anything. Nothing works. Root's password is unknown. Bring it fully back to life."
+        },
+        {
+          "level": 3,
+          "text": "Environment"
+        },
+        {
+          "level": 0,
+          "text": "One RHEL 8 VM, currently failing to boot normally, SELinux enforcing, firewalld running"
+        },
+        {
+          "level": 0,
+          "text": "A second unused virtual disk /dev/vdb for the app's storage"
+        },
+        {
+          "level": 3,
+          "text": "Task 1 — Get in (Ch10)"
+        },
+        {
+          "level": 0,
+          "text": "The system drops to an emergency shell on boot because of a bad /etc/fstab entry someone left behind, AND nobody knows the root password. Recover both."
+        },
+        {
+          "level": 3,
+          "text": "Task 2 — Build the storage (Ch6, Ch7)"
+        },
+        {
+          "level": 0,
+          "text": "Partition /dev/vdb, build an LVM stack (VG appdata, LV weblv, 400 MiB, XFS), mount it persistently at /srv/webapp, and verify the fstab entry survives a real unmount/remount test before you ever reboot again."
+        },
+        {
+          "level": 3,
+          "text": "Task 3 — Lock down access (Ch4, Ch5)"
+        },
+        {
+          "level": 0,
+          "text": "The app team (group webteam) needs rwx on /srv/webapp; a single auditor account (auditor1) needs read-only, without inheriting write access for anything created later. Set this up with ACLs. Separately, confirm /srv/webapp carries a context httpd can actually serve from, and fix it if not."
+        },
+        {
+          "level": 3,
+          "text": "Task 4 — Open the door (Ch11)"
+        },
+        {
+          "level": 0,
+          "text": "The app will listen on port 8090/tcp. Open it on the active firewall zone AND confirm/add the correct SELinux port label — permanently, so it survives a reboot."
+        },
+        {
+          "level": 3,
+          "text": "Task 5 — Automate the housekeeping (Ch2, Ch3)"
+        },
+        {
+          "level": 0,
+          "text": "Add a system-wide cron job (the right way, not by hand-editing /etc/crontab) that runs a backup script at 01:15 every night as the webteam user. Separately, a batch log-processing script keeps starving interactive SSH sessions of CPU — fix its priority without killing it."
+        },
+        {
+          "level": 3,
+          "text": "Checkpoint before viewing the solution"
+        },
+        {
+          "level": 0,
+          "text": "Write out your own command sequence for all five tasks before reading further. This lab is intentionally built to be harder without hints than any single Part's lab — that's the point of a comprehensive review."
+        },
+        {
+          "level": 3,
+          "text": "Solution — Task 1"
+        },
+        {
+          "level": 0,
+          "text": "# Reboot, interrupt GRUB, append rd.break, Ctrl+x"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# mount -o remount,rw /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# chroot /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# passwd root"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "sh-4.4# exit"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# exit"
+        },
+        {
+          "level": 0,
+          "text": "# System reboots, relabels, drops to emergency shell again for the bad fstab line"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# mount -o remount,rw /"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# vim /etc/fstab # remove/fix the bad entry"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "switch_root:/# exit"
+        },
+        {
+          "level": 3,
+          "text": "Solution — Task 2"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb mklabel gpt"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 100%"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# parted -s /dev/vdb set 1 lvm on"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# udevadm settle"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# pvcreate /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# vgcreate appdata /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lvcreate -n weblv -L 400M appdata"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkfs.xfs /dev/appdata/weblv"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mkdir /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# lsblk --fs | grep weblv # get UUID"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# echo 'UUID=<uuid> /srv/webapp xfs defaults 0 0' >> /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# mount /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# umount /srv/webapp && mount /srv/webapp # prove it before trusting it"
+        },
+        {
+          "level": 3,
+          "text": "Solution — Task 3"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setfacl -R -m g:webteam:rwx /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setfacl -m d:g:webteam:rwx /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# setfacl -m u:auditor1:rx /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# getfacl /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ls -Z /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage fcontext -a -t httpd_sys_content_t '/srv/webapp(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# restorecon -Rv /srv/webapp"
+        },
+        {
+          "level": 0,
+          "text": "auditor1's entry deliberately has no d: prefix — the requirement was read-only on the directory itself, not inherited by future files."
+        },
+        {
+          "level": 3,
+          "text": "Solution — Task 4"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --permanent --add-port=8090/tcp"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -l | grep 8090"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# semanage port -a -t http_port_t -p tcp 8090 # if not already listed"
+        },
+        {
+          "level": 3,
+          "text": "Solution — Task 5"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# echo '15 1 * * * webteam /usr/local/bin/backup_webapp.sh' > /etc/cron.d/webapp-backup"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# ps -o pid,comm,nice -C log_processor.sh"
+        },
+        {
+          "level": 0,
+          "text": "[root@host ~]# renice -n 15 <PID>"
+        },
+        {
+          "level": 3,
+          "text": "Full verification"
+        },
+        {
+          "level": 0,
+          "text": "A clean reboot logs in normally as root with the new password — no emergency shell."
+        },
+        {
+          "level": 0,
+          "text": "df -h /srv/webapp shows the LVM volume mounted; getfacl confirms webteam rwx (default+regular) and auditor1 r-x (regular only)."
+        },
+        {
+          "level": 0,
+          "text": "curl http://localhost:8090 (once the app is actually running) succeeds — proving BOTH firewall and SELinux port label are correct."
+        },
+        {
+          "level": 0,
+          "text": "cat /var/log/cron or journalctl -u crond around 01:15 shows the backup job firing; ps -o nice on the log processor shows 15, not the default 0."
+        }
+      ],
+      "words": 725
+    },
+    {
+      "title": "3. RHCSA Skill Checklist — RH134 Portion",
+      "content": [
+        {
+          "level": 0,
+          "text": "Mark each skill honestly. 'Can perform' means from memory, under time pressure, without opening this guide."
+        },
+        {
+          "level": 0,
+          "text": "Skill"
+        },
+        {
+          "level": 0,
+          "text": "Can perform without notes?"
+        },
+        {
+          "level": 0,
+          "text": "Write a Bash script with a for loop and an if/test condition"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Search text with grep + regex (anchors, classes, -v, -r)"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Schedule a one-time job with at, and a recurring one with cron.d"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Enable a systemd timer as a cron alternative"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Set an ACL, a default ACL, and correctly read the mask's effect"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Change SELinux mode, fix a file context, toggle a boolean, read an AVC denial"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Partition a disk, format it, and mount it persistently via fstab"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Build a PV→VG→LV stack and extend it live (both XFS and ext4 growth commands)"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Configure an autofs indirect or wildcard map"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Reset the root password via rd.break"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Recover from a bad fstab entry via emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Open a port in firewalld persistently, and label it correctly for SELinux"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "Build and validate a Kickstart file"
+        },
+        {
+          "level": 0,
+          "text": "___"
+        },
+        {
+          "level": 0,
+          "text": "🎯 RHCSA EXAM CRITICAL If more than two or three of these are still 'not confident,' revisit that specific Part's lab again before moving on to RH294 — RH294's automation content assumes every one of these is already second nature, because you'll be automating exactly these tasks."
+        }
+      ],
+      "words": 214
+    },
+    {
+      "title": "4. Final Mixed Quiz — All RH134 Chapters",
+      "content": [
+        {
+          "level": 0,
+          "text": "Q1. A for loop needs to iterate over host01 through host20 without typing every name. What's the cleanest way?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: Brace expansion: for HOST in host{01..20}; do"
+        },
+        {
+          "level": 0,
+          "text": "Q2. A cron entry set to run on the 1st of the month AND every Monday unexpectedly fires on a Tuesday the 1st. Why?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: cron's day-of-month/day-of-week fields are OR'd together when both are restricted, not AND'd — it fires when either matches."
+        },
+        {
+          "level": 0,
+          "text": "Q3. getfacl shows user:dana:rwx #effective:r-- on a file. What's capping it, and how would you check?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: The ACL mask — check with getfacl again, specifically the mask:: line."
+        },
+        {
+          "level": 0,
+          "text": "Q4. A file moved (not copied) into /var/www/html returns 403 from Apache despite correct rwx permissions. First diagnostic command?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: ls -Z — to check whether its SELinux context still reflects its OLD location (mv preserves context; cp would have inherited the new directory's)."
+        },
+        {
+          "level": 0,
+          "text": "Q5. You need to grow an ext4 filesystem after lvextend. Which command, and what argument does it take?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: resize2fs, taking the LOGICAL VOLUME DEVICE (not the mount point — that's the XFS command's argument)."
+        },
+        {
+          "level": 0,
+          "text": "Q6. What fstab mount option is mandatory for a Stratis filesystem, and what breaks without it?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: x-systemd.requires=stratisd.service — without it, the system can boot to emergency mode because systemd tries to mount before stratisd is running."
+        },
+        {
+          "level": 0,
+          "text": "Q7. From an rd.break shell, what command fixes /etc/shadow's missing SELinux label after resetting the root password?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: touch /.autorelabel, which forces a full relabel on the next boot."
+        },
+        {
+          "level": 0,
+          "text": "Q8. A firewall-cmd --add-port command worked immediately in testing but the rule was gone after a reboot. What was missed?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: --permanent — without it, the change is runtime-only and doesn't survive a reload or reboot."
+        },
+        {
+          "level": 0,
+          "text": "Q9. In a Kickstart file, what three commands build an LVM layout, in order?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: part pv.01 (create the PV placeholder), volgroup (build the VG from it), logvol (carve out each LV)."
+        },
+        {
+          "level": 0,
+          "text": "Q10. A service is denied even with correct file permissions, correct SELinux file context, and an open firewall port. What's the remaining layer to check?"
+        },
+        {
+          "level": 0,
+          "text": "Answer: SELinux port labeling (semanage port -l) — the process's domain may not be allowed to bind that specific port label."
+        }
+      ],
+      "words": 358
+    },
+    {
+      "title": "5. RH134 → RH294: What Changes Next",
+      "content": [
+        {
+          "level": 0,
+          "text": "RH134 is complete. Every RH294 chapter from here on assumes everything in Section 8.3's checklist is solid — RH294 doesn't re-teach storage, SELinux, or firewalld; it automates them."
+        },
+        {
+          "level": 0,
+          "text": "RH134 gave you"
+        },
+        {
+          "level": 0,
+          "text": "RH294 will teach you to do instead"
+        },
+        {
+          "level": 0,
+          "text": "Manually running setfacl, semanage, firewall-cmd on one box"
+        },
+        {
+          "level": 0,
+          "text": "Writing an Ansible playbook that applies the same config to any number of hosts, idempotently"
+        },
+        {
+          "level": 0,
+          "text": "Writing a Kickstart file for one repeatable install"
+        },
+        {
+          "level": 0,
+          "text": "Writing a playbook + inventory that provisions and configures fleets of hosts"
+        },
+        {
+          "level": 0,
+          "text": "Bash scripts with loops and conditionals for one-off admin tasks"
+        },
+        {
+          "level": 0,
+          "text": "Ansible tasks, loops, and conditionals that describe DESIRED STATE instead of a command sequence"
+        },
+        {
+          "level": 0,
+          "text": "Manually verifying a fix worked (getfacl, ls -Z, curl)"
+        },
+        {
+          "level": 0,
+          "text": "Ansible's own idempotence check: running the same playbook twice and seeing 'ok' instead of 'changed' the second time"
+        },
+        {
+          "level": 0,
+          "text": "💡 WHY THIS MATTERS Nothing you learned in RH134 becomes obsolete — RH294 just gives you a way to stop doing it by hand, one server at a time. The mental models (PV/VG/LV, SELinux contexts, firewall zones) stay exactly the same; only the interface to them changes."
+        },
+        {
+          "level": 0,
+          "text": "RH134 is done. Next: RH294 Part 1 — Introducing Ansible + Deploying Ansible."
+        }
+      ],
+      "words": 192
+    }
+  ],
+  "labs": [],
+  "quizzes": [],
+  "services": [],
+  "currency": []
+}
