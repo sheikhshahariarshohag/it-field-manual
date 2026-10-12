@@ -535,6 +535,13 @@ export function lessonView(params) {
         codeBlock(d.quickRef, { where: "RHEL shell", risk: "safe", tag: "cheat sheet" })));
   }
   if (d.source) wrap.appendChild(h("p.srcref", d.source));
+  // Set when a profile was corrected against a live system rather than
+  // documentation — worth showing, because it changes how much the text can
+  // be trusted.
+  if (d.verifiedNote) wrap.appendChild(h("p.srcref", ...paraTokens(d.verifiedNote)));
+  if (d.tested_on && d.tested_on.observed) {
+    wrap.appendChild(h("p.srcref", h("strong", "Observed on the host: "), ...paraTokens(d.tested_on.observed)));
+  }
 
   add(wrap, bookmarkBtn(d), noteEditor(d.id));
   wrap.appendChild(h("div.btnrow",

@@ -1349,7 +1349,7 @@
     "id": "rhel-service-dhcp",
     "kind": "lesson",
     "tech": "rhel",
-    "title": "DHCP",
+    "title": "DHCP (Kea)",
     "summary": "RHEL 10 service profile for 16-dhcp.",
     "verification": "execution-tested",
     "time": "",
@@ -1361,6 +1361,18 @@
     ],
     "analogy": "Think of a DHCP server as the front desk at a hotel handing out room keys (IP addresses) to arriving guests (client devices) from a limited pool of available rooms (the address pool/subnet), along with a map of the building (gateway, DNS, other options) — each key is only valid for a set period (the lease time), after which the guest must check back in (renew) or give the room back.",
     "sections": [
+      {
+        "h": "A working Kea configuration (verified on RHEL 10.2)",
+        "p": [
+          "Kea uses JSON, not dhcpd's plain-text format. Three rules catch almost every mistake:",
+          "The whole file sits inside a top-level object named `Dhcp4`.",
+          "`interfaces-config.interfaces` must name a real interface, or the server binds to nothing.",
+          "`subnet4` entries define the ranges handed out. A pool that falls outside its subnet disables that subnet."
+        ],
+        "code": "{\n  \"Dhcp4\": {\n    \"interfaces-config\": {\n      \"interfaces\": [ \"ens160\" ]\n    },\n    \"valid-lifetime\": 4000,\n    \"subnet4\": [\n      {\n        \"id\": 1,\n        \"subnet\": \"192.168.174.0/24\",\n        \"pools\": [ { \"pool\": \"192.168.174.200-192.168.174.230\" } ],\n        \"option-data\": [\n          { \"name\": \"routers\", \"data\": \"192.168.174.2\" },\n          { \"name\": \"domain-name-servers\", \"data\": \"192.168.174.2\" },\n          { \"name\": \"domain-name\", \"data\": \"lab.local\" }\n        ]\n      }\n    ],\n    \"lease-database\": { \"type\": \"memfile\", \"persist\": true }\n  }\n}",
+        "where": "/etc/kea/kea-dhcp4.conf",
+        "risk": "caution"
+      },
       {
         "h": "How it is put together",
         "p": [],
@@ -1524,34 +1536,22 @@
     ],
     "failures": [
       {
-        "why": "Common mistake.",
-        "fix": "🔴 Assuming RHEL 8/9 ISC `dhcpd`/`dhclient` documentation, packages, or commands apply directly to RHEL 10 — they don't; the package, daemon, and config format have all changed."
+        "why": "ISC dhcpd does not exist on RHEL 10. ",
+        "fix": "`dnf install dhcp-server` fails with 'Unable to find a match'. RHEL 10 ships **kea** (ISC's own modern successor), plus dnsmasq and dhcpcd. Install `kea`; there is no dhcp-server package to find. Verified on RHEL 10.2."
       },
       {
-        "why": "Common mistake.",
-        "fix": "🟡 Copy-pasting a legacy `dhcpd.conf`-style configuration directly into a Kea JSON file without conversion (`keama`) or a rewrite — the syntax is fundamentally different."
+        "why": "The shipped config starts the service but serves nothing. ",
+        "fix": "Out of the box `/etc/kea/kea-dhcp4.conf` has `\"interfaces\": [ ]`. `kea-dhcp4` starts, reports active, and listens on **no port at all**. You must name an interface AND add a `subnet4` entry before it will serve a single client. Check with `ss -lunp | grep kea` — if there is no row, the service is up and useless."
       },
       {
-        "why": "Common mistake.",
-        "fix": "🟡 Not verifying the exact systemd unit name(s) for Kea on the installed package version before writing automation/documentation around it — this has genuinely varied across Kea releases/packagings."
-      },
-      {
-        "why": "Common mistake.",
-        "fix": "🟠 Running a second, unauthorized/rogue DHCP server (even accidentally, e.g., a forgotten test VM) on the same broadcast domain as a production DHCP server, causing intermittent client misconfiguration that can be very confusing to diagnose."
-      },
-      {
-        "why": "Common mistake.",
-        "fix": "🟡 Overlapping a Kea pool's address range with statically assigned addresses elsewhere on the network, causing IP conflicts."
-      },
-      {
-        "why": "Common mistake.",
-        "fix": "🟡 Not accounting for DHCP relay agent configuration when the server needs to serve a subnet it isn't directly attached to."
+        "why": "A malformed config takes the service down, it does not fall back. ",
+        "fix": "Kea refuses to start on a bad config and systemd reports `status=1/FAILURE`. Test first with `kea-admin -t /etc/kea/kea-dhcp4.conf`. Two errors that cost real time on RHEL 10.2: the file must be wrapped in a top-level `\"Dhcp4\"` object, and `rebinding-timer` is **not** a valid keyword in Kea 3.0.3 (valid is `valid-lifetime`; the rebind timer is `rebind-timer`). Kea also stops a subnet entirely if a pool does not fit inside the subnet."
       }
     ],
     "trouble": [
       "Problem: Clients aren't receiving DHCP leases."
     ],
-    "quickRef": "Service:        DHCP (Kea DHCP — RHEL 10's replacement for ISC dhcpd)\nPackage:        kea\nsystemd unit:   kea-dhcp4.service / kea-dhcp6.service (VERIFY exact names on your install)\nDaemon:         kea-dhcp4 / kea-dhcp6\nConfiguration:  /etc/kea/kea-dhcp4.conf (JSON format — verify exact path)\nLogs:           journalctl -u kea-dhcp4 (verify unit name)\nPorts:          UDP 67 (server), UDP 68 (client), UDP 547 (DHCPv6 server)\n\nEssential commands:\n  systemctl status kea-dhcp4  (verify unit name first: systemctl list-unit-files | grep kea)\n  journalctl -u kea-dhcp4 -b\n\nVerification:\n  journalctl shows clean subnet load + an actual client obtains a lease from the expected pool\n\nTroubleshooting:\n  service status → journalctl → firewall-cmd --list-all → check pool utilization → check for rogue DHCP servers\n\nCritical warnings:\n  🔴 RHEL 10 has NO ISC dhcp-server/dhcp-client — do not follow RHEL 8/9 tutorials verbatim.\n  🟡 Use `keama` to assist (not fully automate) migration from legacy dhcpd.conf.\n  🟡 Rogue DHCP servers on the same broadcast domain are a real, confusing failure mode — coordinate with network/switch-level DHCP snooping.",
+    "quickRef": "Service:        DHCPv4 server (Kea — RHEL 10's replacement for ISC dhcpd)\nPackage:        kea                       # verified 3.0.3-1.el10_2\nsystemd unit:   kea-dhcp4.service         # also kea-dhcp6, kea-dhcp-ddns, kea-ctrl-agent\nDaemon:         /usr/sbin/kea-dhcp4\nConfiguration:  /etc/kea/kea-dhcp4.conf   # JSON, not dhcpd syntax\nLeases:         /var/lib/kea/kea-leases4.csv\nLogs:           journalctl -u kea-dhcp4\nPort:           UDP 67 (server), UDP 68 (client)\n\n  Essential commands:\n    systemctl status kea-dhcp4\n    systemctl enable --now kea-dhcp4\n    journalctl -u kea-dhcp4 -b\n    ss -lunp | grep kea-dhcp4\n\n  Before you restart, ALWAYS test the config:\n    kea-admin -t /etc/kea/kea-dhcp4.conf\n",
     "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
     "objectives": [
       {
@@ -1564,12 +1564,14 @@
       "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
       "kernel": "6.12.0-211.7.3.el10_2.x86_64",
       "arch": "x86_64",
-      "command": "systemctl status kea-dhcp4.service --no-pager -n 3",
-      "exit": 0
+      "command": "systemctl restart kea-dhcp4 && ss -lunp | grep kea-dhcp4",
+      "exit": 0,
+      "observed": "UNCONN 0 0 192.168.174.133:67 0.0.0.0:* users:((\"kea-dhcp4\",pid=45593,fd=12)) | kea-3.0.3-1.el10_2.x86_64 | lease file /var/lib/kea/kea-leases4.csv owned by kea:kea"
     },
     "verify": [
       "$ systemctl status kea-dhcp4.service --no-pager -n 3\n● kea-dhcp4.service - Kea DHCPv4 Server\n     Loaded: loaded (/usr/lib/systemd/system/kea-dhcp4.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:26 +06; 2min 46s ago\n Invocation: 1ebcbddc0f064ca381e99ab5350ae602\n       Docs: man:kea-dhcp4(8)\n   Main PID: 35809 (kea-dhcp4)\n     Status: \"Dispatching packets...\"\n      Tasks: 9 (limit: 10105)\n     Memory: 8.9M (peak: 9.6M)\n        CPU: 39ms\n     CGroup: /system.slice/kea-dhcp4.service\n             └─35809 /usr/sbin/kea-dhcp4 -c /etc/kea/kea-dhcp4.conf\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-    ]
+    ],
+    "verifiedNote": "This profile was corrected on 2026-10-12 against a live RHEL 10.2 host with kea 3.0.3. Unit names, config paths, the JSON Dhcp4 wrapper, the lease location and the UDP 67 socket were all observed, not assumed."
   },
   {
     "id": "rhel-service-firewalld",
