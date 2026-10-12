@@ -1475,7 +1475,69 @@ function renderStudyList(items) {
   return h("div.study__body", items.map(studyBlock));
 }
 
-export function studyManualView() {
+const STUDY_STATUS = {
+  open:   { label: "Not started", cls: "sst--open",   rank: 0 },
+  active: { label: "In progress", cls: "sst--active", rank: 1 },
+  done:   { label: "Complete",    cls: "sst--done",   rank: 2 },
+};
+
+/**
+ * Progress for the 35 study units.
+ *
+ * Stored in the existing IndexedDB `progress` store keyed by unit id, so it
+ * exports, imports and wipes with everything else — no new storage to keep in
+ * sync, and nothing to migrate if the schema changes.
+ *
+ * `done` carries a timestamp because the brief asks to resume from where the
+ * learner stopped, which needs "when", not just "what".
+ */
+async function studyProgressAll() {
+  let recs = [];
+  try { recs = await db.store.progress(); } catch (_) { return new Map(); }
+  const byUnit = new Map();
+  for (const r of recs) {
+    if (r && r.status && r.id) byUnit.set(r.id, r);
+  }
+  return byUnit;
+}
+
+async function setStudyStatus(unitId, status) {
+  const patch = { status, unit: true, at: Date.now() };
+  if (status === "done") patch.completed_at = Date.now();
+  await db.store.setProgress(unitId, patch);
+}
+
+/** Small tri-state control rendered on each unit page. */
+function studyStatusControl(unitId, current) {
+  const row = h("div.sst");
+  const mk = (key, label) => h("button.sst__btn", {
+    type: "button",
+    "aria-pressed": current === key ? "true" : "false",
+    title: key === "done" ? "Mark this unit complete"
+        : key === "active" ? "Mark as in progress"
+        : "Reset to not started",
+    onclick: async () => {
+      for (const b of row.querySelectorAll(".sst__btn")) b.setAttribute("aria-pressed", "false");
+      mk.buttons[key].setAttribute("aria-pressed", "true");
+      await setStudyStatus(unitId, key);
+      toast(key === "done" ? "Unit marked complete" : key === "active" ? "Marked as in progress" : "Reset");
+    },
+  }, label);
+  mk.buttons = {};
+  for (const [key, meta] of Object.entries(STUDY_STATUS)) {
+    const b = mk(key, meta.label);
+    mk.buttons[key] = b;
+    row.appendChild(b);
+  }
+  return row;
+}
+
+function studyStatusChip(status) {
+  const meta = STUDY_STATUS[status] || STUDY_STATUS.open;
+  return h("span", { class: `sst-chip ${meta.cls}` }, meta.label);
+}
+
+export async function studyManualView() {
   const wrap = h("div");
   const m = STUDY();
 
@@ -1486,7 +1548,7 @@ export function studyManualView() {
 
   if (!m || !m.books) {
     wrap.appendChild(h("div.empty", h("h2", "Not built yet"),
-      h("p", "Run node scripts/extract-docx.mjs --all then scripts/build-study-manual.mjs")));
+      h("p", "Run node/scripts/extract-docx.mjs --all then scripts/build-study-manual.mjs")));
     return wrap;
   }
 
@@ -1497,8 +1559,39 @@ export function studyManualView() {
     h("div.stat", h("div.stat__n", String(m.books.length)), h("div.stat__l", "courses")),
     h("div.stat", h("div.stat__n", String(units)), h("div.stat__l", "units")),
     h("div.stat", h("div.stat__n", words > 9999 ? (words / 1000).toFixed(0) + "k" : String(words)), h("div.stat__l", "words")),
-    h("div.stat", h("div.stat__n", new Date(m.built).getDate()), h("div.stat__l", "built " + new Date(m.built).toDateString().slice(0, 10))),
+    h("div.stat", { id: "studyDoneStat" }, h("div.stat__n", "…"), h("div.stat__l", "complete")),
   ));
+
+  const prog = await studyProgressAll();
+  const done = [...prog.values()].filter((r) => r.status === "done").length;
+  const active = [...prog.values()].filter((r) => r.status === "active").length;
+  const statEl = wrap.querySelector("#studyDoneStat .stat__n");
+  if (statEl) statEl.textContent = `${done}/${units}`;
+
+  // Resume where the learner stopped: the most recently touched unit that is
+  // not finished. If everything is done, offer a review pass from the start.
+  const openUnits = m.books.flatMap((b) => b.units);
+  const inProgress = openUnits
+    .filter((u) => { const r = prog.get(u.id); return r && r.status !== "done"; })
+    .sort((a, b) => (prog.get(b.id).at || 0) - (prog.get(a.id).at || 0));
+  const notStarted = openUnits.filter((u) => !prog.has(u.id));
+
+  if (inProgress.length || notStarted.length) {
+    const next = inProgress[0] || notStarted[0];
+    const reason = inProgress.length ? "Pick up where you stopped" : "Start the first unit";
+    wrap.appendChild(h("div.note.note--ok",
+      h("strong", reason),
+      h("span", done ? `${done} of ${units} units complete. ` : "",
+        h("a", { href: href(`study/${next.id}`) }, next.display)),
+      h("div.btnrow", h("a.btn.btn--primary", { href: href(`study/${next.id}`) }, reason)),
+    ));
+  }
+
+  if (done + active > 0) {
+    wrap.appendChild(h("p.srcref",
+      `Progress: ${done} complete · ${active} in progress · ${units - done - active} not started. ` +
+      "Stored on this device and included when you export your data."));
+  }
 
   wrap.appendChild(h("div.note.note--risk",
     h("strong", "Personalisation status"),
@@ -1506,13 +1599,20 @@ export function studyManualView() {
 
   for (const b of m.books) {
     const secs = h("section.layer");
+    const bDone = b.units.filter((u) => (prog.get(u.id) || {}).status === "done").length;
     secs.appendChild(h("div.layer__head",
       h("h3", h("span.layer__n", b.code), b.title),
-      h("span.layer__count", `${b.units.length} units`)));
+      h("span.layer__count", `${bDone}/${b.units.length} complete`)));
+    if (b.units.length) {
+      secs.appendChild(h("div.layer__bar", { role: "img",
+        "aria-label": `${bDone} of ${b.units.length} units complete` },
+        h("span", { style: { width: ((bDone / b.units.length) * 100).toFixed(1) + "%" } })));
+    }
     secs.appendChild(h("p.srcref", b.blurb));
     const list = h("ol.sessions");
-    b.units.forEach((u, i) => {
-      list.appendChild(h("li.session",
+    b.units.forEach((u) => {
+      const st = (prog.get(u.id) || {}).status || "open";
+      list.appendChild(h("li.session", { class: `session--${st}` },
         h("a.session__link", { href: href(`study/${u.id}`) },
           h("span.session__n", String(u.n)),
           h("span.session__body",
@@ -1522,6 +1622,7 @@ export function studyManualView() {
               (u.labs ? ` · ${u.labs} lab${u.labs === 1 ? "" : "s"}` : "") +
               (u.quizzes ? ` · ${u.quizzes} quiz${u.quizzes === 1 ? "" : "zes"}` : "")),
           ),
+          studyStatusChip(st),
           u.services ? h("span.badge.badge--accent", `${u.services} svc`) : null,
           u.hasCurrency ? h("span.badge.badge--risk", "check") : null,
         ),
@@ -1570,6 +1671,18 @@ export async function studyUnitView(params) {
       h("span", "This unit has not been downloaded yet, and you may be offline.")));
     return wrap;
   }
+
+  // Progress control sits above the content so it is reachable without
+  // scrolling past a 2000-word chapter.
+  let currentStatus = "open";
+  try {
+    const rec = await db.get("progress", unit.id);
+    if (rec && rec.status) currentStatus = rec.status;
+  } catch (_) { /* no database: still render, just not persisted */ }
+  body.appendChild(h("div.study__status",
+    studyStatusControl(unit.id, currentStatus)));
+  body.appendChild(h("p.srcref",
+    "Progress is stored on this device and travels with your export. It is not uploaded."));
 
   // Currency problems first: they change how the chapter should be read.
   for (const c of data.currency || []) {
@@ -1621,6 +1734,103 @@ export async function studyUnitView(params) {
     h("a.btn", { href: href("study") }, "All units"),
     i < flat.length - 1 ? h("a.btn", { href: href(`study/${flat[i + 1].u.id}`) }, flat[i + 1].u.display + " →") : null,
   ));
+
+  return wrap;
+}
+
+/* ============================================================ self-check */
+
+/**
+ * The learner's own answers to the assessment questions.
+ *
+ * Step 1 of the brief — "evaluate my understanding" — needs the learner's
+ * answers. This app cannot produce them, and must not invent them. What it can
+ * do is capture them honestly: the questions, a place to answer, and a record
+ * of what was answered, so the next session has something to work from.
+ *
+ * Until answers exist, `answers` is empty and every assessment-derived claim
+ * stays switched off.
+ */
+const SELF_CHECK_QUESTIONS = [
+  { id: "os", q: "Which Linux do you use day to day, and for what — a server, a laptop, containers, all three?" },
+  { id: "shell", q: "How comfortable are you with a shell? (moving around, pipes, redirection, writing a script)" },
+  { id: "admin", q: "What server administration have you actually done? Nothing counts — say so if nothing." },
+  { id: "done", q: "Which of these have you completed hands-on: users and groups, permissions, systemd, SSH, LVM, SELinux, Ansible?" },
+  { id: "weak", q: "Which topic do you most want to be able to explain to someone else?" },
+  { id: "time", q: "How many hours a week can you genuinely study, and on which days?" },
+  { id: "exam", q: "Which exam and when — RHCSA EX200, and roughly what date?" },
+];
+
+export function selfCheckView() {
+  const wrap = h("div");
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Assessment"),
+    h("p", "Seven questions. Answering them is what turns this from a reference " +
+           "into something built around you — at the moment it is a reference."),
+  ));
+
+  const box = h("div.selfcheck");
+  wrap.appendChild(box);
+
+  const save = async () => {
+    const answers = {};
+    for (const q of SELF_CHECK_QUESTIONS) {
+      const el = box.querySelector(`[data-q="${q.id}"]`);
+      const v = String(el.value || "").trim();
+      if (v) answers[q.id] = v;
+    }
+    await db.store.note("__assessment__", JSON.stringify(answers));
+    countEl.textContent = answers ? Object.keys(answers).length : 0;
+    summary.replaceChildren();
+    if (Object.keys(answers).length) {
+      summary.appendChild(h("h2", "What you have answered"));
+      const dl = h("dl.facts");
+      for (const q of SELF_CHECK_QUESTIONS) {
+        if (!answers[q.id]) continue;
+        dl.appendChild(h("dt", q.q));
+        dl.appendChild(h("dd", answers[q.id]));
+      }
+      summary.appendChild(dl);
+    }
+    toast(Object.keys(answers).length ? "Assessment saved on this device" : "Assessment cleared");
+  };
+
+  const countEl = h("span.study__count", "0");
+  wrap.insertBefore(
+    h("div.study__statusbar",
+      h("span", h("strong", "Answered: "), countEl, " of ", String(SELF_CHECK_QUESTIONS.length)),
+      h("button.btn.btn--primary", { type: "button", onclick: save }, "Save answers")),
+    box);
+
+  for (const q of SELF_CHECK_QUESTIONS) {
+    box.appendChild(h("label.selfcheck__q",
+      h("span.selfcheck__label", q.q),
+      h("textarea.selfcheck__ta", {
+        rows: 3, "data-q": q.id, placeholder: "Be honest — wrong answers are more useful than blanks.",
+      })));
+  }
+
+  const summary = h("div");
+  wrap.appendChild(summary);
+
+  db.store.note("__assessment__").then((raw) => {
+    if (!raw) return;
+    let a = null;
+    try { a = JSON.parse(raw); } catch (_) { return; }
+    if (!a) return;
+    for (const q of SELF_CHECK_QUESTIONS) {
+      if (a[q.id]) box.querySelector(`[data-q="${q.id}"]`).value = a[q.id];
+    }
+    countEl.textContent = String(Object.keys(a).length);
+    summary.appendChild(h("h2", "What you have answered"));
+    const dl = h("dl.facts");
+    for (const q of SELF_CHECK_QUESTIONS) {
+      if (!a[q.id]) continue;
+      dl.appendChild(h("dt", q.q));
+      dl.appendChild(h("dd", a[q.id]));
+    }
+    summary.appendChild(dl);
+  });
 
   return wrap;
 }

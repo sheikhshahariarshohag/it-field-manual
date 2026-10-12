@@ -103,6 +103,7 @@ function buildNav() {
 
   clear(navProject);
   navProject.appendChild(navLink("Study Manual", "study"));
+  navProject.appendChild(navLink("Assessment", "assessment"));
   navProject.appendChild(navLink("Projects", "projects", { count: st.projects }));
   navProject.appendChild(navLink("Exam objectives", "objectives"));
   navProject.appendChild(navLink("Verification status", "verify"));
@@ -394,6 +395,7 @@ async function render() {
     case "objectives": node = V.objectivesView(); break;
     case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
     case "study": node = rest.length ? V.studyUnitView({ id: rest[0] }) : V.studyManualView(); break;
+    case "assessment": node = V.selfCheckView(); break;
     default: node = V.homeView();
   }
 
@@ -435,6 +437,7 @@ async function boot() {
   route("km/:id", () => render());
   route("study", () => render());
   route("study/:id", () => render());
+  route("assessment", () => render());
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);
