@@ -36,6 +36,12 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const SELF = "scripts/check-secrets.mjs";
+
+// These files necessarily contain the very strings the gate searches for, so
+// scanning them would flag the tools for doing their job. check-secrets.mjs
+// holds the patterns; redact-lab-details.mjs holds the substitutions that
+// replace the lab address and account name.
+const EXEMPT = new Set([SELF, "scripts/redact-lab-details.mjs"]);
 const files = execSync("git ls-files", { cwd: ROOT, encoding: "utf8" }).trim().split("\n");
 
 const LAB_SUBNET = "192\\.168\\.174\\.";  // the lab VM's VMware NAT subnet
@@ -116,7 +122,7 @@ const active = STRICT ? [...CHECKS, ...STRICT_CHECKS] : CHECKS;
 let hits = 0;
 
 for (const f of files) {
-  if (f === SELF) continue;             // this file holds the patterns by design
+  if (EXEMPT.has(f)) continue;           // holds the patterns by design
   if (/\.(png|jpg|ico)$/i.test(f)) continue;
   const p = join(ROOT, f);
   if (!existsSync(p)) continue;
