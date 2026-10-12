@@ -13,6 +13,4458 @@
   },
   "chapters": [
     {
+      "id": "rh124-01",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 0,
+      "title": "Building Your Practice Lab",
+      "partTitle": "Part 0 — standing up the virtual machines you will practise on",
+      "exam": "RHCSA (EX200) — no direct objective; this is the lab everything else runs in",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Part 1 — Planning the lab",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Why build a lab at all",
+              "main": "Every command in this book is safe to try only on a machine you built yourself and can throw away.",
+              "simple": [
+                "Think of it as a practice room. You learn to drive a car by driving badly on a closed track first, not in live traffic.",
+                "If you practise `rm -rf` or a bad partition table on a real machine, there is no undo. On a cloned VM, you snapshot and restore in a minute."
+              ],
+              "parts": [
+                [
+                  "the lab",
+                  "isolated virtual machines on your own workstation."
+                ],
+                [
+                  "the risk",
+                  "a wrong command on a real server is permanent."
+                ],
+                [
+                  "the benefit",
+                  "mistakes cost you a snapshot restore, not a rebuild."
+                ]
+              ],
+              "remember": "Practise only where a mistake is cheap."
+            },
+            {
+              "n": 2,
+              "title": "The network plan",
+              "main": "You decide the addresses up front, on paper, so every machine can be built without guessing later.",
+              "simple": [
+                "Write down each machine's name, its address, and which network it sits on before building anything.",
+                "Keeping a written plan is what stops you giving two machines the same address an hour in."
+              ],
+              "example": [
+                "workstation   192.168.1.100",
+                "servera       192.168.1.101   .1.0/24",
+                "serverb       192.168.1.102",
+                "bastion/rtr   192.168.1.1  and  192.168.2.1",
+                "servera/b     192.168.2.101 / .102   .2.0/24"
+              ],
+              "parts": [
+                [
+                  ".1.0/24",
+                  "the first network — your workstation and two servers."
+                ],
+                [
+                  ".2.0/24",
+                  "the second network — reached only through the router."
+                ],
+                [
+                  "bastion",
+                  "the jump host; the router sits on both networks."
+                ]
+              ],
+              "remember": "Plan the addresses on paper first; guessing later causes duplicates."
+            }
+          ]
+        },
+        {
+          "title": "Part 2 — Getting RHEL and building the machines",
+          "concepts": [
+            {
+              "n": 3,
+              "title": "Getting RHEL for free, legitimately",
+              "main": "Red Hat offers free subscription routes that give you the real RHEL, not a rebuild.",
+              "simple": [
+                "You do not need to buy anything to learn on the genuine product. Red Hat publishes free subscription options specifically for developers, students and individual use.",
+                "It matters that it is the real RHEL: the files, paths and behaviour you practise are the ones you will meet on the job."
+              ],
+              "parts": [
+                [
+                  "developer subscription",
+                  "a free account that gives access to real RHEL packages."
+                ],
+                [
+                  "student",
+                  "free via educational programmes."
+                ],
+                [
+                  "why the real thing",
+                  "what you practise matches production behaviour."
+                ]
+              ],
+              "remember": "The free subscriptions give you genuine RHEL — not a lookalike rebuild."
+            },
+            {
+              "n": 4,
+              "title": "Build one machine, then clone it",
+              "main": "You install RHEL once into a 'gold' machine and clone it, because installing five times is slow and gives five slightly different machines.",
+              "simple": [
+                "Make one perfect machine. Take copies of it for everything else.",
+                "This guarantees all your lab machines behave identically, and it takes minutes rather than an afternoon per machine."
+              ],
+              "example": [
+                "shut down the gold VM",
+                "take 4 clones from the same snapshot"
+              ],
+              "parts": [
+                [
+                  "the gold VM",
+                  "the one you install and configure properly, once."
+                ],
+                [
+                  "clone",
+                  "a copy of it — fast, and identical every time."
+                ],
+                [
+                  "why",
+                  "consistency, and five installs become one."
+                ]
+              ],
+              "remember": "Install once, clone many — that is what makes the lab fast and consistent."
+            },
+            {
+              "n": 5,
+              "title": "The one thing this lab cannot reproduce",
+              "main": "A lab of virtual machines has no real hardware failures, so some skills can only be read, not practised here.",
+              "simple": [
+                "You cannot pull a real disk out of a virtual machine. Disk failure, some hardware faults and true physical cabling are outside what a lab can teach.",
+                "Knowing the boundary is useful: it tells you which skills need real hardware later, instead of assuming you are covered."
+              ],
+              "remember": "A lab cannot teach real hardware failure — know where its limits are."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Plan addresses before building",
+          "write them down on paper"
+        ],
+        [
+          "Build one machine, clone the rest",
+          "clone from a snapshot"
+        ],
+        [
+          "Snapshot a known-good baseline",
+          "so you can always return"
+        ]
+      ],
+      "inOneSentence": "Plan the addresses, install RHEL once into a gold machine, clone it, and snapshot — then practise freely because mistakes are cheap."
+    },
+    {
+      "id": "rh124-02",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 1,
+      "title": "Getting Started with Red Hat Enterprise Linux",
+      "partTitle": "Chapter 1 — what Linux is, what RHEL adds, and why the community rebuilds differ",
+      "exam": "RHCSA (EX200) — conceptual, no direct objective",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Why learn Linux, and what makes it different",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Why bother learning Linux",
+              "main": "Linux quietly runs most of the internet, most cloud instances and almost all networking equipment you rely on.",
+              "simple": [
+                "When you open a website or use an app, a Linux server is very likely answering. That includes the routers, firewalls and phones around you.",
+                "Learning it is learning the machine most systems are actually built on."
+              ],
+              "remember": "Most of what the internet is made of runs on Linux."
+            },
+            {
+              "n": 2,
+              "title": "Three traits that made Linux everywhere",
+              "main": "Open source, runs on everything, and free of per-seat licence costs.",
+              "simple": [
+                "Anyone can read the code, change it, and give the changes back. That means problems get fixed by many people instead of one vendor.",
+                "It runs on anything from a phone to a room-sized server. And because there is no licence fee per machine, running thousands of copies costs nothing extra."
+              ],
+              "parts": [
+                [
+                  "open source",
+                  "anyone may read, change and redistribute the code."
+                ],
+                [
+                  "runs on everything",
+                  "same system on a phone and on a server."
+                ],
+                [
+                  "no per-seat cost",
+                  "running 1 or 10,000 machines costs the same licence-wise."
+                ]
+              ],
+              "remember": "Open source, runs everywhere, no per-seat cost — that is why Linux won."
+            }
+          ]
+        },
+        {
+          "title": "Kernel, distribution, RHEL",
+          "concepts": [
+            {
+              "n": 3,
+              "title": "From kernel to distribution",
+              "main": "The kernel manages hardware; a distribution is the kernel plus everything else you need to actually use it.",
+              "simple": [
+                "The kernel is the engine — it controls memory, processes and hardware. On its own it is not a usable system.",
+                "A distribution bundles the kernel with the installer, the package manager, the text editor, the shell and thousands of tools, all tested together.",
+                "Think of the kernel as the engine and the distribution as the whole car."
+              ],
+              "parts": [
+                [
+                  "kernel",
+                  "hardware, memory and process scheduling — the engine."
+                ],
+                [
+                  "distribution",
+                  "kernel + installer + tools, tested together — the whole car."
+                ],
+                [
+                  "RHEL",
+                  "Red Hat's distribution, sold with a support contract."
+                ]
+              ],
+              "remember": "The kernel is the engine; the distribution is the whole car."
+            },
+            {
+              "n": 4,
+              "title": "RHEL versus the community rebuilds",
+              "main": "RHEL is the original commercial product; CentOS Stream, Rocky and AlmaLinux rebuild its source freely, with trade-offs in support and release timing.",
+              "simple": [
+                "Rebuilds compile the same source packages Red Hat publishes. The code is largely the same.",
+                "The difference is around it: Red Hat provides a tested combination with a support contract and a defined lifecycle. Rebuilds are free, but you get no Red Hat support and sometimes a slightly different release schedule."
+              ],
+              "parts": [
+                [
+                  "RHEL",
+                  "the original, with a support contract and defined lifecycle."
+                ],
+                [
+                  "rebuilds",
+                  "free, compiled from the same source, no Red Hat support."
+                ],
+                [
+                  "CentOS Stream",
+                  "tracks *upstream* — it shows what will be in the next RHEL, not what is in the current one."
+                ]
+              ],
+              "remember": "Rebuilds are free and near-identical, but you get no Red Hat support."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Kernel vs distribution",
+          "kernel = engine, distribution = whole car"
+        ],
+        [
+          "RHEL's advantage",
+          "tested combination + support contract + lifecycle"
+        ],
+        [
+          "CentOS Stream's role",
+          "shows what is coming in the NEXT RHEL"
+        ]
+      ],
+      "inOneSentence": "The kernel is only the engine; RHEL is the whole tested car with a support contract, and the rebuilds are free copies with the same code but no support."
+    },
+    {
+      "id": "rh124-03",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 2,
+      "title": "Accessing the Command Line",
+      "partTitle": "Chapter 2 — the shell, the prompt, and working efficiently in Bash",
+      "exam": "RHCSA (EX200) — 1.1-1.4 command-line fundamentals",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "The shell and the prompt",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "What the shell is",
+              "main": "The shell is the program that reads what you type and runs it.",
+              "simple": [
+                "The shell sits between you and the kernel. You type a command; the shell works out which program you mean, runs it, and shows you the output.",
+                "RHEL's default is bash, the GNU Bourne-Again Shell."
+              ],
+              "parts": [
+                [
+                  "bash",
+                  "RHEL's default shell."
+                ],
+                [
+                  "prompt",
+                  "the text showing who you are and where you are."
+                ],
+                [
+                  "[user@host ~]$",
+                  "user, hostname, current directory, then # for root or $ for a normal user."
+                ]
+              ],
+              "remember": "The shell reads your command and runs it; # means root, $ means normal user."
+            },
+            {
+              "n": 2,
+              "title": "How a command is put together",
+              "main": "Every command has the same three parts: the command, its options, and its arguments.",
+              "simple": [
+                "Like a sentence: the command is the verb, options are adverbs, arguments are the nouns it acts on.",
+                "Once you see this pattern, every command looks like every other command."
+              ],
+              "example": [
+                "ls -l /etc/passwd"
+              ],
+              "parts": [
+                [
+                  "ls",
+                  "the command — the verb."
+                ],
+                [
+                  "-l",
+                  "an option — how to do it."
+                ],
+                [
+                  "/etc/passwd",
+                  "an argument — what to do it to."
+                ]
+              ],
+              "remember": "command + options + arguments — the same shape every time."
+            },
+            {
+              "n": 3,
+              "title": "Logging in over the network",
+              "main": "ssh user@host gives you a remote shell as if you were sitting at that machine.",
+              "simple": [
+                "The same account and password works, but the keyboard and screen are the other machine's. Everything after you log in is identical.",
+                "From a lab workstation this is how you reach servera and serverb."
+              ],
+              "example": [
+                "ssh student@servera"
+              ],
+              "parts": [
+                [
+                  "ssh",
+                  "the command — secure remote shell."
+                ],
+                [
+                  "student",
+                  "the account to log in as."
+                ],
+                [
+                  "servera",
+                  "the machine to reach."
+                ]
+              ],
+              "remember": "ssh user@host puts you at that machine's keyboard, not on a different system."
+            }
+          ]
+        },
+        {
+          "title": "Working efficiently in Bash",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "The shortcuts worth memorising",
+              "main": "A few keys save more time in an exam than anything else you could learn.",
+              "simple": [
+                "Most of these are not exam objectives on their own, but each one turns a slow, error-prone sequence into one or two keystrokes."
+              ],
+              "example": [
+                "!!            repeat the previous command",
+                "!$            last argument of the previous command",
+                "Tab           complete a filename or command",
+                "Ctrl+a / Ctrl+e   jump to start / end of the line",
+                "Ctrl+u        delete from cursor back to the start",
+                "Ctrl+c        abandon the current command",
+                "Ctrl+r        search backwards through history",
+                "Up/Down       walk through previous commands",
+                "Ctrl+l        clear the screen"
+              ],
+              "parts": [
+                [
+                  "Tab",
+                  "the single biggest time-saver — complete instead of typing."
+                ],
+                [
+                  "Ctrl+r",
+                  "search your whole command history by typing part of it."
+                ],
+                [
+                  "Ctrl+c",
+                  "get out of a command that is waiting for input."
+                ]
+              ],
+              "remember": "Tab to complete, Ctrl+r to search history, Ctrl+c to escape — those three pay for themselves."
+            },
+            {
+              "n": 5,
+              "title": "Understanding history expansion",
+              "main": "The shell keeps your commands, and ! lets you reuse them without retyping.",
+              "simple": [
+                "Typing `!!` re-runs the previous command. Typing `!$` inserts the last argument of the previous command, which saves retyping long paths."
+              ],
+              "example": [
+                "mkdir -p /tmp/project/logs",
+                "cd !$"
+              ],
+              "parts": [
+                [
+                  "history",
+                  "the list of what you have run."
+                ],
+                [
+                  "!!",
+                  "the previous command, whole."
+                ],
+                [
+                  "!$",
+                  "the last argument of the previous command."
+                ]
+              ],
+              "remember": "!! repeats the last command, !$ reuses its last argument."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Log in remotely",
+          "ssh user@host"
+        ],
+        [
+          "Complete a name",
+          "Tab"
+        ],
+        [
+          "Search history",
+          "Ctrl+r"
+        ],
+        [
+          "Repeat last command",
+          "!!"
+        ],
+        [
+          "Abandon a command",
+          "Ctrl+c"
+        ]
+      ],
+      "inOneSentence": "The shell runs what you type; every command is verb + options + nouns; and Tab, Ctrl+r and Ctrl+c are the shortcuts that buy back the most time."
+    },
+    {
+      "id": "rh124-04",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 3,
+      "title": "Managing Files from the Command Line",
+      "partTitle": "Chapter 3 — paths, creating and removing files, links, and shell expansions",
+      "exam": "RHCSA (EX200) — 2.1-2.5 file and directory management",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Paths and moving around",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "The file-system hierarchy",
+              "main": "Everything starts at one root directory, /, and everything else hangs from it.",
+              "simple": [
+                "There is no drive letter and no C:. One top folder, and every file and folder lives somewhere below it.",
+                "It is a single tree, which is why an absolute path always begins with /."
+              ],
+              "parts": [
+                [
+                  "/",
+                  "the root — the one folder everything starts from."
+                ],
+                [
+                  "/etc",
+                  "system-wide configuration files."
+                ],
+                [
+                  "/var",
+                  "variable data — logs and caches that change."
+                ],
+                [
+                  "/home",
+                  "user home directories."
+                ],
+                [
+                  "/root",
+                  "root's home directory."
+                ]
+              ],
+              "remember": "One root, /, and every path starts from it."
+            },
+            {
+              "n": 2,
+              "title": "Absolute versus relative paths",
+              "main": "An absolute path starts at the root; a relative path starts where you already are.",
+              "simple": [
+                "Absolute paths are like a full street address. Relative paths are like 'two streets past the bakery, turn left' — they only work from one starting point.",
+                "The dot . means 'here' and two dots .. mean 'the folder above'."
+              ],
+              "example": [
+                "cd /etc",
+                "cd ..",
+                "cd ../..",
+                "cd -"
+              ],
+              "parts": [
+                [
+                  "/etc/passwd",
+                  "absolute — the full address from the root."
+                ],
+                [
+                  "passwd",
+                  "relative — the same file only if you are already in /etc."
+                ],
+                [
+                  ".",
+                  "the current directory."
+                ],
+                [
+                  "..",
+                  "the parent directory — one level up."
+                ],
+                [
+                  "cd -",
+                  "return to the directory you were in last."
+                ]
+              ],
+              "remember": "Absolute starts at /, relative starts at where you are."
+            }
+          ]
+        },
+        {
+          "title": "Creating, copying, moving and removing",
+          "concepts": [
+            {
+              "n": 3,
+              "title": "Creating and copying",
+              "main": "touch makes an empty file, mkdir makes a folder, and cp copies one to another.",
+              "simple": [
+                "Three separate verbs for three separate jobs. Learning them apart saves guessing."
+              ],
+              "example": [
+                "touch notes.txt",
+                "mkdir project",
+                "mkdir -p project/logs",
+                "cp notes.txt project/"
+              ],
+              "parts": [
+                [
+                  "touch FILE",
+                  "create an empty file if it does not exist."
+                ],
+                [
+                  "mkdir DIR",
+                  "create a directory."
+                ],
+                [
+                  "-p",
+                  "with mkdir, create parent folders too instead of failing."
+                ],
+                [
+                  "cp SOURCE DEST",
+                  "copy."
+                ],
+                [
+                  "cp -r DIR DEST",
+                  "copy a whole folder, recursively."
+                ]
+              ],
+              "remember": "touch for files, mkdir for folders, and -p builds the path."
+            },
+            {
+              "n": 4,
+              "title": "Moving and renaming",
+              "main": "mv both moves a file and renames it, depending on what you point it at.",
+              "simple": [
+                "One command does two jobs. If the destination is a new name in the same place, it renames. If it is a folder, it moves."
+              ],
+              "example": [
+                "mv old.txt new.txt",
+                "mv notes.txt project/"
+              ],
+              "parts": [
+                [
+                  "mv A B",
+                  "rename A to B."
+                ],
+                [
+                  "mv A dir/",
+                  "move A into that folder."
+                ]
+              ],
+              "remember": "mv renames when the target is a new name, moves when it is a folder."
+            },
+            {
+              "n": 5,
+              "title": "Removing files and folders",
+              "main": "rm removes files, rm -r removes folders and their contents.",
+              "simple": [
+                "rm does not ask. There is no 'are you sure' and no undo — a deleted file is gone unless it is a snapshot.",
+                "This is the command to slow down and re-read before pressing Enter."
+              ],
+              "example": [
+                "rm notes.txt",
+                "rm -r project",
+                "rm -rf project"
+              ],
+              "parts": [
+                [
+                  "rm FILE",
+                  "delete a file."
+                ],
+                [
+                  "rm -r DIR",
+                  "delete a folder and everything in it."
+                ],
+                [
+                  "-f",
+                  "force — suppress the prompt that could save you."
+                ],
+                [
+                  "rm -rf",
+                  "both together: no prompt, recursive, immediate."
+                ]
+              ],
+              "remember": "rm -rf deletes permanently with no confirmation and no undo.",
+              "warning": "There is no confirmation prompt and no undo on rm. Read the path twice. In a lab, snapshot first."
+            }
+          ]
+        },
+        {
+          "title": "Links",
+          "concepts": [
+            {
+              "n": 6,
+              "title": "Hard links versus soft links",
+              "main": "A hard link is another name for the same file; a soft link is a shortcut that points at it.",
+              "simple": [
+                "A hard link is like giving someone a second key to the same door. The file has not moved and neither copy can tell it is a copy — delete one and the data is still there.",
+                "A soft link is a signpost. It stores only the path. If the original file is deleted or moved, the signpost points nowhere.",
+                "This is the important difference: hard links break when the file is renamed; soft links break when the file is deleted or moved."
+              ],
+              "example": [
+                "ln original.txt hardlink.txt",
+                "ln -s original.txt softlink.txt"
+              ],
+              "parts": [
+                [
+                  "ln SOURCE NAME",
+                  "create a hard link — a second name for the same data."
+                ],
+                [
+                  "ln -s SOURCE NAME",
+                  "create a soft link — a shortcut storing a path."
+                ],
+                [
+                  "ls -i FILE",
+                  "shows the inode; two hard links share one inode number."
+                ],
+                [
+                  "hard link survives rm",
+                  "the data stays, because another name points to it."
+                ],
+                [
+                  "soft link breaks",
+                  "if the target is removed or moved, the link points to nothing."
+                ]
+              ],
+              "remember": "Hard link = same data, survives deletion; soft link = a path, breaks if the target moves."
+            }
+          ]
+        },
+        {
+          "title": "Shell expansions and quoting",
+          "concepts": [
+            {
+              "n": 7,
+              "title": "Pattern, brace and variable expansion",
+              "main": "The shell can expand * and ? into filenames, {a,b} into lists, and $NAME into values — before the command even runs.",
+              "simple": [
+                "Your command never sees the asterisk. The shell replaces it with matching filenames first, then runs the command on the results.",
+                "Globbing matches names. Brace expansion builds lists of anything — it is not limited to files."
+              ],
+              "example": [
+                "ls *.txt",
+                "rm /tmp/*.log",
+                "mkdir -p test/{a,b,c}",
+                "echo $HOME"
+              ],
+              "parts": [
+                [
+                  "*",
+                  "any characters."
+                ],
+                [
+                  "?",
+                  "exactly one character."
+                ],
+                [
+                  "[a-z]",
+                  "one character from a range."
+                ],
+                [
+                  "{a,b,c}",
+                  "brace expansion — builds a comma-separated list."
+                ],
+                [
+                  "{1..5}",
+                  "brace expansion — builds a numeric range."
+                ],
+                [
+                  "$HOME",
+                  "variable expansion."
+                ],
+                [
+                  "$(command)",
+                  "command substitution — use a command's output in place."
+                ]
+              ],
+              "remember": "The shell expands globs and braces before the command runs — never type a literal * you did not mean."
+            },
+            {
+              "n": 8,
+              "title": "Quoting and why it matters",
+              "main": "Quotes stop the shell from expanding things. Use them whenever a name contains a space or a special character.",
+              "simple": [
+                "Without quotes the shell sees each space as a separate argument and each * as a wildcard.",
+                "With quotes the shell hands the text to the command exactly as you typed it."
+              ],
+              "example": [
+                "touch \"my report.txt\"",
+                "rm 'file with spaces.txt'"
+              ],
+              "parts": [
+                [
+                  "'single quotes'",
+                  "everything is literal — no expansion at all."
+                ],
+                [
+                  "\"double quotes\"",
+                  "keeps spaces together but still expands $ and *."
+                ],
+                [
+                  "\\backslash",
+                  "escape just the next character."
+                ],
+                [
+                  "no quotes",
+                  "the shell splits on spaces and expands wildcards."
+                ]
+              ],
+              "remember": "Quote anything with a space or a * in the name.",
+              "warning": "An unquoted variable holding a path with spaces turns one argument into two, and the command fails in a confusing way."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Create a file / folder",
+          "touch FILE  /  mkdir DIR"
+        ],
+        [
+          "Create a whole path",
+          "mkdir -p a/b/c"
+        ],
+        [
+          "Copy / move",
+          "cp -r SRC DEST  /  mv SRC DEST"
+        ],
+        [
+          "Delete",
+          "rm FILE  /  rm -r DIR"
+        ],
+        [
+          "Hard link",
+          "ln SRC NAME"
+        ],
+        [
+          "Soft link",
+          "ln -s SRC NAME"
+        ],
+        [
+          "Wildcards",
+          "*.txt  ?  [a-z]"
+        ],
+        [
+          "Brace expansion",
+          "{a,b,c}   {1..5}"
+        ]
+      ],
+      "inOneSentence": "One root tree; absolute and relative paths; touch/mkdir/cp/mv/rm; hard links are the same data while soft links are just a path; and quote anything with a space."
+    },
+    {
+      "id": "rh124-05",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 4,
+      "title": "Getting Help in RHEL",
+      "partTitle": "Chapter 4 — man pages, info pages and apropos",
+      "exam": "RHCSA (EX200) — 1.6 use documentation and help systems",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Reading documentation",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "The man page",
+              "main": "Every real command has a manual page, and reading one properly answers almost any question.",
+              "simple": [
+                "You do not need to memorise flags. You need to know how to look one up in ten seconds, which is what the man page teaches.",
+                "In an exam or on the job, the man page is always available — using it is a skill, not cheating."
+              ],
+              "example": [
+                "man ls",
+                "man 5 passwd",
+                "apropos password"
+              ],
+              "parts": [
+                [
+                  "man COMMAND",
+                  "show the manual page for a command."
+                ],
+                [
+                  "man 5 passwd",
+                  "the fifth section is a file format, not a command."
+                ],
+                [
+                  "/searchterm",
+                  "inside the page, type / then the word to jump to matches."
+                ],
+                [
+                  "n / N",
+                  "jump to the next or previous match."
+                ],
+                [
+                  "q",
+                  "quit back to your prompt."
+                ],
+                [
+                  "man -k keyword",
+                  "search all man pages for a keyword (apropos)."
+                ]
+              ],
+              "remember": "man COMMAND, then / to search inside it and q to quit."
+            },
+            {
+              "n": 2,
+              "title": "The man page sections",
+              "main": "The numbered sections each describe a different kind of thing, so you know which one to ask for.",
+              "simple": [
+                "Commands and file formats both have man pages, so they are numbered to keep them apart. When you are not sure, try the likely section."
+              ],
+              "parts": [
+                [
+                  "1",
+                  "user commands you type."
+                ],
+                [
+                  "5",
+                  "file formats — the structure of a config file."
+                ],
+                [
+                  "8",
+                  "system administration commands."
+                ],
+                [
+                  "man 5 fstab",
+                  "read the structure of /etc/fstab, not a command called fstab."
+                ]
+              ],
+              "remember": "Section 1 is commands, 5 is file formats — use the number when a name could be either."
+            },
+            {
+              "n": 3,
+              "title": "GNU Info documentation",
+              "main": "info covers deeper material than man does, and is used mainly for GNU core tools.",
+              "simple": [
+                "Man pages are short by design. When you want the full manual, info has it — mostly for tools that came from the GNU project.",
+                "It uses a menu you navigate with arrows rather than scrolling."
+              ],
+              "example": [
+                "info bash",
+                "info coreutils 'cp invocation'"
+              ],
+              "parts": [
+                [
+                  "info COMMAND",
+                  "open the deeper manual."
+                ],
+                [
+                  "arrows / space",
+                  "move through the menu."
+                ],
+                [
+                  "q",
+                  "quit."
+                ]
+              ],
+              "remember": "man for the quick answer, info when you need the full story."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Open a manual page",
+          "man ls"
+        ],
+        [
+          "Search inside the page",
+          "/keyword"
+        ],
+        [
+          "Find a command by keyword",
+          "man -k keyword  /  apropos keyword"
+        ],
+        [
+          "Read a file format",
+          "man 5 fstab"
+        ],
+        [
+          "Deeper documentation",
+          "info bash"
+        ]
+      ],
+      "inOneSentence": "man COMMAND gives the quick answer, / searches inside it, man -k finds commands by keyword, and info holds the deeper manuals."
+    },
+    {
+      "id": "rh124-06",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 5,
+      "title": "Creating, Viewing and Editing Text Files",
+      "partTitle": "Chapter 5 — streams, pipelines, Vim, and shell variables",
+      "exam": "RHCSA (EX200) — 2.4-2.6 streams, pipelines and text editing",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Streams and pipelines",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Standard input, output and error",
+              "main": "Every command has three channels: it reads from 0, writes results to 1, and writes errors to 2.",
+              "simple": [
+                "Think of three labelled tubes. Most commands only use one, but all three are always there.",
+                "This is why you can take a command's normal output and feed it somewhere else — the output is just a stream you can redirect."
+              ],
+              "example": [
+                "ls > out.txt",
+                "ls 2> err.txt",
+                "ls > out.txt 2>&1",
+                "ls >> out.txt"
+              ],
+              "parts": [
+                [
+                  "0 = stdin",
+                  "where a command reads its input."
+                ],
+                [
+                  "1 = stdout",
+                  "normal results."
+                ],
+                [
+                  "2 = stderr",
+                  "error messages."
+                ],
+                [
+                  "> FILE",
+                  "write stdout to a file, replacing it."
+                ],
+                [
+                  "2> FILE",
+                  "write stderr to a file instead."
+                ],
+                [
+                  "> FILE 2>&1",
+                  "send both into the same file."
+                ],
+                [
+                  ">> FILE",
+                  "append rather than overwrite."
+                ]
+              ],
+              "remember": "0 in, 1 results, 2 errors — and 2>&1 merges errors into the results."
+            },
+            {
+              "n": 2,
+              "title": "Pipelines and tee",
+              "main": "A pipe sends one command's output straight into the next command as its input.",
+              "simple": [
+                "Like a conveyor belt: the output of the first machine becomes the input to the second. No temporary file needed.",
+                "tee splits the stream — it sends it onward down the pipe and also writes a copy to a file."
+              ],
+              "example": [
+                "ls -l | less",
+                "cat file | grep error | wc -l",
+                "ls -l | tee listing.txt | less"
+              ],
+              "parts": [
+                [
+                  "|",
+                  "pipe — feed one command's output into the next."
+                ],
+                [
+                  "tee FILE",
+                  "write a copy to FILE while still passing it down the pipe."
+                ],
+                [
+                  "grep / wc / sort",
+                  "common filters to chain."
+                ],
+                [
+                  "< FILE",
+                  "redirect a file into a command's stdin instead of the keyboard."
+                ]
+              ],
+              "remember": "Pipe with |; use tee when you want to save a copy and keep processing."
+            },
+            {
+              "n": 3,
+              "title": "Here documents",
+              "main": "A here document feeds several lines of text into a command as its input.",
+              "simple": [
+                "Useful when a command needs multiple lines and you do not want to create a file first — writing a short config, for instance."
+              ],
+              "example": [
+                "cat > /etc/motd << EOF",
+                "Welcome to the lab",
+                "EOF"
+              ],
+              "parts": [
+                [
+                  "<< EOF",
+                  "start feeding lines until you type EOF on its own line."
+                ],
+                [
+                  "the closing word",
+                  "must match the opening word exactly."
+                ]
+              ],
+              "remember": "<< EOF ... EOF feeds multi-line text to a command."
+            }
+          ]
+        },
+        {
+          "title": "Editing with Vim",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "Vim has modes, and that is the whole difficulty",
+              "main": "Vim behaves differently depending on its current mode.",
+              "simple": [
+                "This is why new users get stuck: pressing a letter in the wrong mode does something unexpected instead of typing it.",
+                "Learn the modes first and Vim stops being mysterious."
+              ],
+              "example": [
+                "vim /etc/hosts"
+              ],
+              "parts": [
+                [
+                  "Normal mode",
+                  "the default — navigate and run commands. Press Esc to return here."
+                ],
+                [
+                  "Insert mode",
+                  "actually typing text. Enter with i, a, o or I."
+                ],
+                [
+                  "i",
+                  "insert before the cursor."
+                ],
+                [
+                  "a",
+                  "insert after the cursor."
+                ],
+                [
+                  "o",
+                  "open a new line below and start typing."
+                ],
+                [
+                  ":w",
+                  "write (save)."
+                ],
+                [
+                  ":q",
+                  "quit."
+                ],
+                [
+                  ":wq",
+                  "write and quit."
+                ],
+                [
+                  ":q!",
+                  "quit without saving, discarding changes."
+                ],
+                [
+                  "dd",
+                  "delete a line (in Normal mode)."
+                ],
+                [
+                  "yy",
+                  "copy a line."
+                ]
+              ],
+              "remember": "Esc returns to Normal mode; i/a/o enter Insert mode; :wq saves and quits."
+            },
+            {
+              "n": 5,
+              "title": "Getting unstuck in Vim",
+              "main": "There is a small set of keys that rescue you from almost any Vim situation.",
+              "simple": [
+                "Almost every 'Vim has frozen' problem is one of these: you are in Insert mode and cannot run a command, or you have unsaved changes and :q will not work."
+              ],
+              "example": [
+                "Esc :q! Enter",
+                "Esc :wq Enter"
+              ],
+              "parts": [
+                [
+                  "Esc",
+                  "back to Normal mode — always safe."
+                ],
+                [
+                  ":q!",
+                  "quit and throw away changes."
+                ],
+                [
+                  ":wq",
+                  "save and quit."
+                ],
+                [
+                  "Ctrl+c",
+                  "if you are truly lost, this leaves Vim without saving."
+                ]
+              ],
+              "remember": "Esc, then :q! to bail out safely — that gets you unstuck every time."
+            }
+          ]
+        },
+        {
+          "title": "Shell and environment variables",
+          "concepts": [
+            {
+              "n": 6,
+              "title": "Shell variables versus environment variables",
+              "main": "A shell variable lives only in your current shell; an environment variable is passed to every command you run.",
+              "simple": [
+                "A shell variable is a note on your desk. An environment variable is pinned to the door, so everyone who walks in can read it.",
+                "Commands only see environment variables — that is why HOME and PATH work everywhere without you passing them."
+              ],
+              "example": [
+                "MYVAR=hello",
+                "echo $MYVAR",
+                "export MYVAR",
+                "export PATH=$PATH:/opt/bin",
+                "env | sort"
+              ],
+              "parts": [
+                [
+                  "NAME=value",
+                  "assign, with no spaces around the =."
+                ],
+                [
+                  "$NAME",
+                  "use the value."
+                ],
+                [
+                  "echo $VAR",
+                  "check what it currently holds."
+                ],
+                [
+                  "unset VAR",
+                  "remove it."
+                ],
+                [
+                  "export VAR",
+                  "make it visible to every command you run."
+                ],
+                [
+                  "env",
+                  "list all environment variables."
+                ],
+                [
+                  "export -p",
+                  "show them with their export status."
+                ]
+              ],
+              "remember": "A plain assignment is shell-only; export passes it to your commands."
+            },
+            {
+              "n": 7,
+              "title": "PATH and why it decides which command runs",
+              "main": "PATH is an ordered list of folders; the shell runs the first match it finds.",
+              "simple": [
+                "Imagine the shell checking a list of drawers in order and using the first one holding the tool you asked for.",
+                "If an older copy of a command sits in an earlier folder, that one runs — which is why a newly installed command sometimes seems to be ignored."
+              ],
+              "example": [
+                "echo $PATH",
+                "which dnf",
+                "type -a dnf"
+              ],
+              "parts": [
+                [
+                  "PATH",
+                  "colon-separated list of folders, searched left to right."
+                ],
+                [
+                  "which CMD",
+                  "show which one would run."
+                ],
+                [
+                  "type -a CMD",
+                  "show every match found in PATH."
+                ],
+                [
+                  "export PATH=$PATH:/opt/bin",
+                  "append a folder — $PATH first so you keep the existing ones."
+                ]
+              ],
+              "remember": "PATH is searched left to right; the first match wins — which is the answer to 'I installed it but nothing changed'."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Redirect stdout",
+          "cmd > file"
+        ],
+        [
+          "Redirect stderr",
+          "cmd 2> file"
+        ],
+        [
+          "Merge both",
+          "cmd > file 2>&1"
+        ],
+        [
+          "Append",
+          "cmd >> file"
+        ],
+        [
+          "Pipe",
+          "cmd1 | cmd2"
+        ],
+        [
+          "Save a copy mid-pipe",
+          "cmd | tee file | cmd2"
+        ],
+        [
+          "Here document",
+          "cat > file << EOF ... EOF"
+        ],
+        [
+          "Vim: insert / save / quit",
+          "i   :wq   :q!"
+        ],
+        [
+          "Environment variable",
+          "export NAME=value"
+        ]
+      ],
+      "inOneSentence": "Every command has three streams you can redirect; pipes chain them; Vim is mode-based and Esc always rescues you; and only exported variables reach your commands."
+    },
+    {
+      "id": "rh124-07",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 6,
+      "title": "Managing Local Users and Groups",
+      "partTitle": "Chapter 6 — accounts, superuser access, passwords and account restriction",
+      "exam": "RHCSA (EX200) — 3.1-3.5 managing users and groups",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Users, groups and identity",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Why every process has a user",
+              "main": "Every running program belongs to a user, and every file is owned by a user — that ownership is the basis of all Linux security.",
+              "simple": [
+                "Because each process has an identity, the system can answer one question for any action: who is asking?",
+                "Permissions then decide what that identity may do. Identity plus permissions is the whole model."
+              ],
+              "parts": [
+                [
+                  "UID 0",
+                  "the superuser, root. One UID, unlimited power."
+                ],
+                [
+                  "1-999 (system)",
+                  "reserved for services; never for people."
+                ],
+                [
+                  "1000+ (regular)",
+                  "normal human accounts."
+                ],
+                [
+                  "/etc/passwd",
+                  "every account's name and UID."
+                ],
+                [
+                  "/etc/group",
+                  "every group and its members."
+                ]
+              ],
+              "remember": "Every process and every file has an owner — identity is the basis of all permissions."
+            },
+            {
+              "n": 2,
+              "title": "Primary and supplementary groups",
+              "main": "Every user has one primary group, and can belong to any number of extra groups.",
+              "simple": [
+                "Your primary group is your main team — it owns files you create. Supplementary groups are extra teams you are a member of.",
+                "This is why `id` is more informative than `whoami`: it shows all of them at once."
+              ],
+              "example": [
+                "id",
+                "id alice",
+                "groups"
+              ],
+              "parts": [
+                [
+                  "id",
+                  "show your own UID and every group you belong to."
+                ],
+                [
+                  "primary group",
+                  "shown as 'group' — owns new files you create."
+                ],
+                [
+                  "groups",
+                  "the supplementary list."
+                ],
+                [
+                  "whoami",
+                  "only your username — less informative than id."
+                ]
+              ],
+              "remember": "One primary group owns your new files; supplementary groups just add access."
+            }
+          ]
+        },
+        {
+          "title": "Becoming root",
+          "concepts": [
+            {
+              "n": 3,
+              "title": "Do not log in as root directly",
+              "main": "Red Hat's guidance is to log in as a normal user and escalate only when you actually need to.",
+              "simple": [
+                "Working as root all the time means one typo is a system-wide problem. Log in as yourself, and step up briefly for the specific thing that needs it.",
+                "It also gives you a record of which account actually ran sudo."
+              ],
+              "remember": "Log in as a normal user and escalate only when needed."
+            },
+            {
+              "n": 4,
+              "title": "The four ways to get a root shell",
+              "main": "su, su -, sudo, and sudo su - each get you root, but they differ in environment and accountability.",
+              "simple": [
+                "The difference matters: `su` without a dash keeps some of your old environment, which can quietly change how commands behave. The dash gives you root's clean environment.",
+                "sudo records who asked for elevation. su on its own often does not."
+              ],
+              "example": [
+                "su -",
+                "sudo -i",
+                "sudo su -",
+                "sudo command"
+              ],
+              "parts": [
+                [
+                  "su -",
+                  "become root with root's environment (the dash is what matters)."
+                ],
+                [
+                  "sudo command",
+                  "run one command as root, and it is logged."
+                ],
+                [
+                  "sudo -i",
+                  "start a root login session — logged, and with a clean environment."
+                ],
+                [
+                  "sudo su -",
+                  "become root — becomes root, which may not be logged the way you expect."
+                ]
+              ],
+              "remember": "The dash in su - gives a clean environment; sudo leaves an audit trail."
+            },
+            {
+              "n": 5,
+              "title": "Managing user accounts",
+              "main": "A small set of commands covers creating, modifying and deleting accounts.",
+              "simple": [
+                "Learn this table. Nearly every account question is answered by one row of it."
+              ],
+              "example": [
+                "useradd -m operator1",
+                "passwd operator1",
+                "usermod -aG developers operator1",
+                "usermod -s /sbin/nologin serviceacct",
+                "userdel -r operator1",
+                "groupadd developers"
+              ],
+              "parts": [
+                [
+                  "useradd -m USER",
+                  "create a user AND its home directory. -m matters."
+                ],
+                [
+                  "passwd USER",
+                  "set or change a password."
+                ],
+                [
+                  "usermod -aG GRP USER",
+                  "add a user to an extra group."
+                ],
+                [
+                  "usermod -s SHELL USER",
+                  "change the user's login shell."
+                ],
+                [
+                  "userdel -r USER",
+                  "delete the user and their home directory."
+                ],
+                [
+                  "groupadd GRP",
+                  "create a group."
+                ]
+              ],
+              "remember": "useradd -m creates the home directory; usermod -aG adds a group."
+            },
+            {
+              "n": 6,
+              "title": "The -aG trap",
+              "main": "usermod -G without -a replaces the user's supplementary groups instead of adding to them.",
+              "simple": [
+                "This quietly causes the exact problem it looks like it should fix: you add one group, and every other group they belonged to is erased.",
+                "The 'a' stands for append. Always use it."
+              ],
+              "parts": [
+                [
+                  "usermod -G grp user",
+                  "REPLACES all supplementary groups — destructive."
+                ],
+                [
+                  "usermod -aG grp user",
+                  "ADDS to the existing groups — what you almost always want."
+                ]
+              ],
+              "remember": "Always usermod -aG. Without the a, you wipe the user's other groups.",
+              "warning": "Forgetting -a silently removes every other supplementary group the user had."
+            }
+          ]
+        },
+        {
+          "title": "Passwords and account restriction",
+          "concepts": [
+            {
+              "n": 7,
+              "title": "Where passwords actually live",
+              "main": "/etc/passwd holds the account details; the encrypted password is in /etc/shadow, which only root can read.",
+              "simple": [
+                "Splitting them means ordinary users can read the account list without ever being able to see password hashes.",
+                "Nine colon-separated fields, and the second one in shadow is the hash."
+              ],
+              "example": [
+                "sudo cat /etc/passwd",
+                "sudo cat /etc/shadow"
+              ],
+              "parts": [
+                [
+                  "/etc/passwd",
+                  "name:UID:GID:GECOS:home:shell — readable by everyone."
+                ],
+                [
+                  "/etc/shadow",
+                  "the encrypted password plus aging data — root only."
+                ],
+                [
+                  "chage -l USER",
+                  "show a user's password age and expiry."
+                ]
+              ],
+              "remember": "passwd for the accounts, shadow for the hashes — that split is the security."
+            },
+            {
+              "n": 8,
+              "title": "Locking, unlocking and expiring",
+              "main": "You can lock an account, unlock it, and set when a password must be changed.",
+              "simple": [
+                "Locking does not delete anything — it just stops the password working, and the shell can be changed so the account cannot be used at all.",
+                "Forcing an expiry is a normal way to demand a password change at the next login."
+              ],
+              "example": [
+                "passwd -l USER",
+                "passwd -u USER",
+                "passwd -e USER",
+                "chage -M 90 USER",
+                "usermod -e 2026-12-31 USER"
+              ],
+              "parts": [
+                [
+                  "passwd -l",
+                  "lock the account (prefixes the hash with !)."
+                ],
+                [
+                  "passwd -u",
+                  "unlock it."
+                ],
+                [
+                  "passwd -e",
+                  "force a password change at the next login."
+                ],
+                [
+                  "chage -M DAYS",
+                  "force change after this many days."
+                ],
+                [
+                  "chage -m/-M/-W",
+                  "minimum age, maximum age, warn days."
+                ],
+                [
+                  "usermod -e DATE",
+                  "set an account expiry date."
+                ]
+              ],
+              "remember": "passwd -l locks, -u unlocks, -e forces a change; chage -M sets the policy."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Create a user with a home dir",
+          "useradd -m USER"
+        ],
+        [
+          "Set a password",
+          "passwd USER"
+        ],
+        [
+          "Add to a group",
+          "usermod -aG GRP USER"
+        ],
+        [
+          "Change login shell",
+          "usermod -s /sbin/nologin USER"
+        ],
+        [
+          "Delete user + home",
+          "userdel -r USER"
+        ],
+        [
+          "Create a group",
+          "groupadd GRP"
+        ],
+        [
+          "Lock / unlock",
+          "passwd -l  /  passwd -u USER"
+        ],
+        [
+          "Password age policy",
+          "chage -l USER"
+        ]
+      ],
+      "inOneSentence": "Every process and file has an owner; log in as yourself and escalate with sudo; and useradd/usermod/userdel with -m and -aG cover almost every account task."
+    },
+    {
+      "id": "rh124-08",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 7,
+      "title": "Controlling Access to Files",
+      "partTitle": "Chapter 7 — permissions, ownership, special bits and umask",
+      "exam": "RHCSA (EX200) — 4.1-4.6 managing file permissions",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "The permission model",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Reading an ls -l line",
+              "main": "Every file has one owning user, one owning group, and permissions for three categories: user, group, other.",
+              "simple": [
+                "The nine characters after the first are three groups of three, in a fixed order: user, group, other — and within each, read, write, execute."
+              ],
+              "example": [
+                "-rwxr-x---  1  alice  staff  4096  script.sh"
+              ],
+              "parts": [
+                [
+                  "-",
+                  "the file type — - file, d directory, l symbolic link."
+                ],
+                [
+                  "rwx",
+                  "read, write, execute for the owner."
+                ],
+                [
+                  "r-x",
+                  "read and execute for the group."
+                ],
+                [
+                  "---",
+                  "nothing for others."
+                ],
+                [
+                  "alice",
+                  "the owning user."
+                ],
+                [
+                  "staff",
+                  "the owning group."
+                ]
+              ],
+              "remember": "-rwxr-x--- reads left to right as type, owner, group, other — each with rwx."
+            },
+            {
+              "n": 2,
+              "title": "Which permission actually applies",
+              "main": "The most specific match wins: if you are the owner, the owner permissions apply — even if you are also in the group.",
+              "simple": [
+                "This is the rule people get wrong most often. There is no falling back to the group permissions if the owner ones are restrictive.",
+                "The system checks user first, then group, then other, and stops at the first match."
+              ],
+              "example": [
+                "-rwx------  alice  staff",
+                "# bob is in staff, but the file is alice's, so bob gets NOTHING"
+              ],
+              "parts": [
+                [
+                  "step 1",
+                  "are you the owner? then owner permissions apply — stop."
+                ],
+                [
+                  "step 2",
+                  "are you in the owning group? then group permissions apply — stop."
+                ],
+                [
+                  "step 3",
+                  "otherwise, other permissions apply."
+                ]
+              ],
+              "remember": "Check owner first, then group, then other — the first match wins and there is no fallback.",
+              "warning": "Being in a file's group grants you nothing if you also happen to be the owner and the owner bits are restrictive."
+            },
+            {
+              "n": 3,
+              "title": "Directories need execute, files need read",
+              "main": "Execute on a directory means you may enter it and list it — it is the 'right of way' through a folder.",
+              "simple": [
+                "For a file, x means 'run it as a program'. For a directory, x means 'you may come in'.",
+                "Without directory execute, listing the contents fails even with directory read."
+              ],
+              "parts": [
+                [
+                  "r on a directory",
+                  "list the names inside it."
+                ],
+                [
+                  "x on a directory",
+                  "enter it, and reach files inside."
+                ],
+                [
+                  "x on a file",
+                  "run it as a program."
+                ],
+                [
+                  "w on a directory",
+                  "create, delete or rename entries inside it."
+                ]
+              ],
+              "remember": "Execute on a directory is the right of way — without it, read does nothing."
+            }
+          ]
+        },
+        {
+          "title": "Changing permissions and ownership",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "chmod in octal",
+              "main": "Each category is a digit where read is 4, write is 2 and execute is 1.",
+              "simple": [
+                "Add the numbers up. 7 is 4+2+1 (everything), 5 is 4+1 (read and execute), 6 is 4+2 (read and write).",
+                "Once the three digits are familiar, you can read any permission string at a glance."
+              ],
+              "example": [
+                "chmod 644 file",
+                "chmod 700 script.sh",
+                "chmod 755 script.sh",
+                "chmod 640 file"
+              ],
+              "parts": [
+                [
+                  "r = 4",
+                  "read."
+                ],
+                [
+                  "w = 2",
+                  "write."
+                ],
+                [
+                  "x = 1",
+                  "execute."
+                ],
+                [
+                  "chmod 644",
+                  "owner full, group read, others read — the common default."
+                ],
+                [
+                  "chmod 700",
+                  "owner only, nobody else — right for private keys."
+                ],
+                [
+                  "chmod 755",
+                  "owner full, everyone else read+execute — right for scripts and directories."
+                ]
+              ],
+              "remember": "4 is read, 2 is write, 1 is execute — add them up per group."
+            },
+            {
+              "n": 5,
+              "title": "chmod in symbolic form",
+              "main": "You can add, remove or exactly set permissions by naming who and what.",
+              "simple": [
+                "Think of it as a sentence: who, then do what, then what to. u g o for who, + - = for what."
+              ],
+              "example": [
+                "chmod u+x script.sh",
+                "chmod g-w file",
+                "chmod o= file",
+                "chmod a+r file"
+              ],
+              "parts": [
+                [
+                  "u / g / o / a",
+                  "user / group / other / all."
+                ],
+                [
+                  "+ - =",
+                  "add / remove / set exactly."
+                ],
+                [
+                  "chmod u+x",
+                  "give the owner execute."
+                ],
+                [
+                  "chmod g-w",
+                  "take write away from the group."
+                ],
+                [
+                  "chmod a+r",
+                  "give everyone read."
+                ],
+                [
+                  "chmod u=rwx,go=rx",
+                  "set several at once, comma-separated."
+                ]
+              ],
+              "remember": "chmod WHO WHAT WHICH — u/g/o/a then + - =."
+            },
+            {
+              "n": 6,
+              "title": "chown and chgrp",
+              "main": "chown changes the owner, chgrp changes the owning group — and only root may give a file away.",
+              "simple": [
+                "Ownership is a separate thing from permissions — changing one does not change the other.",
+                "Only root can set a file's owner to a different user. Changing the group is allowed for any file you own."
+              ],
+              "example": [
+                "chown alice file",
+                "chown alice:staff file",
+                "chgrp staff file",
+                "chown -R alice:staff dir/"
+              ],
+              "parts": [
+                [
+                  "chown USER FILE",
+                  "change the owner."
+                ],
+                [
+                  "chown USER:GROUP FILE",
+                  "change both at once."
+                ],
+                [
+                  "chgrp GROUP FILE",
+                  "change the owning group."
+                ],
+                [
+                  "-R",
+                  "recurse into a whole directory tree."
+                ],
+                [
+                  "chown user: file",
+                  "clear the group and use the user's login group."
+                ]
+              ],
+              "remember": "chown changes owner, chgrp changes group, -R goes through a whole tree."
+            },
+            {
+              "n": 7,
+              "title": "The three special permission bits",
+              "main": "setuid, setgid and the sticky bit each change how a file or directory behaves for whoever uses it.",
+              "simple": [
+                "They are not about access at all — they change behaviour. That is the difference worth remembering.",
+                "You can spot them in ls -l where an ordinary rwx becomes s, S, or t."
+              ],
+              "example": [
+                "chmod 4755 file    # setuid",
+                "chmod 2775 dir     # setgid on a directory",
+                "chmod 1777 dir     # sticky bit"
+              ],
+              "parts": [
+                [
+                  "setuid (4)",
+                  "a program runs with the OWNER's privileges, not yours."
+                ],
+                [
+                  "setgid on a dir (2)",
+                  "new files inside inherit the DIRECTORY's group."
+                ],
+                [
+                  "setgid on a file (2)",
+                  "a program runs with the GROUP's privileges."
+                ],
+                [
+                  "sticky (1)",
+                  "in a shared directory, only the owner may delete their own files."
+                ],
+                [
+                  "s / S / t in ls",
+                  "how they appear: lowercase s means the bit is set AND execute works."
+                ]
+              ],
+              "remember": "setuid = run as the owner; setgid on a dir = inherit its group; sticky = only the owner can delete.",
+              "warning": "A capital S means setuid is set but execute is NOT — the program would not run anyway."
+            },
+            {
+              "n": 8,
+              "title": "umask and default permissions",
+              "main": "New files and folders start from a fixed baseline, then your umask removes permissions from it.",
+              "simple": [
+                "The baseline is 666 for files and 777 for directories. Your umask is subtracted from that baseline.",
+                "So a umask of 022 turns 666 into 644, and 777 into 755 — which is why almost everything you create is 644 or 755."
+              ],
+              "example": [
+                "umask",
+                "umask 022",
+                "umask 077",
+                "umask -S"
+              ],
+              "parts": [
+                [
+                  "umask",
+                  "show your current mask."
+                ],
+                [
+                  "umask 022",
+                  "the usual: files 644, directories 755."
+                ],
+                [
+                  "umask 077",
+                  "private: files 600, directories 700 — right for keys."
+                ],
+                [
+                  "umask -S",
+                  "show the mask in symbolic form instead of digits."
+                ],
+                [
+                  "666 baseline",
+                  "everything permitted, for files."
+                ],
+                [
+                  "777 baseline",
+                  "everything permitted, for directories."
+                ]
+              ],
+              "remember": "umask is subtracted from 666 for files and 777 for directories."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Read permissions",
+          "ls -l — type, owner, group, other"
+        ],
+        [
+          "Which applies?",
+          "owner first, then group, then other — first match wins"
+        ],
+        [
+          "Set numerically",
+          "chmod 644 / 700 / 755 file"
+        ],
+        [
+          "Set symbolically",
+          "chmod u+x  g-w  a+r file"
+        ],
+        [
+          "Change owner / group",
+          "chown USER:GRP file   /   chgrp GRP file"
+        ],
+        [
+          "Recurse",
+          "chmod -R / chown -R"
+        ],
+        [
+          "setuid / setgid / sticky",
+          "chmod 4xxx  2xxx  1xxx"
+        ],
+        [
+          "Show / set umask",
+          "umask   /   umask 022"
+        ]
+      ],
+      "inOneSentence": "Every file has one owner and one group; the first matching permission set wins with no fallback; 4/2/1 make the digits; and umask is subtracted from 666 or 777."
+    },
+    {
+      "id": "rh124-09",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 8,
+      "title": "Monitoring and Managing Linux Processes",
+      "partTitle": "Chapter 8 — processes, job control, signals and load",
+      "exam": "RHCSA (EX200) — 5.1-5.4 monitoring and modifying process behaviour",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "What a process is",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Every running program is a process",
+              "main": "A process is a program in motion: it has its own memory, its own identity, and a Process ID.",
+              "simple": [
+                "The program is the recipe; the process is a cook following that recipe. You can have ten processes running the same program, each with separate memory and its own PID.",
+                "The PID is how every tool refers to a specific running process."
+              ],
+              "example": [
+                "ps aux",
+                "ps -ef",
+                "ps -p 1234 -o pid,ppid,stat,cmd",
+                "top"
+              ],
+              "parts": [
+                [
+                  "PID",
+                  "the process ID — how you refer to one running process."
+                ],
+                [
+                  "PPID",
+                  "the parent process that started it."
+                ],
+                [
+                  "ps aux",
+                  "the common full listing — all users, all processes."
+                ],
+                [
+                  "ps -ef",
+                  "another full-listing format."
+                ],
+                [
+                  "top",
+                  "live view, refreshed continuously."
+                ],
+                [
+                  "CSTAT",
+                  "the state column, explained below."
+                ]
+              ],
+              "remember": "The program is the recipe; the process is one cook following it, with its own PID."
+            },
+            {
+              "n": 2,
+              "title": "The process states",
+              "main": "The STAT column tells you what a process is doing right now.",
+              "simple": [
+                "Most processes are S and that is fine — S means sleeping, waiting for something. Only a few states need your attention."
+              ],
+              "parts": [
+                [
+                  "R",
+                  "running or ready to run — using CPU right now."
+                ],
+                [
+                  "S",
+                  "sleeping — waiting for something. Normal and harmless."
+                ],
+                [
+                  "D",
+                  "uninterruptible sleep — almost always waiting on disk I/O. A long D is a hardware or storage problem."
+                ],
+                [
+                  "T",
+                  "stopped — suspended, often by Ctrl+Z."
+                ],
+                [
+                  "Z",
+                  "zombie — finished, but the parent has not collected it yet."
+                ]
+              ],
+              "remember": "R is running, S is normal sleep, D is waiting on disk, T is stopped, Z is a zombie."
+            }
+          ]
+        },
+        {
+          "title": "Job control",
+          "concepts": [
+            {
+              "n": 3,
+              "title": "Running things in the background",
+              "main": "Adding & runs a command in the background and gives you your prompt straight back.",
+              "simple": [
+                "Useful when something takes a while — a download, a long report — and you want to keep working meanwhile.",
+                "It is one job, running independently of your prompt."
+              ],
+              "example": [
+                "sleep 300 &",
+                "jobs",
+                "fg %1",
+                "bg %1",
+                "Ctrl+Z"
+              ],
+              "parts": [
+                [
+                  "&",
+                  "run in the background."
+                ],
+                [
+                  "jobs",
+                  "list this shell's jobs."
+                ],
+                [
+                  "fg %N",
+                  "bring job N back to the foreground."
+                ],
+                [
+                  "bg %N",
+                  "send a stopped job back to the background."
+                ],
+                [
+                  "Ctrl+Z",
+                  "suspend the foreground job, stopping it."
+                ]
+              ],
+              "remember": "& backgrounds it, jobs lists it, fg brings it back, Ctrl+Z suspends it."
+            }
+          ]
+        },
+        {
+          "title": "Signals",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "What a signal is",
+              "main": "A signal is a software interrupt delivered to a process — a polite message telling it something.",
+              "simple": [
+                "It is how the kernel and other processes talk to a running program. Most signals are a request to stop, and a well-written program shuts down cleanly.",
+                "Sending the right signal is how you stop things properly rather than forcing them."
+              ],
+              "parts": [
+                [
+                  "SIGTERM (15)",
+                  "please stop — the polite request. Try this first."
+                ],
+                [
+                  "SIGINT (2)",
+                  "interrupt — what Ctrl+C sends."
+                ],
+                [
+                  "SIGKILL (9)",
+                  "the kernel kills it immediately. It cannot be caught, blocked or ignored."
+                ],
+                [
+                  "SIGHUP (1)",
+                  "hang up — daemons traditionally use it to reload config."
+                ],
+                [
+                  "SIGSTOP (19)",
+                  "suspend, cannot be caught or ignored."
+                ],
+                [
+                  "SIGCONT (18)",
+                  "resume a stopped process."
+                ]
+              ],
+              "remember": "SIGTERM (15) asks politely; SIGKILL (9) cannot be refused, caught or ignored."
+            },
+            {
+              "n": 5,
+              "title": "kill and pkill",
+              "main": "kill sends a signal to a process by PID, and pkill selects targets by name or attribute.",
+              "simple": [
+                "Always try 15 first. Only escalate to 9 if the process refuses — SIGKILL gives the program no chance to clean up, which can leave corrupted data.",
+                "pkill is faster but blunter: it can match more than you intended."
+              ],
+              "example": [
+                "kill 1234",
+                "kill -15 1234",
+                "kill -9 1234",
+                "pkill -TERM httpd",
+                "killall -u alice"
+              ],
+              "parts": [
+                [
+                  "kill PID",
+                  "the default signal is TERM (15)."
+                ],
+                [
+                  "kill -15 PID",
+                  "explicitly ask it to stop."
+                ],
+                [
+                  "kill -9 PID",
+                  "force it — no cleanup possible."
+                ],
+                [
+                  "pkill -TERM NAME",
+                  "signal every process matching a name."
+                ],
+                [
+                  "killall -u USER",
+                  "signal every process belonging to a user."
+                ]
+              ],
+              "remember": "kill -15 first, kill -9 only as a last resort — 9 skips cleanup entirely.",
+              "warning": "SIGKILL gives the process no chance to close files or flush buffers. That is how you cause corruption."
+            }
+          ]
+        },
+        {
+          "title": "Load and monitoring",
+          "concepts": [
+            {
+              "n": 6,
+              "title": "Reading the load average",
+              "main": "Load average counts how many processes want the CPU, sampled at 1, 5 and 15 minutes.",
+              "simple": [
+                "Think of a queue at a counter. One number means one process waiting, three means three waiting, and it rises when work arrives faster than it can be done.",
+                "It is not a percentage. On a 4-CPU machine, a load of 4 is fully busy, and higher means things are queueing."
+              ],
+              "example": [
+                "uptime",
+                "cat /proc/loadavg",
+                "top",
+                "vmstat 1"
+              ],
+              "parts": [
+                [
+                  "1 min",
+                  "recent demand — reacts fast, can be noisy."
+                ],
+                [
+                  "5 min",
+                  "the middle-ground view."
+                ],
+                [
+                  "15 min",
+                  "the long trend — best for spotting a real problem."
+                ],
+                [
+                  "compare to CPU count",
+                  "load above the number of CPUs means work is waiting."
+                ],
+                [
+                  "uptime",
+                  "the quickest place to read it."
+                ],
+                [
+                  "vmstat 1",
+                  "refresh every second — shows runnable and blocked processes."
+                ]
+              ],
+              "remember": "Load is a queue length, not a percentage — compare it to your CPU count."
+            },
+            {
+              "n": 7,
+              "title": "Finding what is using the CPU",
+              "main": "top shows live CPU and memory use per process, and sorts by the column you choose.",
+              "simple": [
+                "It is the first place to look when something is slow. Press P to sort by CPU, M by memory.",
+                "top and ps are answers to different questions: top is right now, ps is the full picture."
+              ],
+              "example": [
+                "top",
+                "top -u alice",
+                "Shift+P",
+                "ps aux --sort=-%cpu | head"
+              ],
+              "parts": [
+                [
+                  "top",
+                  "live, refreshes continuously."
+                ],
+                [
+                  "P then P",
+                  "in top, press Shift+P to sort by CPU."
+                ],
+                [
+                  "M",
+                  "sort by memory instead."
+                ],
+                [
+                  "q",
+                  "quit top."
+                ],
+                [
+                  "-u USER",
+                  "restrict to one user."
+                ]
+              ],
+              "remember": "top for right now, ps for the whole picture; Shift+P sorts by CPU."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "List processes",
+          "ps aux   /   ps -ef"
+        ],
+        [
+          "Live view",
+          "top   (Shift+P = CPU, M = memory, q = quit)"
+        ],
+        [
+          "Process states",
+          "R running  S sleep  D disk-wait  T stopped  Z zombie"
+        ],
+        [
+          "Background a command",
+          "cmd &"
+        ],
+        [
+          "List / control jobs",
+          "jobs   fg %1   bg %1"
+        ],
+        [
+          "Suspend",
+          "Ctrl+Z"
+        ],
+        [
+          "Polite stop",
+          "kill -15 PID   /   pkill -TERM name"
+        ],
+        [
+          "Force stop",
+          "kill -9 PID"
+        ],
+        [
+          "Load average",
+          "uptime   /   vmstat 1"
+        ]
+      ],
+      "inOneSentence": "A process is a running instance with its own PID and memory; signals are how you stop them politely with 15 before forcing with 9; and load is a queue length to compare against your CPU count."
+    },
+    {
+      "id": "rh124-10",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 9,
+      "title": "Controlling Services and Daemons",
+      "partTitle": "Chapter 9 — systemd units, and starting, stopping and reloading",
+      "exam": "RHCSA (EX200) — 6.1-6.3 systemd service management",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "systemd and units",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "A daemon and a unit",
+              "main": "A daemon is a background service; systemd manages it through a unit file.",
+              "simple": [
+                "A service that answers requests while you do something else is a daemon — sshd, chronyd, firewalld.",
+                "systemd tracks each one with a unit, which is a text file describing how to start, stop and restart it."
+              ],
+              "parts": [
+                [
+                  "daemon",
+                  "a background service that keeps running."
+                ],
+                [
+                  "unit",
+                  "the file systemd uses to manage it."
+                ],
+                [
+                  ".service",
+                  "a service unit."
+                ],
+                [
+                  ".socket",
+                  "listens for connections and starts the service on demand."
+                ],
+                [
+                  ".timer",
+                  "schedules a unit, often with a .service beside it."
+                ]
+              ],
+              "remember": "A daemon is the running service; the unit is the file systemd uses to control it."
+            },
+            {
+              "n": 2,
+              "title": "Viewing service state",
+              "main": "systemctl status shows whether a unit is running, and systemctl is-enabled says whether it starts at boot.",
+              "simple": [
+                "Two different questions: is it running now, and will it start on the next boot? Both matter and they are often confused.",
+                "The coloured word in systemctl status tells you which: active, inactive, failed, enabled."
+              ],
+              "example": [
+                "systemctl status sshd",
+                "systemctl is-active sshd",
+                "systemctl is-enabled sshd",
+                "systemctl list-units --type=service"
+              ],
+              "parts": [
+                [
+                  "active (running)",
+                  "it is running right now."
+                ],
+                [
+                  "inactive (dead)",
+                  "it is not running."
+                ],
+                [
+                  "failed",
+                  "it tried to start and did not work — go and read the log."
+                ],
+                [
+                  "enabled",
+                  "it will start at boot."
+                ],
+                [
+                  "disabled",
+                  "it will not start at boot."
+                ],
+                [
+                  "masked",
+                  "blocked entirely, cannot be started at all."
+                ]
+              ],
+              "remember": "is-active is now, is-enabled is at boot — different questions."
+            },
+            {
+              "n": 3,
+              "title": "Comparing start, restart and reload",
+              "main": "reload asks the service to re-read its config; restart stops it and starts it again.",
+              "simple": [
+                "Reload is gentle — the service keeps running and just re-reads its settings. Restart interrupts it, so existing connections drop.",
+                "Using reload where it works is better for a live server, because nothing using the service notices."
+              ],
+              "example": [
+                "systemctl start sshd",
+                "systemctl stop sshd",
+                "systemctl restart sshd",
+                "systemctl reload sshd",
+                "systemctl enable --now sshd"
+              ],
+              "parts": [
+                [
+                  "start / stop",
+                  "begin or end running."
+                ],
+                [
+                  "restart",
+                  "stop then start — interrupts existing connections."
+                ],
+                [
+                  "reload",
+                  "re-read config without stopping. Gentler."
+                ],
+                [
+                  "enable / disable",
+                  "control whether it starts at boot."
+                ],
+                [
+                  "--now",
+                  "do the boot action AND start/stop immediately in one command."
+                ],
+                [
+                  "mask / unmask",
+                  "block a unit completely / undo that."
+                ]
+              ],
+              "remember": "reload is gentle and keeps connections; restart interrupts them; enable --now does both boot action and start."
+            },
+            {
+              "n": 4,
+              "title": "Editing unit files the safe way",
+              "main": "Never edit a vendor unit directly — override it under /etc/systemd/system/ instead.",
+              "simple": [
+                "Package updates replace files under /usr/lib/systemd/system/. Anything you write in /etc/systemd/system/ survives and takes priority.",
+                "systemctl edit creates the override for you, with a merge block at the top."
+              ],
+              "example": [
+                "systemctl edit sshd",
+                "systemctl daemon-reload",
+                "systemctl restart sshd"
+              ],
+              "parts": [
+                [
+                  "/usr/lib/systemd/system/",
+                  "vendor files — package updates overwrite these."
+                ],
+                [
+                  "/etc/systemd/system/",
+                  "your overrides — highest priority, safe."
+                ],
+                [
+                  "systemctl edit UNIT",
+                  "create an override without touching the vendor file."
+                ],
+                [
+                  "systemctl revert UNIT",
+                  "remove overrides and go back to the vendor file."
+                ],
+                [
+                  "daemon-reload",
+                  "tell systemd to re-read unit files after editing."
+                ]
+              ],
+              "remember": "systemctl edit creates the override under /etc — never hand-edit /usr/lib."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Check a service",
+          "systemctl status SVC"
+        ],
+        [
+          "Now vs boot",
+          "systemctl is-active / is-enabled SVC"
+        ],
+        [
+          "Control it",
+          "start / stop / restart / reload SVC"
+        ],
+        [
+          "Boot behaviour",
+          "enable --now  /  disable  /  mask SVC"
+        ],
+        [
+          "Edit safely",
+          "systemctl edit SVC"
+        ],
+        [
+          "After editing",
+          "systemctl daemon-reload"
+        ]
+      ],
+      "inOneSentence": "systemd manages daemons through unit files; is-active is now while is-enabled is at boot; reload is gentle where restart interrupts; and systemctl edit keeps you out of vendor files."
+    },
+    {
+      "id": "rh124-11",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 10,
+      "title": "Configuring and Securing SSH",
+      "partTitle": "Chapter 10 — host keys, key authentication and hardening sshd",
+      "exam": "RHCSA (EX200) — 7.1-7.2 securing with SSH",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "SSH basics",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Host keys and that first prompt",
+              "main": "Every SSH server has a host key that identifies it, and your client records it the first time you connect.",
+              "simple": [
+                "Like a fingerprint. If a machine's fingerprint changes, you are no longer talking to the same machine — which is exactly what an interception attempt looks like.",
+                "Never accept a changed fingerprint without knowing why it changed."
+              ],
+              "example": [
+                "ssh student@servera",
+                "ssh-keygen -R servera"
+              ],
+              "parts": [
+                [
+                  "host key",
+                  "the server's permanent identity, stored in /etc/ssh/ssh_host_*_key.pub."
+                ],
+                [
+                  "known_hosts",
+                  "the client's record of fingerprints it trusts."
+                ],
+                [
+                  "the first prompt",
+                  "you are being asked to confirm that identity — read the fingerprint."
+                ],
+                [
+                  "are you sure",
+                  "the client has never seen this host before."
+                ],
+                [
+                  "REMOTE HOST IDENTIFICATION HAS CHANGED",
+                  "something is wrong — or the host key was legitimately regenerated."
+                ]
+              ],
+              "remember": "The host key is the server's fingerprint — a changed fingerprint is a warning, not something to click through."
+            }
+          ]
+        },
+        {
+          "title": "Key-based authentication",
+          "concepts": [
+            {
+              "n": 2,
+              "title": "How key authentication works",
+              "main": "A public key on the server verifies a private key you keep locally, so no password ever crosses the network.",
+              "simple": [
+                "The private key stays on your machine and never leaves it. The public key sits in a file on the server saying which keys may log in.",
+                "The server sends a challenge, your private key signs it, and the public key checks the signature. The password is never involved."
+              ],
+              "example": [
+                "ssh-keygen -t ed25519 -C 'lab key'",
+                "ssh-copy-id student@servera",
+                "ls -l ~/.ssh"
+              ],
+              "parts": [
+                [
+                  "ssh-keygen",
+                  "generate a key pair."
+                ],
+                [
+                  "~/.ssh/id_ed25519",
+                  "the private key — never copy or share this."
+                ],
+                [
+                  "~/.ssh/id_ed25519.pub",
+                  "the public key — this is what goes on the server."
+                ],
+                [
+                  "ssh-copy-id USER@HOST",
+                  "copy your public key and append it to the account's authorized_keys."
+                ],
+                [
+                  "~/.ssh/authorized_keys",
+                  "on the server, the list of public keys allowed to log in."
+                ]
+              ],
+              "remember": "The private key stays on your machine; only the public key goes on the server."
+            },
+            {
+              "n": 3,
+              "title": "Permissions that break SSH",
+              "main": "OpenSSH refuses keys and some files when their permissions are too loose.",
+              "simple": [
+                "It is strict on purpose: if anyone else could read your private key or modify authorized_keys, they could log in as you.",
+                "This is the single most common cause of 'my key is being ignored'."
+              ],
+              "example": [
+                "chmod 700 ~/.ssh",
+                "chmod 600 ~/.ssh/id_ed25519",
+                "chmod 600 ~/.ssh/authorized_keys"
+              ],
+              "parts": [
+                [
+                  "chmod 700 ~/.ssh",
+                  "the directory itself — owner only."
+                ],
+                [
+                  "chmod 600 private_key",
+                  "the private key must not be group or world readable."
+                ],
+                [
+                  "chmod 600 authorized_keys",
+                  "else another user could add their own key."
+                ],
+                [
+                  "too open",
+                  "sshd silently ignores the key and falls back to password."
+                ]
+              ],
+              "remember": "chmod 700 ~/.ssh and 600 on both keys — sshd silently ignores keys that are too open.",
+              "warning": "If permissions are wrong, ssh does not say so clearly; it just ignores the key and asks for a password."
+            },
+            {
+              "n": 4,
+              "title": "Generating a key with a passphrase",
+              "main": "A passphrase encrypts the private key on disk, so a stolen key file is useless without it.",
+              "simple": [
+                "Think of it as a second lock on the safe holding the key. Slightly slower to use, far safer if the laptop is ever lost."
+              ],
+              "example": [
+                "ssh-keygen -t ed25519 -C 'student@workstation'"
+              ],
+              "parts": [
+                [
+                  "-t ed25519",
+                  "the modern, recommended key type."
+                ],
+                [
+                  "-C 'comment'",
+                  "a label stored in the public key to identify it."
+                ],
+                [
+                  "-N ''",
+                  "set an empty passphrase — less safe."
+                ],
+                [
+                  "-a 100",
+                  "KDF rounds when setting a passphrase."
+                ]
+              ],
+              "remember": "A passphrase encrypts the private key on disk; ed25519 is the modern type to use."
+            }
+          ]
+        },
+        {
+          "title": "Hardening sshd",
+          "concepts": [
+            {
+              "n": 5,
+              "title": "Turning off password authentication",
+              "main": "Once keys work, you can stop accepting passwords entirely, which removes the brute-force surface.",
+              "simple": [
+                "This is the single biggest SSH improvement. With keys working first, switching passwords off costs you nothing and closes the most attacked door.",
+                "Do not do it until you have confirmed you can log in with a key in a second terminal — otherwise you can lock yourself out."
+              ],
+              "example": [
+                "sudo vi /etc/ssh/sshd_config",
+                "PasswordAuthentication no",
+                "PubkeyAuthentication yes",
+                "sudo systemctl reload sshd"
+              ],
+              "parts": [
+                [
+                  "PasswordAuthentication no",
+                  "refuse password logins."
+                ],
+                [
+                  "PermitRootLogin no",
+                  "stop root logging in over SSH directly."
+                ],
+                [
+                  "PubkeyAuthentication yes",
+                  "key login stays enabled — check this is on."
+                ],
+                [
+                  "AllowUsers alice",
+                  "only these accounts may log in."
+                ],
+                [
+                  "systemctl reload sshd",
+                  "apply without dropping connections."
+                ]
+              ],
+              "remember": "PasswordAuthentication no is the biggest win — but test your key login first, or you lock yourself out."
+            },
+            {
+              "n": 6,
+              "title": "Validating the config before reloading",
+              "main": "sshd can check its configuration and tell you about errors without starting.",
+              "simple": [
+                "A typo in sshd_config can leave the service unable to start at all, which on a remote machine means you cannot log in to fix it.",
+                "Testing first is the difference between catching a typo and being locked out."
+              ],
+              "example": [
+                "sudo sshd -t",
+                "sudo sshd -T | grep -i passwordauth"
+              ],
+              "parts": [
+                [
+                  "sshd -t",
+                  "test the config — reports syntax errors, starts nothing."
+                ],
+                [
+                  "sshd -T",
+                  "dump the effective settings after all defaults are applied."
+                ],
+                [
+                  "exit 0",
+                  "the config is valid."
+                ],
+                [
+                  "non-zero",
+                  "do not reload — fix the error first."
+                ]
+              ],
+              "remember": "sshd -t before every reload — a typo you cannot see is how you lock yourself out.",
+              "warning": "Never restart sshd over a remote connection without testing the config first. You may not be able to log back in."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Generate a key",
+          "ssh-keygen -t ed25519"
+        ],
+        [
+          "Copy the public key over",
+          "ssh-copy-id USER@HOST"
+        ],
+        [
+          "Fix key permissions",
+          "chmod 700 ~/.ssh   /   chmod 600 keys"
+        ],
+        [
+          "Test the config",
+          "sshd -t"
+        ],
+        [
+          "See effective settings",
+          "sshd -T"
+        ],
+        [
+          "Reload after editing",
+          "systemctl reload sshd"
+        ],
+        [
+          "Disable passwords",
+          "PasswordAuthentication no"
+        ]
+      ],
+      "inOneSentence": "The host key is the server's fingerprint; key auth keeps the private key local and only the public key on the server; and sshd -t before every reload, because a typo can lock you out."
+    },
+    {
+      "id": "rh124-12",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 11,
+      "title": "Analyzing and Storing Logs",
+      "partTitle": "Chapter 11 — systemd-journald, rsyslog, journalctl and time",
+      "exam": "RHCSA (EX200) — 8.1-8.4 logging and time synchronisation",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "The two logging services",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "journald and rsyslog are not the same thing",
+              "main": "systemd-journald collects everything into the journal; rsyslog additionally writes the traditional text log files.",
+              "simple": [
+                "Two services, two different jobs. journald is the modern structured store that most things write to. rsyslog is the older text-file system that tools and older software still expect.",
+                "Both run by default. When a log is missing from /var/log, this split is usually why."
+              ],
+              "example": [
+                "systemctl status systemd-journald",
+                "systemctl status rsyslog",
+                "ls /var/log"
+              ],
+              "parts": [
+                [
+                  "systemd-journald",
+                  "collects everything systemd and services report."
+                ],
+                [
+                  "rsyslog",
+                  "writes /var/log/messages, secure, cron and the rest."
+                ],
+                [
+                  "/var/log/messages",
+                  "general system messages."
+                ],
+                [
+                  "/var/log/secure",
+                  "authentication events."
+                ],
+                [
+                  "/run/log/journal",
+                  "the journal on a RAM-backed filesystem — lost on reboot."
+                ],
+                [
+                  "/var/log/journal",
+                  "the journal on disk — survives reboot."
+                ]
+              ],
+              "remember": "journald collects everything; rsyslog writes the text files in /var/log."
+            },
+            {
+              "n": 2,
+              "title": "Querying the journal",
+              "main": "journalctl reads the journal, and can filter by time, unit, priority, PID and more.",
+              "simple": [
+                "It replaces grepping through log files. Because the journal is structured, you can filter on the fields directly rather than matching text."
+              ],
+              "example": [
+                "journalctl",
+                "journalctl -u sshd",
+                "journalctl -p err",
+                "journalctl -f",
+                "journalctl --since '1 hour ago'",
+                "journalctl -b -p warning",
+                "journalctl -k"
+              ],
+              "parts": [
+                [
+                  "journalctl",
+                  "show everything."
+                ],
+                [
+                  "-u UNIT",
+                  "one unit only."
+                ],
+                [
+                  "-p PRIORITY",
+                  "filter by severity: emerg, alert, crit, err, warning, notice, info, debug."
+                ],
+                [
+                  "-f",
+                  "follow new messages live — the one to leave running."
+                ],
+                [
+                  "--since / --until",
+                  "filter by time."
+                ],
+                [
+                  "-b",
+                  "this boot only; -b -1 is the previous boot."
+                ],
+                [
+                  "-k",
+                  "kernel messages only."
+                ]
+              ],
+              "remember": "journalctl -f to follow live, -u for a unit, -p for severity, -b for this boot."
+            },
+            {
+              "n": 3,
+              "title": "Making the journal survive a reboot",
+              "main": "If the journal lives on /run it is memory-backed and gone on reboot; moving it to /var/log makes it persistent.",
+              "simple": [
+                "Compare the two paths. If /var/log/journal exists you already have a persistent journal; if only /run/log/journal exists, logs vanish on reboot.",
+                "Persistent logs are what you need when investigating something that happened before a crash or reboot."
+              ],
+              "example": [
+                "ls -d /var/log/journal /run/log/journal",
+                "sudo mkdir -p /var/log/journal",
+                "sudo systemd-catalog-files --prefix=/var/log/journal",
+                "sudo systemctl restart systemd-journald"
+              ],
+              "parts": [
+                [
+                  "/run/log/journal",
+                  "memory-backed — lost on reboot. The RHEL default."
+                ],
+                [
+                  "/var/log/journal",
+                  "on disk — survives reboot."
+                ],
+                [
+                  "Storage=persistent",
+                  "set in journald.conf to make it permanent."
+                ]
+              ],
+              "remember": "/run/log/journal is lost on reboot; /var/log/journal persists."
+            },
+            {
+              "n": 4,
+              "title": "Log rotation and the usual text files",
+              "main": "Old logs are compressed and rotated so they do not fill the disk.",
+              "simple": [
+                "logrotate renames the current file, compresses it, and starts a new one. The rotated files stay as .1, .2.gz and so on.",
+                "Knowing which file holds what saves hunting: secure is logins, messages is everything routine, cron is scheduled jobs."
+              ],
+              "parts": [
+                [
+                  "/var/log/messages",
+                  "general system messages."
+                ],
+                [
+                  "/var/log/secure",
+                  "authentication — logins, sudo, sshd."
+                ],
+                [
+                  "/var/log/cron",
+                  "scheduled job output."
+                ],
+                [
+                  "logrotate",
+                  "the tool that rotates, compresses and prunes old logs."
+                ],
+                [
+                  "/etc/logrotate.conf",
+                  "the policy telling it when and how long to keep."
+                ]
+              ],
+              "remember": "secure for logins, messages for routine, cron for scheduled jobs."
+            }
+          ]
+        },
+        {
+          "title": "Time",
+          "concepts": [
+            {
+              "n": 5,
+              "title": "Why accurate time matters more than it sounds",
+              "main": "Logs from different machines are only comparable if their clocks agree.",
+              "simple": [
+                "When you are reconstructing what happened across several servers, mismatched clocks make the sequence a guess.",
+                "Authentication also depends on time — expired certificates and Kerberos both fail if the clock is wrong."
+              ],
+              "remember": "Logs are only comparable when the clocks agree — time is a security dependency, not just bookkeeping."
+            },
+            {
+              "n": 6,
+              "title": "chrony and timedatectl",
+              "main": "chrony keeps the clock synchronised, and timedatectl shows the current time settings.",
+              "simple": [
+                "The system asks an upstream time server what the time should be and corrects itself gradually, rather than jumping the clock.",
+                "Gradual correction matters: a sudden jump backwards can confuse running services."
+              ],
+              "example": [
+                "timedatectl",
+                "timedatectl set-timezone 'Asia/Dhaka'",
+                "chronyc tracking",
+                "chronyc sources -v",
+                "systemctl status chronyd"
+              ],
+              "parts": [
+                [
+                  "timedatectl",
+                  "show and set the system's time and time zone."
+                ],
+                [
+                  "chronyd",
+                  "the time daemon."
+                ],
+                [
+                  "chronyc tracking",
+                  "how closely the clock is tracking."
+                ],
+                [
+                  "chronyc sources -v",
+                  "which time sources are being used and whether they agree."
+                ],
+                [
+                  "timezone",
+                  "set by name, not by offset — Asia/Dhaka, not +06:00."
+                ],
+                [
+                  "NTP / systemd-timesyncd",
+                  "the alternative time service on newer systems."
+                ]
+              ],
+              "remember": "chrony corrects gradually rather than jumping the clock; set time zones by name."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Read the journal",
+          "journalctl"
+        ],
+        [
+          "Follow live",
+          "journalctl -f"
+        ],
+        [
+          "Filter by unit / severity",
+          "journalctl -u sshd   /   -p err"
+        ],
+        [
+          "This boot / last boot",
+          "journalctl -b   /   journalctl -b -1"
+        ],
+        [
+          "Kernel messages",
+          "journalctl -k"
+        ],
+        [
+          "Check persistent journal",
+          "ls -d /var/log/journal"
+        ],
+        [
+          "Show time settings",
+          "timedatectl"
+        ],
+        [
+          "Check time sync",
+          "chronyc tracking   /   chronyc sources -v"
+        ]
+      ],
+      "inOneSentence": "journald collects everything and rsyslog writes the text files; journalctl filters by unit, severity and boot; and a journal under /run is lost on reboot."
+    },
+    {
+      "id": "rh124-13",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 12,
+      "title": "Managing Networking",
+      "partTitle": "Chapter 12 — TCP/IP, addressing, NetworkManager and name resolution",
+      "exam": "RHCSA (EX200) — 9.1-9.4 basic network configuration",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "The model and addressing",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "The four layers in plain terms",
+              "main": "Data moves down the layers on one machine, across the wire, and back up on the other.",
+              "simple": [
+                "Each layer only talks to the layers beside it. Your application hands data to the transport layer, which labels it; the internet layer addresses it; the link layer physically sends it.",
+                "On the receiving machine the same thing happens in reverse. This is why a problem at one layer does not affect the others — and why each has its own diagnostic tool."
+              ],
+              "parts": [
+                [
+                  "Application",
+                  "how programs talk to each other — ssh, https, NFS."
+                ],
+                [
+                  "Transport",
+                  "ports and reliability — TCP, UDP."
+                ],
+                [
+                  "Internet",
+                  "routing between networks — IP."
+                ],
+                [
+                  "Link",
+                  "the actual hardware on this network — ethernet, MAC addresses."
+                ]
+              ],
+              "remember": "Application → transport → internet → link, and each layer has its own tools."
+            },
+            {
+              "n": 2,
+              "title": "Reading an IPv4 address and prefix",
+              "main": "An address splits into a network part and a host part, and the prefix length says where the split is.",
+              "simple": [
+                "Think of a street address: 'this street, number 42'. The prefix says which part names the street and which names the house.",
+                "/24 means the first 24 bits are the network — so the last octet is the host."
+              ],
+              "example": [
+                "192.168.1.10/24"
+              ],
+              "parts": [
+                [
+                  "192.168.1.10",
+                  "the address."
+                ],
+                [
+                  "/24",
+                  "the first 24 bits are network — the last octet identifies the host."
+                ],
+                [
+                  "/24 range",
+                  "usable hosts .1 to .254; .0 is the network, .255 is the broadcast."
+                ],
+                [
+                  "network address",
+                  "192.168.1.0 for this example."
+                ],
+                [
+                  "broadcast address",
+                  "192.168.1.255 for this example."
+                ]
+              ],
+              "remember": "/24 means the last octet is the host — .0 is the network and .255 is the broadcast."
+            },
+            {
+              "n": 3,
+              "title": "IPv6 in brief",
+              "main": "IPv6 is 128 bits, written as eight groups of four hex digits, and RHEL runs both at once.",
+              "simple": [
+                "The address space is enormously larger — enough for every device ever made, rather than nearly exhausted.",
+                "Dual-stack means IPv4 still works alongside it, so nothing breaks during the transition."
+              ],
+              "example": [
+                "2001:db8::1",
+                "ping6 example.com",
+                "ip -6 addr show"
+              ],
+              "parts": [
+                [
+                  "128 bits",
+                  "against IPv4's 32."
+                ],
+                [
+                  "::",
+                  "compresses runs of zero groups — the full form may be very long."
+                ],
+                [
+                  "dual-stack",
+                  "IPv4 and IPv6 both active by default."
+                ],
+                [
+                  "link-local",
+                  "fe80:: addresses exist on every interface."
+                ]
+              ],
+              "remember": "IPv6 is 128 bits, :: compresses zero groups, and RHEL is dual-stack by default."
+            }
+          ]
+        },
+        {
+          "title": "Inspecting the network",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "ip commands",
+              "main": "ip configures interfaces and addresses, and ss shows what is listening and what connections exist.",
+              "simple": [
+                "These are the modern replacements for the older ifconfig and netstat, which are deprecated and may not be installed.",
+                "Learn these names rather than the old ones."
+              ],
+              "example": [
+                "ip link show",
+                "ip addr show",
+                "ip route show",
+                "ss -tulpen"
+              ],
+              "parts": [
+                [
+                  "ip link show",
+                  "every interface, its state and its MAC address."
+                ],
+                [
+                  "ip addr show",
+                  "interfaces plus their addresses."
+                ],
+                [
+                  "ip route show",
+                  "the routing table — how traffic leaves."
+                ],
+                [
+                  "ss -tulpen",
+                  "listening sockets and connections, with process names."
+                ],
+                [
+                  "ifconfig / netstat",
+                  "the old names — deprecated, may be missing."
+                ]
+              ],
+              "remember": "ip for configuration, ss for sockets — ifconfig and netstat are the old names."
+            },
+            {
+              "n": 5,
+              "title": "ping and tracepath",
+              "main": "ping tests reachability, tracepath shows the path.",
+              "simple": [
+                "Ping answers 'can I reach it and does it answer?'. Tracepath answers 'which routers does my traffic actually cross?' — which is how you find where a connection breaks."
+              ],
+              "example": [
+                "ping -c 3 192.168.1.101",
+                "ping -c 3 google.com",
+                "tracepath 192.168.1.101",
+                "dig servera"
+              ],
+              "parts": [
+                [
+                  "ping -c N",
+                  "send N packets then stop, instead of running forever."
+                ],
+                [
+                  "DNS resolved",
+                  "pinging a name shows the address it resolved to."
+                ],
+                [
+                  "tracepath",
+                  "show each hop toward the destination."
+                ],
+                [
+                  "dig / host",
+                  "query DNS directly."
+                ]
+              ],
+              "remember": "ping tests reachability, tracepath shows the route, and ping -c stops after N packets."
+            }
+          ]
+        },
+        {
+          "title": "NetworkManager and nmcli",
+          "concepts": [
+            {
+              "n": 6,
+              "title": "NetworkManager owns the configuration",
+              "main": "You do not edit network files directly — you tell NetworkManager what you want and it writes the files for you.",
+              "simple": [
+                "Think of NetworkManager as the only person allowed to rearrange the furniture. Edit its files by hand and the next reload silently overwrites you.",
+                "nmcli is how you give it instructions."
+              ],
+              "example": [
+                "nmcli device status",
+                "nmcli connection show",
+                "nmcli connection add type ethernet con-name work ifname ens160 ipv4.method manual ipv4.addresses 192.168.1.101/24 ipv4.gateway 192.168.1.1"
+              ],
+              "parts": [
+                [
+                  "nmcli device status",
+                  "list hardware devices and their state."
+                ],
+                [
+                  "nmcli connection show",
+                  "list saved connection profiles."
+                ],
+                [
+                  "ipv4.method manual",
+                  "use the address you supply, not DHCP."
+                ],
+                [
+                  "ipv4.method auto",
+                  "use DHCP."
+                ],
+                [
+                  "ipv4.addresses",
+                  "the address and prefix to set."
+                ],
+                [
+                  "profile vs device",
+                  "a device is the hardware; a connection profile is the saved settings."
+                ]
+              ],
+              "remember": "Never hand-edit network files — tell NetworkManager via nmcli, it owns them.",
+              "warning": "A hand-edited connection file will be overwritten the next time NetworkManager reloads its settings."
+            },
+            {
+              "n": 7,
+              "title": "Changes take effect in two places",
+              "main": "Setting a profile's values does not apply them — you must also bring the connection up.",
+              "simple": [
+                "nmcli connection modify changes the saved profile. nmcli connection up applies it.",
+                "Forgetting the second half is the most common reason a change appears to be ignored."
+              ],
+              "example": [
+                "nmcli connection modify work ipv4.addresses 192.168.1.150/24",
+                "nmcli connection up work",
+                "nmcli device show"
+              ],
+              "parts": [
+                [
+                  "modify",
+                  "change the saved profile only — nothing changes yet."
+                ],
+                [
+                  "up / down",
+                  "apply, or deactivate, the connection."
+                ],
+                [
+                  "reload",
+                  "re-read profiles from disk after editing files."
+                ]
+              ],
+              "remember": "modify saves, up applies — do both or nothing happens."
+            }
+          ]
+        },
+        {
+          "title": "Hostname and name resolution",
+          "concepts": [
+            {
+              "n": 8,
+              "title": "Setting the hostname and hosts file",
+              "main": "The hostname identifies the machine; /etc/hosts maps names to addresses locally.",
+              "simple": [
+                "The DNS server is the public phone book. /etc/hosts is your private one-page list for local machines.",
+                "hostnamectl or hostnamectl sets the name permanently — plain `hostname` only changes it until reboot."
+              ],
+              "example": [
+                "hostname",
+                "hostnamectl set-hostname servera",
+                "cat /etc/hosts"
+              ],
+              "parts": [
+                [
+                  "hostnamectl set-hostname NAME",
+                  "set it permanently."
+                ],
+                [
+                  "/etc/hosts",
+                  "local name-to-address mapping, checked before DNS."
+                ],
+                [
+                  "/etc/resolv.conf",
+                  "which DNS servers to ask."
+                ],
+                [
+                  "getent hosts NAME",
+                  "resolve using the real system order, hosts then DNS."
+                ]
+              ],
+              "remember": "hostnamectl sets it permanently; /etc/hosts is your local list; getent shows the real resolution order."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Show interfaces / addresses",
+          "ip link show   /   ip addr show"
+        ],
+        [
+          "Show the routing table",
+          "ip route show"
+        ],
+        [
+          "Show listening sockets",
+          "ss -tulpen"
+        ],
+        [
+          "Test reachability",
+          "ping -c 3 ADDRESS"
+        ],
+        [
+          "Trace the path",
+          "tracepath ADDRESS"
+        ],
+        [
+          "List devices / profiles",
+          "nmcli device status   /   nmcli connection show"
+        ],
+        [
+          "Add a static connection",
+          "nmcli connection add type ethernet con-name NAME ifname DEV ipv4.method manual ipv4.addresses A/P"
+        ],
+        [
+          "Apply a profile",
+          "nmcli connection up NAME"
+        ],
+        [
+          "Set the hostname",
+          "hostnamectl set-hostname NAME"
+        ]
+      ],
+      "inOneSentence": "Data moves application → transport → internet → link; ip configures and ss inspects; NetworkManager owns the files so use nmcli; and remember modify saves while up applies."
+    },
+    {
+      "id": "rh124-14",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 13,
+      "title": "Archiving and Transferring Files",
+      "partTitle": "Chapter 13 — tar, compression, scp, sftp and rsync",
+      "exam": "RHCSA (EX200) — 10.1-10.3 archiving and transferring files",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "tar archives",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "What an archive contains",
+              "main": "A tar archive holds the files' data plus their metadata plus an index, in one file.",
+              "simple": [
+                "Think of packing a whole drawer into one box, including a list of what's inside. Because the index travels with the data, you can pull out one member without unpacking everything."
+              ],
+              "example": [
+                "tar -czf backup.tar.gz /etc/ssh",
+                "tar -tzf backup.tar.gz",
+                "tar -xzf backup.tar.gz -C /tmp/restore"
+              ],
+              "parts": [
+                [
+                  "-c",
+                  "create an archive."
+                ],
+                [
+                  "-x",
+                  "extract."
+                ],
+                [
+                  "-t",
+                  "list the contents without extracting."
+                ],
+                [
+                  "-f FILE",
+                  "the archive filename — almost always required."
+                ],
+                [
+                  "-v",
+                  "verbose: show each file as it works."
+                ],
+                [
+                  "-C DIR",
+                  "change directory before doing the work."
+                ]
+              ],
+              "remember": "tar -c creates, -x extracts, -t lists — and -f FILE names the archive."
+            },
+            {
+              "n": 2,
+              "title": "Compression is a separate flag",
+              "main": "tar bundles, gzip compresses — the flags combine both in one step.",
+              "simple": [
+                "Bundling many files and shrinking them are two different jobs, joined by different letters.",
+                "Forgetting -z on extract is a common cause of 'it will not unpack'."
+              ],
+              "example": [
+                "tar -czf archive.tar.gz dir    # gzip",
+                "tar -cjf archive.tar.bz2 dir   # bzip2",
+                "tar -cJf archive.tar.xz dir    # xz, best ratio"
+              ],
+              "parts": [
+                [
+                  "-z",
+                  "gzip — fast, the usual default."
+                ],
+                [
+                  "-j",
+                  "bzip2 — a little smaller."
+                ],
+                [
+                  "-J",
+                  "xz — smallest, but slowest."
+                ],
+                [
+                  "must match",
+                  "the compression flag on extract must match the one used to create."
+                ]
+              ],
+              "remember": "-z gzip, -j bzip2, -J xz — and the extract flag must match the create flag."
+            },
+            {
+              "n": 3,
+              "title": "The leading-slash message",
+              "main": "tar strips leading slashes so an archive cannot overwrite your system by accident.",
+              "simple": [
+                "When you archive an absolute path, tar prints 'Removing leading /' and stores it relative.",
+                "That message is a safety feature, not an error. It is why an extracted archive lands in the current directory rather than overwriting /."
+              ],
+              "parts": [
+                [
+                  "Removing leading '/'",
+                  "tar is protecting you — the paths were stored relative."
+                ],
+                [
+                  "-P",
+                  "preserve absolute paths. Dangerous — only when you truly mean it."
+                ],
+                [
+                  "relative paths",
+                  "are the safe default, and why restores land where you cd to."
+                ]
+              ],
+              "remember": "'Removing leading /' is tar protecting you, not an error.",
+              "warning": "-P preserves absolute paths and can overwrite your system on extract. Do not use it casually."
+            }
+          ]
+        },
+        {
+          "title": "Transferring files",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "scp and sftp",
+              "main": "Both run over SSH, so they use the same keys and the same encryption as your login.",
+              "simple": [
+                "Wherever ssh already works, these already work — no extra setup, no separate password.",
+                "scp copies; sftp gives you an interactive file transfer session, similar to an old ftp but encrypted."
+              ],
+              "example": [
+                "scp file.txt student@servera:/tmp/",
+                "scp -r dir/ student@servera:/tmp/",
+                "sftp student@servera"
+              ],
+              "parts": [
+                [
+                  "scp SRC DEST",
+                  "copy over SSH."
+                ],
+                [
+                  "-r",
+                  "copy a whole directory."
+                ],
+                [
+                  "user@host:/path",
+                  "the remote side — the colon is what makes it remote."
+                ],
+                [
+                  "sftp",
+                  "interactive, encrypted transfer."
+                ],
+                [
+                  "-i KEY",
+                  "use a specific private key."
+                ]
+              ],
+              "remember": "scp copies over SSH with the same keys as your login; the colon marks the remote side."
+            },
+            {
+              "n": 5,
+              "title": "rsync",
+              "main": "rsync sends only the differences between the source and the destination.",
+              "simple": [
+                "scp copies every byte every time — fine for a small file, wasteful for a large tree. rsync compares first and transfers only what changed.",
+                "That is why rsync is the right tool for repeated syncs of the same directory."
+              ],
+              "example": [
+                "rsync -av /home/ student@servera:/home/",
+                "rsync -avz /data/ student@servera:/data/",
+                "rsync -av --delete /src/ /dst/"
+              ],
+              "parts": [
+                [
+                  "-a",
+                  "archive mode: recurse and preserve permissions, times, symlinks."
+                ],
+                [
+                  "-v",
+                  "verbose."
+                ],
+                [
+                  "-z",
+                  "compress in transit."
+                ],
+                [
+                  "-n",
+                  "dry run — show what would happen without doing it."
+                ],
+                [
+                  "--delete",
+                  "remove destination files that are gone from the source."
+                ],
+                [
+                  "trailing slash",
+                  "on /data/ copies the contents; on /data copies the folder itself."
+                ]
+              ],
+              "remember": "rsync -a preserves and transfers only differences; a trailing slash decides whether the folder or its contents are copied.",
+              "warning": "--delete removes destination files that no longer exist in the source. Dry-run with -n first."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Create an archive",
+          "tar -czf FILE.tar.gz DIR"
+        ],
+        [
+          "List contents",
+          "tar -tzf FILE.tar.gz"
+        ],
+        [
+          "Extract",
+          "tar -xzf FILE.tar.gz -C DIR"
+        ],
+        [
+          "Compression flags",
+          "-z gzip   -j bzip2   -J xz"
+        ],
+        [
+          "Copy over SSH",
+          "scp [-r] SRC user@host:/path"
+        ],
+        [
+          "Interactive transfer",
+          "sftp user@host"
+        ],
+        [
+          "Efficient sync",
+          "rsync -avz SRC/ user@host:DEST/"
+        ],
+        [
+          "Safe preview",
+          "rsync -avn (dry run)"
+        ]
+      ],
+      "inOneSentence": "tar -c/-x/-t bundle and unpack with -f naming the file; compression is a separate flag that must match; and rsync -a transfers only what changed."
+    },
+    {
+      "id": "rh124-15",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 14,
+      "title": "Installing and Updating Software Packages",
+      "partTitle": "Chapter 14 — subscriptions, RPM, dnf, repositories and modules",
+      "exam": "RHCSA (EX200) — 11.1-11.4 package management",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Subscriptions",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "Registering the system",
+              "main": "Registering attaches a Red Hat subscription to the machine so it can reach the official repositories.",
+              "simple": [
+                "Until it is registered, the machine cannot download packages from Red Hat's servers — so this comes before any dnf install.",
+                "The username and password are the ones from your subscription account, not the root password."
+              ],
+              "example": [
+                "subscription-manager register",
+                "subscription-manager list --installed",
+                "subscription-manager unregister"
+              ],
+              "parts": [
+                [
+                  "register",
+                  "attach a subscription — needed before dnf can fetch anything."
+                ],
+                [
+                  "list --installed",
+                  "show what subscription is attached."
+                ],
+                [
+                  "unregister",
+                  "detach it, e.g. when snapshotting a lab VM."
+                ]
+              ],
+              "remember": "Register before installing — until then the official repositories are out of reach."
+            }
+          ]
+        },
+        {
+          "title": "RPM underneath",
+          "concepts": [
+            {
+              "n": 2,
+              "title": "What an RPM actually holds",
+              "main": "An RPM packages files together with metadata: name, version, dependencies, licence, and a scriptlet history.",
+              "simple": [
+                "The metadata is why rpm -q --whatprovides works: the package manager knows every file it installed, which is how you trace a config file back to its package.",
+                "Know the query flags — they answer most package questions instantly."
+              ],
+              "example": [
+                "rpm -q bash",
+                "rpm -qi bash",
+                "rpm -ql bash",
+                "rpm -qf /usr/bin/bash",
+                "rpm -q --whatprovides /usr/bin/bash"
+              ],
+              "parts": [
+                [
+                  "-q NAME",
+                  "is it installed?"
+                ],
+                [
+                  "-qi",
+                  "full information about it."
+                ],
+                [
+                  "-ql",
+                  "every file the package owns."
+                ],
+                [
+                  "-qf FILE",
+                  "which package owns this file? The reverse lookup."
+                ],
+                [
+                  "--whatprovides",
+                  "which package provides this file — works even for a file no package has installed."
+                ],
+                [
+                  "exit 1",
+                  "not installed — for rpm -q this is a valid answer, not an error."
+                ]
+              ],
+              "remember": "rpm -qf FILE answers which package owns a file; exit code 1 from rpm -q just means not installed."
+            }
+          ]
+        },
+        {
+          "title": "dnf",
+          "concepts": [
+            {
+              "n": 3,
+              "title": "Why you use dnf rather than rpm",
+              "main": "dnf understands repositories and resolves dependencies for you; rpm installs only the single file you name.",
+              "simple": [
+                "rpm asks you to work out the dependency order yourself. dnf reads the repository, works out the whole set of packages needed, and installs them together.",
+                "In daily use you almost always want dnf."
+              ],
+              "example": [
+                "sudo dnf install httpd",
+                "sudo dnf remove httpd",
+                "sudo dnf update",
+                "dnf info httpd",
+                "dnf list installed",
+                "dnf provides */sshd_config"
+              ],
+              "parts": [
+                [
+                  "install / remove",
+                  "add or delete a package."
+                ],
+                [
+                  "update",
+                  "bring installed packages up to their newest available version."
+                ],
+                [
+                  "info",
+                  "details, including which repository offers it."
+                ],
+                [
+                  "list installed",
+                  "everything currently installed."
+                ],
+                [
+                  "provides",
+                  "search for which package provides a file — the dnf answer to rpm -qf."
+                ],
+                [
+                  "history",
+                  "a log of every transaction dnf performed."
+                ],
+                [
+                  "history undo N",
+                  "roll back a specific transaction."
+                ]
+              ],
+              "remember": "dnf resolves dependencies across repositories; rpm installs only the one file you name."
+            },
+            {
+              "n": 4,
+              "title": "CURRENCY: dnf, not dnf5",
+              "main": "On RHEL 10 the daily tool is still dnf; the separate dnf5 package is not installed by default.",
+              "simple": [
+                "Some RHEL 9 and 10 documentation refers to dnf5, which is a different, faster implementation. It is available as a separate package.",
+                "This was confirmed by observation on a live RHEL 10.2 host: dnf 4.20.0 is present and dnf5 is not installed. Use dnf."
+              ],
+              "example": [
+                "dnf --version",
+                "rpm -q dnf dnf5"
+              ],
+              "parts": [
+                [
+                  "dnf 4.20.0",
+                  "the installed tool on the verified RHEL 10.2 host."
+                ],
+                [
+                  "dnf5",
+                  "a separate package, not installed by default."
+                ],
+                [
+                  "use dnf",
+                  "for the exam and for normal administration."
+                ]
+              ],
+              "remember": "RHEL 10 ships dnf, not dnf5 — dnf5 is a separate package you would have to install."
+            }
+          ]
+        },
+        {
+          "title": "Repositories and modules",
+          "concepts": [
+            {
+              "n": 5,
+              "title": "Managing repositories",
+              "main": "A repository is a source of packages; dnf only uses the ones you enable.",
+              "simple": [
+                "Think of a shopping list. A disabled repository is a shop you are not allowed into — its packages simply do not exist as far as dnf is concerned.",
+                "Repository files live under /etc/yum.repos.d/."
+              ],
+              "example": [
+                "dnf repolist --all",
+                "dnf repolist enabled",
+                "sudo dnf config-manager --set-enabled REPO",
+                "ls /etc/yum.repos.d/"
+              ],
+              "parts": [
+                [
+                  "repolist --all",
+                  "every repository, enabled or not."
+                ],
+                [
+                  "--set-enabled / --set-disabled",
+                  "turn one on or off."
+                ],
+                [
+                  "/etc/yum.repos.d/",
+                  "where the repository definitions live."
+                ],
+                [
+                  "BaseOS",
+                  "core OS packages, long-lived."
+                ],
+                [
+                  "AppStream",
+                  "applications and streams, mid-life."
+                ],
+                [
+                  "CRB / CodeReady",
+                  "extra content not enabled by default."
+                ]
+              ],
+              "remember": "repolist --all shows everything; disabled means dnf pretends it does not exist."
+            },
+            {
+              "n": 6,
+              "title": "Application Streams and modules",
+              "main": "Application Stream splits large software into separately versioned streams, so you can run several versions side by side.",
+              "simple": [
+                "Without modules you would have to choose one version of, say, PostgreSQL for the whole system. Modules let each application pick its own version.",
+                "That is what removes the classic dependency conflict where two applications need different major versions of the same thing."
+              ],
+              "example": [
+                "dnf module list",
+                "dnf module list --enabled",
+                "dnf module enable postgresql:13",
+                "dnf module reset postgresql"
+              ],
+              "parts": [
+                [
+                  "dnf module list",
+                  "every stream available."
+                ],
+                [
+                  "--enabled",
+                  "only the streams currently enabled."
+                ],
+                [
+                  "module enable NAME:STREAM",
+                  "lock in a specific version."
+                ],
+                [
+                  "module reset NAME",
+                  "remove the lock."
+                ],
+                [
+                  "stream",
+                  "a version of one application."
+                ],
+                [
+                  "module reset",
+                  "the way back out if you lock in the wrong stream."
+                ]
+              ],
+              "remember": "Modules let different applications use different major versions of the same software."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Register for updates",
+          "subscription-manager register"
+        ],
+        [
+          "Is it installed?",
+          "rpm -q NAME"
+        ],
+        [
+          "Which package owns this file?",
+          "rpm -qf FILE   /   dnf provides FILE"
+        ],
+        [
+          "Install / remove",
+          "dnf install / dnf remove NAME"
+        ],
+        [
+          "Update everything",
+          "dnf update"
+        ],
+        [
+          "Repositories",
+          "dnf repolist --all"
+        ],
+        [
+          "Modules",
+          "dnf module list / enable NAME:STREAM / reset NAME"
+        ],
+        [
+          "Roll back a change",
+          "dnf history undo N"
+        ]
+      ],
+      "inOneSentence": "Register to reach the official repositories; rpm knows which package owns which file while dnf resolves dependencies across repos; and modules let two apps use different major versions of the same software."
+    },
+    {
+      "id": "rh124-16",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 15,
+      "title": "Accessing Linux File Systems",
+      "partTitle": "Chapter 15 — block devices, mounting, and finding files",
+      "exam": "RHCSA (EX200) — 12.1-12.3 mounting file systems and finding files",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Block devices and the tree",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "One directory tree for every disk",
+              "main": "Linux attaches every storage device into a single directory tree, so there are no drive letters.",
+              "simple": [
+                "Unlike Windows, adding a disk does not create a new letter. Its contents appear as a folder inside the existing tree.",
+                "The folder where a device appears is its mount point."
+              ],
+              "example": [
+                "lsblk",
+                "lsblk -f",
+                "blkid"
+              ],
+              "parts": [
+                [
+                  "/dev/sd*, /dev/vd*, /dev/nvme*",
+                  "names for disks depending on the bus type."
+                ],
+                [
+                  "/dev/sda1",
+                  "a partition on the first SATA/SCSI disk."
+                ],
+                [
+                  "/dev/vg0/data",
+                  "a logical volume."
+                ],
+                [
+                  "lsblk",
+                  "show devices, sizes and mount points as a tree."
+                ],
+                [
+                  "lsblk -f",
+                  "also show filesystem type and UUID."
+                ],
+                [
+                  "blkid",
+                  "show UUID and filesystem type without mounting."
+                ]
+              ],
+              "remember": "Every disk joins the one tree at a mount point — lsblk shows what is attached where."
+            },
+            {
+              "n": 2,
+              "title": "Mounting and unmounting",
+              "main": "mount attaches a filesystem at a folder; umount detaches it.",
+              "simple": [
+                "The folder must exist before you mount into it — create it first or mount fails.",
+                "You cannot unmount a folder that is in use. That single rule causes most 'device is busy' errors."
+              ],
+              "example": [
+                "mkdir /mnt/data",
+                "sudo mount /dev/sdb1 /mnt/data",
+                "findmnt",
+                "sudo umount /mnt/data"
+              ],
+              "parts": [
+                [
+                  "mount SRC TARGET",
+                  "attach a filesystem at a folder."
+                ],
+                [
+                  "umount TARGET",
+                  "detach it."
+                ],
+                [
+                  "mount -a",
+                  "mount everything in /etc/fstab."
+                ],
+                [
+                  "-t TYPE",
+                  "specify the filesystem type, e.g. -t nfs."
+                ],
+                [
+                  "findmnt",
+                  "show what is mounted where — easier to read than mount output."
+                ],
+                [
+                  "device is busy",
+                  "something is using the folder — cd out and close files there."
+                ]
+              ],
+              "remember": "Create the mount point first; umount fails while anything is using the folder.",
+              "warning": "Unmounting a filesystem with unmounted-but-busy data risks losing writes. Close everything under the mount point first."
+            },
+            {
+              "n": 3,
+              "title": "UUIDs and persistent mounts",
+              "main": "Naming a mount by device path is fragile; naming it by UUID survives hardware changes.",
+              "simple": [
+                "Device names like /dev/sdb can change between boots depending on detection order. A UUID is assigned to the filesystem itself and does not move.",
+                "That is why /etc/fstab entries are written with UUID= on a modern system."
+              ],
+              "example": [
+                "blkid /dev/sdb1",
+                "lsblk -f",
+                "grep UUID /etc/fstab"
+              ],
+              "parts": [
+                [
+                  "UUID",
+                  "a permanent identifier stored inside the filesystem."
+                ],
+                [
+                  "/dev/sdb",
+                  "a name the kernel assigns — it can change between boots."
+                ],
+                [
+                  "blkid",
+                  "read the UUID of a device."
+                ]
+              ],
+              "remember": "Mount by UUID in fstab — device names can change, UUIDs do not."
+            }
+          ]
+        },
+        {
+          "title": "Finding files",
+          "concepts": [
+            {
+              "n": 4,
+              "title": "find versus locate",
+              "main": "find walks the filesystem live; locate looks up a pre-built index and is instant but may be out of date.",
+              "simple": [
+                "Imagine searching every room in the building (find) versus reading a directory list someone compiled yesterday (locate).",
+                "A file you created two minutes ago is in the building but not on yesterday's list — which is why find finds it and locate does not."
+              ],
+              "example": [
+                "find / -name 'sshd_config' 2>/dev/null",
+                "find /var -type f -mtime -1",
+                "find / -user alice",
+                "locate sshd_config",
+                "sudo updatedb"
+              ],
+              "parts": [
+                [
+                  "find PATH -name PATTERN",
+                  "search live. -name matches the filename."
+                ],
+                [
+                  "-type f / -type d",
+                  "regular file or directory."
+                ],
+                [
+                  "-size +100M",
+                  "larger than 100 MB."
+                ],
+                [
+                  "-mtime -1",
+                  "modified within the last day."
+                ],
+                [
+                  "-user alice",
+                  "owned by a user."
+                ],
+                [
+                  "2>/dev/null",
+                  "silence the permission errors you will get searching /."
+                ],
+                [
+                  "updatedb",
+                  "rebuild the locate database."
+                ]
+              ],
+              "remember": "find searches live and is always right; locate is instant but needs updatedb after new files."
+            },
+            {
+              "n": 5,
+              "title": "Useful find combinations",
+              "main": "find is most powerful when you combine tests and actions.",
+              "simple": [
+                "Two or three tests narrow it to exactly what you want, and -exec or -delete then acts on the results.",
+                "Start narrow rather than piping to grep afterwards."
+              ],
+              "example": [
+                "find / -type f -size +100M 2>/dev/null",
+                "find /tmp -name '*.tmp' -mtime +30 -delete",
+                "find / -name '*.conf' -exec grep -l 'PermitRootLogin' {} \\;"
+              ],
+              "parts": [
+                [
+                  "ANDing tests",
+                  "listing tests one after another means all must match."
+                ],
+                [
+                  "-o",
+                  "or — either condition."
+                ],
+                [
+                  "-exec CMD {} \\;",
+                  "run a command on each result; {} is the filename."
+                ],
+                [
+                  "-delete",
+                  "delete the matches — try without it first."
+                ],
+                [
+                  "-maxdepth N",
+                  "limit how deep to search — much faster."
+                ]
+              ],
+              "remember": "Combine tests to narrow it down; use -maxdepth for speed and -delete carefully."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "See devices and mount points",
+          "lsblk -f"
+        ],
+        [
+          "Get a filesystem's UUID",
+          "blkid /dev/sdb1"
+        ],
+        [
+          "Mount / unmount",
+          "mount SRC TARGET   /   umount TARGET"
+        ],
+        [
+          "Test fstab",
+          "mount -a"
+        ],
+        [
+          "Read what is mounted",
+          "findmnt"
+        ],
+        [
+          "Search live",
+          "find / -name PATTERN 2>/dev/null"
+        ],
+        [
+          "By age / size / owner",
+          "-mtime -1   -size +100M   -user alice"
+        ],
+        [
+          "Act on results",
+          "-exec CMD {} \\;   /   -delete"
+        ],
+        [
+          "Instant indexed search",
+          "locate NAME   (updatedb to refresh)"
+        ]
+      ],
+      "inOneSentence": "Every disk joins the one tree at a mount point, mount by UUID because device names move, and find searches live while locate is instant but can be out of date."
+    },
+    {
+      "id": "rh124-17",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 16,
+      "title": "Analyzing Servers and Getting Support",
+      "partTitle": "Chapter 16 — Web Console, the Customer Portal and Red Hat Insights",
+      "exam": "RHCSA (EX200) — 13.1-13.2 obtaining support",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Web Console (Cockpit)",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "A browser-based admin interface",
+              "main": "Web Console gives you a graphical interface to the server over HTTPS on port 9090, without installing a desktop.",
+              "simple": [
+                "Useful when you want to look at a server from a laptop, or when you do not want to put a desktop on a headless machine.",
+                "It is not installed by default and it does not start until you enable it."
+              ],
+              "example": [
+                "sudo dnf install cockpit",
+                "sudo systemctl enable --now cockpit.socket",
+                "sudo firewall-cmd --add-service=cockpit --permanent",
+                "sudo firewall-cmd --reload",
+                "https://servera:9090"
+              ],
+              "parts": [
+                [
+                  "cockpit.socket",
+                  "the socket unit that activates it."
+                ],
+                [
+                  "port 9090",
+                  "where it listens, over HTTPS."
+                ],
+                [
+                  "enable --now",
+                  "start it and make it start at boot."
+                ],
+                [
+                  "must allow the firewall",
+                  "or the browser simply cannot connect."
+                ],
+                [
+                  "not installed by default",
+                  "dnf install cockpit first."
+                ]
+              ],
+              "remember": "Web Console is not installed by default, needs enable --now, and must be allowed through firewalld."
+            }
+          ]
+        },
+        {
+          "title": "Support and Insights",
+          "concepts": [
+            {
+              "n": 2,
+              "title": "The Red Hat Customer Portal",
+              "main": "access.redhat.com holds documentation, knowledgebase articles, downloads and support cases.",
+              "simple": [
+                "The knowledgebase is where a documented fix for a specific error message usually lives, which is faster than searching the web.",
+                "A support case needs a valid subscription."
+              ],
+              "parts": [
+                [
+                  "documentation",
+                  "the official product manuals."
+                ],
+                [
+                  "knowledgebase",
+                  "articles indexed by error message — search the message, not the symptom."
+                ],
+                [
+                  "cases",
+                  "support tickets, requiring an active subscription."
+                ],
+                [
+                  "downloads",
+                  "ISOs, packages and container images."
+                ]
+              ],
+              "remember": "Search the knowledgebase by the literal error message, not by a description of the problem."
+            },
+            {
+              "n": 3,
+              "title": "Red Hat Insights",
+              "main": "Insights runs a lightweight client that uploads configuration metadata so Red Hat can flag problems before they happen.",
+              "simple": [
+                "It checks your running configuration against Red Hat's knowledge of what breaks, and tells you about issues affecting that particular combination of versions.",
+                "It uploads metadata about the system, not your data. That distinction is worth being clear about."
+              ],
+              "example": [
+                "sudo dnf install insights-client",
+                "sudo insights-client start",
+                "insights-client status",
+                "cat /var/lib/insights-client/insights-data.json | wc -c"
+              ],
+              "parts": [
+                [
+                  "insights-client",
+                  "the agent on your machine."
+                ],
+                [
+                  "insights-client start",
+                  "begin collecting and reporting."
+                ],
+                [
+                  "metadata",
+                  "configuration facts, not your application data."
+                ],
+                [
+                  "the rule",
+                  "clear the data with insights-client stop and clear."
+                ],
+                [
+                  "recommendations",
+                  "proactive warnings about known issues affecting your version mix."
+                ]
+              ],
+              "remember": "Insights uploads configuration metadata, not your data, and warns about issues affecting your exact version combination."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Install Web Console",
+          "dnf install cockpit"
+        ],
+        [
+          "Start it",
+          "systemctl enable --now cockpit.socket"
+        ],
+        [
+          "Open the firewall",
+          "firewall-cmd --add-service=cockpit --permanent && firewall-cmd --reload"
+        ],
+        [
+          "Reach it",
+          "https://host:9090"
+        ],
+        [
+          "Start Insights",
+          "insights-client start"
+        ],
+        [
+          "Check Insights",
+          "insights-client status"
+        ]
+      ],
+      "inOneSentence": "Web Console gives a browser admin UI on 9090 but must be installed and enabled; the knowledgebase is searched by exact error message; and Insights reads configuration metadata, not your data."
+    },
+    {
+      "id": "rh124-18",
+      "book": "RH124",
+      "bookTitle": "Red Hat Enterprise Linux Administration I",
+      "n": 17,
+      "title": "Comprehensive Review",
+      "partTitle": "Chapter 17 — objectives map, command reference, practice scenario and exam-day checklist",
+      "exam": "RHCSA (EX200) — revision across all objectives",
+      "source": "RH124 course material (Red Hat Enterprise Linux Administration I)",
+      "status": "written",
+      "sections": [
+        {
+          "title": "Review and practice",
+          "concepts": [
+            {
+              "n": 1,
+              "title": "The highest-yield commands",
+              "main": "A small set of commands answers a large share of the exam.",
+              "simple": [
+                "If you only have time to be fluent with a limited set of tools, these give the most coverage per minute spent.",
+                "Knowing one command thoroughly beats half-knowing five."
+              ],
+              "example": [
+                "ls -l",
+                "find / -name X 2>/dev/null",
+                "systemctl status/enable --now SVC",
+                "chmod/chown",
+                "useradd -m/usermod -aG",
+                "rpm -qf / dnf provides",
+                "tar -czf / -xzf",
+                "journalctl -u/-p/-f",
+                "nmcli connection up",
+                "ss -tulpen"
+              ],
+              "parts": [
+                [
+                  "files",
+                  "ls -l, find, chmod, chown"
+                ],
+                [
+                  "users",
+                  "useradd -m, usermod -aG, passwd, id"
+                ],
+                [
+                  "services",
+                  "systemctl status / enable --now / is-active"
+                ],
+                [
+                  "packages",
+                  "dnf install, rpm -qf, dnf provides"
+                ],
+                [
+                  "logs",
+                  "journalctl -u -p -f"
+                ],
+                [
+                  "network",
+                  "ip, ss, nmcli"
+                ]
+              ],
+              "remember": "Be fluent with this list before learning anything rarer."
+            },
+            {
+              "n": 2,
+              "title": "Working a practice scenario",
+              "main": "Real administration problems arrive as a story: several machines, a complaint, and something to make work.",
+              "simple": [
+                "The skill being tested is ordering: gather facts first, identify the actual cause, change the minimum, then verify.",
+                "Changing several things at once leaves you unable to say which one mattered."
+              ],
+              "parts": [
+                [
+                  "gather",
+                  "read the error, check status and logs, look at the config."
+                ],
+                [
+                  "identify",
+                  "find the cause, not the nearest-looking thing."
+                ],
+                [
+                  "change minimally",
+                  "one thing at a time."
+                ],
+                [
+                  "verify",
+                  "prove the symptom is gone, do not assume it."
+                ],
+                [
+                  "record",
+                  "note what you changed and why."
+                ]
+              ],
+              "remember": "Gather, identify, change one thing, verify — in that order, every time."
+            },
+            {
+              "n": 3,
+              "title": "Exam-day habits",
+              "main": "Time management and reading questions carefully decide more marks than obscure knowledge.",
+              "simple": [
+                "Mark questions you cannot answer quickly and come back. A stuck question costs the easy ones behind it.",
+                "Read what the question asks you to do — 'list' and 'show' want different outputs."
+              ],
+              "parts": [
+                [
+                  "first pass",
+                  "answer everything you can do quickly."
+                ],
+                [
+                  "mark and move on",
+                  "do not burn five minutes on one item."
+                ],
+                [
+                  "second pass",
+                  "return to the marked ones with the time left."
+                ],
+                [
+                  "read the verb",
+                  "list, show, configure — they want different things."
+                ],
+                [
+                  "verify",
+                  "check a changed service actually works, do not just that it started."
+                ]
+              ],
+              "remember": "Mark what you cannot do and come back — a stuck question costs you the easy ones behind it."
+            }
+          ]
+        }
+      ],
+      "revision": [
+        [
+          "Highest-yield commands",
+          "ls -l, find, systemctl, chmod, useradd -m, rpm -qf, journalctl, nmcli"
+        ],
+        [
+          "Problem-solving order",
+          "gather -> identify -> change one thing -> verify"
+        ],
+        [
+          "Exam time",
+          "first pass quick, mark the rest, return at the end"
+        ]
+      ],
+      "inOneSentence": "Be fluent with a dozen high-yield commands, work problems by gathering first and changing one thing at a time, and on exam day mark what you cannot do rather than getting stuck."
+    },
+    {
       "id": "rh134-01",
       "book": "RH134",
       "bookTitle": "Red Hat Enterprise Linux Administration II",
