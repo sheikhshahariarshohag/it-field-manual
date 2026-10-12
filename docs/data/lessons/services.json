@@ -2061,7 +2061,7 @@
     "tech": "rhel",
     "title": "NFS",
     "summary": "RHEL 10 service profile for 12-nfs.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -2171,6 +2171,23 @@
         "risk": "caution"
       },
       {
+        "h": "SELinux: the /srv trap that stops unprivileged access",
+        "p": [
+          "A freshly created directory under /srv is NOT labelled as exportable content:",
+          "",
+          "  unconfined_u:object_r:var_t:s0   /srv/nfs/shared",
+          "",
+          "var_t is the generic type for /srv. SELinux does not treat it as NFS content, so an unprivileged user cannot read the export even though it is exported and the permissions say they should be able to.",
+          "",
+          "Root can still read it, which is what makes this confusing - the export looks like it works until someone logs in as a normal user.",
+          "",
+          "Fix it by declaring the context and relabelling:"
+        ],
+        "code": "semanage fcontext -a -t nfs_t '/srv/nfs/shared(/.*)?'\nrestorecon -Rv /srv/nfs/shared\nls -Zd /srv/nfs/shared    # now nfs_t\n\n# undo:\nsemanage fcontext -d '/srv/nfs/shared(/.*)?'",
+        "where": "RHEL shell, as root",
+        "risk": "caution"
+      },
+      {
         "h": "firewalld",
         "p": [
           "For NFSv3 environments where ancillary daemon ports must be predictable for firewalld rules, pin them to fixed ports in `/etc/nfs.conf` (`[mountd] port=`, `[statd] port=`, etc.) rather than relying on dynamically assigned ports."
@@ -2183,6 +2200,23 @@
         "h": "Logging",
         "p": [],
         "code": "journalctl -u nfs-server                    # 🟢\njournalctl -u nfs-server -b\njournalctl -k | grep -i nfs                 # 🟢 kernel-level NFS messages (the actual data-path daemon is kernel-resident)\nrpcinfo -p                                   # 🟢 useful diagnostic for NFSv3/rpcbind-dependent troubleshooting",
+        "where": "RHEL shell",
+        "risk": "caution"
+      },
+      {
+        "h": "Testing an NFS server properly (and the trap that fakes success)",
+        "p": [
+          "The obvious test lies to you. If the mount fails but the mount point is an ordinary directory, a write still reports success and reads back correctly - because you were writing to a local folder the whole time.",
+          "",
+          "This was hit for real on RHEL 10.2: mounting 127.0.0.1 against an export that allowed only 192.168.174.0/24 failed with",
+          "",
+          "  mount.nfs: access denied by server while mounting",
+          "",
+          "yet the follow-up write and read both appeared to work. Only looking at the server-side export directory revealed the file was never there.",
+          "",
+          "The rule: always confirm the write from the SERVER's side, never from the mount point. And make sure the address you connect FROM matches the export's client list - 127.0.0.1 is not a shortcut past an access list."
+        ],
+        "code": "# 1. does a client even see the export?\nshowmount -e 192.168.1.101\n\n# 2. mount from an address the export actually allows\nmount -t nfs -o vers=4 192.168.1.101:/srv/nfs/shared /mnt/nfstest\nfindmnt -no SOURCE,FSTYPE /mnt/nfstest\n\n# 3. write THROUGH the mount\necho proof > /mnt/nfstest/proof.txt\n\n# 4. THE ACTUAL PROOF - read it from the server side, not the mount\nls -l /srv/nfs/shared/proof.txt\ncat /srv/nfs/shared/proof.txt\n\n# 5. clean up\numount /mnt/nfstest",
         "where": "RHEL shell",
         "risk": "caution"
       },
@@ -2243,41 +2277,63 @@
     ],
     "failures": [
       {
-        "why": "Common mistake.",
+        "why": "🔴 Using `no_root_squash` without a reason. ",
         "fix": "🔴 Using `no_root_squash` without a specific, well-understood reason — a significant privilege-escalation exposure if the client isn't fully trusted."
       },
       {
-        "why": "Common mistake.",
+        "why": "🟡 Forgetting `exportfs -ra` after editing /etc/exports. ",
         "fix": "🟡 Forgetting `exportfs -ra` after editing `/etc/exports` (or forgetting that a full `nfs-server` restart is disruptive to existing clients, and unnecessary for most export changes)."
       },
       {
-        "why": "Common mistake.",
+        "why": "🟡 Mismatched UID/GID between server and clients. ",
         "fix": "🟡 Mismatched UID/GID mapping between server and clients causing files to appear owned by the \"wrong\" user on the client side — a very common point of confusion when NFS is used without centralized identity (SSSD/LDAP, Profile 14)."
       },
       {
-        "why": "Common mistake.",
+        "why": "🟡 Exporting to too broad a range. ",
         "fix": "🟡 Exporting to an overly broad subnet/range rather than the specific hosts/subnet that actually need access."
       },
       {
-        "why": "Common mistake.",
+        "why": "🟡 Assuming NFS traffic is encrypted. ",
         "fix": "🟡 Assuming NFS traffic is encrypted by default — it isn't, unless Kerberos `sec=krb5p` is explicitly configured."
       },
       {
-        "why": "Common mistake.",
+        "why": "🟠 Forgetting SELinux booleans for NFS content. ",
         "fix": "🟠 Forgetting SELinux booleans for NFS-mounted home directories or nonstandard export content, leading to confusing \"permission denied\" symptoms despite correct Unix permissions."
+      },
+      {
+        "why": "A failed mount still accepts writes and reads them back. ",
+        "fix": "If the mount fails, the mount point stays an ordinary directory, so writing to it succeeds and reads back the right content while nothing has touched the export. Verify from the SERVER's export directory, never from the mount point, and connect from an address the export's client list actually allows. Seen on RHEL 10.2."
+      },
+      {
+        "why": "Unprivileged users cannot read a freshly created /srv export. ",
+        "fix": "A new directory under /srv is labelled `var_t`, which SELinux does not treat as exportable content. Root can still read it, so it looks correct until a normal user tries. Run `semanage fcontext -a -t nfs_t '/srv/nfs/shared(/.*)?'` then `restorecon -Rv /srv/nfs/shared`, and confirm with `ls -Zd`."
+      },
+      {
+        "why": "Files written over NFS are owned by nobody, even by root. ",
+        "fix": "That is `root_squash`, which is on by default and is the protection working as intended. It is not a permissions bug. Only change it with `no_root_squash` if you have a specific reason and understand the consequence."
       }
     ],
     "trouble": [
       "Problem: A client cannot mount an NFS export."
     ],
-    "quickRef": "Service:        NFS (Network File System)\nPackage:        nfs-utils\nsystemd unit:   nfs-server.service (server), nfs-client.target (client support units)\nDaemon:         kernel nfsd threads + rpc.mountd/rpc.idmapd/rpc.statd\nConfiguration:  /etc/exports, /etc/nfs.conf, /etc/idmapd.conf\nLogs:           journalctl -u nfs-server, journalctl -k\nPorts:          TCP/UDP 2049 (NFSv4); TCP/UDP 111 + ancillary ports (NFSv3)\n\nEssential commands:\n  exportfs -ra\n  exportfs -v\n  showmount -e SERVER\n  mount -t nfs SERVER:/export /mnt/point\n\nVerification:\n  exportfs -v (server) && mount | grep nfs (client) && a real read-write test\n\nTroubleshooting:\n  exportfs -v → firewall-cmd --list-all → ausearch -m avc → rpcinfo -p → journalctl -u nfs-server\n\nCritical warnings:\n  🔴 Never use no_root_squash without a specific, well-understood reason.\n  🟡 NFS is unencrypted by default — use Kerberos sec=krb5p across untrusted networks.\n  🟡 hard vs. soft mount choice materially affects client behavior during a server outage — choose deliberately.",
+    "quickRef": "Service:        NFS (Network File System)\nPackage:        nfs-utils                    # provides server AND client\nsystemd unit:   nfs-server.service\nDaemon:         kernel nfsd + rpcbind\nConfiguration:  /etc/exports, /etc/nfs.conf\nLogs:           journalctl -u nfs-server\nPorts:          TCP/UDP 2049 (NFSv4), TCP/UDP 111 (rpcbind)\n\n  Server:\n    systemctl enable --now nfs-server\n    exportfs -ra            # apply /etc/exports\n    exportfs -v             # what is exported, with resolved options\n    showmount -e SERVER     # what a client can see\n\n  Client:\n    mount -t nfs -o vers=4 SERVER:/path /mnt/point\n    findmnt -no SOURCE,FSTYPE /mnt/point\n\n  ALWAYS verify a write from the SERVER side:\n    cat /srv/nfs/shared/proof.txt\n    (checking through the mount point proves nothing - a failed mount\n     leaves a plain directory that still accepts writes)\n\n  SELinux - a new /srv dir is var_t, not exportable content:\n    semanage fcontext -a -t nfs_t '/srv/nfs/shared(/.*)?'\n    restorecon -Rv /srv/nfs/shared\n\n  Critical warnings:\n    - root_squash is ON by default: files you write over NFS come back owned by nobody.\n    - NFSv4 is unencrypted; use Kerberos sec=krb5p across untrusted networks.\n    - The export client list matches the address the client connects FROM.\n",
     "source": "Adapted from the author's own RHEL 10 service-profile notes (private study material; not redistributed). Verification status inherited from that source: source-checked, not execution-tested.",
     "objectives": [
       {
         "id": "RHCSA-6.2",
         "note": "Mount and unmount network file systems using NFS"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "mount -t nfs -o vers=4 192.168.174.133:/srv/nfs/shared /mnt/nfstest && echo x > /mnt/nfstest/proof.txt && cat /srv/nfs/shared/proof.txt",
+      "exit": 0,
+      "observed": "nfs-utils-2.8.3-5.el10_2.x86_64 | nfs-server.service disabled->enabled, active | tcp LISTEN 0.0.0.0:2049 and :111 (rpcbind) | showmount -e lists /srv/nfs/shared | exportfs -v shows sec=sys,rw,root_squash as the default option set | mount resolved to nfs4 vers=4.2 rsize=262144 | file written THROUGH the mount appeared server-side at /srv/nfs/shared/proof.txt, 23 bytes, owned by nobody"
+    },
+    "verifiedNote": "Tested on 2026-10-12 against a live RHEL 10.2 host with a genuine read-write round trip through an NFSv4.2 mount. Not a status check - a file was written over the mount and confirmed present in the server-side export directory."
   },
   {
     "id": "rhel-service-openssh-sshd",

@@ -45,7 +45,7 @@ and nothing here should be read as saying it has.
 
 | # | Limitation | Impact |
 |---|---|---|
-| B1 | ~~No technical entry is execution-tested~~ → **22 of 75 now are** (2026-10-12) | Real output from a live RHEL 10.2 host is recorded in `VERIFICATION_REGISTER.md` §5–§6 with date, OS, kernel and exit code. The remaining **53 are still source-checked only** and are labelled as such. B6 (`dnf4` vs `dnf5`) is **resolved**: RHEL 10.2 ships dnf 4.20.0 and no dnf5 |
+| B1 | ~~No technical entry is execution-tested~~ → **23 of 75 now are** (2026-10-12) | Real output from a live RHEL 10.2 host is recorded in `VERIFICATION_REGISTER.md` §5–§8 with date, OS, kernel and exit code. **16 of the 19 service profiles** are now execution-tested (NFS added 2026-10-12, §8) — the three still source-checked are the ones with no runnable service. The remaining **52 are still source-checked only** and are labelled as such. B6 (`dnf4` vs `dnf5`) is **resolved**: RHEL 10.2 ships dnf 4.20.0 and no dnf5 |
 | B2 | **No entry has had an independent review** | A systematic error would survive. Re-reading my own text is not independent review. |
 | B3 | **No Microsoft Windows Server VM** | Windows Server procedures cannot be executed |
 | B4 | **No Cisco IOS, no MikroTik CHR** | Cisco and MikroTik procedures cannot be executed |

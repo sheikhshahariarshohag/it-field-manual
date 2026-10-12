@@ -348,3 +348,72 @@ Handled by `scripts/fix-dhcp-profile.mjs`, which is idempotent and re-runnable.
 working minimal configuration, three recorded real-world failures, and a
 `tested_on` entry describing the socket check — the earlier `systemctl status`
 entry could not distinguish "Kea is present" from "Kea is actually serving".
+
+## 8. Execution test - NFS, promoted with a real read-write round trip (2026-10-12)
+
+Handled by `scripts/fix-nfs-profile.mjs` and `scripts/label-nfs-failures.mjs`,
+both idempotent and re-runnable.
+
+`nfs-utils-2.8.3-5.el10_2.x86_64` was already installed; `nfs-server.service`
+existed but was disabled. An export was created, the service enabled and
+started, and a file was written **through an NFSv4.2 mount**.
+
+**The proof, not just the exit code.** The file was confirmed present in the
+server-side export directory with matching content and a real size:
+
+```
+mount -t nfs -o vers=4 192.168.174.133:/srv/nfs/shared /mnt/nfstest
+findmnt -no SOURCE,FSTYPE /mnt/nfstest
+  192.168.174.133:/srv/nfs/shared nfs4 rw,... vers=4.2,rsize=262144
+
+echo proof-of-rw > /mnt/nfstest/proof.txt
+ls -l  /srv/nfs/shared/proof.txt     # the SERVER side
+  -rw-r--r--. 1 nobody nobody 23 ... /srv/nfs/shared/proof.txt
+cat   /srv/nfs/shared/proof.txt
+  proof-of-rw-2026-10-12
+```
+
+**Finding 1 - a failed mount still accepts writes, and looks like it worked.**
+
+The first attempt mounted `127.0.0.1` against an export that only allowed
+`192.168.174.0/24`. The server refused it:
+
+```
+mount.nfs: access denied by server while mounting 127.0.0.1:/srv/nfs/shared
+```
+
+But the mount point was an ordinary empty directory, so the subsequent write
+reported success and reading it back through the same path returned the correct
+content. **Only checking the server-side export directory showed the file had
+never been written there.** This is the most dangerous property of NFS to test
+naively: a broken mount is indistinguishable from a working one unless you
+verify from the server's side.
+
+**Finding 2 - the export's client list matches the address the client connects
+FROM**, not the destination and not a `127.0.0.1` shortcut.
+
+**Finding 3 - `root_squash` is on by default and bites even root.** The file
+written over NFS as root came back owned by `nobody`. That is the protection
+working correctly, and it is why `no_root_squash` must not be enabled casually.
+
+**Finding 4 - `/srv` is `var_t`, not an NFS type.** A stock `/srv` directory
+carries `unconfined_u:object_r:var_t:s0`, which SELinux does not treat as
+exportable content. Root could still read it, so the export looked correct until
+an unprivileged user tried:
+
+```
+semanage fcontext -a -t nfs_t '/srv/nfs/shared(/.*)?'
+restorecon -Rv /srv/nfs/shared
+# Relabelled /srv/nfs/shared from var_t to nfs_t
+# unprivileged 'student' could then read the export
+```
+
+**Also fixed:** six failure entries all carried the placeholder label
+`"Common mistake."` despite having six distinct bodies. Each now has a
+descriptive label. Nothing was added or removed, only the placeholder text.
+
+**Host state after the test:** test artifacts removed (`/srv/nfs`, the export
+entry, and the `semanage fcontext` rule). `nfs-server` left enabled and active
+as the service under test; revert with `systemctl disable --now nfs-server`.
+The two remaining `nfs` mount entries are the kernel pseudo-filesystems the
+server itself needs (`rpc_pipefs`, `nfsd`) - zero user export mounts remain.
