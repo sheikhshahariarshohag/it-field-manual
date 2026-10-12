@@ -2,11 +2,24 @@
 #
 # The app is already a static site — there is no build step, which is the whole
 # point of the architecture. This workflow exists only to run the content and
-# privacy gate before anything is published, and to copy app/ into _site/ so
+# privacy gate before anything is published, and to copy docs/ into _site/ so
 # GitHub Pages has a single known output directory.
 #
 # It is intentionally simple. If this file ever needs a build tool, something
 # has gone wrong with the design.
+#
+# HISTORY — this file silently rotted and nobody noticed for 24 runs
+# The site moved from app/ to docs/ in 6fba85c. This workflow still said
+# `cp -r app/. _site/`, so every run failed at "Stage the site". Because Pages
+# was serving main:/docs directly (build_type legacy), the site kept working and
+# the red X in the Actions tab was easy to stop reading.
+#
+# Two lessons are now enforced rather than just noted:
+#   - the staging step asserts the output exists, so a future directory move
+#     fails loudly instead of quietly
+#   - Pages is set to build_type "workflow", so this gate actually gates. With
+#     the legacy branch deployment it was decorative: a commit that failed
+#     validation would still have gone live.
 
 name: Deploy field manual
 
@@ -39,7 +52,9 @@ jobs:
       # dangling, an entry claims a test it did not do, or private material,
       # a credential or an absolute user path has appeared.
       - name: Validate content and privacy
-        run: node scripts/validate.mjs
+        run: |
+          node scripts/validate.mjs
+          node scripts/check-secrets.mjs
 
   deploy:
     needs: validate
@@ -58,7 +73,19 @@ jobs:
         run: |
           rm -rf _site
           mkdir -p _site
-          cp -r app/. _site/
+          cp -r docs/. _site/
+
+          # Fail loudly here rather than shipping an empty or wrong site. This
+          # step is exactly where the last 24 runs died: `cp -r app/.` against a
+          # directory that no longer existed. cp returned 1, but the symptom
+          # was invisible because Pages was still serving main:/docs directly.
+          #
+          # These assertions are the fix for that class of bug — a future
+          # directory move now breaks the build instead of quietly shipping.
+          test -f _site/index.html       || { echo "::error::no _site/index.html - is docs/ still the site root?"; exit 1; }
+          test -f _site/sw.js           || { echo "::error::no _site/sw.js"; exit 1; }
+          test -f _site/data/lessons/services.json || { echo "::error::no services.json in the staged site"; exit 1; }
+          echo "staged $(find _site -type f | wc -l) files"
 
       - uses: actions/configure-pages@v5
         id: pages
