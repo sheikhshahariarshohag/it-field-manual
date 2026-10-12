@@ -196,22 +196,22 @@ a:hover { text-decoration: underline; }
   box-shadow: inset 0 1px 2px rgba(60,48,32,.04);
   transition: border-color .14s, box-shadow .14s, background .14s;
 }
-/* Defensive: a reported fault showed the placeholder glyphs overlapping.
-   Not reproducible (560px input, 225px text, normal letter-spacing), so these
-   are guards rather than a confirmed fix — see git log for the measurements. */
-.search input {
-  letter-spacing: normal;
-  word-spacing: normal;
-  font-stretch: 100%;
-  font-synthesis: none;
-  font-variant-ligatures: none;
-}
+/* A reported fault showed the search placeholder glyphs appearing to overlap.
+   It has never been reproduced: measured input 560px against 225px of text,
+   letter-spacing normal, per-glyph advance 7.35px at 15px (ratio 0.49, which
+   is healthy - overlap would need a ratio near zero). The only evidence was a
+   magnified crop of a screenshot, which shows upscaling artefacts whether or
+   not the page is at fault.
+
+   An earlier version of this file carried "defensive" rules pinning
+   letter-spacing, font-stretch, font-synthesis and placeholder opacity. They
+   were removed on 2026-10-12: none of them addressed a cause, and leaving
+   them in place implied a fix that had never been demonstrated.
+
+   scripts/search-diagnostic.js measures the live element instead. Run it in
+   the browser that shows the fault and paste the result back. */
 .search input::placeholder {
   color: var(--text-faint);
-  letter-spacing: normal;
-  word-spacing: normal;
-  opacity: 1;
-  font-synthesis: none;
 }
 .search input:hover { border-color: var(--accent); }
 .search input:focus {
