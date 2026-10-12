@@ -308,7 +308,20 @@ export async function commandView(params) {
   if (d.output) add(wrap, h("h2", "Expected result"), codeBlock(d.output, { where: "output", tag: "expected" }));
   if (d.verify && d.verify.length) {
     wrap.appendChild(h("h2", "Confirm it worked"));
-    for (const v of d.verify) wrap.appendChild(codeBlock(v, { where: d.where || "shell", tag: "verify" }));
+    // Real recorded output deserves a heading that says so. A placeholder and
+    // a transcript from a live host must not look alike.
+    for (const v of d.verify) {
+      wrap.appendChild(codeBlock(v, {
+        where: d.where || "shell",
+        tag: d.tested_on ? "recorded output" : "verify",
+      }));
+    }
+    if (d.tested_on) {
+      const t = d.tested_on;
+      wrap.appendChild(h("p.srcref",
+        `Actually executed on ${t.date} · ${t.os} · kernel ${t.kernel} · ${t.arch} · ` +
+        `exit code ${t.exit}. This is recorded output from a live host, not an example.`));
+    }
   }
   if (d.errors && d.errors.length) {
     const wrapE = h("div");

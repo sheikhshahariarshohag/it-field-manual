@@ -45,12 +45,12 @@ and nothing here should be read as saying it has.
 
 | # | Limitation | Impact |
 |---|---|---|
-| B1 | **No technical entry is execution-tested** | Every command is source-checked only. Correct syntax is not proof it works on your system. |
+| B1 | ~~No technical entry is execution-tested~~ → **7 of 75 now are** (2026-10-12) | Real output from a live RHEL 10.2 host is recorded in `VERIFICATION_REGISTER.md` §5 with date, OS, kernel and exit code. The remaining **68 are still source-checked only** and are labelled as such. Limitation B6 (`dnf4` vs `dnf5`) is **resolved**: RHEL 10.2 ships dnf 4.20.0 and no dnf5 |
 | B2 | **No entry has had an independent review** | A systematic error would survive. Re-reading my own text is not independent review. |
 | B3 | **No Microsoft Windows Server VM** | Windows Server procedures cannot be executed |
 | B4 | **No Cisco IOS, no MikroTik CHR** | Cisco and MikroTik procedures cannot be executed |
 | B5 | Scenario command output is **invented for teaching**, clearly labelled | Usable for pattern-matching, never as evidence about a real system |
-| B6 | `dnf4` vs `dnf5` unconfirmed on an actual RHEL 10.2 host | One command's version assumption is untested |
+| B6 | ~~`dnf4` vs `dnf5` unconfirmed~~ → **RESOLVED 2026-10-12** | Verified on a live host: `dnf --version` reports 4.20.0 and `dnf5` is absent. The manual's `dnf` usage is correct for RHEL 10.2 |
 | **B7** | **Exam objectives are verified; the *lessons* are not** | All 6 syllabi were read from the publishers' own pages and mapped. But mapping a lesson to an objective does not make the lesson correct — B1 and B2 still apply to every mapped entry. Objective coverage is a syllabus claim, not a correctness claim. |
 
 ## C. Library problems found

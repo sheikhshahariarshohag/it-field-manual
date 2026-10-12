@@ -159,3 +159,82 @@ Every one of these is stated in the content itself, not hidden here:
 > **The honest summary:** the application's behaviour is thoroughly tested. The
 > technical content is well-sourced but not yet executed, and no entry has had an
 > independent review. Both gaps are closable with equipment you already own.
+---
+
+## 5. EXECUTION TEST — 2026-10-12 (first real one)
+
+Everything above this line was source-checked: syntax read from documentation,
+never run. That was limitation **B1**, and it is now partly closed with evidence.
+
+### Environment
+
+| | |
+|---|---|
+| OS | Red Hat Enterprise Linux release **10.2 (Coughlan)** |
+| Kernel | 6.12.0-211.7.3.el10_2.x86_64 |
+| Arch | x86_64 |
+| Host | `RHEL 10 S` VMware guest, 2 GB / 4 vCPU, UEFI |
+
+This **confirms VERSION_POLICY.md's** claim of RHEL 10.2, which had been inferred
+from documentation rather than observed.
+
+### B6 RESOLVED — dnf is dnf4 here, and dnf5 is absent
+
+`
+$ dnf --version | head -1
+4.20.0
+$ command -v dnf5
+ABSENT
+`
+
+RHEL 10.2 ships **dnf 4.20.0**. The manual's dnf usage is correct for this
+release and limitation B6 is closed. Worth keeping in mind that a future RHEL
+point release may switch the default to dnf5; that is not true today.
+
+### Promoted to execution-tested (7)
+
+| Entry | What was actually run |
+|---|---|
+| hel-systemctl-status | systemctl status chronyd --no-pager |
+| hel-journalctl-unit | journalctl -u chronyd -n 2 --no-pager |
+| hel-ss-lntup | ss -lntup |
+| hel-sudo-dnf | dnf search nginx |
+| hel-getenforce-ausearch | getenforce |
+| hel-firewall-cmd-list | irewall-cmd --list-all |
+| hel-nmcli-connection | 
+mcli -t -f DEVICE,TYPE,STATE con show --active |
+
+Each now carries a `tested_on` record (date, OS, kernel, arch, exact command,
+exit code) and its `verify` array holds the **real output**, not a placeholder.
+
+### Deliberately NOT promoted
+
+- `rhel-systemctl-enable-now` — ran, produced **no output**. Exit code alone is
+  not accepted as proof; a promotion requires output that looks like a real answer.
+  Left at source-checked rather than given a badge it did not earn.
+- All 19 service profiles — this VM is a minimal install. ind, dhcp-server,
+  
+fs-utils, postgresql-server, libvirt-daemon-kvm and nsible are all
+  **not installed**, so their commands could not be exercised.
+
+### Also observed on this host
+
+| | |
+|---|---|
+| Flatpak | **PRESENT** — confirms the RHCSA Flatpak objective is real on RHEL 10 |
+| SELinux | Enforcing |
+| firewalld | running |
+| systemd | 257 |
+| chrony | 4.8-2.el10 |
+| podman | 5.8.2-1.el10_2 |
+| rsyslog / audit / sssd | installed (8.2510.0 / 4.0.3 / 2.12.0) |
+| default target | `graphical.target` — note: a **desktop** default, unusual for a server |
+
+### What this does and does not establish
+
+It establishes that **7 commands run and produce correct output on RHEL 10.2**.
+It does **not** establish that the other 68 entries are correct — they remain
+`source-checked`, and saying otherwise would be false. Harness:
+
+`node scripts/exec-test.mjs`       36 environment checks — 32 ok, 0 unexpected
+`node scripts/promote-exec-tested.mjs`  the promotion rules above

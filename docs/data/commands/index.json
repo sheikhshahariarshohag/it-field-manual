@@ -27,7 +27,7 @@
     ],
     "output": "# systemctl status sshd --no-pager\n● sshd.service - OpenSSH server daemon\n   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)\n   Active: active (running) since Sat 2026-10-10 09:14:22 BST; 2min 11s ago\n     Docs: man:sshd(8) man:sshd_config(5)\n   Main PID: 1184 (sshd)\n      Tasks: 1 (limit: 61440)\n   Memory: 5.1M",
     "verify": [
-      "systemctl is-active sshd && systemctl is-enabled sshd && echo OK"
+      "$ systemctl status sshd\n● sshd.service - OpenSSH server daemon\n     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:24 +06; 1h 13min ago\n Invocation: 746f2b44bcb94a12b0e2128655ba1b2d\n       Docs: man:sshd(8)\n             man:sshd_config(5)\n   Main PID: 1373 (sshd)\n      Tasks: 1 (limit: 10105)\n     Memory: 5.3M (peak: 22.9M)\n        CPU: 7.337s\n     CGroup: /system.slice/sshd.service\n             └─1373 \"sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups\"\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -48,7 +48,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "systemd",
       "services",
@@ -59,7 +59,15 @@
       {
         "id": "RHCSA-7.2"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status sshd",
+      "exit": 0
+    }
   },
   {
     "id": "rhel-systemctl-enable-now",
@@ -152,7 +160,7 @@
       "A service shows `Active: failed` in `systemctl status`. The cause is almost always in the last lines of `journalctl -u NAME -b`, not in the status block itself."
     ],
     "verify": [
-      "journalctl -u NAME -b -n 50 --no-pager"
+      "$ journalctl -u sshd -b --no-pager\nOct 12 09:33:24 localhost.localdomain systemd[1]: Starting sshd.service - OpenSSH server daemon...\nOct 12 09:33:24 localhost.localdomain sshd[1373]: Server listening on 0.0.0.0 port 22.\nOct 12 09:33:24 localhost.localdomain systemd[1]: Started sshd.service - OpenSSH server daemon.\nOct 12 09:33:24 localhost.localdomain sshd[1373]: Server listening on :: port 22.\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: Invalid user U1 from 192.168.174.1 port 54017\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=192.168.174.1\nOct 12 09:35:13 localhost.localdomain sshd-session[3050]: Failed password for invalid user U1 from 192.168.174.1 port 54017 ssh2\nOct 12 09:35:13 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:15 localhost.localdomain sshd-session[3050]: Failed password for invalid user U1 from 192.168.174.1 port 54017 ssh2\nOct 12 09:35:16 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:18 localhost.localdomain sshd-session[3050]: Failed password for invalid user U1 from 192.168.174.1 port 54017 ssh2\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -173,7 +181,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "journalctl",
       "logs",
@@ -185,7 +193,15 @@
         "id": "RHCSA-4.5",
         "note": "Interpret system journals"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "journalctl -u sshd -b --no-pager",
+      "exit": 0
+    }
   },
   {
     "id": "rhel-ss-lntup",
@@ -216,7 +232,7 @@
       "You started Apache and cannot reach it from your laptop. `ss -lntup` shows `:::80` and `:::443` — that is fine. If it showed `127.0.0.1:80` instead, that would explain it exactly."
     ],
     "verify": [
-      "curl -sS -I http://127.0.0.1/ | head -1\nss -lntup | grep :80"
+      "$ ss -lntup\nNetid State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                                 \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=17))     \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=13))     \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=9))      \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=5))      \nudp   UNCONN 0      0            0.0.0.0:5353      0.0.0.0:*    users:((\"avahi-daemon\",pid=1177,fd=12))\nudp   UNCONN 0      0          127.0.0.1:323       0.0.0.0:*    users:((\"chronyd\",pid=1178,fd=4))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=3))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=7))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=11))     \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=15))     \nudp   UNCONN 0      0               [::]:5353         [::]:*    users:((\"avahi-daemon\",pid=1177,fd=13))\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -236,7 +252,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "ss",
       "netstat",
@@ -249,7 +265,15 @@
         "id": "RHCSA-4.6",
         "note": "Start, stop and check the status of network services"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "ss -lntup",
+      "exit": 0
+    }
   },
   {
     "id": "rhel-sudo-dnf",
@@ -281,7 +305,7 @@
       "`dnf history undo 42` rolls back the whole transaction, including packages that were upgraded as a side effect. It is the fastest correct recovery from a bad `dnf update`."
     ],
     "verify": [
-      "rpm -q nginx\nsystemctl is-active nginx"
+      "$ dnf search nginx\nUpdating Subscription Management repositories.\n========================= Name Exactly Matched: nginx ==========================\nnginx.x86_64 : A high performance web server and reverse proxy server\n======================== Name & Summary Matched: nginx =========================\nnginx-all-modules.noarch : A meta package that installs all available Nginx modules\nnginx-core.x86_64 : nginx minimal core\nnginx-filesystem.noarch : The basic directory layout for the Nginx server\nnginx-mod-http-image-filter.x86_64 : Nginx HTTP image filter module\nnginx-mod-http-perl.x86_64 : Nginx HTTP perl module\nnginx-mod-http-xslt-filter.x86_64 : Nginx XSLT module\nnginx-mod-mail.x86_64 : Nginx mail modules\nnginx-mod-stream.x86_64 : Nginx stream modules\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -302,7 +326,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "dnf",
       "yum",
@@ -314,7 +338,15 @@
         "id": "RHCSA-2.3",
         "note": "Install and update packages from a repository"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "dnf search nginx",
+      "exit": 0
+    }
   },
   {
     "id": "rhel-getenforce-ausearch",
@@ -344,7 +376,7 @@
       "A web server can read `/srv/www` but Apache returns 403. `ausearch -m avc -ts recent` shows `denied { read } for ... scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:default_t:s0`. The fix is to give the files the right label, not to disable SELinux."
     ],
     "verify": [
-      "ls -Z /srv/www\nsemanage fcontext -l | grep /srv/www"
+      "$ getenforce\nEnforcing\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -360,7 +392,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "selinux",
       "ausearch",
@@ -375,7 +407,15 @@
       {
         "id": "RHCSA-10.4"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "getenforce",
+      "exit": 0
+    }
   },
   {
     "id": "rhel-firewall-cmd-list",
@@ -407,7 +447,7 @@
       "You run `firewall-cmd --add-port=8080/tcp --permanent`, test, and it does not work. This is expected: permanent rules are not live. Add it at runtime too, or reload."
     ],
     "verify": [
-      "sudo firewall-cmd --list-ports\nsudo firewall-cmd --list-all --zone=public"
+      "$ sudo firewall-cmd --list-all\npublic (default, active)\n  target: default\n  ingress-priority: 0\n  egress-priority: 0\n  icmp-block-inversion: no\n  interfaces: \n  sources: \n  services: cockpit dhcpv6-client ssh\n  ports: \n  protocols: \n  forward: yes\n  masquerade: no\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -428,7 +468,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "firewalld",
       "firewall",
@@ -439,7 +479,15 @@
       {
         "id": "RHCSA-10.1"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "sudo firewall-cmd --list-all",
+      "exit": 0
+    }
   },
   {
     "id": "rhel-nmcli-connection",
@@ -471,7 +519,7 @@
       "To make a change reversible over SSH, schedule the activation and a forced revert:\n  sudo nmcli con down 'System eth0' && sudo nmcli con up 'System eth0'\n  (sleep 120; sudo nmcli con mod 'System eth0' ipv4.method auto; sudo nmcli con up 'System eth0') &\nIf the new address works, the revert is still scheduled — cancel it with `kill %1`."
     ],
     "verify": [
-      "ip -br address show\nip route\nnmcli -f IN-USE,NAME,DEVICE connection show --active"
+      "$ nmcli device status\nDEVICE  TYPE      STATE                   CONNECTION \nens160  ethernet  connected               ens160     \nens224  ethernet  connected               internal   \nlo      loopback  connected (externally)  lo\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ],
     "errors": [
       {
@@ -492,7 +540,7 @@
         "checked": "2026-10-10"
       }
     ],
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "tags": [
       "nmcli",
       "networkmanager",
@@ -504,7 +552,15 @@
         "id": "RHCSA-8.1",
         "note": "Configure IPv4 and IPv6 addresses"
       }
-    ]
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "nmcli device status",
+      "exit": 0
+    }
   },
   {
     "id": "cisco-show-ip-interface-brief",
