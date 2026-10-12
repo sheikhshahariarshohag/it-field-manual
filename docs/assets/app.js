@@ -55,7 +55,7 @@ async function loadCorpus() {
 
     // Exam objectives and the Knowledge Map are single objects, not lists, so
   // they are loaded separately from the per-kind groups.
-  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"], ["study", "study-manual"]]) {
+  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"], ["study", "study-manual"], ["notes", "simple-notes"]]) {
     try {
       const res = await fetch(`${base}/${file}.json`, { cache: "no-cache" });
       if (res.ok) out[key] = await res.json();
@@ -103,6 +103,7 @@ function buildNav() {
 
   clear(navProject);
   navProject.appendChild(navLink("Study Manual", "study"));
+  navProject.appendChild(navLink("Simple Notes", "notes"));
   navProject.appendChild(navLink("Assessment", "assessment"));
   navProject.appendChild(navLink("Projects", "projects", { count: st.projects }));
   navProject.appendChild(navLink("Exam objectives", "objectives"));
@@ -396,6 +397,7 @@ async function render() {
     case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
     case "study": node = rest.length ? V.studyUnitView({ id: rest[0] }) : V.studyManualView(); break;
     case "assessment": node = V.selfCheckView(); break;
+    case "notes": node = rest.length ? V.notesChapterView({ id: rest[0] }) : V.notesIndexView(); break;
     default: node = V.homeView();
   }
 
@@ -438,6 +440,8 @@ async function boot() {
   route("study", () => render());
   route("study/:id", () => render());
   route("assessment", () => render());
+  route("notes", () => render());
+  route("notes/:id", () => render());
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);

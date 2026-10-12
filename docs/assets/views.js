@@ -1848,6 +1848,160 @@ export function selfCheckView() {
   return wrap;
 }
 
+/* =========================================================== simple notes */
+
+/**
+ * Plain-English chapter notes.
+ *
+ * The full chapter text is dense by necessity — it has to carry every detail.
+ * These notes are the opposite: one idea at a time, a comparison, one command,
+ * what each part means, one sentence to remember. They sit beside the real
+ * chapter, never instead of it.
+ *
+ * The shape is fixed by design so it is learnable: main idea → simple
+ * explanation → example → what each part means → remember.
+ */
+export function NOTES() {
+  return search.CORPUS.notes || null;
+}
+
+export function notesIndexView() {
+  const wrap = h("div");
+  const m = NOTES();
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Simple Notes"),
+    h("p", "Every RHEL chapter rewritten in plain English. One idea at a time, with a " +
+           "comparison, a command, and what each part of it means. The full chapter text is " +
+           "still one click away when you need the detail."),
+  ));
+
+  if (!m || !m.chapters) {
+    wrap.appendChild(h("div.empty", h("h2", "Not written yet"),
+      h("p", "No simple notes have been added.")));
+    return wrap;
+  }
+
+  const total = m.chapters.reduce((a, c) =>
+    a + c.sections.reduce((x, s) => x + s.concepts.length, 0), 0);
+
+  wrap.appendChild(h("div.stat-row",
+    h("div.stat", h("div.stat__n", String(m.chapters.length)), h("div.stat__l", "chapters written")),
+    h("div.stat", h("div.stat__n", String(total)), h("div.stat__l", "concepts")),
+  ));
+
+  if (m.style && m.style.rule) {
+    wrap.appendChild(h("div.note",
+      h("strong", "The rule these follow"),
+      h("span", m.style.rule)));
+  }
+
+  const list = h("ol.sessions");
+  for (const c of m.chapters) {
+    const n = c.sections.reduce((a, s) => a + s.concepts.length, 0);
+    list.appendChild(h("li.session",
+      h("a.session__link", { href: href(`notes/${c.id}`) },
+        h("span.session__n", String(c.n)),
+        h("span.session__body",
+          h("span.session__title", c.title),
+          h("span.session__sum", `${c.book} · ${c.partTitle} · ${n} concept${n === 1 ? "" : "s"}`),
+        ),
+        h("span.badge.badge--accent", String(n)),
+      ),
+    ));
+  }
+  wrap.appendChild(h("section.layer", list));
+  return wrap;
+}
+
+export function notesChapterView(params) {
+  const wrap = h("div");
+  const m = NOTES();
+  const c = (m && m.chapters || []).find((x) => x.id === params.id);
+
+  if (!c) {
+    // Not written yet — offer the full chapter, which does exist.
+    const alt = search.docById(c ? c.id : params.id);
+    wrap.appendChild(h("div.empty",
+      h("h2", "Simple notes for this chapter are not written yet"),
+      h("p", "The full chapter is still available."),
+      h("div.btnrow",
+        h("a.btn", { href: href("notes") }, "All simple notes"),
+        alt ? h("a.btn.btn--primary", { href: contentHref(alt) }, "Open the full chapter") : null)));
+    return wrap;
+  }
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", `Chapter ${c.n}: ${c.title} — Complete Simple Notes`),
+    h("p", c.partTitle),
+    h("div.card__meta",
+      h("span.badge", c.book),
+      h("span.badge", c.exam),
+      h("a.badge", { href: href(`study/${c.id}`) }, "Open the full chapter"),
+      h("a.badge", { href: href("notes") }, "All notes"),
+    ),
+  ));
+
+  for (const s of c.sections) {
+    wrap.appendChild(h("h2", h("span.sec__n", "P"), s.title));
+    for (const q of s.concepts) {
+      const card = h("div.idea");
+      card.appendChild(h("h3.idea__h",
+        h("span.idea__n", String(q.n)), q.title));
+
+      card.appendChild(h("p.idea__main", h("strong", "Main idea: "), q.main));
+
+      card.appendChild(h("div.idea__block",
+        h("strong", "Simple explanation:")));
+      const ul = h("ul.prose");
+      for (const line of (q.simple || [])) ul.appendChild(h("li", ...paraTokens(line)));
+      card.appendChild(ul);
+
+      if (q.warning) {
+        card.appendChild(h("div.note.note--risk",
+          h("strong", "Watch out"), h("span", q.warning)));
+      }
+
+      if (q.example && q.example.length) {
+        card.appendChild(h("div.idea__block", h("strong", "Example")));
+        card.appendChild(codeBlock(q.example.join("\n"), { where: "shell", risk: "safe" }));
+      }
+
+      if (q.parts && q.parts.length) {
+        card.appendChild(h("div.idea__block", h("strong", "What each part means:")));
+        const dl = h("dl.parts");
+        for (const [a, b] of q.parts) {
+          dl.appendChild(h("dt", a));
+          dl.appendChild(h("dd", ...paraTokens(b)));
+        }
+        card.appendChild(dl);
+      }
+
+      if (q.remember) {
+        card.appendChild(h("p.idea__remember", h("strong", "Remember: "), q.remember));
+      }
+      wrap.appendChild(card);
+    }
+  }
+
+  if (c.revision && c.revision.length) {
+    wrap.appendChild(h("h2", "Final revision — commands to remember"));
+    const dl = h("dl.parts");
+    for (const [task, cmd] of c.revision) {
+      dl.appendChild(h("dt", task));
+      dl.appendChild(h("dd", h("code", cmd)));
+    }
+    wrap.appendChild(dl);
+  }
+  if (c.inOneSentence) {
+    wrap.appendChild(h("div.note.note--ok",
+      h("strong", "The whole chapter in one sentence"),
+      h("span", c.inOneSentence)));
+  }
+
+  return wrap;
+}
+
 /* ================================================================== objectives */
 
 /** Exam objectives, verified or explicitly flagged as unverified. */
