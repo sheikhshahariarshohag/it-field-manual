@@ -306,3 +306,45 @@ installed.
 
 This is exactly the class of error that reading documentation cannot catch and
 only running the thing does.
+
+### 7a. RESOLUTION - the DHCP profile, rewritten for Kea (2026-10-12)
+
+Handled by `scripts/fix-dhcp-profile.mjs`, which is idempotent and re-runnable.
+
+**Everything below was observed on the host, not inferred:**
+
+| Fact | Observed value |
+|---|---|
+| Package | `kea-3.0.3-1.el10_2.x86_64` |
+| Units | `kea-dhcp4`, `kea-dhcp6`, `kea-dhcp-ddns`, `kea-ctrl-agent` (all `.service`) |
+| Config | `/etc/kea/kea-dhcp4.conf` — **JSON**, wrapped in a top-level `Dhcp4` object |
+| Leases | `/var/lib/kea/kea-leases4.csv`, owned by `kea:kea` |
+| Socket | `UNCONN 0 0 192.168.174.133:67 0.0.0.0:* users:(("kea-dhcp4",pid=45593,fd=12))` |
+| Startup log | `DHCPSRV_CFGMGR_ADD_IFACE listening on interface ens160` / `DHCP4_STARTED Kea DHCPv4 server version 3.0.3 started` |
+| Binaries | `/usr/sbin/kea-{dhcp4,dhcp6,kea-admin,kea-lfc,kea-shell,kea-ctrl-agent,kea-dhcp-ddns}` |
+
+**Three findings that only surfaced by running it:**
+
+1. **The shipped config serves nothing.** The stock `/etc/kea/kea-dhcp4.conf`
+   has `"interfaces": [ ]`. `kea-dhcp4` starts, reports `active`, and binds to
+   **no port at all**. You must name an interface *and* add a `subnet4` entry
+   before a single client is served. `ss -lunp | grep kea` is the check —
+   no row means the service is up and useless.
+
+2. **A bad config takes the service down rather than degrading.** systemd
+   reports `status=1/FAILURE`. Two errors that cost real time here:
+   - the file must be wrapped in a top-level `"Dhcp4"` object — without it
+     the daemon exits with `syntax error, unexpected constant string, expecting Dhcp4`
+   - `rebinding-timer` is **not** a valid keyword in Kea 3.0.3, at the `Dhcp4`
+     level *or* inside a subnet (`got unexpected keyword`). Timers are optional;
+     `valid-lifetime` is accepted.
+   Test with `kea-admin -t /etc/kea/kea-dhcp4.conf` before restarting.
+
+3. **Shell quoting through SSH mangles JSON.** Writing the config with a
+   nested `printf` produced `unexpected EOF while looking for matching '''`.
+   The config was authored locally and transferred with `scp` instead.
+
+**Verification status:** execution-tested. The profile now carries a verified
+working minimal configuration, three recorded real-world failures, and a
+`tested_on` entry describing the socket check — the earlier `systemctl status`
+entry could not distinguish "Kea is present" from "Kea is actually serving".

@@ -51,8 +51,9 @@ and nothing here should be read as saying it has.
 | B4 | **No Cisco IOS, no MikroTik CHR** | Cisco and MikroTik procedures cannot be executed |
 | B5 | Scenario command output is **invented for teaching**, clearly labelled | Usable for pattern-matching, never as evidence about a real system |
 | B6 | ~~`dnf4` vs `dnf5` unconfirmed~~ → **RESOLVED 2026-10-12** | Verified on a live host: `dnf --version` reports 4.20.0 and `dnf5` is absent. The manual's `dnf` usage is correct for RHEL 10.2 |
-| **B8** | **The DHCP profile is written for a package RHEL 10 does not ship** | ISC `dhcpd` / `dhcp-server` cannot be installed on RHEL 10 — the replacements are `kea`, `dnsmasq` and `dhcpcd`. The profile is promoted on Kea evidence but its *content* still teaches `dhcpd` and `/etc/dhcp/dhcpd.conf`. A learner following it on RHEL 10 will hit a package that cannot be installed | Rewrite the profile for Kea (`kea-dhcp4.conf`, `kea-admin`) |
+| ~~**B8**~~ **RESOLVED 2026-10-12** | ~~The DHCP profile is written for a package RHEL 10 does not ship~~ | **Fixed.** `kea` 3.0.3 verified live on RHEL 10.2. Profile rewritten: unit names, config paths, the JSON `Dhcp4` wrapper, lease location and the UDP 67 socket were all observed. `tested_on` now records the socket check, not just that a unit exists. All remaining `dhcpd` mentions are "this does not exist" / migration / JSON-vs-syntax context, which is correct |
 | **B7** | **Exam objectives are verified; the *lessons* are not** | All 6 syllabi were read from the publishers' own pages and mapped. But mapping a lesson to an objective does not make the lesson correct — B1 and B2 still apply to every mapped entry. Objective coverage is a syllabus claim, not a correctness claim. |
+| **A13** | **Simple Notes cover RH134 only** | All 8 RH134 chapters are written in plain English (74 concepts, `docs/data/simple-notes.json`). RH124 (17 chapters) and RH294 (9 parts) are **not** written. The index states the real count rather than implying full coverage, and an unwritten chapter offers the full text instead |
 
 ## C. Library problems found
 
