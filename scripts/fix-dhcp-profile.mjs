@@ -16,7 +16,7 @@
  *   units   kea-dhcp4/dhcp6/dhcp-ddns/ctrl-agent .service
  *   config  /etc/kea/kea-dhcp4.conf  (JSON, wrapped in "Dhcp4")
  *   leases  /var/lib/kea/kea-leases4.csv  owned by kea:kea
- *   socket  UNCONN 192.168.174.133:67 users:(("kea-dhcp4",...))
+ *   socket  UNCONN <vm-ip>:67 users:(("kea-dhcp4",...))
  *   log     DHCPSRV_CFGMGR_ADD_IFACE listening on interface ens160
  *           DHCP4_STARTED Kea DHCPv4 server version 3.0.3 started
  *
@@ -90,11 +90,11 @@ const cfgSection = {
     "subnet4": [
       {
         "id": 1,
-        "subnet": "192.168.174.0/24",
-        "pools": [ { "pool": "192.168.174.200-192.168.174.230" } ],
+        "subnet": "192.168.10.0/24",
+        "pools": [ { "pool": "192.168.10.200-192.168.10.230" } ],
         "option-data": [
-          { "name": "routers", "data": "192.168.174.2" },
-          { "name": "domain-name-servers", "data": "192.168.174.2" },
+          { "name": "routers", "data": "192.168.10.2" },
+          { "name": "domain-name-servers", "data": "192.168.10.2" },
           { "name": "domain-name", "data": "lab.local" }
         ]
       }
@@ -127,7 +127,7 @@ d.tested_on = {
   command: "systemctl restart kea-dhcp4 && ss -lunp | grep kea-dhcp4",
   exit: 0,
   observed:
-    "UNCONN 0 0 192.168.174.133:67 0.0.0.0:* users:((\"kea-dhcp4\",pid=45593,fd=12)) | " +
+    "UNCONN 0 0 <vm-ip>:67 0.0.0.0:* users:((\"kea-dhcp4\",pid=45593,fd=12)) | " +
     "kea-3.0.3-1.el10_2.x86_64 | lease file /var/lib/kea/kea-leases4.csv owned by kea:kea",
 };
 

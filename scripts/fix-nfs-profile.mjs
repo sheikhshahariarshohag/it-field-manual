@@ -8,7 +8,7 @@
  * WHAT WAS ACTUALLY DONE ON THE HOST
  *   nfs-utils-2.8.3-5.el10_2.x86_64 was already installed; nfs-server.service
  *   existed but was disabled. Created /srv/nfs/shared, exported it to
- *   192.168.174.0/24(rw,sync,no_subtree_check), enabled and started the
+ *   192.168.10.0/24(rw,sync,no_subtree_check), enabled and started the
  *   service, then mounted the export back and wrote a file THROUGH the mount.
  *
  *   Proof the write really went over NFS, not to a local directory:
@@ -19,7 +19,7 @@
  *
  * 1. A failed mount still lets writes "succeed".
  *    The first attempt mounted 127.0.0.1 against an export that only allowed
- *    192.168.174.0/24, and the server refused it:
+ *    192.168.10.0/24, and the server refused it:
  *      mount.nfs: access denied by server while mounting ...
  *    But because the mount point was an ordinary empty directory, the
  *    subsequent write reported success, and reading it back through the same
@@ -65,7 +65,7 @@ d.tested_on = {
   os: "Red Hat Enterprise Linux release 10.2 (Coughlan)",
   kernel: "6.12.0-211.7.3.el10_2.x86_64",
   arch: "x86_64",
-  command: "mount -t nfs -o vers=4 192.168.174.133:/srv/nfs/shared /mnt/nfstest && echo x > /mnt/nfstest/proof.txt && cat /srv/nfs/shared/proof.txt",
+  command: "mount -t nfs -o vers=4 <vm-ip>:/srv/nfs/shared /mnt/nfstest && echo x > /mnt/nfstest/proof.txt && cat /srv/nfs/shared/proof.txt",
   exit: 0,
   observed:
     "nfs-utils-2.8.3-5.el10_2.x86_64 | nfs-server.service disabled->enabled, active | " +
@@ -128,7 +128,7 @@ const testSection = {
     "because you were writing to a local folder the whole time.",
     "",
     "This was hit for real on RHEL 10.2: mounting 127.0.0.1 against an export that " +
-    "allowed only 192.168.174.0/24 failed with",
+    "allowed only 192.168.10.0/24 failed with",
     "",
     "  mount.nfs: access denied by server while mounting",
     "",

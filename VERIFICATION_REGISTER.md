@@ -319,7 +319,7 @@ Handled by `scripts/fix-dhcp-profile.mjs`, which is idempotent and re-runnable.
 | Units | `kea-dhcp4`, `kea-dhcp6`, `kea-dhcp-ddns`, `kea-ctrl-agent` (all `.service`) |
 | Config | `/etc/kea/kea-dhcp4.conf` — **JSON**, wrapped in a top-level `Dhcp4` object |
 | Leases | `/var/lib/kea/kea-leases4.csv`, owned by `kea:kea` |
-| Socket | `UNCONN 0 0 192.168.174.133:67 0.0.0.0:* users:(("kea-dhcp4",pid=45593,fd=12))` |
+| Socket | `UNCONN 0 0 <vm-ip>:67 0.0.0.0:* users:(("kea-dhcp4",pid=45593,fd=12))` |
 | Startup log | `DHCPSRV_CFGMGR_ADD_IFACE listening on interface ens160` / `DHCP4_STARTED Kea DHCPv4 server version 3.0.3 started` |
 | Binaries | `/usr/sbin/kea-{dhcp4,dhcp6,kea-admin,kea-lfc,kea-shell,kea-ctrl-agent,kea-dhcp-ddns}` |
 
@@ -362,9 +362,9 @@ started, and a file was written **through an NFSv4.2 mount**.
 server-side export directory with matching content and a real size:
 
 ```
-mount -t nfs -o vers=4 192.168.174.133:/srv/nfs/shared /mnt/nfstest
+mount -t nfs -o vers=4 <vm-ip>:/srv/nfs/shared /mnt/nfstest
 findmnt -no SOURCE,FSTYPE /mnt/nfstest
-  192.168.174.133:/srv/nfs/shared nfs4 rw,... vers=4.2,rsize=262144
+  <vm-ip>:/srv/nfs/shared nfs4 rw,... vers=4.2,rsize=262144
 
 echo proof-of-rw > /mnt/nfstest/proof.txt
 ls -l  /srv/nfs/shared/proof.txt     # the SERVER side
@@ -376,7 +376,7 @@ cat   /srv/nfs/shared/proof.txt
 **Finding 1 - a failed mount still accepts writes, and looks like it worked.**
 
 The first attempt mounted `127.0.0.1` against an export that only allowed
-`192.168.174.0/24`. The server refused it:
+`192.168.10.0/24`. The server refused it:
 
 ```
 mount.nfs: access denied by server while mounting 127.0.0.1:/srv/nfs/shared

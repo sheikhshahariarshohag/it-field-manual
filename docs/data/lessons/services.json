@@ -1369,7 +1369,7 @@
           "`interfaces-config.interfaces` must name a real interface, or the server binds to nothing.",
           "`subnet4` entries define the ranges handed out. A pool that falls outside its subnet disables that subnet."
         ],
-        "code": "{\n  \"Dhcp4\": {\n    \"interfaces-config\": {\n      \"interfaces\": [ \"ens160\" ]\n    },\n    \"valid-lifetime\": 4000,\n    \"subnet4\": [\n      {\n        \"id\": 1,\n        \"subnet\": \"192.168.174.0/24\",\n        \"pools\": [ { \"pool\": \"192.168.174.200-192.168.174.230\" } ],\n        \"option-data\": [\n          { \"name\": \"routers\", \"data\": \"192.168.174.2\" },\n          { \"name\": \"domain-name-servers\", \"data\": \"192.168.174.2\" },\n          { \"name\": \"domain-name\", \"data\": \"lab.local\" }\n        ]\n      }\n    ],\n    \"lease-database\": { \"type\": \"memfile\", \"persist\": true }\n  }\n}",
+        "code": "{\n  \"Dhcp4\": {\n    \"interfaces-config\": {\n      \"interfaces\": [ \"ens160\" ]\n    },\n    \"valid-lifetime\": 4000,\n    \"subnet4\": [\n      {\n        \"id\": 1,\n        \"subnet\": \"192.168.10.0/24\",\n        \"pools\": [ { \"pool\": \"192.168.10.200-192.168.10.230\" } ],\n        \"option-data\": [\n          { \"name\": \"routers\", \"data\": \"192.168.10.2\" },\n          { \"name\": \"domain-name-servers\", \"data\": \"192.168.10.2\" },\n          { \"name\": \"domain-name\", \"data\": \"lab.local\" }\n        ]\n      }\n    ],\n    \"lease-database\": { \"type\": \"memfile\", \"persist\": true }\n  }\n}",
         "where": "/etc/kea/kea-dhcp4.conf",
         "risk": "caution"
       },
@@ -1566,7 +1566,7 @@
       "arch": "x86_64",
       "command": "systemctl restart kea-dhcp4 && ss -lunp | grep kea-dhcp4",
       "exit": 0,
-      "observed": "UNCONN 0 0 192.168.174.133:67 0.0.0.0:* users:((\"kea-dhcp4\",pid=45593,fd=12)) | kea-3.0.3-1.el10_2.x86_64 | lease file /var/lib/kea/kea-leases4.csv owned by kea:kea"
+      "observed": "UNCONN 0 0 <vm-ip>:67 0.0.0.0:* users:((\"kea-dhcp4\",pid=45593,fd=12)) | kea-3.0.3-1.el10_2.x86_64 | lease file /var/lib/kea/kea-leases4.csv owned by kea:kea"
     },
     "verify": [
       "$ systemctl status kea-dhcp4.service --no-pager -n 3\n● kea-dhcp4.service - Kea DHCPv4 Server\n     Loaded: loaded (/usr/lib/systemd/system/kea-dhcp4.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:26 +06; 2min 46s ago\n Invocation: 1ebcbddc0f064ca381e99ab5350ae602\n       Docs: man:kea-dhcp4(8)\n   Main PID: 35809 (kea-dhcp4)\n     Status: \"Dispatching packets...\"\n      Tasks: 9 (limit: 10105)\n     Memory: 8.9M (peak: 9.6M)\n        CPU: 39ms\n     CGroup: /system.slice/kea-dhcp4.service\n             └─35809 /usr/sbin/kea-dhcp4 -c /etc/kea/kea-dhcp4.conf\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
@@ -2208,7 +2208,7 @@
         "p": [
           "The obvious test lies to you. If the mount fails but the mount point is an ordinary directory, a write still reports success and reads back correctly - because you were writing to a local folder the whole time.",
           "",
-          "This was hit for real on RHEL 10.2: mounting 127.0.0.1 against an export that allowed only 192.168.174.0/24 failed with",
+          "This was hit for real on RHEL 10.2: mounting 127.0.0.1 against an export that allowed only 192.168.10.0/24 failed with",
           "",
           "  mount.nfs: access denied by server while mounting",
           "",
@@ -2329,7 +2329,7 @@
       "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
       "kernel": "6.12.0-211.7.3.el10_2.x86_64",
       "arch": "x86_64",
-      "command": "mount -t nfs -o vers=4 192.168.174.133:/srv/nfs/shared /mnt/nfstest && echo x > /mnt/nfstest/proof.txt && cat /srv/nfs/shared/proof.txt",
+      "command": "mount -t nfs -o vers=4 <vm-ip>:/srv/nfs/shared /mnt/nfstest && echo x > /mnt/nfstest/proof.txt && cat /srv/nfs/shared/proof.txt",
       "exit": 0,
       "observed": "nfs-utils-2.8.3-5.el10_2.x86_64 | nfs-server.service disabled->enabled, active | tcp LISTEN 0.0.0.0:2049 and :111 (rpcbind) | showmount -e lists /srv/nfs/shared | exportfs -v shows sec=sys,rw,root_squash as the default option set | mount resolved to nfs4 vers=4.2 rsize=262144 | file written THROUGH the mount appeared server-side at /srv/nfs/shared/proof.txt, 23 bytes, owned by nobody"
     },
