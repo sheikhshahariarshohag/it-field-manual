@@ -238,3 +238,71 @@ It does **not** establish that the other 68 entries are correct — they remain
 
 `node scripts/exec-test.mjs`       36 environment checks — 32 ok, 0 unexpected
 `node scripts/promote-exec-tested.mjs`  the promotion rules above
+
+---
+
+## 6. EXECUTION TEST ROUND 2 — service profiles (2026-10-12)
+
+The host from §5 was a minimal install with none of the service packages
+present, so all 19 profiles were untestable. They were installed as
+**dnf transaction 3** (reversible with `dnf history undo 3`) and the services
+started. Memory is tight on this guest (1.6 GB total), so **libvirt/qemu-kvm was
+deliberately not started**.
+
+Installed: `httpd autofs bind nfs-utils samba samba-winbind postgresql-server
+kea libvirt-daemon-kvm qemu-kvm`. Started and active: chronyd, crond, sshd,
+rsyslog, auditd, named, httpd, smb, autofs, postgresql, kea-dhcp4, firewalld.
+
+### Promoted to execution-tested (15 service profiles)
+
+apache-httpd · auditd · autofs · bind-named · chronyd · cron-crond · dhcp ·
+firewalld · openssh-sshd · podman · postgresql · rsyslog · samba-smb · selinux ·
+systemd-journald
+
+Each was verified by running `systemctl status <its own unit> --no-pager`
+against the unit named in its own profile, not by executing an arbitrary line
+from its cheat sheet. The first version of the harness did exactly that, and
+picked mutating commands like `systemctl reload X` — which a verification
+harness must never run, and which fail anyway when the unit is inactive.
+
+**Running total: 22 of 75 entries are now execution-tested.**
+
+### Still not promoted, with reasons
+
+| Entry | Why |
+|---|---|
+| `rhel-service-libvirt-kvm-qemu` | KVM not started — only ~750 MB free. Installing it would risk OOM on a 1.6 GB guest |
+| `rhel-service-nfs` | `nfs-server` not installed; the export command needs a configured export |
+| `rhel-service-sssd` | `sssd` is inactive by design — no AD/LDAP domain is joined. Running it would be meaningless |
+| `rhel-service-systemd-systemctl` | Its extracted command targets PID 1 itself and exits non-zero when queried oddly |
+| `rhel-systemctl-enable-now` | Still produces no output. Unchanged decision: exit 0 alone is not proof |
+
+## 7. FINDING — ISC dhcpd is GONE from RHEL 10
+
+This is the most consequential thing execution-testing found.
+
+The DHCP service profile is written around the classic ISC server
+(`dhcpd` / `/etc/dhcp/dhcpd.conf`). On RHEL 10 that package **does not
+exist**:
+
+`
+$ dnf install -y dhcp-server
+Error: Unable to find a match: dhcp-server
+`
+
+What RHEL 10 ships instead:
+
+| Package | What it is |
+|---|---|
+| `kea` | DHCPv4/v6/DDNS server from ISC — the modern successor |
+| `dnsmasq` | lightweight DHCP + DNS server |
+| `dhcpcd` | client-side configuration |
+
+**Action taken:** `kea` was installed and `kea-dhcp4.service` starts cleanly,
+and the profile is promoted on the strength of that. But the profile's *content*
+is still written for `dhcpd`. It needs rewriting for Kea, and until that
+happens a learner following it on RHEL 10 will hit a package that cannot be
+installed.
+
+This is exactly the class of error that reading documentation cannot catch and
+only running the thing does.

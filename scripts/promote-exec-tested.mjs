@@ -66,6 +66,78 @@ function isUnhelpful(out, code) {
   return null;
 }
 
+/**
+ * The command worth executing for an entry.
+ *
+ * Commands (docs/data/commands/*.json) carry a top-level `commands` string.
+ * Lessons — including all 19 service profiles — do NOT: their runnable text
+ * lives in `quickRef` (a cheat sheet), in `sections[].code`, and in
+ * `lab[].cmd`. The first version of this harness only looked at `commands`,
+ * so it silently skipped every service profile and reported "promoted: 0"
+ * without explaining why.
+ *
+ * Order of preference: the explicit commands block, then quickRef, then the
+ * first section that actually contains a shell command.
+ */
+function primaryCommand(it) {
+  const lines = (s) => String(s || "").split("\n").map((l) => l.trim())
+    .filter((l) => l && !l.startsWith("#"));
+
+  if (it.commands) {
+    const l = lines(typeof it.commands === "string" ? it.commands : it.commands.text);
+    if (l.length) return l[0];
+  }
+  if (it.quickRef) {
+    // quickRef is a cheat sheet that mixes runnable commands with prose and
+    // "Label: value" rows. A line is only a command if the binary is followed
+    // by whitespace and then a flag, argument or subcommand — never a
+    // parenthesis or a sentence. Without this test, "chronyd (client mode:
+    // ...)" was extracted and handed to bash, which failed on the parenthesis.
+    const l = lines(it.quickRef).filter((x) => {
+      // Reject metadata rows. The cheat sheets open with lines like
+      //   systemd unit:   httpd.service
+      //   Package:        httpd
+      //   Config:         /etc/httpd/conf/httpd.conf
+      // An earlier filter treated "systemd" in the first row as a binary and
+      // then probed `command -v systemd unit:` — which of course failed, and
+      // every one of the 19 profiles was rejected for "binary not on this host".
+      if (/^[A-Za-z][\w .()/-]{0,24}:\s/.test(x)) return false;   // "Label:  value"
+      if (/^[a-z][a-z0-9-]*\s*\(/.test(x)) return false;         // prose
+      if (/^[A-Z]/.test(x)) return false;
+      // A command is a bare binary followed by a flag, subcommand or argument.
+      const m = x.match(/^([a-z][a-z0-9-]*)\s+(-{1,2}\S|[a-z0-9./]+)/);
+      return !!m;
+    });
+    if (l.length) return l[0];
+  }
+  for (const sec of (it.sections || [])) {
+    if (!sec.code) continue;
+    const l = lines(sec.code);
+    // A section's first code line is often an ASCII diagram ("Kernel boot ↓ ...").
+    const real = l.find((x) => /^[a-z][a-z0-9-]*\s|^\//.test(x) && x.length > 4);
+    if (real) return real;
+  }
+  return null;
+}
+
+/**
+ * For a service profile, verify the SERVICE rather than an arbitrary line of
+ * its cheat sheet.
+ *
+ * The cheat sheets list mutating commands early — `systemctl reload X`,
+ * `systemctl enable X` — which must not be run by a verification harness, and
+ * which fail anyway if the unit is inactive. Each profile's own metadata names
+ * its unit ("systemd unit:  httpd.service"), so the honest test is whether that
+ * unit is running and what it reports.
+ */
+function serviceUnitCheck(it) {
+  const q = String(it.quickRef || "");
+  const m = q.match(/systemd unit:\s*([a-z0-9_.@-]+\.service)/i);
+  if (!m) return null;
+  const unit = m[1];
+  return { cmd: `systemctl status ${unit} --no-pager -n 3`, unit };
+}
+
 const FILES = [
   "docs/data/commands/index.json",
   "docs/data/lessons/services.json",
@@ -83,14 +155,18 @@ for (const rel of FILES) {
     if (it.verification === "execution-tested" || it.verification === "release-approved") continue;
 
     const raw = typeof it.commands === "string" ? it.commands : (it.commands || {}).text || "";
-    const primary = String(raw).split("\n")
-      .map((l) => l.trim()).filter((l) => l && !l.startsWith("#"))[0];
-    if (!primary) continue;
+    const svc = serviceUnitCheck(it);
+    const primary = svc ? svc.cmd : primaryCommand(it);
+    if (!primary) { rejected.push([it.id, "no runnable command found"]); continue; }
 
-    // Cheap pre-flight: does the binary even exist?
-    const bin = primary.split(/\s+/)[0].replace(/^\//, "").split("/").pop();
-    const probe = ssh(`command -v ${bin} >/dev/null 2>&1 && echo HAVE || echo MISSING`);
-    if (!/HAVE/.test(probe.out)) { rejected.push([it.id, "binary not on this host"]); continue; }
+    // A pre-flight probe only makes sense for a bare command. When the service
+    // path is in use the "binary" is systemctl and the real failure will be a
+    // non-zero exit, which is already handled below.
+    if (!svc) {
+      const bin = primary.split(/\s+/)[0].replace(/^\//, "").split("/").pop();
+      const probe = ssh(`command -v ${bin} >/dev/null 2>&1 && echo HAVE || echo MISSING`);
+      if (!/HAVE/.test(probe.out)) { rejected.push([it.id, "binary not on this host"]); continue; }
+    }
 
     const r = ssh(primary);
     const why = isUnhelpful(r.out, r.code);

@@ -5,7 +5,7 @@
     "tech": "rhel",
     "title": "Apache HTTP Server / httpd",
     "summary": "RHEL 10 service profile for 11-apache-httpd.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -222,6 +222,17 @@
         "id": "RHCSA-7.2",
         "note": "Start and stop services; start automatically at boot"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status httpd.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status httpd.service --no-pager -n 3\n● httpd.service - The Apache HTTP Server\n     Loaded: loaded (/usr/lib/systemd/system/httpd.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:23 +06; 2min 41s ago\n Invocation: 0a95f25019c643d7991a100ad97dee0b\n       Docs: man:httpd.service(8)\n   Main PID: 35014 (httpd)\n     Status: \"Total requests: 0; Idle/Busy workers 100/0;Requests/sec: 0; Bytes served/sec:   0 B/sec\"\n      Tasks: 177 (limit: 10105)\n     Memory: 17.7M (peak: 18.3M)\n        CPU: 219ms\n     CGroup: /system.slice/httpd.service\n             ├─35014 /usr/sbin/httpd -DFOREGROUND\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -230,7 +241,7 @@
     "tech": "rhel",
     "title": "auditd",
     "summary": "RHEL 10 service profile for 08-auditd.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -438,6 +449,17 @@
         "id": "RHCSA-10",
         "note": "Security auditing — audit rules and logs"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status auditd.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status auditd.service --no-pager -n 3\n● auditd.service - Security Audit Logging Service\n     Loaded: loaded (/usr/lib/systemd/system/auditd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:21 +06; 1h 42min ago\n Invocation: 2d8195c6d3e849158dae6efd474d2688\n       Docs: man:auditd(8)\n             https://github.com/linux-audit/audit-documentation\n   Main PID: 1133 (auditd)\n      Tasks: 4 (limit: 10105)\n     Memory: 5M (peak: 5.6M, swap: 900K, swap peak: 904K)\n        CPU: 1.123s\n     CGroup: /system.slice/auditd.service\n             ├─1133 /usr/sbin/auditd\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -446,7 +468,7 @@
     "tech": "rhel",
     "title": "autofs",
     "summary": "RHEL 10 service profile for 17-autofs.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -633,6 +655,17 @@
         "id": "RHCSA-6.3",
         "note": "Configure autofs"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status autofs.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status autofs.service --no-pager -n 3\n● autofs.service - Automounts filesystems on demand\n     Loaded: loaded (/usr/lib/systemd/system/autofs.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:25 +06; 2min 42s ago\n Invocation: 18d0a77aa0bc4bba8707f1103db90a63\n   Main PID: 35495 (automount)\n      Tasks: 6 (limit: 10105)\n     Memory: 2M (peak: 3.1M)\n        CPU: 22ms\n     CGroup: /system.slice/autofs.service\n             └─35495 /usr/sbin/automount --systemd-service --dont-check-daemon\n\nOct 12 11:13:25 localhost.localdomain systemd[1]: Started autofs.service - Automounts filesystems on demand.\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -641,7 +674,7 @@
     "tech": "rhel",
     "title": "BIND / named",
     "summary": "RHEL 10 service profile for 15-bind-named.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -849,6 +882,17 @@
         "id": "RHCSA-8.2",
         "note": "Configure hostname resolution"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status named.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status named.service --no-pager -n 3\n● named.service - Berkeley Internet Name Domain (DNS)\n     Loaded: loaded (/usr/lib/systemd/system/named.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:23 +06; 2min 45s ago\n Invocation: f219e1e731ee4a81992dfff0b15c3ebe\n   Main PID: 34862 (named)\n      Tasks: 14 (limit: 10105)\n     Memory: 9.5M (peak: 9.7M)\n        CPU: 65ms\n     CGroup: /system.slice/named.service\n             └─34862 /usr/sbin/named -u named -c /etc/named.conf\n\nOct 12 11:13:23 localhost.localdomain named[34862]: managed-keys-zone: Initializing automatic trust anchor management for zone '.'; DNSKEY ID 20326 is now trusted, waiving the normal 30-day waiting period.\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -857,7 +901,7 @@
     "tech": "rhel",
     "title": "chronyd",
     "summary": "RHEL 10 service profile for 07-chronyd.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -1064,6 +1108,17 @@
         "id": "RHCSA-7.4",
         "note": "Configure time service clients"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status chronyd.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status chronyd.service --no-pager -n 3\n● chronyd.service - NTP client/server\n     Loaded: loaded (/usr/lib/systemd/system/chronyd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:22 +06; 1h 42min ago\n Invocation: 19fe915edb504516bd9e6919f3ef8bca\n       Docs: man:chronyd(8)\n             man:chrony.conf(5)\n   Main PID: 1178 (chronyd)\n      Tasks: 1 (limit: 10105)\n     Memory: 3.2M (peak: 5.1M, swap: 4K, swap peak: 4K)\n        CPU: 230ms\n     CGroup: /system.slice/chronyd.service\n             └─1178 /usr/sbin/chronyd -n -F 2\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -1072,7 +1127,7 @@
     "tech": "rhel",
     "title": "cron / crond",
     "summary": "RHEL 10 service profile for 09-cron-crond.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -1277,6 +1332,17 @@
         "id": "RHCSA-7.1",
         "note": "Schedule tasks using cron and systemd timer units"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status crond.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status crond.service --no-pager -n 3\n● crond.service - Command Scheduler\n     Loaded: loaded (/usr/lib/systemd/system/crond.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:24 +06; 1h 42min ago\n Invocation: 63d26e7800e14a33a0d6c940c280d0df\n   Main PID: 1395 (crond)\n      Tasks: 1 (limit: 10105)\n     Memory: 476K (peak: 4M, swap: 616K, swap peak: 620K)\n        CPU: 122ms\n     CGroup: /system.slice/crond.service\n             └─1395 /usr/sbin/crond -n\n\nOct 12 10:07:01 localhost.localdomain anacron[3123]: Normal exit (1 job run)\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -1285,7 +1351,7 @@
     "tech": "rhel",
     "title": "DHCP",
     "summary": "RHEL 10 service profile for 16-dhcp.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -1492,6 +1558,17 @@
         "id": "RHCSA-8.3",
         "note": "Configure network services to start at boot"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status kea-dhcp4.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status kea-dhcp4.service --no-pager -n 3\n● kea-dhcp4.service - Kea DHCPv4 Server\n     Loaded: loaded (/usr/lib/systemd/system/kea-dhcp4.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:26 +06; 2min 46s ago\n Invocation: 1ebcbddc0f064ca381e99ab5350ae602\n       Docs: man:kea-dhcp4(8)\n   Main PID: 35809 (kea-dhcp4)\n     Status: \"Dispatching packets...\"\n      Tasks: 9 (limit: 10105)\n     Memory: 8.9M (peak: 9.6M)\n        CPU: 39ms\n     CGroup: /system.slice/kea-dhcp4.service\n             └─35809 /usr/sbin/kea-dhcp4 -c /etc/kea/kea-dhcp4.conf\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -1500,7 +1577,7 @@
     "tech": "rhel",
     "title": "firewalld",
     "summary": "RHEL 10 service profile for 03-firewalld.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -1738,6 +1815,17 @@
         "id": "RHCSA-8.4",
         "note": "Restrict network access"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status firewalld.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status firewalld.service --no-pager -n 3\n● firewalld.service - firewalld - dynamic firewall daemon\n     Loaded: loaded (/usr/lib/systemd/system/firewalld.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:24 +06; 1h 42min ago\n Invocation: a84ed05c2c414a2eb9d522afd77d7e0b\n       Docs: man:firewalld(1)\n   Main PID: 1263 (firewalld)\n      Tasks: 4 (limit: 10105)\n     Memory: 38.7M (peak: 46.2M, swap: 4.4M, swap peak: 4.4M)\n        CPU: 1.358s\n     CGroup: /system.slice/firewalld.service\n             └─1263 /usr/bin/python3 -sP /usr/sbin/firewalld --nofork --nopid\n\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -2195,7 +2283,7 @@
     "tech": "rhel",
     "title": "OpenSSH / sshd",
     "summary": "RHEL 10 service profile for 04-openssh-sshd.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -2432,6 +2520,17 @@
         "id": "RHCSA-8.3",
         "note": "Configure network services to start at boot"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status sshd.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status sshd.service --no-pager -n 3\n● sshd.service - OpenSSH server daemon\n     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:24 +06; 1h 42min ago\n Invocation: 746f2b44bcb94a12b0e2128655ba1b2d\n       Docs: man:sshd(8)\n             man:sshd_config(5)\n   Main PID: 1373 (sshd)\n      Tasks: 1 (limit: 10105)\n     Memory: 5.9M (peak: 23.7M, swap: 12K, swap peak: 1.2M)\n        CPU: 24.025s\n     CGroup: /system.slice/sshd.service\n             └─1373 \"sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups\"\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -2440,7 +2539,7 @@
     "tech": "rhel",
     "title": "Podman",
     "summary": "RHEL 10 service profile for 18-podman.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -2645,6 +2744,17 @@
         "id": "RHCSA-2",
         "note": "Containers are not a named EX200 objective; package/container management overlap only"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "podman info",
+      "exit": 0
+    },
+    "verify": [
+      "$ podman info\nhost:\n  arch: amd64\n  buildahVersion: 1.43.1\n  cgroupControllers:\n  - cpuset\n  - cpu\n  - io\n  - memory\n  - hugetlb\n  - pids\n  - rdma\n  - misc\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -2653,7 +2763,7 @@
     "tech": "rhel",
     "title": "PostgreSQL",
     "summary": "RHEL 10 service profile for 20-postgresql.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -2866,6 +2976,17 @@
         "id": "RHCSA-2",
         "note": "Installing and running a server package; database packages are not named in EX200"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status postgresql.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status postgresql.service --no-pager -n 3\n● postgresql.service - PostgreSQL database server\n     Loaded: loaded (/usr/lib/systemd/system/postgresql.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:25 +06; 2min 52s ago\n Invocation: fc81240ff9924cfbb4ac50c2c97a9756\n   Main PID: 35654 (postgres)\n      Tasks: 7 (limit: 10105)\n     Memory: 23.1M (peak: 25.8M)\n        CPU: 127ms\n     CGroup: /system.slice/postgresql.service\n             ├─35654 /usr/bin/postgres -D /var/lib/pgsql/data\n             ├─35656 \"postgres: logger \"\n             ├─35657 \"postgres: checkpointer \"\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -2874,7 +2995,7 @@
     "tech": "rhel",
     "title": "rsyslog",
     "summary": "RHEL 10 service profile for 10-rsyslog.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -3085,6 +3206,17 @@
         "id": "RHCSA-4.5",
         "note": "Locate and interpret system log files"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status rsyslog.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status rsyslog.service --no-pager -n 3\n● rsyslog.service - System Logging Service\n     Loaded: loaded (/usr/lib/systemd/system/rsyslog.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 11:12:03 +06; 4min 15s ago\n Invocation: e93ebd7f5a85423b8d0c5fee84179627\n       Docs: man:rsyslogd(8)\n             https://www.rsyslog.com/doc/\n   Main PID: 33149 (rsyslogd)\n      Tasks: 3 (limit: 10105)\n     Memory: 2.3M (peak: 3.2M)\n        CPU: 280ms\n     CGroup: /system.slice/rsyslog.service\n             └─33149 /usr/sbin/rsyslogd -n\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -3093,7 +3225,7 @@
     "tech": "rhel",
     "title": "Samba / SMB",
     "summary": "RHEL 10 service profile for 13-samba-smb.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -3295,6 +3427,17 @@
         "id": "RHCSA-6",
         "note": "File systems — Samba is assessed indirectly, not by name"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status smb.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status smb.service --no-pager -n 3\n● smb.service - Samba SMB Daemon\n     Loaded: loaded (/usr/lib/systemd/system/smb.service; enabled; preset: disabled)\n     Active: active (running) since Mon 2026-10-12 11:13:24 +06; 2min 56s ago\n Invocation: 80f3e05d943d43348cf2364967e2245b\n       Docs: man:smbd(8)\n             man:samba(7)\n             man:smb.conf(5)\n   Main PID: 35337 (smbd)\n     Status: \"smbd: ready to serve connections...\"\n      Tasks: 3 (limit: 10105)\n     Memory: 17.3M (peak: 18.5M)\n        CPU: 106ms\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -3303,7 +3446,7 @@
     "tech": "rhel",
     "title": "SELinux",
     "summary": "RHEL 10 service profile for 05-selinux.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -3534,6 +3677,17 @@
         "id": "RHCSA-10.7",
         "note": "Boolean settings"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "getenforce / sestatus",
+      "exit": 0
+    },
+    "verify": [
+      "$ getenforce / sestatus\nEnforcing\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   },
   {
@@ -4021,7 +4175,7 @@
     "tech": "rhel",
     "title": "systemd-journald",
     "summary": "RHEL 10 service profile for 06-systemd-journald.",
-    "verification": "source-checked",
+    "verification": "execution-tested",
     "time": "",
     "tags": [
       "rhel",
@@ -4226,6 +4380,17 @@
         "id": "RHCSA-4.5",
         "note": "Locate and interpret system journals"
       }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status systemd-journald.service --no-pager -n 3",
+      "exit": 0
+    },
+    "verify": [
+      "$ systemctl status systemd-journald.service --no-pager -n 3\n● systemd-journald.service - Journal Service\n     Loaded: loaded (/usr/lib/systemd/system/systemd-journald.service; static)\n     Active: active (running) since Mon 2026-10-12 09:33:20 +06; 1h 43min ago\n Invocation: 0783241a209d487baa1b08f969a750c6\nTriggeredBy: ● systemd-journald-dev-log.socket\n             ○ systemd-journald-audit.socket\n             ● systemd-journald.socket\n       Docs: man:systemd-journald.service(8)\n             man:journald.conf(5)\n   Main PID: 993 (systemd-journal)\n     Status: \"Processing requests...\"\n      Tasks: 1 (limit: 10105)\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
     ]
   }
 ]
