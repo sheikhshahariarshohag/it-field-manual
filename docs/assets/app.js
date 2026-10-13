@@ -399,7 +399,7 @@ async function render() {
     case "study": node = rest.length ? V.studyUnitView({ id: rest[0] }) : V.studyManualView(); break;
     case "assessment": node = V.selfCheckView(); break;
     case "notes": node = rest.length ? V.notesChapterView({ id: rest[0] }) : V.notesIndexView(); break;
-    case "library": node = rest.length ? V.libraryBookView({ id: rest[0] }) : V.libraryView(); break;
+    case "library": node = rest.length ? (rest[1] ? V.libraryChapterView({ book: rest[0], id: rest[1] }) : V.libraryBookView({ id: rest[0] })) : V.libraryView(); break;
     default: node = V.homeView();
   }
 
@@ -446,6 +446,7 @@ async function boot() {
   route("notes/:id", () => render());
   route("library", () => render());
   route("library/:id", () => render());
+  route("library/:id/:chunk", () => render());
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);

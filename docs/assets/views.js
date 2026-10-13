@@ -2099,11 +2099,83 @@ export function libraryBookView(params) {
       }
       wrap.appendChild(ul);
     }
+    if (c.chunk) {
+      wrap.appendChild(h("div.btnrow",
+        h("a.btn", { href: href(`library/${b.id}/${c.chunk}`) },
+          `Read ${c.words.toLocaleString()} words`)));
+    }
+  }
+
+  if (b.full) {
+    wrap.appendChild(h("div.note.note--ok",
+      h("strong", "Full text"),
+      h("span", "This book's complete text is in the app, one module at a time, and every word is searchable.")));
   }
 
   wrap.appendChild(h("div.note",
     h("strong", "Not published here"),
     h("span", lib.copyright)));
+  return wrap;
+}
+
+/**
+ * One module of a book whose full text is published.
+ *
+ * The chunk is fetched on demand, the same way the Knowledge Map sessions are.
+ * Keeping it out of library.json means opening the Library tab does not pull
+ * half a megabyte nobody asked for.
+ */
+const libChunkCache = new Map();
+export async function libraryChapterView(params) {
+  const wrap = h("div");
+  const lib = search.CORPUS.library;
+  const b = lib && (lib.books || []).find((x) => x.id === params.book);
+  const chapter = b && (b.chapters || []).find((c) => c.chunk === params.id);
+
+  if (!b || !chapter) {
+    wrap.appendChild(h("div.empty",
+      h("h2", "That chapter is not available"),
+      h("div.btnrow", h("a.btn", { href: href("library") }, "Library"))));
+    return wrap;
+  }
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", chapter.title),
+    h("p", `${b.title} — module ${chapter.n}, page ${chapter.page}`),
+    h("div.card__meta",
+      h("span.badge", `${(chapter.words || 0).toLocaleString()} words`),
+      h("a.badge", { href: href(`library/${b.id}`) }, "All modules"),
+      h("a.badge", { href: href("library") }, "Library"),
+    ),
+  ));
+
+  const body = h("div.prose");
+  body.appendChild(h("p", h("em", "Loading…")));
+  wrap.appendChild(body);
+
+  (async () => {
+    try {
+      let data = libChunkCache.get(params.id);
+      if (!data) {
+        const res = await fetch(`data/library/${params.id}.json`, { cache: "default" });
+        if (!res.ok) throw new Error(String(res.status));
+        data = await res.json();
+        libChunkCache.set(params.id, data);
+      }
+      clear(body);
+      // The extracted text is Markdown-ish: keep it as preformatted text so a
+      // stray '#' or '*' can never be interpreted as markup.
+      const pre = h("pre.booktext", data.text);
+      body.appendChild(pre);
+      body.appendChild(noteEditor(params.id));
+    } catch (err) {
+      clear(body);
+      body.appendChild(h("div.empty",
+        h("h2", "Could not load that chapter"),
+        h("p", String(err.message))));
+    }
+  })();
+
   return wrap;
 }
 

@@ -199,16 +199,19 @@ function buildIndex() {
     for (const b of CORPUS.library.books || []) {
       for (const c of b.chapters || []) {
         const secTitles = (c.sections || []).map((s) => s.title);
+        // A book published in full carries its prose in a lazily-fetched chunk,
+        // so the distinctive words have to be precomputed at build time or the
+        // body is unreachable by search. `body` is a distinctive-term list
+        // built from the chunk text; the chunk itself is never in the corpus.
+        const body = c.body || [];
         push({
           // The id is the BOOK, not the chapter: a library result routes to
-          // library/<book>, and there is no per-chapter page. Several entries
-          // sharing an id is fine — DOCS is an array, and each carries its own
-          // chapter in the title and summary.
+          // library/<book>, and there is no per-chapter page at that level.
           id: b.id, kind: "library", _library: true,
           title: `${b.title} — Ch ${c.n}: ${c.title}`,
           summary: `page ${c.page}`,
           tech: "",
-          terms: [c.title, ...secTitles].filter(Boolean),
+          terms: [c.title, ...secTitles, ...body].filter(Boolean),
           aliases: [c.title],
         }, 2);
       }
