@@ -62,6 +62,10 @@ const ICON_PATHS = {
   flask: ["M9 3h6", "M10 3v6L4.5 18a2 2 0 0 0 1.7 3h11.6a2 2 0 0 0 1.7-3L14 9V3"],
   star: ["M12 3l2.6 5.6 6 .8-4.4 4.2 1.1 6.1L12 16.8 6.7 19.7l1.1-6.1L3.4 9.4l6-.8z"],
   layers: ["M12 3l9 5-9 5-9-5z", "M3 13l9 5 9-5"],
+    // Added for the back-to-top control. The set had no upward arrow, and
+    // icon() falls back to the book glyph for an unknown name, so without
+    // this the button would have shown a book and meant nothing.
+    up: ["M12 19V5", "M5 12l7-7 7 7"],
 };
 
 export function icon(name, cls) {

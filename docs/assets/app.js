@@ -357,7 +357,7 @@ function wasServedFromCache() {
 
 let syncHashToSearch = () => {};
 
-async function render() {
+async function render(restoreTo) {
   const cur = currentRoute() || { path: [], query: {} };
   const [head, ...rest] = cur.path;
 
@@ -413,7 +413,63 @@ async function render() {
   // every keystroke would make the search box impossible to type in.
   const typing = document.activeElement && document.activeElement.id === "q";
   if (!typing) main.focus({ preventScroll: true });
-  scrollTo({ top: 0, behavior: "instant" });
+
+  // Restore the reader's place on a Back or Forward move; start at the top
+  // only when genuinely going somewhere new. Resetting unconditionally is what
+  // made Back drop you at the first line of a 36,000-character chapter instead
+  // of the paragraph you had actually read.
+  if (typeof restoreTo === "number") {
+    // Two frames: the first lets the new content lay out, the second restores.
+    // Restoring immediately clamps a large offset against a still-empty page
+    // and lands short of where the reader was.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      scrollTo({ top: restoreTo, behavior: "instant" });
+    }));
+  } else {
+    scrollTo({ top: 0, behavior: "instant" });
+  }
+}
+
+/* ----------------------------------------------------------- back to top */
+
+/**
+ * A way back to the top of a long document.
+ *
+ * The header sticks, so navigation is always reachable - but on a library
+ * chapter, which runs to 36,000 characters, scrolling back up is a long thumb
+ * gesture. This appears only once the reader is far enough down for the trip
+ * to be worth offering, and it never covers anything: it sits above the safe
+ * area and is hidden from assistive tech because the header is already a
+ * direct route home.
+ */
+function initBackToTop() {
+  const btn = h("button.totop", {
+    type: "button",
+    title: "Back to top",
+    "aria-hidden": "true",
+    tabindex: "-1",
+  }, icon("arrow-up", "Back to top"));
+
+  btn.addEventListener("click", () => {
+    scrollTo({ top: 0, behavior: "smooth" });
+    // Put focus back where the reader can see it, rather than leaving it on a
+    // button that is about to disappear.
+    const first = document.querySelector("#main h1");
+    if (first) { first.setAttribute("tabindex", "-1"); first.focus({ preventScroll: true }); }
+  });
+
+  document.body.appendChild(btn);
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    btn.dataset.on = window.scrollY > 900 ? "1" : "0";
+  };
+  addEventListener("scroll", () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(update);
+  }, { passive: true });
+  update();
 }
 
 /* ------------------------------------------------------------------ boot */
@@ -422,31 +478,32 @@ async function boot() {
   initTheme();
   initDrawer();
   initNetStatus();
+  initBackToTop();
   syncHashToSearch = initSearchBox();
   initDataPanel();
 
-  route("", () => render());
-  route("search", () => render());
+  route("", ({ recalled }) => render(recalled));
+  route("search", ({ recalled }) => render(recalled));
   // Each collection needs two patterns: the list, and the detail with an id.
   for (const [seg, kind] of [["commands", "commands"], ["lessons", "lessons"], ["scenarios", "scenarios"],
                              ["quizzes", "quizzes"], ["projects", "projects"], ["subjects", "subjects"]]) {
-    route(seg, () => render());
-    route(`${seg}/:id`, () => render());
+    route(seg, ({ recalled }) => render(recalled));
+    route(`${seg}/:id`, ({ recalled }) => render(recalled));
   }
-  route("bookmarks", () => render());
-  route("progress", () => render());
-  route("verify", () => render());
-  route("objectives", () => render());
-  route("km", () => render());
-  route("km/:id", () => render());
-  route("study", () => render());
-  route("study/:id", () => render());
-  route("assessment", () => render());
-  route("notes", () => render());
-  route("notes/:id", () => render());
-  route("library", () => render());
-  route("library/:id", () => render());
-  route("library/:id/:chunk", () => render());
+  route("bookmarks", ({ recalled }) => render(recalled));
+  route("progress", ({ recalled }) => render(recalled));
+  route("verify", ({ recalled }) => render(recalled));
+  route("objectives", ({ recalled }) => render(recalled));
+  route("km", ({ recalled }) => render(recalled));
+  route("km/:id", ({ recalled }) => render(recalled));
+  route("study", ({ recalled }) => render(recalled));
+  route("study/:id", ({ recalled }) => render(recalled));
+  route("assessment", ({ recalled }) => render(recalled));
+  route("notes", ({ recalled }) => render(recalled));
+  route("notes/:id", ({ recalled }) => render(recalled));
+  route("library", ({ recalled }) => render(recalled));
+  route("library/:id", ({ recalled }) => render(recalled));
+  route("library/:id/:chunk", ({ recalled }) => render(recalled));
 
   // Content first — a broken fetch must show an error, not an empty search.
   clear(main);
