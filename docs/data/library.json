@@ -1,0 +1,351 @@
+{
+  "note": "A locator for two reference books held on the owner's machine. Chapter and module titles with page numbers only — the books' text is not reproduced here. Search a topic, get the page, open your own copy.",
+  "copyright": "Titles and page references are facts about a work. The prose of these books is not published. The full extracted text stays in private/library/, which is git-ignored and never served.",
+  "built": "2026-10-13",
+  "books": [
+    {
+      "id": "ccna",
+      "subject": "cisco",
+      "title": "CCNA Certification Study Guide: Exam 200-301",
+      "author": "Todd Lammle",
+      "note": "Chapter list from the book's own table of contents.",
+      "pages": 900,
+      "chapters": [
+        {
+          "n": 1,
+          "title": "Network Fundamentals",
+          "page": 1
+        },
+        {
+          "n": 2,
+          "title": "TCP/IP",
+          "page": 29
+        },
+        {
+          "n": 3,
+          "title": "Easy Subnetting",
+          "page": 75
+        },
+        {
+          "n": 4,
+          "title": "Troubleshooting IP Addressing",
+          "page": 105
+        },
+        {
+          "n": 5,
+          "title": "IP Routing",
+          "page": 117
+        },
+        {
+          "n": 6,
+          "title": "Open Shortest Path First (OSPF)",
+          "page": 163
+        },
+        {
+          "n": 7,
+          "title": "Layer 2 Switching",
+          "page": 193
+        },
+        {
+          "n": 8,
+          "title": "VLANs and Inter-VLAN Routing",
+          "page": 219
+        },
+        {
+          "n": 9,
+          "title": "Enhanced Switched Technologies",
+          "page": 251
+        },
+        {
+          "n": 10,
+          "title": "Access Lists",
+          "page": 289
+        },
+        {
+          "n": 11,
+          "title": "Network Address Translation (NAT)",
+          "page": 319
+        },
+        {
+          "n": 12,
+          "title": "IP Services",
+          "page": 337
+        },
+        {
+          "n": 13,
+          "title": "Security",
+          "page": 363
+        },
+        {
+          "n": 14,
+          "title": "First Hop Redundancy Protocol (HSRP)",
+          "page": 411
+        },
+        {
+          "n": 15,
+          "title": "Virtual Private Networks (VPN’s)",
+          "page": 433
+        },
+        {
+          "n": 16,
+          "title": "Quality of Service (QoS)",
+          "page": 451
+        },
+        {
+          "n": 17,
+          "title": "Internet Protocol Version 6 (IPv6)",
+          "page": 465
+        },
+        {
+          "n": 18,
+          "title": "Troubleshooting IP, IPv6, and VLANs",
+          "page": 495
+        },
+        {
+          "n": 19,
+          "title": "Wireless Technologies",
+          "page": 549
+        },
+        {
+          "n": 20,
+          "title": "Configuring Wireless Technologies",
+          "page": 595
+        },
+        {
+          "n": 21,
+          "title": "Virtualization, Automation, and Programmability",
+          "page": 661
+        },
+        {
+          "n": 22,
+          "title": "SDN Controllers",
+          "page": 689
+        },
+        {
+          "n": 23,
+          "title": "Configuration Management",
+          "page": 743
+        }
+      ]
+    },
+    {
+      "id": "rhcsa",
+      "subject": "rhel",
+      "title": "RHCSA Certification Study Guide",
+      "author": "",
+      "note": "Objectives and modules, with page numbers derived from page boundaries.",
+      "pages": 467,
+      "chapters": [
+        {
+          "n": 1,
+          "title": "System Installation",
+          "page": 27,
+          "sections": [
+            {
+              "title": "Install RHEL 10 with standard configuration for RHCSA practice",
+              "page": 33
+            },
+            {
+              "title": "Install RHEL 10 with custom partitioning scheme",
+              "page": 35
+            },
+            {
+              "title": "Configure newly installed system for RHCSA practice",
+              "page": 36
+            }
+          ]
+        },
+        {
+          "n": 2,
+          "title": "File Management",
+          "page": 42,
+          "sections": [
+            {
+              "title": "Master essential file operations and text processing",
+              "page": 48
+            },
+            {
+              "title": "Master text processing and analysis techniques",
+              "page": 49
+            },
+            {
+              "title": "Master archiving, compression, and linking",
+              "page": 50
+            }
+          ]
+        },
+        {
+          "n": 3,
+          "title": "User & Group Management",
+          "page": 57,
+          "sections": [
+            {
+              "title": "Create, modify, and manage user accounts with various configurations",
+              "page": 66
+            },
+            {
+              "title": "Create groups and manage complex membership scenarios",
+              "page": 68
+            },
+            {
+              "title": "Handle complex user management scenarios combining both methodologies",
+              "page": 69
+            }
+          ]
+        },
+        {
+          "n": 4,
+          "title": "File Permissions",
+          "page": 78,
+          "sections": [
+            {
+              "title": "Master fundamental permission operations and special bits",
+              "page": 84
+            },
+            {
+              "title": "Practice ownership changes and understand umask",
+              "page": 85
+            },
+            {
+              "title": "Create a collaborative workspace using standard permissions",
+              "page": 87
+            }
+          ]
+        },
+        {
+          "n": 5,
+          "title": "Process & Service Management",
+          "page": 92,
+          "sections": [
+            {
+              "title": "Master process identification, monitoring, and control techniques",
+              "page": 102
+            },
+            {
+              "title": "Master systemd service lifecycle and configuration",
+              "page": 105
+            },
+            {
+              "title": "Create and manage a custom systemd service",
+              "page": 108
+            }
+          ]
+        },
+        {
+          "n": 6,
+          "title": "Package Management",
+          "page": 119,
+          "sections": [
+            {
+              "title": "Master fundamental DNF package management operations",
+              "page": 127
+            },
+            {
+              "title": "Configure and manage software repositories",
+              "page": 130
+            },
+            {
+              "title": "Handle complex package scenarios including modules, local packages, and",
+              "page": 133
+            }
+          ]
+        },
+        {
+          "n": 7,
+          "title": "Storage & LVM",
+          "page": 144,
+          "sections": [
+            {
+              "title": "Create complete LVM storage solution from scratch",
+              "page": 157
+            },
+            {
+              "title": "Practice extending and managing existing LVM infrastructure",
+              "page": 160
+            },
+            {
+              "title": "Migrate existing storage to new LVM configuration with minimal downtime",
+              "page": 163
+            }
+          ]
+        },
+        {
+          "n": 8,
+          "title": "Network Configuration",
+          "page": 174,
+          "sections": [
+            {
+              "title": "Configure static IP address and test connectivity",
+              "page": 184
+            },
+            {
+              "title": "Modify existing connections and manage multiple network configurations",
+              "page": 187
+            },
+            {
+              "title": "Diagnose and resolve complex network connectivity issues",
+              "page": 190
+            }
+          ]
+        },
+        {
+          "n": 9,
+          "title": "SELinux Management",
+          "page": 203,
+          "sections": [
+            {
+              "title": "Understand SELinux modes, contexts, and basic troubleshooting",
+              "page": 214
+            },
+            {
+              "title": "Configure custom file contexts and manage SELinux policies",
+              "page": 216
+            },
+            {
+              "title": "Diagnose and resolve SELinux access denials in a realistic scenario",
+              "page": 217
+            }
+          ]
+        },
+        {
+          "n": 10,
+          "title": "Firewall Configuration",
+          "page": 230,
+          "sections": [
+            {
+              "title": "Configure basic firewall rules for common services",
+              "page": 241
+            },
+            {
+              "title": "Implement complex firewall rules using rich rules and custom zones",
+              "page": 244
+            },
+            {
+              "title": "Diagnose and resolve firewall connectivity issues",
+              "page": 247
+            }
+          ]
+        },
+        {
+          "n": 13,
+          "title": "Scheduled Tasks & Automation",
+          "page": 289,
+          "sections": [
+            {
+              "title": "Set up Flatpak repositories and install applications at system and user levels",
+              "page": 310
+            },
+            {
+              "title": "Practice updating, removing, and managing Flatpak applications",
+              "page": 313
+            },
+            {
+              "title": "Configure a complete Flatpak environment suitable for enterprise use",
+              "page": 314
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -195,6 +195,26 @@ function buildIndex() {
     }
   }
 
+  if (CORPUS.library) {
+    for (const b of CORPUS.library.books || []) {
+      for (const c of b.chapters || []) {
+        const secTitles = (c.sections || []).map((s) => s.title);
+        push({
+          // The id is the BOOK, not the chapter: a library result routes to
+          // library/<book>, and there is no per-chapter page. Several entries
+          // sharing an id is fine — DOCS is an array, and each carries its own
+          // chapter in the title and summary.
+          id: b.id, kind: "library", _library: true,
+          title: `${b.title} — Ch ${c.n}: ${c.title}`,
+          summary: `page ${c.page}`,
+          tech: "",
+          terms: [c.title, ...secTitles].filter(Boolean),
+          aliases: [c.title],
+        }, 2);
+      }
+    }
+  }
+
   // Alias table: common names -> canonical ids, so "ccna" finds Cisco items.
   ALIASES = new Map();
   for (const d of DOCS) {

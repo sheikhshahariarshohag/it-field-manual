@@ -70,13 +70,14 @@ const ROUTE_FOR_KIND = {
   session: "km",          // Knowledge Map sessions are search results too
   unit: "study",          // Study Manual chapters
   notes: "notes",         // Simple Notes chapters
+  library: "library",     // Book locators
 };
 
 /** The label shown on a search result row. */
 const KIND_LABEL = {
   command: "Command", lesson: "Lesson", scenario: "Scenario",
   quiz: "Quiz", project: "Project", session: "Knowledge Map",
-  unit: "Study chapter", notes: "Simple Notes",
+  unit: "Study chapter", notes: "Simple Notes", library: "Book",
 };
 
 /** The canonical URL for any content item. */
@@ -2009,6 +2010,100 @@ export function notesChapterView(params) {
       h("span", c.inOneSentence)));
   }
 
+  return wrap;
+}
+
+/* =================================================================== library */
+
+/**
+ * Reference books the owner holds on their own machine.
+ *
+ * This is a locator, not a copy. It lists each book's chapters and modules
+ * with page numbers so a search can send you to the right page of the PDF you
+ * already own. The books' prose is deliberately not published — the site is
+ * public, and these are commercial works.
+ */
+export function libraryView() {
+  const wrap = h("div");
+  const lib = search.CORPUS.library;
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Library"),
+    h("p", lib
+      ? "Locators for reference books held on your own machine. Search a topic and you " +
+        "get the chapter and page — then open your own copy."
+      : "No library index has been built."),
+  ));
+
+  if (!lib || !lib.books) {
+    wrap.appendChild(h("div.empty",
+      h("h2", "Nothing indexed yet"),
+      h("p", "Run scripts/build-library-index.mjs after extracting the books with pdftotext.")));
+    return wrap;
+  }
+
+  wrap.appendChild(h("div.note",
+    h("strong", "How this works"),
+    h("span", lib.copyright)));
+
+  const list = h("ol.sessions");
+  for (const b of lib.books) {
+    const secs = b.chapters.reduce((a, c) => a + (c.sections ? c.sections.length : 0), 0);
+    list.appendChild(h("li.session",
+      h("a.session__link", { href: href(`library/${b.id}`) },
+        h("span.session__n", String(b.pages)),
+        h("span.session__body",
+          h("span.session__title", b.title),
+          h("span.session__sum",
+            `${b.author ? b.author + " · " : ""}${b.chapters.length} chapter${b.chapters.length === 1 ? "" : "s"}` +
+            ` · ${secs} section${secs === 1 ? "" : "s"} · ${b.pages} pages`),
+        ),
+        h("span.badge.badge--accent", String(b.chapters.length)),
+      ),
+    ));
+  }
+  wrap.appendChild(h("section.layer", list));
+  return wrap;
+}
+
+export function libraryBookView(params) {
+  const wrap = h("div");
+  const lib = search.CORPUS.library;
+  const b = lib && (lib.books || []).find((x) => x.id === params.id);
+
+  if (!b) {
+    wrap.appendChild(h("div.empty",
+      h("h2", "That book is not indexed"),
+      h("div.btnrow", h("a.btn", { href: href("library") }, "All books"))));
+    return wrap;
+  }
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", b.title),
+    h("p", b.author ? b.author : ""),
+    h("div.card__meta",
+      h("span.badge", `${b.chapters.length} chapters`),
+      h("span.badge", `${b.pages} pages`),
+      h("a.badge", { href: href("library") }, "All books"),
+    ),
+  ));
+
+  for (const c of b.chapters) {
+    const head = h("h2", h("span.sec__n", String(c.n)), c.title,
+      h("span.pagehint", `page ${c.page}`));
+    wrap.appendChild(head);
+    if (c.sections && c.sections.length) {
+      const ul = h("ul.prose");
+      for (const s of c.sections) {
+        ul.appendChild(h("li", ...paraTokens(`${s.title} — page ${s.page}`)));
+      }
+      wrap.appendChild(ul);
+    }
+  }
+
+  wrap.appendChild(h("div.note",
+    h("strong", "Not published here"),
+    h("span", lib.copyright)));
   return wrap;
 }
 
