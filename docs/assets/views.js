@@ -9,6 +9,7 @@ import { h, clear, icon, codeBlock, more, sheet, toast, copyText, add } from "./
 import * as search from "./search.js";
 import * as db from "./db.js";
 import { href } from "./router.js";
+import * as prose from "./prose.js";
 
 export const TECH = {
   aplus:    { label: "CompTIA A+",     varName: "--tech-aplus" },
@@ -1495,8 +1496,16 @@ function studyBlock(b) {
   return h("p", t);
 }
 
+/**
+ * Render a run of Study Manual content blocks.
+ *
+ * Routes through prose.js so a command in the manual is marked exactly the way
+ * a command in a book is. Both used to render as a bare <p>, which is why a
+ * learner could not tell at a glance which line was one to type and which was
+ * an explanation to read.
+ */
 function renderStudyList(items) {
-  return h("div.study__body", items.map(studyBlock));
+  return h("div.study__body", prose.renderBlocks(items));
 }
 
 const STUDY_STATUS = {
@@ -2163,10 +2172,12 @@ export async function libraryChapterView(params) {
         libChunkCache.set(params.id, data);
       }
       clear(body);
-      // The extracted text is Markdown-ish: keep it as preformatted text so a
-      // stray '#' or '*' can never be interpreted as markup.
-      const pre = h("pre.booktext", data.text);
-      body.appendChild(pre);
+      // Routed through prose.js, so a command in the book is marked the same
+      // way a command in the manual is. This was previously a bare <pre>, so
+      // every line looked the same and nothing told the reader what to type.
+      // It is still built from text nodes only - no innerHTML - so a line of
+      // book content can never become markup.
+      body.appendChild(h("div.study__body", prose.renderText(data.text)));
       body.appendChild(noteEditor(params.id));
     } catch (err) {
       clear(body);

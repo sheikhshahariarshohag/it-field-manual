@@ -27,6 +27,7 @@ const SHELL = [
   "assets/ui.js",
   "assets/db.js",
   "assets/search.js",
+  "assets/prose.js",
   "assets/router.js",
   "assets/views.js",
   "assets/icon.svg",
