@@ -1,0 +1,3673 @@
+{
+  "id": "rh134-09",
+  "n": 9,
+  "sourceNumber": 9,
+  "kind": "chapter",
+  "title": "Chapter 9 — Accessing Network-Attached Storage",
+  "display": "Chapter 9 — Accessing Network-Attached Storage",
+  "exam": "RHCSA (EX200)",
+  "words": 6793,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Part 1 — Mounting Network-Attached Storage with NFS"
+        },
+        {
+          "level": 0,
+          "text": "Part 2 — Guided Exercise: Managing Network-Attached Storage with NFS"
+        },
+        {
+          "level": 0,
+          "text": "Part 3 — Automounting Network-Attached Storage"
+        },
+        {
+          "level": 0,
+          "text": "Part 4 — Guided Exercise: Automounting Network-Attached Storage"
+        },
+        {
+          "level": 0,
+          "text": "Part 5 — Lab: Accessing Network-Attached Storage"
+        },
+        {
+          "level": 0,
+          "text": "Part 6 — Troubleshooting NFS and Automounting"
+        },
+        {
+          "level": 0,
+          "text": "Part 7 — Chapter Summary and Command Reference"
+        }
+      ],
+      "words": 54
+    },
+    {
+      "title": "Chapter goal",
+      "content": [
+        {
+          "level": 0,
+          "text": "By the end of this chapter, you should understand how to access files stored on another Linux server using NFS, mount shared directories temporarily or permanently, configure automatic mounting, and configure an NFS client to use NFS version 4."
+        },
+        {
+          "level": 0,
+          "text": "This chapter follows the book's original structure:"
+        },
+        {
+          "level": 0,
+          "text": "Mounting Network-Attached Storage with NFS"
+        },
+        {
+          "level": 0,
+          "text": "Guided Exercise: Managing Network-Attached Storage with NFS"
+        },
+        {
+          "level": 0,
+          "text": "Automounting Network-Attached Storage"
+        },
+        {
+          "level": 0,
+          "text": "Guided Exercise: Automounting Network-Attached Storage"
+        },
+        {
+          "level": 0,
+          "text": "Lab: Accessing Network-Attached Storage"
+        }
+      ],
+      "words": 70
+    },
+    {
+      "title": "1.1 What is network-attached storage?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Network-attached storage allows a computer to use files stored on another computer through a network."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine your office has one central file server. Instead of keeping a separate copy of every document on each employee's computer, the company stores the documents on that server and allows authorized employees to access them."
+        },
+        {
+          "level": 0,
+          "text": "Linux can do this with NFS, which stands for Network File System."
+        },
+        {
+          "level": 0,
+          "text": "An NFS server shares a directory over the network. An NFS client connects to that shared directory and makes it available at a local directory."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Server: serverb"
+        },
+        {
+          "level": 0,
+          "text": "Shared directory on the server: /shares/public"
+        },
+        {
+          "level": 0,
+          "text": "Local directory on the client: /public"
+        },
+        {
+          "level": 0,
+          "text": "After mounting the share, users on the client can access the server's files through /public."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "NFS server: The computer that provides shared directories."
+        },
+        {
+          "level": 0,
+          "text": "NFS client: The computer that accesses those directories."
+        },
+        {
+          "level": 0,
+          "text": "NFS export: A directory that the server makes available to clients."
+        },
+        {
+          "level": 0,
+          "text": "Mount point: A local directory where the shared files appear."
+        },
+        {
+          "level": 0,
+          "text": "Remember: NFS lets a client access a server's shared files through a local directory."
+        }
+      ],
+      "words": 177
+    },
+    {
+      "title": "1.2 Understand how NFS works",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: NFS connects a server's exported directory to a directory on the client."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The server does not normally send every file to the client as a separate download. Instead, the client mounts the shared directory and accesses its contents through the mounted location."
+        },
+        {
+          "level": 0,
+          "text": "For example, if the server exports /shares/public and the client mounts it at /public, opening /public/NOTES.txt accesses the file in the shared directory."
+        },
+        {
+          "level": 0,
+          "text": "The client and server must both be reachable on the network. The server must export the directory, and the user must have permission to access the files."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ls /public"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "Delivered.txt"
+        },
+        {
+          "level": 0,
+          "text": "NOTES.txt"
+        },
+        {
+          "level": 0,
+          "text": "README.txt"
+        },
+        {
+          "level": 0,
+          "text": "Trackings.txt"
+        },
+        {
+          "level": 0,
+          "text": "These files are available through the mounted NFS share."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ls — lists files and directories."
+        },
+        {
+          "level": 0,
+          "text": "/public — the local mount point."
+        },
+        {
+          "level": 0,
+          "text": "The displayed files — the contents of the remote share, not necessarily files stored on the client's own disk."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The mount point is local, but the data can remain on the remote server."
+        }
+      ],
+      "words": 164
+    },
+    {
+      "title": "1.3 Understand NFS versions",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: NFS has multiple versions, and RHEL 8 supports NFSv3 and NFSv4."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book identifies NFSv4.2 as the default NFS version in RHEL 8. It also covers NFSv3. NFSv2 is no longer supported in RHEL 8."
+        },
+        {
+          "level": 0,
+          "text": "NFSv4 uses TCP for network communication. Earlier versions could use TCP or UDP."
+        },
+        {
+          "level": 0,
+          "text": "The protocol version matters because the client and server must support compatible versions and settings."
+        },
+        {
+          "level": 0,
+          "text": "Important facts from the book:"
+        },
+        {
+          "level": 0,
+          "text": "NFSv3 is supported."
+        },
+        {
+          "level": 0,
+          "text": "NFSv4 is supported, including versions 4.0, 4.1, and 4.2."
+        },
+        {
+          "level": 0,
+          "text": "NFSv2 is not supported in RHEL 8."
+        },
+        {
+          "level": 0,
+          "text": "NFSv4 uses TCP."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "When a share is mounted, inspect the active mount options:"
+        },
+        {
+          "level": 0,
+          "text": "mount | grep /public"
+        },
+        {
+          "level": 0,
+          "text": "Example output may include:"
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/public on /public type nfs4 (rw,relatime,vers=4.2,proto=tcp,...)"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount — displays mounted file systems."
+        },
+        {
+          "level": 0,
+          "text": "| — sends the output of mount to the next command."
+        },
+        {
+          "level": 0,
+          "text": "grep /public — keeps lines containing /public."
+        },
+        {
+          "level": 0,
+          "text": "vers=4.2 — indicates NFS version 4.2."
+        },
+        {
+          "level": 0,
+          "text": "proto=tcp — indicates TCP is being used."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Check the actual mount options when you need to know which NFS version and transport are in use."
+        }
+      ],
+      "words": 179
+    },
+    {
+      "title": "1.4 Three ways to mount an NFS share",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An NFS share can be mounted manually, automatically at boot, or on demand."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book presents three approaches:"
+        },
+        {
+          "level": 0,
+          "text": "Manual mounting: Use the mount command when you need the share."
+        },
+        {
+          "level": 0,
+          "text": "Persistent mounting: Add the share to /etc/fstab so the system can mount it at boot."
+        },
+        {
+          "level": 0,
+          "text": "On-demand mounting: Use autofs so the share mounts when someone accesses it and can unmount it after it is no longer being used."
+        },
+        {
+          "level": 0,
+          "text": "Think of these like three ways to open a room: open it yourself, unlock it every morning automatically, or have it open when someone arrives."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Manual mount:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount serverb:/shares/public /public"
+        },
+        {
+          "level": 0,
+          "text": "Persistent mounting uses an /etc/fstab entry. On-demand mounting uses an automounter map."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount — attaches a file system to a local directory."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/public — the server and exported path."
+        },
+        {
+          "level": 0,
+          "text": "/public — the local mount point."
+        },
+        {
+          "level": 0,
+          "text": "sudo — runs the command with administrative privileges."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use manual mounting for immediate access, /etc/fstab for boot-time mounting, and autofs for on-demand access."
+        }
+      ],
+      "words": 166
+    },
+    {
+      "title": "1.5 Identify available NFS shares",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Before mounting a share, you need to know the server name and exported directory path."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The NFS server administrator can provide the server address, export path, and any security requirements."
+        },
+        {
+          "level": 0,
+          "text": "The book also demonstrates mounting the root of an NFSv4 server to explore visible exported directories. This must be done with appropriate privileges, and access to some shares may be restricted."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir -p /mnt/nfs-check"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount serverb:/ /mnt/nfs-check"
+        },
+        {
+          "level": 0,
+          "text": "ls /mnt/nfs-check"
+        },
+        {
+          "level": 0,
+          "text": "The final command lists the directories visible through the mount, subject to server configuration and access controls."
+        },
+        {
+          "level": 0,
+          "text": "After inspecting the available directories, unmount the temporary connection:"
+        },
+        {
+          "level": 0,
+          "text": "sudo umount /mnt/nfs-check"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mkdir — creates a directory."
+        },
+        {
+          "level": 0,
+          "text": "-p — creates missing parent directories as needed and does not complain if the directory already exists."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/ — the root path exposed through the NFS server."
+        },
+        {
+          "level": 0,
+          "text": "/mnt/nfs-check — the local mount point."
+        },
+        {
+          "level": 0,
+          "text": "umount — disconnects the mounted file system from that location."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Confirm the correct export path and access requirements before configuring a permanent mount."
+        }
+      ],
+      "words": 171
+    },
+    {
+      "title": "1.6 Create a mount point",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A mount point is a local directory where the contents of an NFS share become accessible."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The directory must exist before you mount the share there. It can be an empty directory such as /public or /mnt/nfs-check."
+        },
+        {
+          "level": 0,
+          "text": "Once the share is mounted, the remote files appear at that location. Files that were already underneath the mount point are hidden while the share is mounted, so choose the directory carefully."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir -p /public"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — requests administrative privileges."
+        },
+        {
+          "level": 0,
+          "text": "mkdir — creates a directory."
+        },
+        {
+          "level": 0,
+          "text": "-p — creates missing parent directories if needed."
+        },
+        {
+          "level": 0,
+          "text": "/public — the directory that will become the mount point."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Create the local mount point before mounting the remote share."
+        }
+      ],
+      "words": 121
+    },
+    {
+      "title": "1.7 Mount an NFS share temporarily",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use mount to make an NFS share available immediately without configuring it to mount automatically at boot."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A temporary mount is useful when testing a share before making it a permanent part of the system."
+        },
+        {
+          "level": 0,
+          "text": "The book's example uses the -t nfs option to identify the file-system type and -o to provide mount options."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -t nfs -o rw,sync serverb:/shares/public /public"
+        },
+        {
+          "level": 0,
+          "text": "Then check the files:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "-rw-r--r--. 1 root admin 42 Delivered.txt"
+        },
+        {
+          "level": 0,
+          "text": "-rw-r--r--. 1 root admin 46 NOTES.txt"
+        },
+        {
+          "level": 0,
+          "text": "-rw-r--r--. 1 root admin 20 README.txt"
+        },
+        {
+          "level": 0,
+          "text": "This is illustrative output; file names, sizes, owners, and permissions depend on the server."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount — attaches the share."
+        },
+        {
+          "level": 0,
+          "text": "-t nfs — specifies the NFS file-system type."
+        },
+        {
+          "level": 0,
+          "text": "-o — introduces mount options."
+        },
+        {
+          "level": 0,
+          "text": "rw — requests read and write access, subject to the server's export settings and file permissions."
+        },
+        {
+          "level": 0,
+          "text": "sync — requests synchronous writes to the server."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/public — the remote server and export path."
+        },
+        {
+          "level": 0,
+          "text": "/public — the local mount point."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A successful temporary mount makes the share available now, but does not automatically configure it for the next boot."
+        }
+      ],
+      "words": 188
+    },
+    {
+      "title": "1.8 Understand read/write and synchronization options",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Mount options influence how a share is accessed and how write operations are handled."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book uses two options in its examples:"
+        },
+        {
+          "level": 0,
+          "text": "rw requests read and write access."
+        },
+        {
+          "level": 0,
+          "text": "sync requests synchronous writes, meaning write operations are synchronized with the server rather than being handled asynchronously."
+        },
+        {
+          "level": 0,
+          "text": "However, the client cannot grant itself more access than the server allows. If the server exports a share as read-only, using rw on the client does not turn it into a writable share."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -t nfs -o rw,sync serverb:/shares/public /public"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "rw — request read/write access."
+        },
+        {
+          "level": 0,
+          "text": "sync — request synchronous write behavior."
+        },
+        {
+          "level": 0,
+          "text": "-o rw,sync — the comma separates the two mount options; do not put spaces between the options."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Client mount options cannot override restrictions imposed by the NFS server or Linux file permissions."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "1.9 Unmount an NFS share",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use umount to detach an NFS share from its local mount point."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Unmounting stops the share from being available at that location. It does not delete the files stored on the NFS server."
+        },
+        {
+          "level": 0,
+          "text": "The command is spelled umount, not unmount."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo umount /public"
+        },
+        {
+          "level": 0,
+          "text": "You can check the result:"
+        },
+        {
+          "level": 0,
+          "text": "mount | grep /public"
+        },
+        {
+          "level": 0,
+          "text": "If no matching line is displayed, the share is no longer mounted at /public."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "umount — detaches the mounted file system."
+        },
+        {
+          "level": 0,
+          "text": "/public — the local mount point being detached."
+        },
+        {
+          "level": 0,
+          "text": "mount | grep /public — displays mounted file systems and filters for /public."
+        },
+        {
+          "level": 0,
+          "text": "If unmounting reports that the target is busy, a process may still be using files or directories within that share. Find and close the process's access before retrying."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Unmounting detaches the share; it does not erase the remote data."
+        }
+      ],
+      "words": 143
+    },
+    {
+      "title": "1.10 Make an NFS mount persistent with /etc/fstab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An entry in /etc/fstab tells Linux how to mount a share automatically during startup."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A manual mount is temporary. If the system reboots, the mount is not automatically restored unless it is configured persistently."
+        },
+        {
+          "level": 0,
+          "text": "The /etc/fstab file contains one entry per file system. For the book's example, the line is:"
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/public /public nfs rw,sync 0 0"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/public — the remote NFS server and exported directory."
+        },
+        {
+          "level": 0,
+          "text": "/public — the local mount point."
+        },
+        {
+          "level": 0,
+          "text": "nfs — the file-system type."
+        },
+        {
+          "level": 0,
+          "text": "rw,sync — the mount options."
+        },
+        {
+          "level": 0,
+          "text": "0 — the dump utility field."
+        },
+        {
+          "level": 0,
+          "text": "0 — the traditional file-system check order field."
+        },
+        {
+          "level": 0,
+          "text": "The final two fields are both set to zero in this example, as in the book."
+        },
+        {
+          "level": 0,
+          "text": "Example procedure:"
+        },
+        {
+          "level": 0,
+          "text": "Edit the file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Add the entry, save it, and test the configuration without rebooting:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount /public"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/fstab — the file containing persistent mount configuration."
+        },
+        {
+          "level": 0,
+          "text": "mount /public — asks Linux to mount the file system using the matching entry in /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public — verifies that the share is accessible."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Add the correct /etc/fstab entry and test it before relying on it during boot."
+        }
+      ],
+      "words": 197
+    },
+    {
+      "title": "1.11 Important difference: unmounting versus removing /etc/fstab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Unmounting a share does not remove its persistent configuration."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose you add an NFS share to /etc/fstab and then run umount /public. The share is disconnected for now, but the entry remains in the file."
+        },
+        {
+          "level": 0,
+          "text": "The share may mount again at the next boot or when a relevant mount operation is performed."
+        },
+        {
+          "level": 0,
+          "text": "If you no longer want the share to mount automatically, remove its entry from /etc/fstab or comment out the entry."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo umount /public"
+        },
+        {
+          "level": 0,
+          "text": "This unmounts the share. It does not delete the line from /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "umount — disconnects the current mount."
+        },
+        {
+          "level": 0,
+          "text": "/public — the mount point."
+        },
+        {
+          "level": 0,
+          "text": "/etc/fstab — stores the separate persistent configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: umount changes the active mount; editing /etc/fstab changes the persistent configuration."
+        }
+      ],
+      "words": 126
+    },
+    {
+      "title": "1.12 Understand the NFS configuration tool: nfsconf",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: In RHEL 8, nfsconf manages NFS configuration settings stored in /etc/nfs.conf."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "NFS has configuration settings for supported versions, transport protocols, and other behavior. In RHEL 8, the book introduces nfsconf to manage these settings."
+        },
+        {
+          "level": 0,
+          "text": "The /etc/nfs.conf file is organized into sections. A section name appears inside square brackets, and its settings appear below it."
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "[nfsd]"
+        },
+        {
+          "level": 0,
+          "text": "vers4.2 = y"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/nfs.conf — the NFS configuration file."
+        },
+        {
+          "level": 0,
+          "text": "[nfsd] — the section for NFS server daemon settings in the book's examples."
+        },
+        {
+          "level": 0,
+          "text": "vers4.2 — a setting related to NFS version 4.2."
+        },
+        {
+          "level": 0,
+          "text": "= — assigns a value."
+        },
+        {
+          "level": 0,
+          "text": "y — enables the setting."
+        },
+        {
+          "level": 0,
+          "text": "The book notes that /etc/sysconfig/nfs, used in older releases, is deprecated in this RHEL 8 context."
+        },
+        {
+          "level": 0,
+          "text": "Remember: In this chapter, use nfsconf to manage the settings in /etc/nfs.conf."
+        }
+      ],
+      "words": 134
+    },
+    {
+      "title": "1.13 Read NFS configuration values",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use nfsconf --get to read a specific configuration value."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Instead of opening the whole configuration file, you can ask nfsconf for a particular setting."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --get nfsd vers4.2"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "y"
+        },
+        {
+          "level": 0,
+          "text": "This indicates that the setting's value is y."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "nfsconf — manages NFS configuration."
+        },
+        {
+          "level": 0,
+          "text": "--get — requests the value of a setting."
+        },
+        {
+          "level": 0,
+          "text": "nfsd — identifies the configuration section."
+        },
+        {
+          "level": 0,
+          "text": "vers4.2 — identifies the setting within that section."
+        },
+        {
+          "level": 0,
+          "text": "Remember: nfsconf --get SECTION KEY reads the selected value."
+        }
+      ],
+      "words": 85
+    },
+    {
+      "title": "1.14 Set an NFS configuration value",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use nfsconf --set to assign a value to a setting."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The command updates the relevant setting in /etc/nfs.conf. The book demonstrates setting the NFS version 4.2 option to y."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.2 y"
+        },
+        {
+          "level": 0,
+          "text": "Verify the result:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --get nfsd vers4.2"
+        },
+        {
+          "level": 0,
+          "text": "Expected output:"
+        },
+        {
+          "level": 0,
+          "text": "y"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--set — assigns a configuration value."
+        },
+        {
+          "level": 0,
+          "text": "nfsd — the section being changed."
+        },
+        {
+          "level": 0,
+          "text": "vers4.2 — the setting being changed."
+        },
+        {
+          "level": 0,
+          "text": "y — the value assigned to that setting."
+        },
+        {
+          "level": 0,
+          "text": "Remember: --set changes a setting; use --get to verify it."
+        }
+      ],
+      "words": 91
+    },
+    {
+      "title": "1.15 Remove an explicit NFS configuration value",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use nfsconf --unset to remove an explicitly configured value."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The configuration file can contain explicit settings and commented examples of defaults. Removing an explicit setting allows the normal default behavior to apply, rather than leaving that value explicitly configured."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --unset nfsd vers4.2"
+        },
+        {
+          "level": 0,
+          "text": "Then check the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --get nfsd vers4.2"
+        },
+        {
+          "level": 0,
+          "text": "The returned result depends on the remaining configuration and the tool's handling of the default."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--unset — removes the explicit setting."
+        },
+        {
+          "level": 0,
+          "text": "nfsd — the configuration section."
+        },
+        {
+          "level": 0,
+          "text": "vers4.2 — the setting being removed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: --unset removes an explicit value; it does not mean “set this option to no” in every case."
+        }
+      ],
+      "words": 112
+    },
+    {
+      "title": "1.16 Configure an NFSv4-only client",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The book demonstrates using nfsconf to disable older NFS versions and UDP while enabling NFSv4 and TCP."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "An administrator may want a client to use NFS version 4 only. The book's procedure changes the relevant settings in /etc/nfs.conf."
+        },
+        {
+          "level": 0,
+          "text": "The following commands reproduce the book's configuration example. Use them in a controlled environment and confirm the settings required by your own system before applying them."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Disable UDP and NFSv2/NFSv3:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd udp n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers2 n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers3 n"
+        },
+        {
+          "level": 0,
+          "text": "Enable TCP and NFSv4 versions:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd tcp y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.0 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.1 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.2 y"
+        },
+        {
+          "level": 0,
+          "text": "Inspect the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cat /etc/nfs.conf"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--set — changes a configuration setting."
+        },
+        {
+          "level": 0,
+          "text": "udp n — disables UDP in the book's example."
+        },
+        {
+          "level": 0,
+          "text": "vers2 n and vers3 n — disable NFSv2 and NFSv3."
+        },
+        {
+          "level": 0,
+          "text": "tcp y — enables TCP."
+        },
+        {
+          "level": 0,
+          "text": "vers4 y — enables the NFSv4 family."
+        },
+        {
+          "level": 0,
+          "text": "vers4.0 y, vers4.1 y, and vers4.2 y — enable the listed NFSv4 minor versions."
+        },
+        {
+          "level": 0,
+          "text": "cat — displays the configuration file."
+        },
+        {
+          "level": 0,
+          "text": "Remember: NFS version settings control which protocol versions are enabled; use compatible settings on the systems involved."
+        }
+      ],
+      "words": 210
+    },
+    {
+      "title": "2.1 What is the purpose of the exercise?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: This exercise teaches you to test an NFS share, make it persistent, and configure NFSv4 settings."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's training environment uses two servers:"
+        },
+        {
+          "level": 0,
+          "text": "serverb provides the shared directory."
+        },
+        {
+          "level": 0,
+          "text": "servera accesses the share as the NFS client."
+        },
+        {
+          "level": 0,
+          "text": "The exported directory is /shares/public on serverb. The local mount point is /public on servera."
+        },
+        {
+          "level": 0,
+          "text": "The exercise checks that you can mount the share, inspect its files, configure /etc/fstab, reboot the client, and verify that the share is still available."
+        },
+        {
+          "level": 0,
+          "text": "Remember: First prove that the share works manually; only then configure it to mount automatically."
+        }
+      ],
+      "words": 95
+    },
+    {
+      "title": "2.2 Configure the client for NFSv4",
+      "content": [
+        {
+          "level": 0,
+          "text": "On servera, use the book's nfsconf commands to disable UDP, NFSv2, and NFSv3, and enable TCP and the required NFSv4 settings."
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd udp n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers2 n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers3 n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd tcp y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.0 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.1 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.2 y"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — runs each command with administrative privileges."
+        },
+        {
+          "level": 0,
+          "text": "nfsconf --set — changes a setting in the NFS configuration."
+        },
+        {
+          "level": 0,
+          "text": "n — disables the selected setting."
+        },
+        {
+          "level": 0,
+          "text": "y — enables the selected setting."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The goal is to configure the version and transport settings required by the exercise."
+        }
+      ],
+      "words": 118
+    },
+    {
+      "title": "2.3 Test the NFS share manually",
+      "content": [
+        {
+          "level": 0,
+          "text": "Create the mount point on servera:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir -p /public"
+        },
+        {
+          "level": 0,
+          "text": "Mount the export from serverb:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -t nfs serverb.lab.example.com:/shares/public /public"
+        },
+        {
+          "level": 0,
+          "text": "List the files:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public"
+        },
+        {
+          "level": 0,
+          "text": "The training environment should display the files in the exported directory, such as Delivered.txt, NOTES.txt, README.txt, and Trackings.txt."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com — the example server's fully qualified domain name."
+        },
+        {
+          "level": 0,
+          "text": ":/shares/public — the directory exported by the server."
+        },
+        {
+          "level": 0,
+          "text": "/public — the client's mount point."
+        },
+        {
+          "level": 0,
+          "text": "-t nfs — identifies the file-system type."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Verify the server name, export path, and mount point before testing the share."
+        }
+      ],
+      "words": 93
+    },
+    {
+      "title": "2.4 Inspect the mount options",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The mount output helps you verify that the NFS share is connected and shows its active options."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "mount | grep public"
+        },
+        {
+          "level": 0,
+          "text": "The output should identify the server, exported directory, local mount point, NFS version, and other options."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount — displays mounted file systems."
+        },
+        {
+          "level": 0,
+          "text": "| — sends the output to the next command."
+        },
+        {
+          "level": 0,
+          "text": "grep public — displays lines containing public."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use the mounted-file-system information to confirm that the correct share is active."
+        }
+      ],
+      "words": 79
+    },
+    {
+      "title": "2.5 Unmount and configure the persistent entry",
+      "content": [
+        {
+          "level": 0,
+          "text": "Unmount the share:"
+        },
+        {
+          "level": 0,
+          "text": "sudo umount /public"
+        },
+        {
+          "level": 0,
+          "text": "Edit the persistent mount configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Add this line, as in the book's exercise:"
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com:/shares/public /public nfs rw,sync 0 0"
+        },
+        {
+          "level": 0,
+          "text": "Save the file, then test the entry:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount /public"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "umount /public — detaches the temporary mount."
+        },
+        {
+          "level": 0,
+          "text": "/etc/fstab — stores the persistent mount entry."
+        },
+        {
+          "level": 0,
+          "text": "mount /public — uses the configuration to mount the share."
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public — checks that the files are accessible."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Test an /etc/fstab entry before rebooting so you can catch configuration errors early."
+        }
+      ],
+      "words": 93
+    },
+    {
+      "title": "2.6 Verify the persistent mount after reboot",
+      "content": [
+        {
+          "level": 0,
+          "text": "Reboot the training client:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "After the machine returns, sign in as an authorized user and inspect the share:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /public"
+        },
+        {
+          "level": 0,
+          "text": "cat /public/NOTES.txt"
+        },
+        {
+          "level": 0,
+          "text": "In the book's exercise, an authorized user also creates a test file in the shared directory:"
+        },
+        {
+          "level": 0,
+          "text": "echo \"This is a test\" > /public/Test.txt"
+        },
+        {
+          "level": 0,
+          "text": "cat /public/Test.txt"
+        },
+        {
+          "level": 0,
+          "text": "Expected output from the final command:"
+        },
+        {
+          "level": 0,
+          "text": "This is a test"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl reboot — restarts the machine."
+        },
+        {
+          "level": 0,
+          "text": "cat — displays file contents."
+        },
+        {
+          "level": 0,
+          "text": "echo — produces the text."
+        },
+        {
+          "level": 0,
+          "text": "> — redirects standard output into a file, replacing that file's contents if it already exists."
+        },
+        {
+          "level": 0,
+          "text": "/public/Test.txt — the test file inside the mounted share."
+        },
+        {
+          "level": 0,
+          "text": "The write test succeeds only if the server export and file permissions allow the user to write."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A successful post-reboot test confirms that the persistent mount configuration works in the training environment."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "3.1 What is an automounter?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An automounter mounts a network share when it is accessed and can unmount it when it is no longer being used."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A persistent /etc/fstab mount is configured to be mounted at boot. An automounter works differently: it waits until a user or program accesses the configured path."
+        },
+        {
+          "level": 0,
+          "text": "RHEL uses the autofs service for the automounter examples in this chapter."
+        },
+        {
+          "level": 0,
+          "text": "Imagine a storage room that opens when someone needs something from it and closes again when no one is using it. The automounter follows a similar idea."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "A configured share might be available at:"
+        },
+        {
+          "level": 0,
+          "text": "/shares/work"
+        },
+        {
+          "level": 0,
+          "text": "When a user accesses that path, autofs mounts the corresponding remote directory if the configuration is correct."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "autofs — the automounter service."
+        },
+        {
+          "level": 0,
+          "text": "On-demand mount — a mount triggered by access to the configured path."
+        },
+        {
+          "level": 0,
+          "text": "Indirect map — a mapping that places shares under a common base directory."
+        },
+        {
+          "level": 0,
+          "text": "Direct map — a mapping that uses a specific absolute path as a mount point."
+        },
+        {
+          "level": 0,
+          "text": "Remember: autofs mounts shares when they are needed instead of keeping every configured share mounted all the time."
+        }
+      ],
+      "words": 183
+    },
+    {
+      "title": "3.2 Benefits of the automounter",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The automounter makes network shares available on demand and reduces the need to keep unused shares mounted."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book identifies several benefits:"
+        },
+        {
+          "level": 0,
+          "text": "Users do not need to run mount or umount themselves."
+        },
+        {
+          "level": 0,
+          "text": "The configured shares can be available to different users, subject to permissions."
+        },
+        {
+          "level": 0,
+          "text": "Shares do not need to remain continuously mounted like typical /etc/fstab entries."
+        },
+        {
+          "level": 0,
+          "text": "Configuration is performed on the client; the server does not need special automounter configuration."
+        },
+        {
+          "level": 0,
+          "text": "It supports direct and indirect maps."
+        },
+        {
+          "level": 0,
+          "text": "It can create and remove indirect mount points as needed."
+        },
+        {
+          "level": 0,
+          "text": "NFS is its default network file system, although other file-system types can be configured."
+        },
+        {
+          "level": 0,
+          "text": "It is managed as a system service."
+        },
+        {
+          "level": 0,
+          "text": "The automounter does not remove the need for server exports, network connectivity, or Linux permissions."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "A user accesses /internal/west. If that path is correctly configured in an indirect map, autofs can mount the corresponding NFS share automatically."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The automounter handles when a share is mounted; it does not replace the server's access controls."
+        }
+      ],
+      "words": 166
+    },
+    {
+      "title": "3.3 Install the autofs package",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Install autofs before configuring automounter maps."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The autofs package provides the service and tools needed to configure automounting."
+        },
+        {
+          "level": 0,
+          "text": "The book's RHEL 8 example uses yum:"
+        },
+        {
+          "level": 0,
+          "text": "sudo yum install autofs"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — runs the installation command with administrative privileges."
+        },
+        {
+          "level": 0,
+          "text": "yum — the package-management command used in the book's RHEL 8 examples."
+        },
+        {
+          "level": 0,
+          "text": "install — requests installation of a package."
+        },
+        {
+          "level": 0,
+          "text": "autofs — the package to install."
+        },
+        {
+          "level": 0,
+          "text": "RHEL 8 also provides dnf; on systems where yum is available, it is commonly used as the compatible command shown in the book."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Install the package before creating and starting the automounter configuration."
+        }
+      ],
+      "words": 105
+    },
+    {
+      "title": "3.4 Understand the master map and mapping file",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The master map tells autofs where the mount points are located and which mapping file contains their details."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Automounter configuration is split into two levels:"
+        },
+        {
+          "level": 0,
+          "text": "Master map: identifies a base path and the file containing the share mappings."
+        },
+        {
+          "level": 0,
+          "text": "Mapping file: defines the individual mount points, options, and remote locations."
+        },
+        {
+          "level": 0,
+          "text": "This is like a table of contents pointing to the detailed list of items."
+        },
+        {
+          "level": 0,
+          "text": "The book shows master map files under /etc/auto.master.d/. These files normally have the .autofs extension."
+        },
+        {
+          "level": 0,
+          "text": "Example — Create a master map file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.master.d/demo.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Put this line inside it:"
+        },
+        {
+          "level": 0,
+          "text": "/shares /etc/auto.demo"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.master.d/demo.autofs — the master map file."
+        },
+        {
+          "level": 0,
+          "text": "/shares — the base directory for indirect mount points."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.demo — the mapping file containing the individual share definitions."
+        },
+        {
+          "level": 0,
+          "text": "The space separates the two fields in the master map entry."
+        },
+        {
+          "level": 0,
+          "text": "The mapping file must be created before starting or reloading the service for this configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The master map points to the mapping file; the mapping file identifies the actual shares."
+        }
+      ],
+      "words": 170
+    },
+    {
+      "title": "3.5 Create an indirect map",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An indirect map puts several shares under one common directory."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose the server exports /shares/work. The client can make that directory available as /shares/work by using /shares as the base and work as the key in an indirect map."
+        },
+        {
+          "level": 0,
+          "text": "Create the mapping file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.demo"
+        },
+        {
+          "level": 0,
+          "text": "Add this entry:"
+        },
+        {
+          "level": 0,
+          "text": "work -rw,sync serverb:/shares/work"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "work — the key; combined with the base directory /shares, it produces /shares/work."
+        },
+        {
+          "level": 0,
+          "text": "-rw,sync — mount options. The dash (-) introduces the options; the comma separates them."
+        },
+        {
+          "level": 0,
+          "text": "rw — requests read/write access."
+        },
+        {
+          "level": 0,
+          "text": "sync — requests synchronous writes."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/work — the server and exported directory."
+        },
+        {
+          "level": 0,
+          "text": "The share is accessible only if the server exports it appropriately and the user has the required permissions."
+        },
+        {
+          "level": 0,
+          "text": "Remember: In an indirect map, the key is added beneath the base directory to form the local mount path."
+        }
+      ],
+      "words": 141
+    },
+    {
+      "title": "3.6 Start and enable the automounter service",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Start autofs now and enable it so it starts automatically during boot."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Writing map files does not by itself start the service. Use systemctl to manage autofs."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "Check its status:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status autofs"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl — manages systemd services and other units."
+        },
+        {
+          "level": 0,
+          "text": "enable — configures the service to start automatically at boot."
+        },
+        {
+          "level": 0,
+          "text": "--now — also starts the service immediately."
+        },
+        {
+          "level": 0,
+          "text": "autofs — the service being managed."
+        },
+        {
+          "level": 0,
+          "text": "status — displays service status information."
+        },
+        {
+          "level": 0,
+          "text": "Remember: enable --now both enables the service at boot and starts it immediately."
+        }
+      ],
+      "words": 97
+    },
+    {
+      "title": "3.7 Understand a direct map",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A direct map associates a share with a specific absolute mount path."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "An indirect map creates paths beneath a base directory. A direct map specifies the full path of the mount point itself."
+        },
+        {
+          "level": 0,
+          "text": "The book's example uses this master map entry:"
+        },
+        {
+          "level": 0,
+          "text": "/- /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "The /- tells the automounter that the mapping file contains direct paths."
+        },
+        {
+          "level": 0,
+          "text": "Create the mapping file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "Add this entry:"
+        },
+        {
+          "level": 0,
+          "text": "/mnt/docs -rw,sync serverb:/shares/docs"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/- — indicates direct mapping in the master map."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.direct — the file containing the direct map entries."
+        },
+        {
+          "level": 0,
+          "text": "/mnt/docs — the full local mount path."
+        },
+        {
+          "level": 0,
+          "text": "-rw,sync — mount options."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/docs — the remote server and export."
+        },
+        {
+          "level": 0,
+          "text": "The parent directory /mnt must exist. autofs manages the mapped mount path as part of the automount operation."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Direct maps use a complete absolute mount path; indirect maps use a key beneath a shared base directory."
+        }
+      ],
+      "words": 149
+    },
+    {
+      "title": "3.8 Compare direct and indirect maps",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Direct maps specify the full mount path, while indirect maps build a path beneath a common directory."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Consider these two examples:"
+        },
+        {
+          "level": 0,
+          "text": "Type"
+        },
+        {
+          "level": 0,
+          "text": "Master map entry"
+        },
+        {
+          "level": 0,
+          "text": "Mapping entry"
+        },
+        {
+          "level": 0,
+          "text": "Resulting local path"
+        },
+        {
+          "level": 0,
+          "text": "Indirect"
+        },
+        {
+          "level": 0,
+          "text": "/shares /etc/auto.demo"
+        },
+        {
+          "level": 0,
+          "text": "work ... serverb:/shares/work"
+        },
+        {
+          "level": 0,
+          "text": "/shares/work"
+        },
+        {
+          "level": 0,
+          "text": "Direct"
+        },
+        {
+          "level": 0,
+          "text": "/- /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "/mnt/docs ... serverb:/shares/docs"
+        },
+        {
+          "level": 0,
+          "text": "/mnt/docs"
+        },
+        {
+          "level": 0,
+          "text": "An indirect map is useful when many related shares belong under a common directory. A direct map is useful when a share needs to appear at a particular absolute path."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Indirect maps use a base directory and key; direct maps specify the complete path."
+        }
+      ],
+      "words": 93
+    },
+    {
+      "title": "3.9 Use a wildcard in an indirect map",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A wildcard map lets one rule handle several similarly named remote directories."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose a server exports multiple subdirectories under /shares, such as work, docs, and reports. If they all use the same mount options, you may not need a separate map entry for every directory."
+        },
+        {
+          "level": 0,
+          "text": "The book uses an asterisk (*) as the key and an ampersand (&) in the source path."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "* -rw,sync serverb:/shares/&"
+        },
+        {
+          "level": 0,
+          "text": "If a user accesses /shares/work, the key work replaces the ampersand in the source path. The resulting remote path is serverb:/shares/work."
+        },
+        {
+          "level": 0,
+          "text": "If the user accesses /shares/docs, the resulting remote path is serverb:/shares/docs."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "* — matches a requested key in this wildcard map."
+        },
+        {
+          "level": 0,
+          "text": "-rw,sync — the mount options."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/ — the common beginning of the remote path."
+        },
+        {
+          "level": 0,
+          "text": "& — replaced with the key requested by the user."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The wildcard key and ampersand let one indirect-map entry handle multiple matching share names."
+        }
+      ],
+      "words": 155
+    },
+    {
+      "title": "3.10 Understand automounter-specific options",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Automounter maps can use additional options to specify the file-system type and how mount failures are handled."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book describes options such as -fstype= and -strict."
+        },
+        {
+          "level": 0,
+          "text": "-fstype= specifies the file-system type, such as nfs4."
+        },
+        {
+          "level": 0,
+          "text": "-strict makes mounting errors fatal for the relevant automount operation."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "/external -rw,sync,fstype=nfs4 serverb:/shares/direct/external"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/external — the direct mount point."
+        },
+        {
+          "level": 0,
+          "text": "-rw,sync,fstype=nfs4 — options for read/write access, synchronous writes, and NFS version 4 file-system handling."
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/direct/external — the source location."
+        },
+        {
+          "level": 0,
+          "text": "-fstype=nfs4 — the fstype option, preceded by the dash used in the map syntax."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use the appropriate file-system type in a map when the configuration needs to specify it explicitly."
+        }
+      ],
+      "words": 112
+    },
+    {
+      "title": "3.11 Understand server permissions and client permissions",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An automounter cannot give a user access that the NFS server or file permissions deny."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose an automounter entry requests rw, but the server exports the share as read-only. The client still receives read-only access."
+        },
+        {
+          "level": 0,
+          "text": "Similarly, the server may export the directory, but a user may not have permission to read or write its contents."
+        },
+        {
+          "level": 0,
+          "text": "There are multiple checks: the share must be exported, the network connection must work, and the user's permissions must allow the requested action."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "cat /shares/work/README.txt"
+        },
+        {
+          "level": 0,
+          "text": "If this fails, the cause might be an unavailable mount, an incorrect map, a network issue, or missing file permissions."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "cat — reads and displays file contents."
+        },
+        {
+          "level": 0,
+          "text": "/shares/work/README.txt — the file accessed through the automounted path."
+        },
+        {
+          "level": 0,
+          "text": "rw — a mount option that requests read/write access but cannot override server-side restrictions."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Automounting controls when a share is mounted; it does not override access restrictions."
+        }
+      ],
+      "words": 153
+    },
+    {
+      "title": "4.1 What is the purpose of this exercise?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The exercise combines direct maps, indirect maps, wildcard mappings, and the autofs service."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's training environment uses serverb as the NFS server and servera as the client."
+        },
+        {
+          "level": 0,
+          "text": "The exercise configures:"
+        },
+        {
+          "level": 0,
+          "text": "A direct mount from the server's /shares/direct/external to /external on the client."
+        },
+        {
+          "level": 0,
+          "text": "An indirect map for the west, central, and east directories beneath /internal."
+        },
+        {
+          "level": 0,
+          "text": "The autofs service to start automatically at boot."
+        },
+        {
+          "level": 0,
+          "text": "The purpose is to understand how both mapping types work and how a wildcard can handle several similarly named shares."
+        }
+      ],
+      "words": 87
+    },
+    {
+      "title": "4.2 Install the package and test the server shares",
+      "content": [
+        {
+          "level": 0,
+          "text": "On servera, install autofs:"
+        },
+        {
+          "level": 0,
+          "text": "sudo yum install autofs"
+        },
+        {
+          "level": 0,
+          "text": "Before configuring a map, test that the server exports the expected directory."
+        },
+        {
+          "level": 0,
+          "text": "For the direct-map example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -t nfs serverb.lab.example.com:/shares/direct/external /mnt"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /mnt"
+        },
+        {
+          "level": 0,
+          "text": "sudo umount /mnt"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount -t nfs — mounts an NFS share."
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com:/shares/direct/external — the remote share."
+        },
+        {
+          "level": 0,
+          "text": "/mnt — the temporary local mount point."
+        },
+        {
+          "level": 0,
+          "text": "ls -l /mnt — checks the share's contents."
+        },
+        {
+          "level": 0,
+          "text": "umount /mnt — detaches the temporary mount."
+        },
+        {
+          "level": 0,
+          "text": "The exercise's environment should provide /mnt. If you use your own lab, make sure the mount point exists first."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Test the remote export manually before building an automounter map around it."
+        }
+      ],
+      "words": 107
+    },
+    {
+      "title": "4.3 Configure the direct map",
+      "content": [
+        {
+          "level": 0,
+          "text": "Create the master map file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.master.d/direct.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Add:"
+        },
+        {
+          "level": 0,
+          "text": "/- /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "Create the mapping file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.direct"
+        },
+        {
+          "level": 0,
+          "text": "Add:"
+        },
+        {
+          "level": 0,
+          "text": "/external -rw,sync,fstype=nfs4 serverb.lab.example.com:/shares/direct/external"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/- — selects direct-map behavior."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.direct — the direct mapping file."
+        },
+        {
+          "level": 0,
+          "text": "/external — the local mount path."
+        },
+        {
+          "level": 0,
+          "text": "-rw,sync,fstype=nfs4 — the requested options and file-system type."
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com:/shares/direct/external — the remote export."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A direct map uses the complete local path as its key."
+        }
+      ],
+      "words": 68
+    },
+    {
+      "title": "4.4 Configure the indirect map",
+      "content": [
+        {
+          "level": 0,
+          "text": "Create the master map file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.master.d/indirect.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Add:"
+        },
+        {
+          "level": 0,
+          "text": "/internal /etc/auto.indirect"
+        },
+        {
+          "level": 0,
+          "text": "Create the mapping file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.indirect"
+        },
+        {
+          "level": 0,
+          "text": "Add the wildcard entry:"
+        },
+        {
+          "level": 0,
+          "text": "* -rw,sync,fstype=nfs4 serverb.lab.example.com:/shares/indirect/&"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/internal — the base directory for indirect mounts."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.indirect — the file containing the mapping rule."
+        },
+        {
+          "level": 0,
+          "text": "* — matches a requested subdirectory name."
+        },
+        {
+          "level": 0,
+          "text": "& — inserts that name into the remote path."
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com:/shares/indirect/ — the common remote path."
+        },
+        {
+          "level": 0,
+          "text": "For example, /internal/west maps to the remote directory /shares/indirect/west."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The wildcard rule maps multiple subdirectories without requiring one separate entry per directory."
+        }
+      ],
+      "words": 90
+    },
+    {
+      "title": "4.5 Start and enable autofs",
+      "content": [
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "Check the service:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status autofs"
+        },
+        {
+          "level": 0,
+          "text": "Then reboot the training client as instructed in the book:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "enable — configure automatic startup."
+        },
+        {
+          "level": 0,
+          "text": "--now — start the service immediately."
+        },
+        {
+          "level": 0,
+          "text": "status — inspect whether the service is running."
+        },
+        {
+          "level": 0,
+          "text": "reboot — restart the system."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The maps define the mounts; the running autofs service makes those maps work."
+        }
+      ],
+      "words": 67
+    },
+    {
+      "title": "4.6 Test the direct map",
+      "content": [
+        {
+          "level": 0,
+          "text": "After the client has rebooted, access the direct mount:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /external"
+        },
+        {
+          "level": 0,
+          "text": "cat /external/README.txt"
+        },
+        {
+          "level": 0,
+          "text": "If the training environment has been configured correctly and the user is authorized, the remote files should be visible."
+        },
+        {
+          "level": 0,
+          "text": "Test writing only when the exercise explicitly allows it:"
+        },
+        {
+          "level": 0,
+          "text": "echo testing-direct > /external/testing.txt"
+        },
+        {
+          "level": 0,
+          "text": "cat /external/testing.txt"
+        },
+        {
+          "level": 0,
+          "text": "Expected output:"
+        },
+        {
+          "level": 0,
+          "text": "testing-direct"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/external — the direct mount point."
+        },
+        {
+          "level": 0,
+          "text": "cat — displays a file."
+        },
+        {
+          "level": 0,
+          "text": "> — redirects output into a file, replacing its existing contents."
+        },
+        {
+          "level": 0,
+          "text": "/external/testing.txt — the test file on the remote share."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The direct map should make the share available at the exact path /external."
+        }
+      ],
+      "words": 100
+    },
+    {
+      "title": "4.7 Test the indirect map",
+      "content": [
+        {
+          "level": 0,
+          "text": "Access each of the mapped directories:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /internal/west"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /internal/central"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /internal/east"
+        },
+        {
+          "level": 0,
+          "text": "If the maps and server permissions are correct, each directory should show the contents of its corresponding remote share."
+        },
+        {
+          "level": 0,
+          "text": "The book also demonstrates reading a file:"
+        },
+        {
+          "level": 0,
+          "text": "cat /internal/west/README.txt"
+        },
+        {
+          "level": 0,
+          "text": "And, for a user with write access, creating a test file:"
+        },
+        {
+          "level": 0,
+          "text": "echo testing-1 > /internal/west/testing-1.txt"
+        },
+        {
+          "level": 0,
+          "text": "cat /internal/west/testing-1.txt"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/internal — the indirect-map base directory."
+        },
+        {
+          "level": 0,
+          "text": "west, central, and east — keys in the wildcard map."
+        },
+        {
+          "level": 0,
+          "text": "& — substitutes the requested key in the remote path."
+        },
+        {
+          "level": 0,
+          "text": "> — writes the output into the specified file."
+        },
+        {
+          "level": 0,
+          "text": "Remember: In an indirect map, accessing each mapped subdirectory triggers its corresponding mount."
+        }
+      ],
+      "words": 112
+    },
+    {
+      "title": "4.8 Why one user can access a share while another cannot",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Successful mounting does not guarantee that every user can read or write the share."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's exercise intentionally gives different users different access rights. The contractor users are allowed to access the direct share, while the operator users access the indirect shares."
+        },
+        {
+          "level": 0,
+          "text": "If a user cannot open /external, that may be correct behavior when the user lacks permission. It does not automatically mean the automounter is broken."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /external"
+        },
+        {
+          "level": 0,
+          "text": "An error such as Permission denied means the access attempt was refused. Check the user's group membership and the permissions configured on the server before changing the automounter."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l — lists files and their ordinary permissions."
+        },
+        {
+          "level": 0,
+          "text": "Permission denied — access was refused; further investigation is required."
+        },
+        {
+          "level": 0,
+          "text": "User and group permissions — help determine who can access the share's contents."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A working automount and a user's permission to access the mounted files are two separate things."
+        }
+      ],
+      "words": 156
+    },
+    {
+      "title": "5.1 What the final lab requires",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The final lab asks you to configure an NFSv4 client and use an indirect map to make multiple shared directories available on demand."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's lab uses a central NFS server called serverb and a client called servera."
+        },
+        {
+          "level": 0,
+          "text": "The server exports shared directories for three groups:"
+        },
+        {
+          "level": 0,
+          "text": "managers"
+        },
+        {
+          "level": 0,
+          "text": "production"
+        },
+        {
+          "level": 0,
+          "text": "operators"
+        },
+        {
+          "level": 0,
+          "text": "The shares are to be accessed beneath /remote on the client:"
+        },
+        {
+          "level": 0,
+          "text": "Remote share"
+        },
+        {
+          "level": 0,
+          "text": "Expected client path"
+        },
+        {
+          "level": 0,
+          "text": "/shares/management"
+        },
+        {
+          "level": 0,
+          "text": "/remote/management"
+        },
+        {
+          "level": 0,
+          "text": "/shares/production"
+        },
+        {
+          "level": 0,
+          "text": "/remote/production"
+        },
+        {
+          "level": 0,
+          "text": "/shares/operation"
+        },
+        {
+          "level": 0,
+          "text": "/remote/operation"
+        },
+        {
+          "level": 0,
+          "text": "The exercise uses an indirect map so all three shares can be accessed through a common base directory."
+        }
+      ],
+      "words": 93
+    },
+    {
+      "title": "5.2 Configure NFSv4 on the client",
+      "content": [
+        {
+          "level": 0,
+          "text": "The lab asks you to use nfsconf to configure the client for NFSv4 and TCP, with UDP and NFSv2/NFSv3 disabled."
+        },
+        {
+          "level": 0,
+          "text": "Use the book's commands:"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd udp n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers2 n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers3 n"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd tcp y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.0 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.1 y"
+        },
+        {
+          "level": 0,
+          "text": "sudo nfsconf --set nfsd vers4.2 y"
+        },
+        {
+          "level": 0,
+          "text": "Verify the resulting settings:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cat /etc/nfs.conf"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Complete the protocol configuration before testing the NFSv4 automounts."
+        }
+      ],
+      "words": 89
+    },
+    {
+      "title": "5.3 Install the automounter",
+      "content": [
+        {
+          "level": 0,
+          "text": "Install the package:"
+        },
+        {
+          "level": 0,
+          "text": "sudo yum install autofs"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "yum — the package manager shown in the book."
+        },
+        {
+          "level": 0,
+          "text": "install — requests package installation."
+        },
+        {
+          "level": 0,
+          "text": "autofs — the automounter package."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The client needs the automounter package before it can use automounter maps."
+        }
+      ],
+      "words": 43
+    },
+    {
+      "title": "5.4 Create the indirect-map configuration",
+      "content": [
+        {
+          "level": 0,
+          "text": "The lab specifies these file names:"
+        },
+        {
+          "level": 0,
+          "text": "Master map: /etc/auto.master.d/shares.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Mapping file: /etc/auto.shares"
+        },
+        {
+          "level": 0,
+          "text": "Base directory on the client: /remote"
+        },
+        {
+          "level": 0,
+          "text": "Create the master map:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.master.d/shares.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Add:"
+        },
+        {
+          "level": 0,
+          "text": "/remote /etc/auto.shares"
+        },
+        {
+          "level": 0,
+          "text": "Create the mapping file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/auto.shares"
+        },
+        {
+          "level": 0,
+          "text": "Add the wildcard mapping:"
+        },
+        {
+          "level": 0,
+          "text": "* -rw,sync,fstype=nfs4 serverb.lab.example.com:/shares/&"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/remote — the local base directory."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.shares — the mapping file."
+        },
+        {
+          "level": 0,
+          "text": "* — matches the requested subdirectory name."
+        },
+        {
+          "level": 0,
+          "text": "-rw,sync,fstype=nfs4 — the mount options and file-system type."
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com:/shares/ — the remote base path."
+        },
+        {
+          "level": 0,
+          "text": "& — inserts the requested name into the remote path."
+        },
+        {
+          "level": 0,
+          "text": "For example, accessing /remote/management requests the remote directory /shares/management."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The wildcard entry allows the three related shares to be handled by one indirect-map rule."
+        }
+      ],
+      "words": 113
+    },
+    {
+      "title": "5.5 Enable the automounter and test the shares",
+      "content": [
+        {
+          "level": 0,
+          "text": "Start and enable the service:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "Reboot the client as required by the lab:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "After reboot, test the configured mount paths using the authorized training users:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /remote/management"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /remote/production"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /remote/operation"
+        },
+        {
+          "level": 0,
+          "text": "Check the contents and perform write tests only when the user's permissions allow them."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now autofs — enables and starts the automounter."
+        },
+        {
+          "level": 0,
+          "text": "systemctl reboot — restarts the client."
+        },
+        {
+          "level": 0,
+          "text": "ls -l — checks whether each path can be accessed and displays its contents."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The final lab checks that the protocol configuration, indirect map, service, and permissions work together."
+        }
+      ],
+      "words": 106
+    },
+    {
+      "title": "6.1 The share will not mount",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A failed mount can result from an incorrect server name, export path, network problem, or server-side restriction."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Do not assume that the mount command itself is the problem. Verify the basic information first:"
+        },
+        {
+          "level": 0,
+          "text": "Is the server reachable?"
+        },
+        {
+          "level": 0,
+          "text": "Is the server name correct?"
+        },
+        {
+          "level": 0,
+          "text": "Is the exported directory path correct?"
+        },
+        {
+          "level": 0,
+          "text": "Does the server allow the client to access the share?"
+        },
+        {
+          "level": 0,
+          "text": "Does the local mount point exist?"
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -t nfs serverb:/shares/public /public"
+        },
+        {
+          "level": 0,
+          "text": "If the command fails, confirm the server name, the exported path, and the availability of /public."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A mount needs a reachable server, a valid export, and a suitable local mount point."
+        }
+      ],
+      "words": 107
+    },
+    {
+      "title": "6.2 The NFS share works until reboot",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: If a manually mounted share disappears after reboot, it may not have a persistent configuration."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A temporary mount made with mount does not by itself configure the next boot. To mount the share automatically at boot, add a correct entry to /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "serverb:/shares/public /public nfs rw,sync 0 0"
+        },
+        {
+          "level": 0,
+          "text": "Test the entry:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount /public"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/fstab — the persistent mount configuration."
+        },
+        {
+          "level": 0,
+          "text": "mount /public — uses the matching entry to mount the share."
+        },
+        {
+          "level": 0,
+          "text": "rw,sync — the options used by this example."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use /etc/fstab for persistent boot-time mounting."
+        }
+      ],
+      "words": 95
+    },
+    {
+      "title": "6.3 The automounter is not mounting a share",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Check the master map, mapping file, service status, and remote share."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A valid map requires the correct relationship between the master map and mapping file. The file names must match the paths referenced in the master map, and the entries must use the expected format."
+        },
+        {
+          "level": 0,
+          "text": "Check the service:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status autofs"
+        },
+        {
+          "level": 0,
+          "text": "Then inspect the map files:"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/auto.master.d/shares.autofs"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/auto.shares"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status autofs — checks whether the service is active and reports its status."
+        },
+        {
+          "level": 0,
+          "text": "cat — displays the contents of a file."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.master.d/shares.autofs — the master map."
+        },
+        {
+          "level": 0,
+          "text": "/etc/auto.shares — the mapping file."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Confirm that the service is running and that the master map points to the correct mapping file."
+        }
+      ],
+      "words": 118
+    },
+    {
+      "title": "6.4 The share mounts, but a user gets permission denied",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Mounting a share and having permission to access its files are different checks."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A share may mount successfully, but an individual user can still be denied access because of Linux ownership, group membership, mode bits, or server export restrictions."
+        },
+        {
+          "level": 0,
+          "text": "Check the user and file permissions before changing the mount options."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "id"
+        },
+        {
+          "level": 0,
+          "text": "ls -ld /remote/management"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /remote/management"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "id — displays the current user's identity and group memberships."
+        },
+        {
+          "level": 0,
+          "text": "ls -ld — displays the directory itself and its permissions."
+        },
+        {
+          "level": 0,
+          "text": "ls -l — lists the directory's contents and their permissions."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A mounted share is not automatically accessible to every user."
+        }
+      ],
+      "words": 107
+    },
+    {
+      "title": "6.5 The share is mounted read-only",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The client cannot make a read-only server export writable simply by requesting rw."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A client can request read/write access, but the server's export configuration and the files' permissions still control what is allowed."
+        },
+        {
+          "level": 0,
+          "text": "If writing fails, inspect the server-side export settings and the permissions of the target file or directory. Do not repeatedly change client mount options without checking the server."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "mount | grep /public"
+        },
+        {
+          "level": 0,
+          "text": "Inspect the displayed options, then investigate the server's export and file permissions if needed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Client mount options do not override server-side read-only restrictions."
+        }
+      ],
+      "words": 94
+    },
+    {
+      "title": "7.1 The main ideas",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: NFS makes remote directories available locally, while /etc/fstab and autofs determine when those directories are mounted."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "This chapter connects three important tasks:"
+        },
+        {
+          "level": 0,
+          "text": "Mount an NFS export at a local directory."
+        },
+        {
+          "level": 0,
+          "text": "Configure persistent or on-demand mounting."
+        },
+        {
+          "level": 0,
+          "text": "Verify that the service, maps, protocol settings, and permissions work together."
+        },
+        {
+          "level": 0,
+          "text": "Remember: First test the share manually, then configure the required mounting method and verify the result."
+        }
+      ],
+      "words": 66
+    },
+    {
+      "title": "7.2 Important commands",
+      "content": [
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "mkdir -p /public"
+        },
+        {
+          "level": 0,
+          "text": "Create a mount point, including missing parent directories."
+        },
+        {
+          "level": 0,
+          "text": "mount -t nfs SERVER:/PATH /MOUNTPOINT"
+        },
+        {
+          "level": 0,
+          "text": "Mount an NFS share manually."
+        },
+        {
+          "level": 0,
+          "text": "mount"
+        },
+        {
+          "level": 0,
+          "text": "Display mounted file systems."
+        },
+        {
+          "level": 0,
+          "text": "mount | grep public"
+        },
+        {
+          "level": 0,
+          "text": "Filter mount information for a path containing public."
+        },
+        {
+          "level": 0,
+          "text": "umount /public"
+        },
+        {
+          "level": 0,
+          "text": "Detach the share from /public."
+        },
+        {
+          "level": 0,
+          "text": "vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Edit persistent mount configuration."
+        },
+        {
+          "level": 0,
+          "text": "mount /public"
+        },
+        {
+          "level": 0,
+          "text": "Mount a share using its /etc/fstab entry."
+        },
+        {
+          "level": 0,
+          "text": "nfsconf --get SECTION KEY"
+        },
+        {
+          "level": 0,
+          "text": "Read an NFS configuration value."
+        },
+        {
+          "level": 0,
+          "text": "nfsconf --set SECTION KEY VALUE"
+        },
+        {
+          "level": 0,
+          "text": "Change an NFS configuration value."
+        },
+        {
+          "level": 0,
+          "text": "nfsconf --unset SECTION KEY"
+        },
+        {
+          "level": 0,
+          "text": "Remove an explicitly configured value."
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/nfs.conf"
+        },
+        {
+          "level": 0,
+          "text": "Display NFS configuration."
+        },
+        {
+          "level": 0,
+          "text": "yum install autofs"
+        },
+        {
+          "level": 0,
+          "text": "Install the automounter package."
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now autofs"
+        },
+        {
+          "level": 0,
+          "text": "Enable and start the automounter."
+        },
+        {
+          "level": 0,
+          "text": "systemctl status autofs"
+        },
+        {
+          "level": 0,
+          "text": "Check the automounter service status."
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/auto.master.d/shares.autofs"
+        },
+        {
+          "level": 0,
+          "text": "Display a master map file."
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/auto.shares"
+        },
+        {
+          "level": 0,
+          "text": "Display a mapping file."
+        },
+        {
+          "level": 0,
+          "text": "ls -l /remote/management"
+        },
+        {
+          "level": 0,
+          "text": "Check access to an automounted share."
+        },
+        {
+          "level": 0,
+          "text": "id"
+        },
+        {
+          "level": 0,
+          "text": "Display the current user's identity and group memberships."
+        }
+      ],
+      "words": 150
+    },
+    {
+      "title": "7.3 Symbols and options to remember",
+      "content": [
+        {
+          "level": 0,
+          "text": ": in serverb:/shares/public separates the server name from the remote path."
+        },
+        {
+          "level": 0,
+          "text": "/ separates directory names in a path."
+        },
+        {
+          "level": 0,
+          "text": "-t nfs specifies the NFS file-system type."
+        },
+        {
+          "level": 0,
+          "text": "-o introduces mount options."
+        },
+        {
+          "level": 0,
+          "text": "rw requests read/write access."
+        },
+        {
+          "level": 0,
+          "text": "sync requests synchronous writes."
+        },
+        {
+          "level": 0,
+          "text": "> redirects output into a file, replacing its existing contents."
+        },
+        {
+          "level": 0,
+          "text": "| sends one command's output to another command."
+        },
+        {
+          "level": 0,
+          "text": "* is a wildcard key in the book's indirect-map example."
+        },
+        {
+          "level": 0,
+          "text": "& is replaced by the requested key in that wildcard map."
+        },
+        {
+          "level": 0,
+          "text": "/- identifies a direct map in the master-map syntax."
+        },
+        {
+          "level": 0,
+          "text": "--now starts a service immediately when used with systemctl enable."
+        },
+        {
+          "level": 0,
+          "text": "0 0 are the final two fields in the book's example /etc/fstab entry."
+        }
+      ],
+      "words": 108
+    },
+    {
+      "title": "Final memory rule",
+      "content": [
+        {
+          "level": 0,
+          "text": "Identify the export → create the mount point → test the mount → configure persistence or automounting → verify access and permissions."
+        },
+        {
+          "level": 0,
+          "text": "That is the central skill of Chapter 9: making remote storage available reliably without confusing the mount configuration with the permissions that control access to the files."
+        }
+      ],
+      "words": 49
+    }
+  ],
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
+}

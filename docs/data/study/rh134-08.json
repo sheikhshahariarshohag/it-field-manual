@@ -2,781 +2,760 @@
   "id": "rh134-08",
   "n": 8,
   "sourceNumber": 8,
-  "kind": "part",
-  "title": "Part 8",
-  "display": "Part 8 — Condensed Chapter-by-Chapter Review; Integrated Lab: The Br…",
+  "kind": "chapter",
+  "title": "Chapter 8 — Implementing Advanced Storage Features",
+  "display": "Chapter 8 — Implementing Advanced Storage Features",
   "exam": "RHCSA (EX200)",
-  "words": 1666,
+  "words": 1312,
   "sections": [
     {
-      "title": "1. Condensed Chapter-by-Chapter Review",
+      "title": "Overview",
       "content": [
         {
           "level": 0,
-          "text": "Ch"
+          "text": "This chapter teaches two tools that help Linux administrators manage storage more efficiently:"
         },
         {
           "level": 0,
-          "text": "Topic"
+          "text": "Stratis — manages storage and lets file systems grow as needed."
         },
         {
           "level": 0,
-          "text": "Core skill"
+          "text": "VDO (Virtual Data Optimizer) — helps save disk space by reducing duplicate data and compressing data."
         },
         {
           "level": 0,
-          "text": "One thing people forget"
-        },
-        {
-          "level": 0,
-          "text": "1"
-        },
-        {
-          "level": 0,
-          "text": "CLI Productivity"
-        },
-        {
-          "level": 0,
-          "text": "Bash scripts, for loops, test/if, grep+regex"
-        },
-        {
-          "level": 0,
-          "text": "Single quotes block variable expansion; brackets need spaces"
-        },
-        {
-          "level": 0,
-          "text": "2"
-        },
-        {
-          "level": 0,
-          "text": "Scheduling"
-        },
-        {
-          "level": 0,
-          "text": "at, crontab, cron.d, systemd timers, tmpfiles"
-        },
-        {
-          "level": 0,
-          "text": "day-of-month/day-of-week in cron is OR, not AND"
-        },
-        {
-          "level": 0,
-          "text": "3"
-        },
-        {
-          "level": 0,
-          "text": "Performance"
-        },
-        {
-          "level": 0,
-          "text": "tuned-adm profiles, nice/renice"
-        },
-        {
-          "level": 0,
-          "text": "Unprivileged users can raise nice but never lower it"
-        },
-        {
-          "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "ACLs"
-        },
-        {
-          "level": 0,
-          "text": "getfacl/setfacl, mask, default ACLs"
-        },
-        {
-          "level": 0,
-          "text": "The mask is a ceiling, not a grant"
-        },
-        {
-          "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "SELinux"
-        },
-        {
-          "level": 0,
-          "text": "modes, contexts, booleans, troubleshooting"
-        },
-        {
-          "level": 0,
-          "text": "mv keeps old context; cp inherits destination's"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "Basic Storage"
-        },
-        {
-          "level": 0,
-          "text": "parted, mkfs, fstab, swap"
-        },
-        {
-          "level": 0,
-          "text": "parted's fs-type prompt tags type only — mkfs still required"
-        },
-        {
-          "level": 0,
-          "text": "7"
-        },
-        {
-          "level": 0,
-          "text": "LVM"
-        },
-        {
-          "level": 0,
-          "text": "pv/vg/lv, extending live"
-        },
-        {
-          "level": 0,
-          "text": "xfs_growfs takes the mount point; resize2fs takes the device"
-        },
-        {
-          "level": 0,
-          "text": "8"
-        },
-        {
-          "level": 0,
-          "text": "Stratis/VDO"
-        },
-        {
-          "level": 0,
-          "text": "pools/filesystems, dedup pipeline"
-        },
-        {
-          "level": 0,
-          "text": "Stratis fstab entries need x-systemd.requires=stratisd.service"
-        },
-        {
-          "level": 0,
-          "text": "9"
-        },
-        {
-          "level": 0,
-          "text": "NFS/Autofs"
-        },
-        {
-          "level": 0,
-          "text": "manual mounts, indirect/direct/wildcard maps"
-        },
-        {
-          "level": 0,
-          "text": "Autofs mount points must NOT already exist as plain directories"
-        },
-        {
-          "level": 0,
-          "text": "10"
-        },
-        {
-          "level": 0,
-          "text": "Boot"
-        },
-        {
-          "level": 0,
-          "text": "targets, rd.break, emergency mode"
-        },
-        {
-          "level": 0,
-          "text": "touch /.autorelabel after passwd under rd.break"
-        },
-        {
-          "level": 0,
-          "text": "11"
-        },
-        {
-          "level": 0,
-          "text": "Network Security"
-        },
-        {
-          "level": 0,
-          "text": "firewalld zones, semanage port"
-        },
-        {
-          "level": 0,
-          "text": "--permanent needs --reload (or reboot) to actually apply"
-        },
-        {
-          "level": 0,
-          "text": "12"
-        },
-        {
-          "level": 0,
-          "text": "Install/Kickstart/VMs"
-        },
-        {
-          "level": 0,
-          "text": "Anaconda, kickstart commands, KVM"
-        },
-        {
-          "level": 0,
-          "text": "ksvalidator checks syntax only, never logic"
+          "text": "Think of normal storage as a box with a fixed size. These tools help you manage that space more flexibly."
         }
       ],
-      "words": 177
+      "words": 60
     },
     {
-      "title": "2. Integrated Lab: The Broken Application Server",
+      "title": "1. Understanding Stratis",
       "content": [
         {
           "level": 0,
-          "text": "A single scenario touching seven of the twelve RH134 chapters. Work top to bottom — later steps assume earlier ones are fixed, exactly like a real incident."
-        },
-        {
-          "level": 3,
-          "text": "Scenario"
+          "text": "Stratis is a storage management tool for Linux. It combines storage devices into a pool and creates file systems from that pool."
         },
         {
           "level": 0,
-          "text": "A colleague handed you a RHEL 8 VM that's supposed to run a small internal web app off a dedicated LVM-backed volume, with a nightly backup job, before leaving the company without documenting anything. Nothing works. Root's password is unknown. Bring it fully back to life."
-        },
-        {
-          "level": 3,
-          "text": "Environment"
+          "text": "Imagine you have two 5 GB disks:"
         },
         {
           "level": 0,
-          "text": "One RHEL 8 VM, currently failing to boot normally, SELinux enforcing, firewalld running"
+          "text": "Disk 1: 5 GB"
         },
         {
           "level": 0,
-          "text": "A second unused virtual disk /dev/vdb for the app's storage"
-        },
-        {
-          "level": 3,
-          "text": "Task 1 — Get in (Ch10)"
+          "text": "Disk 2: 5 GB"
         },
         {
           "level": 0,
-          "text": "The system drops to an emergency shell on boot because of a bad /etc/fstab entry someone left behind, AND nobody knows the root password. Recover both."
-        },
-        {
-          "level": 3,
-          "text": "Task 2 — Build the storage (Ch6, Ch7)"
+          "text": "Storage pool: 10 GB"
         },
         {
           "level": 0,
-          "text": "Partition /dev/vdb, build an LVM stack (VG appdata, LV weblv, 400 MiB, XFS), mount it persistently at /srv/webapp, and verify the fstab entry survives a real unmount/remount test before you ever reboot again."
-        },
-        {
-          "level": 3,
-          "text": "Task 3 — Lock down access (Ch4, Ch5)"
+          "text": "You can create a file system from the pool without manually managing every low-level storage detail."
         },
         {
           "level": 0,
-          "text": "The app team (group webteam) needs rwx on /srv/webapp; a single auditor account (auditor1) needs read-only, without inheriting write access for anything created later. Set this up with ACLs. Separately, confirm /srv/webapp carries a context httpd can actually serve from, and fix it if not."
-        },
-        {
-          "level": 3,
-          "text": "Task 4 — Open the door (Ch11)"
+          "text": "happycloud-lee.tistory.com"
         },
         {
           "level": 0,
-          "text": "The app will listen on port 8090/tcp. Open it on the active firewall zone AND confirm/add the correct SELinux port label — permanently, so it survives a reboot."
-        },
-        {
-          "level": 3,
-          "text": "Task 5 — Automate the housekeeping (Ch2, Ch3)"
+          "text": "Important Stratis terms"
         },
         {
           "level": 0,
-          "text": "Add a system-wide cron job (the right way, not by hand-editing /etc/crontab) that runs a backup script at 01:15 every night as the webteam user. Separately, a batch log-processing script keeps starving interactive SSH sessions of CPU — fix its priority without killing it."
-        },
-        {
-          "level": 3,
-          "text": "Checkpoint before viewing the solution"
+          "text": "Pool: A group of storage capacity managed together."
         },
         {
           "level": 0,
-          "text": "Write out your own command sequence for all five tasks before reading further. This lab is intentionally built to be harder without hints than any single Part's lab — that's the point of a comprehensive review."
-        },
-        {
-          "level": 3,
-          "text": "Solution — Task 1"
+          "text": "File system: The structure Linux uses to store and organize files."
         },
         {
           "level": 0,
-          "text": "# Reboot, interrupt GRUB, append rd.break, Ctrl+x"
+          "text": "Thin provisioning: A file system can appear larger than the physical storage currently used for it. Actual disk usage increases as data is written."
         },
         {
           "level": 0,
-          "text": "switch_root:/# mount -o remount,rw /sysroot"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# chroot /sysroot"
-        },
-        {
-          "level": 0,
-          "text": "sh-4.4# passwd root"
-        },
-        {
-          "level": 0,
-          "text": "sh-4.4# touch /.autorelabel"
-        },
-        {
-          "level": 0,
-          "text": "sh-4.4# exit"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# exit"
-        },
-        {
-          "level": 0,
-          "text": "# System reboots, relabels, drops to emergency shell again for the bad fstab line"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# mount -o remount,rw /"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# vim /etc/fstab # remove/fix the bad entry"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# systemctl daemon-reload"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# exit"
-        },
-        {
-          "level": 3,
-          "text": "Solution — Task 2"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb mklabel gpt"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 100%"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb set 1 lvm on"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# udevadm settle"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# pvcreate /dev/vdb1"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# vgcreate appdata /dev/vdb1"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lvcreate -n weblv -L 400M appdata"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mkfs.xfs /dev/appdata/weblv"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mkdir /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lsblk --fs | grep weblv # get UUID"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# echo 'UUID=<uuid> /srv/webapp xfs defaults 0 0' >> /etc/fstab"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# systemctl daemon-reload"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mount /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# umount /srv/webapp && mount /srv/webapp # prove it before trusting it"
-        },
-        {
-          "level": 3,
-          "text": "Solution — Task 3"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# setfacl -R -m g:webteam:rwx /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# setfacl -m d:g:webteam:rwx /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# setfacl -m u:auditor1:rx /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# getfacl /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# ls -Z /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# semanage fcontext -a -t httpd_sys_content_t '/srv/webapp(/.*)?'"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# restorecon -Rv /srv/webapp"
-        },
-        {
-          "level": 0,
-          "text": "auditor1's entry deliberately has no d: prefix — the requirement was read-only on the directory itself, not inherited by future files."
-        },
-        {
-          "level": 3,
-          "text": "Solution — Task 4"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --permanent --add-port=8090/tcp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --reload"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# semanage port -l | grep 8090"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# semanage port -a -t http_port_t -p tcp 8090 # if not already listed"
-        },
-        {
-          "level": 3,
-          "text": "Solution — Task 5"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# echo '15 1 * * * webteam /usr/local/bin/backup_webapp.sh' > /etc/cron.d/webapp-backup"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# ps -o pid,comm,nice -C log_processor.sh"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# renice -n 15 <PID>"
-        },
-        {
-          "level": 3,
-          "text": "Full verification"
-        },
-        {
-          "level": 0,
-          "text": "A clean reboot logs in normally as root with the new password — no emergency shell."
-        },
-        {
-          "level": 0,
-          "text": "df -h /srv/webapp shows the LVM volume mounted; getfacl confirms webteam rwx (default+regular) and auditor1 r-x (regular only)."
-        },
-        {
-          "level": 0,
-          "text": "curl http://localhost:8090 (once the app is actually running) succeeds — proving BOTH firewall and SELinux port label are correct."
-        },
-        {
-          "level": 0,
-          "text": "cat /var/log/cron or journalctl -u crond around 01:15 shows the backup job firing; ps -o nice on the log processor shows 15, not the default 0."
+          "text": "Snapshot: A saved view of a file system at a particular point in time. It can help you access earlier versions of files."
         }
       ],
-      "words": 725
+      "words": 127
     },
     {
-      "title": "3. RHCSA Skill Checklist — RH134 Portion",
+      "title": "2. Install and start Stratis",
       "content": [
         {
           "level": 0,
-          "text": "Mark each skill honestly. 'Can perform' means from memory, under time pressure, without opening this guide."
+          "text": "These examples follow the RHEL 8 textbook. They may need adjustments on RHEL 10."
         },
         {
           "level": 0,
-          "text": "Skill"
+          "text": "Install the required packages:"
         },
         {
           "level": 0,
-          "text": "Can perform without notes?"
+          "text": "sudo dnf install stratisd stratis-cli"
         },
         {
           "level": 0,
-          "text": "Write a Bash script with a for loop and an if/test condition"
+          "text": "dnf install installs software packages."
         },
         {
           "level": 0,
-          "text": "___"
+          "text": "stratisd is the background service that manages Stratis."
         },
         {
           "level": 0,
-          "text": "Search text with grep + regex (anchors, classes, -v, -r)"
+          "text": "stratis-cli provides the commands you type to manage Stratis."
         },
         {
           "level": 0,
-          "text": "___"
+          "text": "Start the service now and enable it to start automatically after reboot:"
         },
         {
           "level": 0,
-          "text": "Schedule a one-time job with at, and a recurring one with cron.d"
+          "text": "sudo systemctl enable --now stratisd"
         },
         {
           "level": 0,
-          "text": "___"
+          "text": "Check its status:"
         },
         {
           "level": 0,
-          "text": "Enable a systemd timer as a cron alternative"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Set an ACL, a default ACL, and correctly read the mask's effect"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Change SELinux mode, fix a file context, toggle a boolean, read an AVC denial"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Partition a disk, format it, and mount it persistently via fstab"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Build a PV→VG→LV stack and extend it live (both XFS and ext4 growth commands)"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Configure an autofs indirect or wildcard map"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Reset the root password via rd.break"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Recover from a bad fstab entry via emergency mode"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Open a port in firewalld persistently, and label it correctly for SELinux"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "Build and validate a Kickstart file"
-        },
-        {
-          "level": 0,
-          "text": "___"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL If more than two or three of these are still 'not confident,' revisit that specific Part's lab again before moving on to RH294 — RH294's automation content assumes every one of these is already second nature, because you'll be automating exactly these tasks."
+          "text": "systemctl status stratisd"
         }
       ],
-      "words": 214
+      "words": 68
     },
     {
-      "title": "4. Final Mixed Quiz — All RH134 Chapters",
+      "title": "3. Create a Stratis storage pool",
       "content": [
         {
           "level": 0,
-          "text": "Q1. A for loop needs to iterate over host01 through host20 without typing every name. What's the cleanest way?"
+          "text": "Warning: The following examples assume /dev/vdb and /dev/vdc are empty, dedicated lab disks. Never use a disk containing important data."
         },
         {
           "level": 0,
-          "text": "Answer: Brace expansion: for HOST in host{01..20}; do"
+          "text": "Create a pool named labpool:"
         },
         {
           "level": 0,
-          "text": "Q2. A cron entry set to run on the 1st of the month AND every Monday unexpectedly fires on a Tuesday the 1st. Why?"
+          "text": "sudo stratis pool create labpool /dev/vdb"
         },
         {
           "level": 0,
-          "text": "Answer: cron's day-of-month/day-of-week fields are OR'd together when both are restricted, not AND'd — it fires when either matches."
+          "text": "Meaning:"
         },
         {
           "level": 0,
-          "text": "Q3. getfacl shows user:dana:rwx #effective:r-- on a file. What's capping it, and how would you check?"
+          "text": "pool create creates a storage pool."
         },
         {
           "level": 0,
-          "text": "Answer: The ACL mask — check with getfacl again, specifically the mask:: line."
+          "text": "labpool is the pool's name."
         },
         {
           "level": 0,
-          "text": "Q4. A file moved (not copied) into /var/www/html returns 403 from Apache despite correct rwx permissions. First diagnostic command?"
+          "text": "/dev/vdb is the disk assigned to the pool."
         },
         {
           "level": 0,
-          "text": "Answer: ls -Z — to check whether its SELinux context still reflects its OLD location (mv preserves context; cp would have inherited the new directory's)."
+          "text": "Check the pool:"
         },
         {
           "level": 0,
-          "text": "Q5. You need to grow an ext4 filesystem after lvextend. Which command, and what argument does it take?"
+          "text": "sudo stratis pool list"
         },
         {
           "level": 0,
-          "text": "Answer: resize2fs, taking the LOGICAL VOLUME DEVICE (not the mount point — that's the XFS command's argument)."
+          "text": "Add another disk"
         },
         {
           "level": 0,
-          "text": "Q6. What fstab mount option is mandatory for a Stratis filesystem, and what breaks without it?"
+          "text": "sudo stratis pool add-data labpool /dev/vdc"
         },
         {
           "level": 0,
-          "text": "Answer: x-systemd.requires=stratisd.service — without it, the system can boot to emergency mode because systemd tries to mount before stratisd is running."
+          "text": "This adds /dev/vdc to labpool, increasing its available physical storage."
         },
         {
           "level": 0,
-          "text": "Q7. From an rd.break shell, what command fixes /etc/shadow's missing SELinux label after resetting the root password?"
+          "text": "Check the pool again:"
         },
         {
           "level": 0,
-          "text": "Answer: touch /.autorelabel, which forces a full relabel on the next boot."
+          "text": "sudo stratis pool list"
         },
         {
           "level": 0,
-          "text": "Q8. A firewall-cmd --add-port command worked immediately in testing but the rule was gone after a reboot. What was missed?"
+          "text": "List the devices in the pool:"
         },
         {
           "level": 0,
-          "text": "Answer: --permanent — without it, the change is runtime-only and doesn't survive a reload or reboot."
+          "text": "sudo stratis blockdev list labpool"
         },
         {
           "level": 0,
-          "text": "Q9. In a Kickstart file, what three commands build an LVM layout, in order?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: part pv.01 (create the PV placeholder), volgroup (build the VG from it), logvol (carve out each LV)."
-        },
-        {
-          "level": 0,
-          "text": "Q10. A service is denied even with correct file permissions, correct SELinux file context, and an open firewall port. What's the remaining layer to check?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: SELinux port labeling (semanage port -l) — the process's domain may not be allowed to bind that specific port label."
+          "text": "Remember: A pool groups storage together; adding a disk increases the pool's capacity."
         }
       ],
-      "words": 358
+      "words": 109
     },
     {
-      "title": "5. RH134 → RH294: What Changes Next",
+      "title": "4. Create a Stratis file system",
       "content": [
         {
           "level": 0,
-          "text": "RH134 is complete. Every RH294 chapter from here on assumes everything in Section 8.3's checklist is solid — RH294 doesn't re-teach storage, SELinux, or firewalld; it automates them."
+          "text": "Create a file system named labfs inside labpool:"
         },
         {
           "level": 0,
-          "text": "RH134 gave you"
+          "text": "sudo stratis filesystem create labpool labfs"
         },
         {
           "level": 0,
-          "text": "RH294 will teach you to do instead"
+          "text": "Check the file systems:"
         },
         {
           "level": 0,
-          "text": "Manually running setfacl, semanage, firewall-cmd on one box"
+          "text": "sudo stratis filesystem list"
         },
         {
           "level": 0,
-          "text": "Writing an Ansible playbook that applies the same config to any number of hosts, idempotently"
+          "text": "Create a directory to use as the mount point:"
         },
         {
           "level": 0,
-          "text": "Writing a Kickstart file for one repeatable install"
+          "text": "sudo mkdir /labstratisvol"
         },
         {
           "level": 0,
-          "text": "Writing a playbook + inventory that provisions and configures fleets of hosts"
+          "text": "Mount the file system:"
         },
         {
           "level": 0,
-          "text": "Bash scripts with loops and conditionals for one-off admin tasks"
+          "text": "sudo mount /dev/stratis/labpool/labfs /labstratisvol"
         },
         {
           "level": 0,
-          "text": "Ansible tasks, loops, and conditionals that describe DESIRED STATE instead of a command sequence"
+          "text": "Check that it is mounted:"
         },
         {
           "level": 0,
-          "text": "Manually verifying a fix worked (getfacl, ls -Z, curl)"
+          "text": "df -h /labstratisvol"
         },
         {
           "level": 0,
-          "text": "Ansible's own idempotence check: running the same playbook twice and seeing 'ok' instead of 'changed' the second time"
+          "text": "Here, df -h displays file-system space in an easy-to-read format."
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS Nothing you learned in RH134 becomes obsolete — RH294 just gives you a way to stop doing it by hand, one server at a time. The mental models (PV/VG/LV, SELinux contexts, firewall zones) stay exactly the same; only the interface to them changes."
+          "text": "Make the mount persistent"
         },
         {
           "level": 0,
-          "text": "RH134 is done. Next: RH294 Part 1 — Introducing Ansible + Deploying Ansible."
+          "text": "A manual mount may not return automatically after reboot. To make it persistent, add this entry to /etc/fstab:"
+        },
+        {
+          "level": 0,
+          "text": "/dev/stratis/labpool/labfs /labstratisvol xfs defaults,x-systemd.requires=stratisd.service 0 0"
+        },
+        {
+          "level": 0,
+          "text": "Edit the file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "After saving, test the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -a"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload asks systemd to reload its configuration."
+        },
+        {
+          "level": 0,
+          "text": "mount -a attempts to mount file systems configured in /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "Always check for errors before rebooting."
         }
       ],
-      "words": 192
+      "words": 129
+    },
+    {
+      "title": "5. Understand thin provisioning",
+      "content": [
+        {
+          "level": 0,
+          "text": "Suppose your Stratis file system is allowed to grow to a large logical size, but it initially contains only a small amount of data."
+        },
+        {
+          "level": 0,
+          "text": "It does not need to consume all that physical storage immediately. Actual physical usage grows as you write data."
+        },
+        {
+          "level": 0,
+          "text": "This is called thin provisioning."
+        },
+        {
+          "level": 0,
+          "text": "Why is it useful?"
+        },
+        {
+          "level": 0,
+          "text": "You can allocate storage flexibly."
+        },
+        {
+          "level": 0,
+          "text": "Physical storage is used as data grows."
+        },
+        {
+          "level": 0,
+          "text": "You can manage growing storage needs more easily."
+        },
+        {
+          "level": 0,
+          "text": "Important: Thin provisioning does not create unlimited physical disk space. You must monitor the real storage pool so it does not run out of space."
+        }
+      ],
+      "words": 97
+    },
+    {
+      "title": "6. Create a Stratis snapshot",
+      "content": [
+        {
+          "level": 0,
+          "text": "A snapshot gives you a point-in-time view of a file system. It can help recover a file that was deleted after the snapshot was taken."
+        },
+        {
+          "level": 0,
+          "text": "Create a snapshot named labfs-snap:"
+        },
+        {
+          "level": 0,
+          "text": "sudo stratis filesystem snapshot labpool labfs labfs-snap"
+        },
+        {
+          "level": 0,
+          "text": "List the file systems and snapshots:"
+        },
+        {
+          "level": 0,
+          "text": "sudo stratis filesystem list"
+        },
+        {
+          "level": 0,
+          "text": "Remember that a snapshot is not a substitute for a separate backup. If the underlying storage fails, the snapshot may be lost too."
+        }
+      ],
+      "words": 70
+    },
+    {
+      "title": "7. Understanding VDO",
+      "content": [
+        {
+          "level": 0,
+          "text": "VDO stands for Virtual Data Optimizer."
+        },
+        {
+          "level": 0,
+          "text": "Its purpose is to reduce the amount of physical storage used by data through two techniques:"
+        },
+        {
+          "level": 0,
+          "text": "Deduplication: Recognizes duplicate data and avoids storing repeated copies unnecessarily."
+        },
+        {
+          "level": 0,
+          "text": "Compression: Stores data in a form that takes less space when the data can be compressed."
+        },
+        {
+          "level": 0,
+          "text": "Imagine you store the same large file three times. Without deduplication, each copy could use additional disk space. With deduplication, VDO can recognize the repeated data and save space."
+        },
+        {
+          "level": 0,
+          "text": "redhat.com"
+        },
+        {
+          "level": 0,
+          "text": "Install VDO packages"
+        },
+        {
+          "level": 0,
+          "text": "In the RHEL 8 textbook environment:"
+        },
+        {
+          "level": 0,
+          "text": "sudo dnf install vdo kmod-kvdo"
+        },
+        {
+          "level": 0,
+          "text": "The vdo package provides VDO management commands. kmod-kvdo provides the required kernel module for that RHEL 8 environment."
+        },
+        {
+          "level": 0,
+          "text": "The commands in this section are specifically from the RHEL 8 book. VDO availability and management differ across RHEL versions, so check your installed RHEL version before trying them."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "8. Create a VDO volume",
+      "content": [
+        {
+          "level": 0,
+          "text": "Warning: Creating a VDO volume on a device can overwrite or repurpose storage metadata. Use only a dedicated, disposable lab disk."
+        },
+        {
+          "level": 0,
+          "text": "The textbook example creates a volume named vdo1 on /dev/vdd, with a logical size of 50 GB:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vdo create --name=vdo1 --device=/dev/vdd --vdoLogicalSize=50G"
+        },
+        {
+          "level": 0,
+          "text": "Understand each part:"
+        },
+        {
+          "level": 0,
+          "text": "vdo create creates a VDO volume."
+        },
+        {
+          "level": 0,
+          "text": "--name=vdo1 gives the volume its name."
+        },
+        {
+          "level": 0,
+          "text": "--device=/dev/vdd specifies the underlying disk."
+        },
+        {
+          "level": 0,
+          "text": "--vdoLogicalSize=50G sets the logical capacity presented to users."
+        },
+        {
+          "level": 0,
+          "text": "The logical capacity can be larger than the actual physical disk. This is called thin provisioning. It requires careful monitoring because the physical disk can fill up before the logical capacity is reached."
+        },
+        {
+          "level": 0,
+          "text": "List running VDO volumes:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vdo list"
+        },
+        {
+          "level": 0,
+          "text": "Check the status:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vdo status --name=vdo1"
+        }
+      ],
+      "words": 119
+    },
+    {
+      "title": "9. Format and mount the VDO volume",
+      "content": [
+        {
+          "level": 0,
+          "text": "After creating the VDO volume, you can create a file system on it."
+        },
+        {
+          "level": 0,
+          "text": "For the book's example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkfs.xfs /dev/mapper/vdo1"
+        },
+        {
+          "level": 0,
+          "text": "This creates an XFS file system on the VDO device."
+        },
+        {
+          "level": 0,
+          "text": "Create a mount point:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir /mnt/vdo1"
+        },
+        {
+          "level": 0,
+          "text": "Mount the file system:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount /dev/mapper/vdo1 /mnt/vdo1"
+        },
+        {
+          "level": 0,
+          "text": "Check the mounted space:"
+        },
+        {
+          "level": 0,
+          "text": "df -h /mnt/vdo1"
+        }
+      ],
+      "words": 52
+    },
+    {
+      "title": "10. Check VDO space savings",
+      "content": [
+        {
+          "level": 0,
+          "text": "Use this command in the textbook's RHEL 8 environment:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vdostats --human-readable"
+        },
+        {
+          "level": 0,
+          "text": "The output includes information such as:"
+        },
+        {
+          "level": 0,
+          "text": "Size: Logical size presented by the VDO device."
+        },
+        {
+          "level": 0,
+          "text": "Used: Physical space used."
+        },
+        {
+          "level": 0,
+          "text": "Available: Physical space available."
+        },
+        {
+          "level": 0,
+          "text": "Use%: Percentage of physical space used."
+        },
+        {
+          "level": 0,
+          "text": "Space saving%: Estimated storage saved through VDO."
+        },
+        {
+          "level": 0,
+          "text": "When you copy a file to the VDO volume, physical usage can increase. Copying the same file again may use much less additional space because VDO can recognize duplicate data."
+        },
+        {
+          "level": 0,
+          "text": "Do not assume that every file will compress well or contain duplicates. The savings depend on the data."
+        }
+      ],
+      "words": 95
+    },
+    {
+      "title": "11. Stratis vs. VDO",
+      "content": [
+        {
+          "level": 0,
+          "text": "Feature"
+        },
+        {
+          "level": 0,
+          "text": "Stratis"
+        },
+        {
+          "level": 0,
+          "text": "VDO"
+        },
+        {
+          "level": 0,
+          "text": "Main purpose"
+        },
+        {
+          "level": 0,
+          "text": "Easier storage and file-system management"
+        },
+        {
+          "level": 0,
+          "text": "Reduce physical storage usage"
+        },
+        {
+          "level": 0,
+          "text": "Pools"
+        },
+        {
+          "level": 0,
+          "text": "Yes"
+        },
+        {
+          "level": 0,
+          "text": "Not its main management concept"
+        },
+        {
+          "level": 0,
+          "text": "File-system snapshots"
+        },
+        {
+          "level": 0,
+          "text": "Supported"
+        },
+        {
+          "level": 0,
+          "text": "Not its primary feature"
+        },
+        {
+          "level": 0,
+          "text": "Deduplication and compression"
+        },
+        {
+          "level": 0,
+          "text": "Not its main purpose"
+        },
+        {
+          "level": 0,
+          "text": "Yes"
+        },
+        {
+          "level": 0,
+          "text": "Useful for"
+        },
+        {
+          "level": 0,
+          "text": "Flexible storage management"
+        },
+        {
+          "level": 0,
+          "text": "Space efficiency"
+        }
+      ],
+      "words": 43
+    },
+    {
+      "title": "12. Common mistakes",
+      "content": [
+        {
+          "level": 0,
+          "text": "Forgetting to start or enable stratisd."
+        },
+        {
+          "level": 0,
+          "text": "Using a disk that contains important data."
+        },
+        {
+          "level": 0,
+          "text": "Forgetting to make the mount persistent in /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "Assuming thin provisioning means unlimited storage."
+        },
+        {
+          "level": 0,
+          "text": "Confusing logical size with physical storage usage."
+        },
+        {
+          "level": 0,
+          "text": "Expecting VDO to save the same amount of space for every type of file."
+        },
+        {
+          "level": 0,
+          "text": "Forgetting that snapshots are not full backups."
+        }
+      ],
+      "words": 55
+    },
+    {
+      "title": "13. Practice quiz",
+      "content": [
+        {
+          "level": 0,
+          "text": "Try answering these without looking at the lesson."
+        },
+        {
+          "level": 0,
+          "text": "What is a Stratis pool?"
+        },
+        {
+          "level": 0,
+          "text": "Which command creates a Stratis pool named labpool using /dev/vdb?"
+        },
+        {
+          "level": 0,
+          "text": "What is thin provisioning?"
+        },
+        {
+          "level": 0,
+          "text": "What is a snapshot used for?"
+        },
+        {
+          "level": 0,
+          "text": "What does VDO stand for?"
+        },
+        {
+          "level": 0,
+          "text": "What is the difference between deduplication and compression?"
+        },
+        {
+          "level": 0,
+          "text": "Which command displays Stratis pools?"
+        },
+        {
+          "level": 0,
+          "text": "Which command displays VDO space-saving statistics in the RHEL 8 book?"
+        },
+        {
+          "level": 0,
+          "text": "Why should you monitor the physical space of a thinly provisioned volume?"
+        },
+        {
+          "level": 0,
+          "text": "Why is a snapshot not a replacement for a backup?"
+        }
+      ],
+      "words": 84
+    },
+    {
+      "title": "Final recap",
+      "content": [
+        {
+          "level": 0,
+          "text": "Stratis makes it easier to combine storage, create file systems, expand pools, and take snapshots."
+        },
+        {
+          "level": 0,
+          "text": "VDO reduces physical storage usage through deduplication and compression."
+        },
+        {
+          "level": 0,
+          "text": "Thin provisioning lets logical storage capacity exceed the physical space currently consumed, but physical capacity must still be monitored."
+        },
+        {
+          "level": 0,
+          "text": "/etc/fstab helps make mounts persistent across reboots."
+        },
+        {
+          "level": 0,
+          "text": "Always practise storage commands on dedicated lab disks, never on a disk containing important data."
+        }
+      ],
+      "words": 65
     }
   ],
-  "labs": [],
-  "quizzes": [],
-  "services": [],
-  "currency": []
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
 }

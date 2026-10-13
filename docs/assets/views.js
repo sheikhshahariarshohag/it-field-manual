@@ -68,12 +68,15 @@ const ROUTE_FOR_KIND = {
   quiz: "quizzes",
   project: "projects",
   session: "km",          // Knowledge Map sessions are search results too
+  unit: "study",          // Study Manual chapters
+  notes: "notes",         // Simple Notes chapters
 };
 
 /** The label shown on a search result row. */
 const KIND_LABEL = {
   command: "Command", lesson: "Lesson", scenario: "Scenario",
   quiz: "Quiz", project: "Project", session: "Knowledge Map",
+  unit: "Study chapter", notes: "Simple Notes",
 };
 
 /** The canonical URL for any content item. */

@@ -1,0 +1,3155 @@
+{
+  "id": "rh134-12",
+  "n": 12,
+  "sourceNumber": 12,
+  "kind": "chapter",
+  "title": "Chapter 12 — Installing Red Hat Enterprise Linux",
+  "display": "Chapter 12 — Installing Red Hat Enterprise Linux",
+  "exam": "RHCSA (EX200)",
+  "words": 6650,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "RH134 — Red Hat Enterprise Linux 8 System Administration II"
+        },
+        {
+          "level": 0,
+          "text": "This chapter teaches you three main skills:"
+        },
+        {
+          "level": 0,
+          "text": "Install RHEL on a physical server or virtual machine."
+        },
+        {
+          "level": 0,
+          "text": "Automate installations using Kickstart."
+        },
+        {
+          "level": 0,
+          "text": "Create and manage virtual machines using KVM and Cockpit."
+        },
+        {
+          "level": 0,
+          "text": "We will follow your tutor prompt: small concepts, simple English, practical commands, explanations of command parts, and the complete exercises. The book uses RHEL 8; your own computer runs RHEL 10.2, so some package commands and screens may differ."
+        },
+        {
+          "level": 0,
+          "text": "Part 1: Installing Red Hat Enterprise Linux"
+        },
+        {
+          "level": 0,
+          "text": "Part 2: Guided Exercise — Manual RHEL Installation"
+        },
+        {
+          "level": 0,
+          "text": "Part 3: Automating Installation with Kickstart"
+        },
+        {
+          "level": 0,
+          "text": "Part 4: Guided Exercise — Automating Installation with Kickstart"
+        },
+        {
+          "level": 0,
+          "text": "Part 5: Installing and Configuring Virtual Machines"
+        },
+        {
+          "level": 0,
+          "text": "Part 6: Final Performance Lab — Installing Red Hat Enterprise Linux"
+        },
+        {
+          "level": 0,
+          "text": "Part 7: Chapter 12 Final Revision"
+        }
+      ],
+      "words": 132
+    },
+    {
+      "title": "1. What does installing an operating system mean?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Installing an operating system prepares a computer's storage and software so it can start and run Linux."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of a computer as an empty house. The operating system is what makes the house usable. Installation prepares the rooms (storage), installs the necessary equipment (software), and sets up basic services such as networking and user accounts."
+        },
+        {
+          "level": 0,
+          "text": "When installing RHEL, you choose the disk, software, network settings, time zone, and administrator account. After installation, the computer can boot into RHEL and run applications."
+        },
+        {
+          "level": 0,
+          "text": "There are two main ways to install it:"
+        },
+        {
+          "level": 0,
+          "text": "Manual installation: You answer questions during installation."
+        },
+        {
+          "level": 0,
+          "text": "Automated installation: You provide a configuration file called a Kickstart file, and the installer follows its instructions."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "You can install RHEL on a physical computer or create a virtual machine and install RHEL inside it."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Physical computer: The actual machine and its hardware."
+        },
+        {
+          "level": 0,
+          "text": "Virtual machine (VM): A computer created using software."
+        },
+        {
+          "level": 0,
+          "text": "Installer: The program that installs the operating system."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Installation prepares the system; configuration determines how that system will operate."
+        }
+      ],
+      "words": 176
+    },
+    {
+      "title": "2. Choosing installation media",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Installation media contains the installer and, depending on the type, the software packages needed to install RHEL."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of installation media as a toolbox. Some toolboxes contain everything you need, while others require you to collect additional tools from somewhere else."
+        },
+        {
+          "level": 0,
+          "text": "The book describes three types:"
+        },
+        {
+          "level": 0,
+          "text": "Media"
+        },
+        {
+          "level": 0,
+          "text": "What it contains"
+        },
+        {
+          "level": 0,
+          "text": "Binary DVD ISO"
+        },
+        {
+          "level": 0,
+          "text": "Installer and software repositories needed for installation."
+        },
+        {
+          "level": 0,
+          "text": "Boot ISO"
+        },
+        {
+          "level": 0,
+          "text": "Installer, but it needs network access to retrieve software packages."
+        },
+        {
+          "level": 0,
+          "text": "QCOW2 image"
+        },
+        {
+          "level": 0,
+          "text": "A prebuilt virtual disk image for supported virtual or cloud environments."
+        },
+        {
+          "level": 0,
+          "text": "An ISO is a file containing a disc image. You can use it to boot a computer or a virtual machine."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "If you download a RHEL ISO and attach it to a VMware virtual machine, the VM can boot from it and start the installer."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ISO: Installation disc image."
+        },
+        {
+          "level": 0,
+          "text": "QCOW2: A virtual disk image format commonly used with QEMU/KVM."
+        },
+        {
+          "level": 0,
+          "text": "Repository: A location containing installable software packages."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Choose media based on whether you need a complete local source, a network-based installation, or a prebuilt virtual disk."
+        }
+      ],
+      "words": 180
+    },
+    {
+      "title": "3. Understanding Anaconda",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Anaconda is the RHEL installation program that installs and configures the operating system."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine Anaconda as a guided installation assistant. It asks where to install RHEL, which software to install, how to configure the network, and which users to create."
+        },
+        {
+          "level": 0,
+          "text": "The book describes two installation methods:"
+        },
+        {
+          "level": 0,
+          "text": "Manual: You provide the choices through the installer."
+        },
+        {
+          "level": 0,
+          "text": "Automated: You give Anaconda a Kickstart file containing the installation instructions."
+        },
+        {
+          "level": 0,
+          "text": "Anaconda can run when you boot a physical computer from installation media or when you boot a virtual machine from an ISO."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "When you boot a RHEL 8 installation ISO, select Install Red Hat Enterprise Linux 8. Anaconda starts and displays the language selection screen."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Boot: Start a computer or virtual machine."
+        },
+        {
+          "level": 0,
+          "text": "Installation media: The ISO or other source used to start the installer."
+        },
+        {
+          "level": 0,
+          "text": "Anaconda: The program that performs the installation."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Anaconda is the installer; Kickstart is a file that tells Anaconda what to do."
+        }
+      ],
+      "words": 160
+    },
+    {
+      "title": "4. Understanding the Installation Summary screen",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The Installation Summary screen is the central place to configure the main installation settings before installation begins."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of it as a checklist before submitting a form. You review the important choices and correct anything that is missing."
+        },
+        {
+          "level": 0,
+          "text": "The book identifies these settings:"
+        },
+        {
+          "level": 0,
+          "text": "Keyboard: Select keyboard layouts."
+        },
+        {
+          "level": 0,
+          "text": "Language Support: Choose languages."
+        },
+        {
+          "level": 0,
+          "text": "Time & Date: Set the time zone and related time settings."
+        },
+        {
+          "level": 0,
+          "text": "Installation Source: Tell Anaconda where to find packages."
+        },
+        {
+          "level": 0,
+          "text": "Software Selection: Choose the system's software environment."
+        },
+        {
+          "level": 0,
+          "text": "Installation Destination: Choose the disk and partitioning method."
+        },
+        {
+          "level": 0,
+          "text": "Kdump: Configure crash-memory collection."
+        },
+        {
+          "level": 0,
+          "text": "Network & Host Name: Set the system's name and network connection."
+        },
+        {
+          "level": 0,
+          "text": "Security Policy: Apply a security profile if required."
+        },
+        {
+          "level": 0,
+          "text": "System Purpose: Identify the system's intended use."
+        },
+        {
+          "level": 0,
+          "text": "Mandatory settings are marked with a warning symbol when they need attention."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Resolve required warnings before clicking Begin Installation."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "5. Choosing the software environment",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Software Selection determines which packages and software environment RHEL installs."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine buying a computer. You might want only the basic operating system, or you might want a desktop and extra applications. RHEL installation lets you choose a similar level of software."
+        },
+        {
+          "level": 0,
+          "text": "The book includes Minimal Install, which installs the essential software needed to run RHEL without a full graphical desktop environment."
+        },
+        {
+          "level": 0,
+          "text": "A minimal installation is useful for servers because it reduces unnecessary software and can reduce the system's attack surface."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "In Anaconda, open Software Selection, choose Minimal Install, and click Done."
+        },
+        {
+          "level": 0,
+          "text": "There is no universal command for selecting this option during the graphical installation; it is selected in the installer interface."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Package: An installable software component."
+        },
+        {
+          "level": 0,
+          "text": "Minimal Install: A base environment with essential packages."
+        },
+        {
+          "level": 0,
+          "text": "Attack surface: The parts of a system that could potentially be targeted."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Install the software the server needs, rather than automatically installing everything."
+        }
+      ],
+      "words": 157
+    },
+    {
+      "title": "6. Choosing the installation disk",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Installation Destination determines which disk RHEL uses and how the disk is divided into partitions."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of a disk as a large cupboard. Partitions divide that cupboard into separate areas, and file systems organize the data stored in those areas."
+        },
+        {
+          "level": 0,
+          "text": "Anaconda can partition the disk automatically or let you configure partitions manually. The book's guided exercise uses automatic partitioning on /dev/vda."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "In Anaconda:"
+        },
+        {
+          "level": 0,
+          "text": "Open Installation Destination."
+        },
+        {
+          "level": 0,
+          "text": "Select the correct disk."
+        },
+        {
+          "level": 0,
+          "text": "Keep automatic partitioning selected."
+        },
+        {
+          "level": 0,
+          "text": "Click Done."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/dev/vda: A disk device name commonly seen in virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Partition: A defined section of a disk."
+        },
+        {
+          "level": 0,
+          "text": "Automatic partitioning: The installer decides how to allocate the selected disk."
+        },
+        {
+          "level": 0,
+          "text": "Critical warning: The book's exercise deletes existing partitions to reinstall RHEL. This destroys the old installation and its data on that disk. Never select Delete all on your everyday computer unless you intentionally want to erase the selected disk and have protected any data you need."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Verify the target disk carefully before installing or deleting partitions."
+        }
+      ],
+      "words": 170
+    },
+    {
+      "title": "7. Configuring the network and host name",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The network settings let the installed system communicate with other computers, while the host name identifies the system."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A host name is like a person's name on a contact list. An IP address is more like their network address."
+        },
+        {
+          "level": 0,
+          "text": "The book's exercise configures:"
+        },
+        {
+          "level": 0,
+          "text": "Host name: servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "IP address: 172.25.250.10"
+        },
+        {
+          "level": 0,
+          "text": "Network prefix: /24"
+        },
+        {
+          "level": 0,
+          "text": "Gateway: 172.25.250.254"
+        },
+        {
+          "level": 0,
+          "text": "DNS server: 172.25.250.254"
+        },
+        {
+          "level": 0,
+          "text": "A /24 network prefix indicates the subnet mask 255.255.255.0."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "In Anaconda, open Network & Host Name, enter the host name, select the network interface, review its IPv4 settings, save, and switch the connection ON."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "IP address: Identifies the system on the network."
+        },
+        {
+          "level": 0,
+          "text": "Gateway: The next hop for traffic going to other networks."
+        },
+        {
+          "level": 0,
+          "text": "DNS server: Resolves names such as host names to IP addresses."
+        },
+        {
+          "level": 0,
+          "text": "Network interface: The system's network connection."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A correct host name does not replace the need for correct IP, gateway, and DNS settings."
+        }
+      ],
+      "words": 152
+    },
+    {
+      "title": "8. Kdump, security policy, and system purpose",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: RHEL installation includes settings that support crash investigation, security requirements, and system identification."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Kdump can collect system memory information after a kernel crash. This information can help investigate why the operating system crashed."
+        },
+        {
+          "level": 0,
+          "text": "A security policy profile applies a defined set of security recommendations or restrictions. For example, an organization may require a particular profile for systems that handle payment-card data."
+        },
+        {
+          "level": 0,
+          "text": "System Purpose records the intended use of the system, including its role, service-level agreement (SLA), and usage type. In the RHEL 8 book, these settings are part of the installation workflow."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "During installation, open the Kdump, Security Policy, or System Purpose section and review the options that apply to the machine."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Kernel: The central part of the operating system."
+        },
+        {
+          "level": 0,
+          "text": "Crash dump: Information collected to help investigate a crash."
+        },
+        {
+          "level": 0,
+          "text": "SLA: An agreement describing a level of service or support."
+        },
+        {
+          "level": 0,
+          "text": "Remember: These options help prepare the system for its intended environment; not every server needs the same settings."
+        }
+      ],
+      "words": 166
+    },
+    {
+      "title": "9. Setting the root password and creating a user",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: RHEL installation lets you set the administrator password and create a normal user account."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The root account has full administrative power. A normal account has fewer privileges, which makes it safer for everyday work."
+        },
+        {
+          "level": 0,
+          "text": "The book recommends creating a non-root account. That user can perform administrative tasks with sudo when permitted."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "During installation:"
+        },
+        {
+          "level": 0,
+          "text": "Open Root Password and set a strong password."
+        },
+        {
+          "level": 0,
+          "text": "Open User Creation."
+        },
+        {
+          "level": 0,
+          "text": "Create a user such as student."
+        },
+        {
+          "level": 0,
+          "text": "If appropriate, select Make this user administrator."
+        },
+        {
+          "level": 0,
+          "text": "Complete the installation and reboot."
+        },
+        {
+          "level": 0,
+          "text": "After installation, an administrator user may run:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl status sshd"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo: Run a command with elevated privileges."
+        },
+        {
+          "level": 0,
+          "text": "systemctl: Manage or inspect services."
+        },
+        {
+          "level": 0,
+          "text": "status: Show a service's current state."
+        },
+        {
+          "level": 0,
+          "text": "sshd: The SSH server service."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use a normal account for routine work and elevate privileges only when needed."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "10. Troubleshooting the installation",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Anaconda provides logs and consoles that help you investigate installation problems."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "If installation fails, you need more than the message on the screen. Logs can show what the installer was doing when the failure happened."
+        },
+        {
+          "level": 0,
+          "text": "The RHEL 8 book describes two important virtual consoles:"
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + Alt + F1: Accesses the installation troubleshooting console with terminal windows managed by tmux."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + Alt + F6: Returns to the graphical Anaconda interface."
+        },
+        {
+          "level": 0,
+          "text": "Within the tmux console, press and release Ctrl + b, then press the relevant number key to select a window."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + b, then 2: Opens a root shell in the book's described environment."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + b, then 3: Displays /tmp/anaconda.log."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + b, then 4: Displays /tmp/storage.log."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + b, then 5: Displays /tmp/program.log."
+        },
+        {
+          "level": 0,
+          "text": "Remember: When installation fails, inspect the logs to find the cause instead of repeatedly restarting without diagnosis."
+        }
+      ],
+      "words": 148
+    },
+    {
+      "title": "11. Prepare and start the installation lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The guided exercise reinstalls servera using a minimal RHEL 8 installation."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "This is a training lab, not a task to run on your normal computer. It deliberately replaces the existing installation on the training server."
+        },
+        {
+          "level": 0,
+          "text": "Start the exercise on the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab installing-install start"
+        },
+        {
+          "level": 0,
+          "text": "The lab checks whether servera is reachable and prepares its boot menu for the installation media."
+        },
+        {
+          "level": 0,
+          "text": "Next, open the servera console, send Ctrl + Alt + Del to reboot, and select Install Red Hat Enterprise Linux 8 from the boot menu."
+        },
+        {
+          "level": 0,
+          "text": "Wait for Anaconda's language screen, keep the default language, and click Continue."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "lab: Training-environment command."
+        },
+        {
+          "level": 0,
+          "text": "installing-install: Name of the exercise."
+        },
+        {
+          "level": 0,
+          "text": "start: Prepare the environment."
+        },
+        {
+          "level": 0,
+          "text": "Boot menu: The menu where you choose what the computer starts from."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Run the lab commands on the course workstation, and use the console to install the training server."
+        }
+      ],
+      "words": 147
+    },
+    {
+      "title": "12. Configure the disk and network",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The exercise requires a clean installation disk and the correct server identity and network settings."
+        },
+        {
+          "level": 0,
+          "text": "In Anaconda, open Installation Destination and select /dev/vda. Keep automatic partitioning selected."
+        },
+        {
+          "level": 0,
+          "text": "The book then instructs you to choose Reclaim space, click Delete all, and confirm Reclaim space. This erases the existing partitions on the selected training disk."
+        },
+        {
+          "level": 0,
+          "text": "Next, configure Network & Host Name:"
+        },
+        {
+          "level": 0,
+          "text": "Host name: servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "IP address: 172.25.250.10"
+        },
+        {
+          "level": 0,
+          "text": "Prefix: 24"
+        },
+        {
+          "level": 0,
+          "text": "Gateway: 172.25.250.254"
+        },
+        {
+          "level": 0,
+          "text": "DNS server: 172.25.250.254"
+        },
+        {
+          "level": 0,
+          "text": "Make sure the network connection is switched on."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "24: Network prefix length, equivalent here to subnet mask 255.255.255.0."
+        },
+        {
+          "level": 0,
+          "text": "Gateway: Route used to reach other networks."
+        },
+        {
+          "level": 0,
+          "text": "DNS: Resolves system names to IP addresses."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Check the disk and network values before proceeding; an incorrect disk selection can destroy the wrong data."
+        }
+      ],
+      "words": 128
+    },
+    {
+      "title": "13. Select the installation source and software",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Anaconda needs a package source and a software selection before it can install the operating system."
+        },
+        {
+          "level": 0,
+          "text": "In the book's lab, set Installation Source to:"
+        },
+        {
+          "level": 0,
+          "text": "http://content.example.com/rhel8.0/x86_64/dvd"
+        },
+        {
+          "level": 0,
+          "text": "This is a training-environment URL, not a universal public download address."
+        },
+        {
+          "level": 0,
+          "text": "Then open Software Selection, choose Minimal Install, and click Done."
+        },
+        {
+          "level": 0,
+          "text": "Open System Purpose and select the following values specified in the book:"
+        },
+        {
+          "level": 0,
+          "text": "Role: Red Hat Enterprise Linux Server"
+        },
+        {
+          "level": 0,
+          "text": "SLA: Self-Support"
+        },
+        {
+          "level": 0,
+          "text": "Usage: Development/Test"
+        },
+        {
+          "level": 0,
+          "text": "Once the required settings are complete, click Begin Installation."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "http://: The URL uses HTTP to access the installation source."
+        },
+        {
+          "level": 0,
+          "text": "x86_64: The 64-bit Intel/AMD processor architecture."
+        },
+        {
+          "level": 0,
+          "text": "Minimal Install: The minimal software environment."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Anaconda must know where to get packages and what kind of system to install."
+        }
+      ],
+      "words": 120
+    },
+    {
+      "title": "14. Complete the installation and log in",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Set the required accounts, finish installation, and verify that the new system starts."
+        },
+        {
+          "level": 0,
+          "text": "While the installation progresses, the book asks you to set the root password to redhat and create an administrator-capable student user with password student."
+        },
+        {
+          "level": 0,
+          "text": "These are deliberately weak lab passwords. Do not use them on a real server."
+        },
+        {
+          "level": 0,
+          "text": "When installation finishes, click Reboot. At the login prompt, log in as student with the lab password."
+        },
+        {
+          "level": 0,
+          "text": "The exercise then instructs you to reset the training machine using the classroom's reset method."
+        },
+        {
+          "level": 0,
+          "text": "Example — verify the host name after logging in:"
+        },
+        {
+          "level": 0,
+          "text": "hostname"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "hostname: Displays the system's host name."
+        },
+        {
+          "level": 0,
+          "text": "No extra arguments are required for this simple check."
+        },
+        {
+          "level": 0,
+          "text": "The result should reflect the host name configured during installation."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A successful installation should reboot and allow you to log in with the account you created."
+        }
+      ],
+      "words": 141
+    },
+    {
+      "title": "15. What is Kickstart?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart automates RHEL installation by storing installation choices in a text file."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine installing RHEL on one server. You answer many questions about storage, networking, software, and accounts."
+        },
+        {
+          "level": 0,
+          "text": "Now imagine installing 20 similar servers. Repeating those answers 20 times would be slow and could lead to mistakes."
+        },
+        {
+          "level": 0,
+          "text": "Kickstart solves this by recording the installation instructions in a file. Anaconda reads the file and uses those instructions to perform an automated installation."
+        },
+        {
+          "level": 0,
+          "text": "Kickstart is similar in purpose to an unattended Windows installation answer file."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "lang en_US.UTF-8"
+        },
+        {
+          "level": 0,
+          "text": "keyboard --vckeymap=us"
+        },
+        {
+          "level": 0,
+          "text": "timezone UTC"
+        },
+        {
+          "level": 0,
+          "text": "These are examples of installation settings in Kickstart syntax."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "lang: Sets the language."
+        },
+        {
+          "level": 0,
+          "text": "keyboard: Sets the keyboard layout."
+        },
+        {
+          "level": 0,
+          "text": "timezone: Sets the time zone."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A Kickstart file is a reusable instruction sheet for installing RHEL."
+        }
+      ],
+      "words": 133
+    },
+    {
+      "title": "16. Understand Kickstart file structure",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A Kickstart file contains installation commands and sections for packages or scripts."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The file is a plain-text document. Some lines define the installation, while special sections contain lists or scripts."
+        },
+        {
+          "level": 0,
+          "text": "A line beginning with # is a comment, which the installer ignores as a command."
+        },
+        {
+          "level": 0,
+          "text": "Sections such as %packages, %pre, and %post begin with a % character and normally end with %end."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "# Install the core package group"
+        },
+        {
+          "level": 0,
+          "text": "%packages"
+        },
+        {
+          "level": 0,
+          "text": "@core"
+        },
+        {
+          "level": 0,
+          "text": "chrony"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "# Install the core package group: A comment for a human reader."
+        },
+        {
+          "level": 0,
+          "text": "%packages: Starts the package list."
+        },
+        {
+          "level": 0,
+          "text": "@core: Requests the core package group."
+        },
+        {
+          "level": 0,
+          "text": "chrony: Requests the package named chrony."
+        },
+        {
+          "level": 0,
+          "text": "%end: Ends the package section."
+        },
+        {
+          "level": 0,
+          "text": "The @ character identifies a package group. A leading - can exclude a package or group, although required dependencies may still be installed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Comments explain the file; Kickstart commands and sections tell the installer what to do."
+        }
+      ],
+      "words": 153
+    },
+    {
+      "title": "17. Understand %pre and %post",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart can run shell commands before and after the main installation process."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Sometimes an installation needs extra work that the standard settings cannot express. Kickstart lets you run scripts for that purpose."
+        },
+        {
+          "level": 0,
+          "text": "%pre: Runs before disk partitioning. It is often used when a device must be identified or prepared before storage setup."
+        },
+        {
+          "level": 0,
+          "text": "%post: Runs after the main installation has otherwise completed."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "%post --erroronfail"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Installation completed\" >> /etc/issue"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "%post: Begins the post-installation script."
+        },
+        {
+          "level": 0,
+          "text": "--erroronfail: Tells the installer to treat script failure as an error."
+        },
+        {
+          "level": 0,
+          "text": "echo: Prints the text."
+        },
+        {
+          "level": 0,
+          "text": ">>: Appends text to a file without replacing existing contents."
+        },
+        {
+          "level": 0,
+          "text": "/etc/issue: A file that can display a message at local login prompts."
+        },
+        {
+          "level": 0,
+          "text": "%end: Ends the script section."
+        },
+        {
+          "level": 0,
+          "text": "Be careful with scripts: incorrect commands can leave a system incompletely configured."
+        },
+        {
+          "level": 0,
+          "text": "Remember: %pre prepares before partitioning; %post performs tasks after the main installation."
+        }
+      ],
+      "words": 149
+    },
+    {
+      "title": "18. Choose packages in Kickstart",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The %packages section controls which software is installed."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "%packages"
+        },
+        {
+          "level": 0,
+          "text": "@core"
+        },
+        {
+          "level": 0,
+          "text": "chrony"
+        },
+        {
+          "level": 0,
+          "text": "httpd"
+        },
+        {
+          "level": 0,
+          "text": "-plymouth"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "@core: Install the core package group."
+        },
+        {
+          "level": 0,
+          "text": "chrony: Install the chrony package."
+        },
+        {
+          "level": 0,
+          "text": "httpd: Install the Apache web server package."
+        },
+        {
+          "level": 0,
+          "text": "-plymouth: Request that the plymouth package be excluded."
+        },
+        {
+          "level": 0,
+          "text": "%end: End the package list."
+        },
+        {
+          "level": 0,
+          "text": "Kickstart supports package groups, individual package names, and, in supported syntax, environment groups and module-related specifications. Groups can contain mandatory, default, and optional packages. A package excluded explicitly may still be installed if another requested package requires it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Package names determine the software selection, but dependencies can affect what is ultimately installed."
+        }
+      ],
+      "words": 105
+    },
+    {
+      "title": "19. Configure the installation source and repositories",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart must tell Anaconda where to get the operating system and any additional packages."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The installation source is like the main supply store. A repository is a location where packages can be obtained."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "url --url=\"http://classroom.example.com/content/rhel8.0/x86_64/dvd/\""
+        },
+        {
+          "level": 0,
+          "text": "repo --name=\"appstream\" --baseurl=http://classroom.example.com/content/rhel8.0/x86_64/dvd/AppStream/"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "url --url=...: Identifies the main installation source."
+        },
+        {
+          "level": 0,
+          "text": "repo: Defines an additional package repository."
+        },
+        {
+          "level": 0,
+          "text": "--name=\"appstream\": Gives the repository a name."
+        },
+        {
+          "level": 0,
+          "text": "--baseurl=...: Specifies where the repository is located."
+        },
+        {
+          "level": 0,
+          "text": "The URLs above are examples from the book's classroom environment. They will not work unless that environment is available and configured."
+        },
+        {
+          "level": 0,
+          "text": "Other installation commands include text, which requests text-mode installation, and vnc, which allows the graphical installation to be viewed remotely using VNC."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A valid Kickstart file can still fail if its package source or repository URL is unavailable."
+        }
+      ],
+      "words": 133
+    },
+    {
+      "title": "20. Configure disk partitioning in Kickstart",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart commands can select disks, remove existing partitions, and create the required storage layout."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Storage settings are especially important because they can erase data. Read each disk-related command carefully before using it."
+        },
+        {
+          "level": 0,
+          "text": "Common commands include:"
+        },
+        {
+          "level": 0,
+          "text": "clearpart: Removes existing partitions according to its options."
+        },
+        {
+          "level": 0,
+          "text": "part: Creates a partition."
+        },
+        {
+          "level": 0,
+          "text": "autopart: Automatically creates a suitable partition layout."
+        },
+        {
+          "level": 0,
+          "text": "ignoredisk: Controls which disks Anaconda ignores."
+        },
+        {
+          "level": 0,
+          "text": "bootloader: Configures where the boot loader is installed."
+        },
+        {
+          "level": 0,
+          "text": "volgroup and logvol: Create LVM volume groups and logical volumes."
+        },
+        {
+          "level": 0,
+          "text": "zerombr: Initializes disks whose existing formatting is unrecognized."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "autopart"
+        },
+        {
+          "level": 0,
+          "text": "This tells Anaconda to create an automatic partition layout."
+        },
+        {
+          "level": 0,
+          "text": "Another example:"
+        },
+        {
+          "level": 0,
+          "text": "part /home --fstype=ext4 --size=4096"
+        },
+        {
+          "level": 0,
+          "text": "part /home: Create a partition mounted at /home."
+        },
+        {
+          "level": 0,
+          "text": "--fstype=ext4: Use the ext4 file system."
+        },
+        {
+          "level": 0,
+          "text": "--size=4096: Request a size of 4096 MiB in this command's size convention."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Validate disk targets and partitioning choices before running an unattended installation."
+        }
+      ],
+      "words": 145
+    },
+    {
+      "title": "21. Configure networking and the firewall in Kickstart",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart can configure network settings and set the initial firewall policy."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "network --device=eth0 --bootproto=dhcp"
+        },
+        {
+          "level": 0,
+          "text": "firewall --enabled --service=ssh,http"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "network: Configures network settings."
+        },
+        {
+          "level": 0,
+          "text": "--device=eth0: Selects the interface named eth0."
+        },
+        {
+          "level": 0,
+          "text": "--bootproto=dhcp: Requests network settings from DHCP."
+        },
+        {
+          "level": 0,
+          "text": "firewall --enabled: Enables the firewall configuration."
+        },
+        {
+          "level": 0,
+          "text": "--service=ssh,http: Allows the listed services in the Kickstart firewall configuration."
+        },
+        {
+          "level": 0,
+          "text": "Interface names can differ between machines. For example, a RHEL system may use ens160 instead of eth0, so verify the target system and version."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Kickstart can configure the network and firewall during installation, but its settings must match the target machine."
+        }
+      ],
+      "words": 98
+    },
+    {
+      "title": "22. Configure language, time, accounts, and security",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart supports settings for the system's language, keyboard, time zone, users, and security."
+        },
+        {
+          "level": 0,
+          "text": "Examples:"
+        },
+        {
+          "level": 0,
+          "text": "lang en_US.UTF-8"
+        },
+        {
+          "level": 0,
+          "text": "keyboard --vckeymap=us"
+        },
+        {
+          "level": 0,
+          "text": "timezone UTC"
+        },
+        {
+          "level": 0,
+          "text": "selinux --enforcing"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "lang: Sets the system language."
+        },
+        {
+          "level": 0,
+          "text": "keyboard: Sets the keyboard layout."
+        },
+        {
+          "level": 0,
+          "text": "timezone: Sets the time zone."
+        },
+        {
+          "level": 0,
+          "text": "selinux --enforcing: Requests SELinux enforcing mode."
+        },
+        {
+          "level": 0,
+          "text": "Other commands include rootpw for the initial root password, user and group for creating local accounts, authselect for authentication configuration, and services for enabling or disabling selected services."
+        },
+        {
+          "level": 0,
+          "text": "The book shows a plaintext root password as a teaching example, but plaintext passwords in a Kickstart file are unsafe for real deployments. Use a suitable protected password method and restrict access to the file."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Automated installation still needs secure account and authentication settings."
+        }
+      ],
+      "words": 122
+    },
+    {
+      "title": "23. Configure logging and the final installation action",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kickstart can control installation logging and what happens when installation finishes."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A large installation may need logs sent to a central system. An unattended installation also needs to know whether the machine should reboot, power off, or halt when finished."
+        },
+        {
+          "level": 0,
+          "text": "Examples:"
+        },
+        {
+          "level": 0,
+          "text": "logging --level=info"
+        },
+        {
+          "level": 0,
+          "text": "reboot"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "logging: Configures installation logging."
+        },
+        {
+          "level": 0,
+          "text": "--level=info: Requests informational logging."
+        },
+        {
+          "level": 0,
+          "text": "reboot: Requests a reboot when installation completes."
+        },
+        {
+          "level": 0,
+          "text": "Other possible final actions include poweroff and halt. The book also mentions firstboot, which controls whether the initial setup agent runs at the first boot when its required package is installed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A Kickstart file should define how installation ends so an unattended process does not stop unexpectedly."
+        }
+      ],
+      "words": 115
+    },
+    {
+      "title": "24. Understand the example Kickstart file",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A complete Kickstart file combines installation settings, package choices, and optional scripts."
+        },
+        {
+          "level": 0,
+          "text": "The book's example contains three major parts:"
+        },
+        {
+          "level": 0,
+          "text": "Installation commands, such as the installation source, language, boot loader, and partitioning."
+        },
+        {
+          "level": 0,
+          "text": "A %packages section listing software to install or exclude."
+        },
+        {
+          "level": 0,
+          "text": "Optional %pre and %post scripts."
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "#version=RHEL8"
+        },
+        {
+          "level": 0,
+          "text": "text"
+        },
+        {
+          "level": 0,
+          "text": "lang en_US.UTF-8"
+        },
+        {
+          "level": 0,
+          "text": "selinux --enforcing"
+        },
+        {
+          "level": 0,
+          "text": "%packages"
+        },
+        {
+          "level": 0,
+          "text": "@core"
+        },
+        {
+          "level": 0,
+          "text": "chrony"
+        },
+        {
+          "level": 0,
+          "text": "httpd"
+        },
+        {
+          "level": 0,
+          "text": "-plymouth"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "#version=RHEL8: A comment identifying the Kickstart syntax version."
+        },
+        {
+          "level": 0,
+          "text": "text: Requests text-mode installation."
+        },
+        {
+          "level": 0,
+          "text": "selinux --enforcing: Requests SELinux enforcing mode."
+        },
+        {
+          "level": 0,
+          "text": "%packages through %end: Defines the package list."
+        },
+        {
+          "level": 0,
+          "text": "This is a teaching example, not a complete production-ready Kickstart file. A real installation may need a valid installation source, storage instructions, network configuration, and other required settings."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A Kickstart file is a complete installation plan, not merely a list of packages."
+        }
+      ],
+      "words": 133
+    },
+    {
+      "title": "25. Create a Kickstart file",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can create a Kickstart file using a generator or by editing a file produced by an earlier installation."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Starting from an empty file can be difficult because Kickstart has many commands and options. The book recommends two approaches:"
+        },
+        {
+          "level": 0,
+          "text": "Use the Kickstart Generator website."
+        },
+        {
+          "level": 0,
+          "text": "Copy /root/anaconda-ks.cfg, which records the settings used in an existing installation, and edit the copy."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cp /root/anaconda-ks.cfg /home/student/kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo: Run with administrator privileges."
+        },
+        {
+          "level": 0,
+          "text": "cp: Copy a file."
+        },
+        {
+          "level": 0,
+          "text": "/root/anaconda-ks.cfg: The source file created by the installer."
+        },
+        {
+          "level": 0,
+          "text": "/home/student/kickstart.cfg: The destination file for editing."
+        },
+        {
+          "level": 0,
+          "text": "The example assumes you have permission to write to the destination. The book's guided exercise uses a different method involving sudo cat and shell redirection."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Reusing an existing Kickstart file gives you a practical starting point, but you must review its settings for the new machine."
+        }
+      ],
+      "words": 142
+    },
+    {
+      "title": "26. Validate Kickstart syntax with ksvalidator",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: ksvalidator checks whether a Kickstart file contains recognized commands and valid syntax."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of it as a spell-checker for Kickstart commands. It can catch misspelled directives and invalid options before you start an installation."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator: The Kickstart syntax-checking utility."
+        },
+        {
+          "level": 0,
+          "text": "kickstart.cfg: The file to check."
+        },
+        {
+          "level": 0,
+          "text": "If the command reports no errors, the file has passed the checks performed by that version of the validator."
+        },
+        {
+          "level": 0,
+          "text": "However, this does not guarantee a successful installation. It does not prove that URLs work, repositories contain the required packages, or scripts will run successfully."
+        },
+        {
+          "level": 0,
+          "text": "If the command is missing, the RHEL 8 book identifies the pykickstart package as providing it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Syntax validation catches many configuration mistakes, but you must still test the installation source and scripts."
+        }
+      ],
+      "words": 132
+    },
+    {
+      "title": "27. Publish the Kickstart file",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Anaconda must be able to read the Kickstart file when the installation begins."
+        },
+        {
+          "level": 0,
+          "text": "The book describes several ways to provide the file:"
+        },
+        {
+          "level": 0,
+          "text": "A network server using HTTP, FTP, or NFS."
+        },
+        {
+          "level": 0,
+          "text": "A USB drive or CD-ROM."
+        },
+        {
+          "level": 0,
+          "text": "A local disk on the machine being installed."
+        },
+        {
+          "level": 0,
+          "text": "A network server is convenient when you need to install multiple machines because you can update one file and use it for future installations."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cp ~/kickstart.cfg /var/www/html/ks-config/"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo: Run with administrator privileges."
+        },
+        {
+          "level": 0,
+          "text": "cp: Copy a file."
+        },
+        {
+          "level": 0,
+          "text": "~/kickstart.cfg: The file in the current user's home directory."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/ks-config/: A directory served by Apache when configured accordingly."
+        },
+        {
+          "level": 0,
+          "text": "The directory must exist, and the web server must be configured to serve it. The file must also be readable by the installer."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Publishing a file means making it reachable by the installer, not merely saving it on your workstation."
+        }
+      ],
+      "words": 146
+    },
+    {
+      "title": "28. Tell Anaconda where the Kickstart file is",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The inst.ks= boot parameter tells Anaconda where to find the Kickstart file."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The installer cannot follow your instructions unless you give it the file's location. The location can point to a network URL or supported local media."
+        },
+        {
+          "level": 0,
+          "text": "Examples:"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=http://server/dir/file"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=ftp://server/dir/file"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=nfs:server:/dir/file"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=: The boot parameter that specifies the Kickstart location."
+        },
+        {
+          "level": 0,
+          "text": "http://: Retrieve the file using HTTP."
+        },
+        {
+          "level": 0,
+          "text": "ftp://: Retrieve it using FTP."
+        },
+        {
+          "level": 0,
+          "text": "nfs:: Retrieve it from an NFS location."
+        },
+        {
+          "level": 0,
+          "text": "The exact syntax and available sources depend on the installation method and RHEL version. For a physical machine, the book explains interrupting the boot menu and adding the parameter to the installation kernel command line. For a virtual machine, the management interface may offer a field for the Kickstart URL."
+        },
+        {
+          "level": 0,
+          "text": "Remember: An unattended installation needs both a valid Kickstart file and a way for Anaconda to locate it."
+        }
+      ],
+      "words": 144
+    },
+    {
+      "title": "29. Start the Kickstart exercise",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You will copy an existing Kickstart file, edit it, validate it, and publish it through Apache."
+        },
+        {
+          "level": 0,
+          "text": "Start the exercise on the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab installing-kickstart start"
+        },
+        {
+          "level": 0,
+          "text": "Connect to servera:"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@servera"
+        },
+        {
+          "level": 0,
+          "text": "The book's lab uses SSH keys, so a password may not be required for this connection."
+        },
+        {
+          "level": 0,
+          "text": "Copy the existing installation configuration into the student's home directory:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cat /root/anaconda-ks.cfg > ~/kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cat /root/anaconda-ks.cfg: Read the existing Kickstart file with administrator permission."
+        },
+        {
+          "level": 0,
+          "text": ">: Redirect the output into a file, replacing its contents."
+        },
+        {
+          "level": 0,
+          "text": "~/kickstart.cfg: The destination in the student's home directory."
+        },
+        {
+          "level": 0,
+          "text": "A subtle but important detail: sudo applies to cat, while the shell handles >. This works in the book's lab because the destination belongs to the student. It is not a general solution for writing to every root-owned destination."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Copy the existing file to a location the student can edit, then change the copy."
+        }
+      ],
+      "words": 151
+    },
+    {
+      "title": "30. Edit the installation settings",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The exercise changes the source, account, authentication, storage, services, and package settings in the Kickstart file."
+        },
+        {
+          "level": 0,
+          "text": "Edit ~/kickstart.cfg with a text editor such as vim."
+        },
+        {
+          "level": 0,
+          "text": "Make these changes from the book:"
+        },
+        {
+          "level": 0,
+          "text": "Comment out reboot by changing it to #reboot."
+        },
+        {
+          "level": 0,
+          "text": "Comment out the old BaseOS repository line."
+        },
+        {
+          "level": 0,
+          "text": "Set the AppStream repository to the classroom's AppStream URL with the name appstream."
+        },
+        {
+          "level": 0,
+          "text": "Set the installation URL to http://classroom.example.com/content/rhel8.0/x86_64/dvd/."
+        },
+        {
+          "level": 0,
+          "text": "Comment out the existing network command."
+        },
+        {
+          "level": 0,
+          "text": "Set the root password directive to rootpw --plaintext redhat for this lab only."
+        },
+        {
+          "level": 0,
+          "text": "Replace the old auth command with authselect select sssd."
+        },
+        {
+          "level": 0,
+          "text": "Set the services directive to services --disabled=\"kdump,rhsmcertd\" --enabled=\"sshd,rngd,chronyd\"."
+        },
+        {
+          "level": 0,
+          "text": "Comment out reqpart and the specified part command, then add autopart."
+        },
+        {
+          "level": 0,
+          "text": "Why? The lab needs the installation to use the classroom repositories and a suitable, repeatable configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Edit the specified lines carefully; do not accidentally leave conflicting old settings active."
+        }
+      ],
+      "words": 144
+    },
+    {
+      "title": "31. Edit the post-installation script and package list",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The lab adds a completion message and defines a specific set of installed packages."
+        },
+        {
+          "level": 0,
+          "text": "Replace the existing %post content with:"
+        },
+        {
+          "level": 0,
+          "text": "%post --erroronfail"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Kickstarted on $(date)\" >> /etc/issue"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "$(date): Runs the date command and inserts its output into the text."
+        },
+        {
+          "level": 0,
+          "text": ">>: Appends to /etc/issue."
+        },
+        {
+          "level": 0,
+          "text": "--erroronfail: Treats failure of the post-installation script as an error."
+        },
+        {
+          "level": 0,
+          "text": "The package section should look like this:"
+        },
+        {
+          "level": 0,
+          "text": "%packages"
+        },
+        {
+          "level": 0,
+          "text": "@core"
+        },
+        {
+          "level": 0,
+          "text": "chrony"
+        },
+        {
+          "level": 0,
+          "text": "dracut-config-generic"
+        },
+        {
+          "level": 0,
+          "text": "dracut-norescue"
+        },
+        {
+          "level": 0,
+          "text": "firewalld"
+        },
+        {
+          "level": 0,
+          "text": "grub2"
+        },
+        {
+          "level": 0,
+          "text": "kernel"
+        },
+        {
+          "level": 0,
+          "text": "rsync"
+        },
+        {
+          "level": 0,
+          "text": "tar"
+        },
+        {
+          "level": 0,
+          "text": "httpd"
+        },
+        {
+          "level": 0,
+          "text": "-plymouth"
+        },
+        {
+          "level": 0,
+          "text": "%end"
+        },
+        {
+          "level": 0,
+          "text": "This requests the core environment and named packages, while excluding plymouth unless a dependency requires it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The post-installation script customizes the installed system, while the package list determines which software is requested."
+        }
+      ],
+      "words": 114
+    },
+    {
+      "title": "32. Validate and publish the file",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Check the syntax, then make the Kickstart file available through the training server's web directory."
+        },
+        {
+          "level": 0,
+          "text": "Validate the file:"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "If errors are reported, correct the line or option indicated and validate again."
+        },
+        {
+          "level": 0,
+          "text": "Publish the file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cp ~/kickstart.cfg /var/www/html/ks-config"
+        },
+        {
+          "level": 0,
+          "text": "Exit the server:"
+        },
+        {
+          "level": 0,
+          "text": "exit"
+        },
+        {
+          "level": 0,
+          "text": "Then finish the exercise from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab installing-kickstart finish"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator: Checks Kickstart syntax."
+        },
+        {
+          "level": 0,
+          "text": "cp: Copies the file."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/ks-config: The lab's web-served directory."
+        },
+        {
+          "level": 0,
+          "text": "exit: Ends the SSH session."
+        },
+        {
+          "level": 0,
+          "text": "finish: Cleans up the guided exercise."
+        },
+        {
+          "level": 0,
+          "text": "The lab assumes the web server and destination directory have been prepared by the training environment."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Validate first, publish second, and make sure the installer can actually retrieve the file."
+        }
+      ],
+      "words": 115
+    },
+    {
+      "title": "33. What is virtualization?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Virtualization allows one physical computer to run multiple separate virtual computers."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine one physical building divided into several apartments. Each apartment has its own space, even though all the apartments are inside the same building."
+        },
+        {
+          "level": 0,
+          "text": "Similarly, one physical server can run several virtual machines. Each VM can have its own operating system, memory allocation, virtual disks, and network settings."
+        },
+        {
+          "level": 0,
+          "text": "For example, you could run a RHEL server VM and a Windows VM on the same physical computer, provided the hardware has enough resources."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Your existing VMware lab runs RHEL inside a virtual machine on your computer. The physical computer is the host, and RHEL running inside VMware is the guest."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Host: The physical system that runs virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Guest: The operating system running inside a VM."
+        },
+        {
+          "level": 0,
+          "text": "Virtual disk: A disk represented by a file or virtual storage device."
+        },
+        {
+          "level": 0,
+          "text": "Virtual CPU: CPU capacity assigned to a VM."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Virtualization lets multiple operating systems share one physical machine while remaining logically separate."
+        }
+      ],
+      "words": 169
+    },
+    {
+      "title": "34. What is KVM?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: KVM is Linux's built-in virtualization technology for running virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "KVM stands for Kernel-based Virtual Machine. It allows a suitably configured Linux system to act as a virtualization host."
+        },
+        {
+          "level": 0,
+          "text": "The book describes KVM as supporting Windows and Linux guest operating systems. It also mentions virsh and Cockpit as management tools."
+        },
+        {
+          "level": 0,
+          "text": "Three related technologies in the book are:"
+        },
+        {
+          "level": 0,
+          "text": "RHEL as a virtualization host: Runs VMs while also providing other services."
+        },
+        {
+          "level": 0,
+          "text": "Red Hat Virtualization (RHV): A platform for centralized virtual infrastructure management in the book's historical context."
+        },
+        {
+          "level": 0,
+          "text": "Red Hat OpenStack Platform (RHOSP): A platform for creating and managing cloud infrastructure."
+        },
+        {
+          "level": 0,
+          "text": "These are different levels of virtualization management, not interchangeable names for KVM."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "A RHEL server with KVM configured can run a separate RHEL guest for testing software without installing that guest directly on the host's physical disk."
+        },
+        {
+          "level": 0,
+          "text": "Remember: KVM provides the virtualization capability; management tools help you create and control the VMs."
+        }
+      ],
+      "words": 155
+    },
+    {
+      "title": "35. Prepare a RHEL system as a virtualization host",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A system needs suitable hardware and virtualization software before it can run KVM virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of a virtualization host as a workshop. You need compatible equipment, enough space, and the right tools before you can build anything."
+        },
+        {
+          "level": 0,
+          "text": "The RHEL 8 book shows installing the virt module:"
+        },
+        {
+          "level": 0,
+          "text": "sudo yum module list virt"
+        },
+        {
+          "level": 0,
+          "text": "sudo yum module install virt"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "yum: Package management command used in the book's RHEL 8 environment."
+        },
+        {
+          "level": 0,
+          "text": "module list virt: Lists information about the virtualization module."
+        },
+        {
+          "level": 0,
+          "text": "module install virt: Installs the module's default profile."
+        },
+        {
+          "level": 0,
+          "text": "The exact module commands and available profiles depend on the RHEL release and repositories. On your RHEL 10 system, check the current virtualization installation instructions rather than assuming the RHEL 8 module workflow still applies."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Install the appropriate virtualization tools for your RHEL version before trying to create VMs."
+        }
+      ],
+      "words": 143
+    },
+    {
+      "title": "36. Verify hardware support for virtualization",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: virt-host-validate checks whether a system meets important requirements for hosting virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Not every machine is ready to run KVM. The CPU must support the required virtualization features, and the operating system must have the needed devices and system support."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo virt-host-validate"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "virt-host-validate: Runs checks on the virtualization host."
+        },
+        {
+          "level": 0,
+          "text": "sudo: Allows checks that may require administrator privileges."
+        },
+        {
+          "level": 0,
+          "text": "The book's example output includes checks for hardware virtualization, /dev/kvm, /dev/vhost-net, /dev/net/tun, and several system resource controllers."
+        },
+        {
+          "level": 0,
+          "text": "A result of PASS means that a particular check succeeded. If a check fails, investigate that requirement before attempting to create a VM."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Validate the host first so you can find hardware or configuration problems before creating a guest."
+        }
+      ],
+      "words": 123
+    },
+    {
+      "title": "37. Install Cockpit's Virtual Machines tool",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Cockpit can provide a web interface for managing KVM virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Cockpit is a web-based administration interface for Linux. The book's RHEL 8 workflow adds a Virtual Machines section to Cockpit using the cockpit-machines package."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo yum install cockpit-machines"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now cockpit.socket"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "yum install cockpit-machines: Installs the Cockpit virtual-machine management interface."
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable: Configures a service or socket to start at boot."
+        },
+        {
+          "level": 0,
+          "text": "--now: Starts it immediately as well."
+        },
+        {
+          "level": 0,
+          "text": "cockpit.socket: The socket that allows Cockpit's web service to be activated when needed."
+        },
+        {
+          "level": 0,
+          "text": "These are the book's RHEL 8 commands. On RHEL 10, verify the available package names and the current virtualization setup."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Cockpit supplies the web interface, while KVM and its supporting tools provide the virtualization capability."
+        }
+      ],
+      "words": 128
+    },
+    {
+      "title": "38. Create a virtual machine in Cockpit",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Cockpit lets you define a VM's name, installation source, operating system, memory, and disk size."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Creating a VM is similar to preparing a new computer before installing its operating system. You decide how much memory and storage it will receive and where the installation files will come from."
+        },
+        {
+          "level": 0,
+          "text": "In the book's interface:"
+        },
+        {
+          "level": 0,
+          "text": "Open Cockpit in a browser."
+        },
+        {
+          "level": 0,
+          "text": "Choose Virtual Machines."
+        },
+        {
+          "level": 0,
+          "text": "Click Create VM."
+        },
+        {
+          "level": 0,
+          "text": "Enter the VM configuration."
+        },
+        {
+          "level": 0,
+          "text": "Click Create."
+        },
+        {
+          "level": 0,
+          "text": "Click Install to start the guest operating system installation."
+        },
+        {
+          "level": 0,
+          "text": "Important fields include:"
+        },
+        {
+          "level": 0,
+          "text": "Name: The VM's management name. This is not automatically the guest operating system's host name."
+        },
+        {
+          "level": 0,
+          "text": "Installation Source Type: Where the installer ISO or source is located."
+        },
+        {
+          "level": 0,
+          "text": "Installation Source: The path or URL of the installation source."
+        },
+        {
+          "level": 0,
+          "text": "OS Vendor and Operating System: The guest OS type."
+        },
+        {
+          "level": 0,
+          "text": "Memory: The RAM assigned to the VM."
+        },
+        {
+          "level": 0,
+          "text": "Storage Size: The virtual disk capacity."
+        },
+        {
+          "level": 0,
+          "text": "Immediately Start VM: Whether the VM starts after creation."
+        },
+        {
+          "level": 0,
+          "text": "Remember: VM configuration defines the virtual hardware; the guest OS still needs to be installed and configured."
+        }
+      ],
+      "words": 169
+    },
+    {
+      "title": "39. Install the guest operating system",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: After creating a VM, boot its virtual hardware from the installation source and install the guest OS."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A newly created VM is like a new computer without an operating system. Once you attach an ISO or another valid installation source, you can start the installer and configure the guest just as you would on physical hardware."
+        },
+        {
+          "level": 0,
+          "text": "In Cockpit, select the new VM and open its console. Start the installation and follow the steps for the operating system you chose."
+        },
+        {
+          "level": 0,
+          "text": "You need enough host resources to support both the host and the guest. Giving a VM too much memory or CPU capacity can leave the host struggling."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "You could create a RHEL test VM with an appropriate amount of RAM and disk space, then install RHEL using an ISO."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "VM console: The screen and keyboard interface for the guest."
+        },
+        {
+          "level": 0,
+          "text": "ISO: The installation image."
+        },
+        {
+          "level": 0,
+          "text": "Guest OS: The operating system installed inside the VM."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Creating a VM creates the virtual computer; installing an OS makes it usable."
+        }
+      ],
+      "words": 174
+    },
+    {
+      "title": "40. Understand the book's virtualization quiz",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The quiz checks whether you understand supported guests, required tools, and VM management."
+        },
+        {
+          "level": 0,
+          "text": "The book's answer key identifies these answers:"
+        },
+        {
+          "level": 0,
+          "text": "Supported guest systems — choose three: RHEL 6 and later, Microsoft Windows 10 and later, and Windows Server 2016 and later."
+        },
+        {
+          "level": 0,
+          "text": "Components for the book's host and Cockpit workflow — choose two: The virt module and cockpit-machines package."
+        },
+        {
+          "level": 0,
+          "text": "Hardware and host requirement validation: virt-host-validate."
+        },
+        {
+          "level": 0,
+          "text": "Tools for starting and stopping VMs: virsh and the Web Console."
+        },
+        {
+          "level": 0,
+          "text": "These answers reflect the book's RHEL 8 environment and historical support matrix. Do not interpret them as a current compatibility list for every newer RHEL release."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "virt-host-validate"
+        },
+        {
+          "level": 0,
+          "text": "This is the command to remember for the book's question about checking virtualization host requirements."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Know the role of each tool rather than memorizing names without understanding what they do."
+        }
+      ],
+      "words": 136
+    },
+    {
+      "title": "41. Understand the final lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You will create a Kickstart file on serverb, publish it through a web server, and use it to reinstall servera."
+        },
+        {
+          "level": 0,
+          "text": "This final lab combines the chapter's main skills: editing a Kickstart file, validating it, making it available over HTTP, and starting an automated installation."
+        },
+        {
+          "level": 0,
+          "text": "The lab deliberately reinstalls a training machine. Do not run these instructions on your personal computer or a production server."
+        },
+        {
+          "level": 0,
+          "text": "Start on the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab installing-review start"
+        },
+        {
+          "level": 0,
+          "text": "The training script checks the servers and prepares serverb and servera for the exercise."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "lab: The training environment's lab command."
+        },
+        {
+          "level": 0,
+          "text": "installing-review: The name of the final exercise."
+        },
+        {
+          "level": 0,
+          "text": "start: Prepares the environment."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The final lab is a full workflow, not just a Kickstart syntax exercise."
+        }
+      ],
+      "words": 122
+    },
+    {
+      "title": "42. Create the Kickstart file on serverb",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Copy the existing installation configuration on serverb so the student user can edit it."
+        },
+        {
+          "level": 0,
+          "text": "Connect to serverb:"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@serverb"
+        },
+        {
+          "level": 0,
+          "text": "Copy the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cat /root/anaconda-ks.cfg > ~/kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "This creates kickstart.cfg in the student's home directory, using the existing configuration as a starting point."
+        },
+        {
+          "level": 0,
+          "text": "The file must then be edited according to the final lab's requirements:"
+        },
+        {
+          "level": 0,
+          "text": "Comment out the reboot directive."
+        },
+        {
+          "level": 0,
+          "text": "Comment out the BaseOS repository and configure the AppStream repository with the classroom URL."
+        },
+        {
+          "level": 0,
+          "text": "Set the installation URL to the classroom's RHEL 8 source."
+        },
+        {
+          "level": 0,
+          "text": "Comment out the network command."
+        },
+        {
+          "level": 0,
+          "text": "Set the lab's root password directive."
+        },
+        {
+          "level": 0,
+          "text": "Replace the old authentication command with authselect select sssd."
+        },
+        {
+          "level": 0,
+          "text": "Configure the specified services."
+        },
+        {
+          "level": 0,
+          "text": "Use autopart instead of the specified partition commands."
+        },
+        {
+          "level": 0,
+          "text": "Simplify the %post script and %packages list."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The final lab uses the same editing skills as the guided Kickstart exercise, but the finished file must be published on serverb for servera to use."
+        }
+      ],
+      "words": 152
+    },
+    {
+      "title": "43. Validate and publish the final Kickstart file",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Validate the file, then copy it into the web server's directory."
+        },
+        {
+          "level": 0,
+          "text": "Validate:"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "If the validator reports an error, correct the indicated line or option and run the check again."
+        },
+        {
+          "level": 0,
+          "text": "Publish the file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo cp ~/kickstart.cfg /var/www/html/ks-config/"
+        },
+        {
+          "level": 0,
+          "text": "The required location is:"
+        },
+        {
+          "level": 0,
+          "text": "http://serverb.lab.example.com/ks-config/kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator: Checks Kickstart syntax."
+        },
+        {
+          "level": 0,
+          "text": "cp: Copies the file."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/ks-config/: The lab's web-served directory."
+        },
+        {
+          "level": 0,
+          "text": "The HTTP URL: The address the installer will use to retrieve the file."
+        },
+        {
+          "level": 0,
+          "text": "If the URL does not work, check that the file exists at the expected path and that the web server can serve it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A correct file is not enough; the target installer must be able to reach it."
+        }
+      ],
+      "words": 114
+    },
+    {
+      "title": "44. Grade and perform the automated installation",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The final test is to boot servera using the published Kickstart file and let Anaconda install the system."
+        },
+        {
+          "level": 0,
+          "text": "Return to the workstation and run:"
+        },
+        {
+          "level": 0,
+          "text": "lab installing-review grade"
+        },
+        {
+          "level": 0,
+          "text": "The grading script checks the lab's requirements. Correct any reported failures in the Kickstart file or its published copy, then grade again."
+        },
+        {
+          "level": 0,
+          "text": "Next, reboot servera. At the boot menu, select Kickstart Red Hat Enterprise Linux 8 and press Enter."
+        },
+        {
+          "level": 0,
+          "text": "Anaconda should use the configured Kickstart file to perform the installation."
+        },
+        {
+          "level": 0,
+          "text": "After the exercise, run:"
+        },
+        {
+          "level": 0,
+          "text": "lab installing-review finish"
+        },
+        {
+          "level": 0,
+          "text": "The lab's finish script cleans up the resources created for the exercise. Follow the course instructions to reset servera to its expected default state afterward."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A successful Kickstart workflow requires a correct file, a reachable source, a working boot path, and a successful installation."
+        }
+      ],
+      "words": 131
+    },
+    {
+      "title": "45. The essential commands and concepts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "Command or concept"
+        },
+        {
+          "level": 0,
+          "text": "Display the host name"
+        },
+        {
+          "level": 0,
+          "text": "hostname"
+        },
+        {
+          "level": 0,
+          "text": "Copy a configuration file"
+        },
+        {
+          "level": 0,
+          "text": "cp source destination"
+        },
+        {
+          "level": 0,
+          "text": "Check Kickstart syntax"
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator kickstart.cfg"
+        },
+        {
+          "level": 0,
+          "text": "Prepare a virtualization host in the book"
+        },
+        {
+          "level": 0,
+          "text": "yum module install virt"
+        },
+        {
+          "level": 0,
+          "text": "Validate virtualization requirements"
+        },
+        {
+          "level": 0,
+          "text": "virt-host-validate"
+        },
+        {
+          "level": 0,
+          "text": "Install Cockpit VM management in the book"
+        },
+        {
+          "level": 0,
+          "text": "yum install cockpit-machines"
+        },
+        {
+          "level": 0,
+          "text": "Start Cockpit's socket"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now cockpit.socket"
+        },
+        {
+          "level": 0,
+          "text": "Tell Anaconda where the Kickstart file is"
+        },
+        {
+          "level": 0,
+          "text": "inst.ks=LOCATION"
+        },
+        {
+          "level": 0,
+          "text": "Define a package list"
+        },
+        {
+          "level": 0,
+          "text": "%packages through %end"
+        },
+        {
+          "level": 0,
+          "text": "Run post-installation commands"
+        },
+        {
+          "level": 0,
+          "text": "%post through %end"
+        },
+        {
+          "level": 0,
+          "text": "These commands come from the book's RHEL 8 workflow. On your RHEL 10.2 machine, verify the currently available tools and package instructions before using the older module-based installation commands."
+        }
+      ],
+      "words": 103
+    },
+    {
+      "title": "46. Final understanding check",
+      "content": [
+        {
+          "level": 0,
+          "text": "You should now be able to explain these questions in your own words:"
+        },
+        {
+          "level": 0,
+          "text": "What is Anaconda, and what does it do?"
+        },
+        {
+          "level": 0,
+          "text": "What is the difference between a binary DVD ISO and a boot ISO?"
+        },
+        {
+          "level": 0,
+          "text": "Why must you verify the target disk before installing RHEL?"
+        },
+        {
+          "level": 0,
+          "text": "What is Kickstart, and why is it useful when installing many servers?"
+        },
+        {
+          "level": 0,
+          "text": "What is the difference between %pre, %post, and %packages?"
+        },
+        {
+          "level": 0,
+          "text": "What does ksvalidator check, and what does it not guarantee?"
+        },
+        {
+          "level": 0,
+          "text": "How does Anaconda find a Kickstart file?"
+        },
+        {
+          "level": 0,
+          "text": "What is virtualization, and how is a host different from a guest?"
+        },
+        {
+          "level": 0,
+          "text": "What does KVM provide, and what do virsh and Cockpit do?"
+        },
+        {
+          "level": 0,
+          "text": "Why should you validate a virtualization host before creating VMs?"
+        }
+      ],
+      "words": 115
+    },
+    {
+      "title": "Chapter 12 summary",
+      "content": [
+        {
+          "level": 0,
+          "text": "Anaconda installs and configures RHEL."
+        },
+        {
+          "level": 0,
+          "text": "Installation media provides the installer and, depending on the type, the required software source."
+        },
+        {
+          "level": 0,
+          "text": "Kickstart automates installation through a configuration file."
+        },
+        {
+          "level": 0,
+          "text": "ksvalidator checks Kickstart syntax."
+        },
+        {
+          "level": 0,
+          "text": "inst.ks= tells Anaconda where to find the Kickstart file."
+        },
+        {
+          "level": 0,
+          "text": "KVM provides Linux virtualization."
+        },
+        {
+          "level": 0,
+          "text": "virt-host-validate checks virtualization host requirements."
+        },
+        {
+          "level": 0,
+          "text": "Cockpit with its VM management tools provides a web interface for managing virtual machines."
+        },
+        {
+          "level": 0,
+          "text": "The central lesson of this chapter is that you can install Linux manually, automate repeatable installations with Kickstart, and run additional operating systems using virtualization."
+        }
+      ],
+      "words": 87
+    }
+  ],
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
+}

@@ -2,487 +2,1075 @@
   "id": "rh134-07",
   "n": 7,
   "sourceNumber": 7,
-  "kind": "part",
-  "title": "Part 7",
-  "display": "Part 7 — Selecting Installation Media and Installing Manually; Autom…",
+  "kind": "chapter",
+  "title": "Chapter 7 — Managing Logical Volumes",
+  "display": "Chapter 7 — Managing Logical Volumes",
   "exam": "RHCSA (EX200)",
-  "words": 2014,
+  "words": 2080,
   "sections": [
     {
-      "title": "1. Selecting Installation Media and Installing Manually",
+      "title": "Overview",
       "content": [
         {
           "level": 0,
-          "text": "RHEL installation media comes as a binary DVD (includes all packages) or a smaller boot ISO (downloads packages from a network repository during install). Red Hat's Image Builder (Composer) can also build custom, ready-to-deploy system images instead of installing from scratch each time."
-        },
-        {
-          "level": 2,
-          "text": "The Anaconda Installation Summary screen"
-        },
-        {
-          "level": 0,
-          "text": "Booting the DVD/ISO launches Anaconda, RHEL's graphical installer, centered on one screen where every configurable item is an icon you can visit in any order."
-        },
-        {
-          "level": 0,
-          "text": "Item"
-        },
-        {
-          "level": 0,
-          "text": "What it configures"
-        },
-        {
-          "level": 0,
-          "text": "Keyboard / Language Support"
-        },
-        {
-          "level": 0,
-          "text": "Layouts and additional installable languages"
-        },
-        {
-          "level": 0,
-          "text": "Time & Date"
-        },
-        {
-          "level": 0,
-          "text": "Timezone — set explicitly even if using NTP"
-        },
-        {
-          "level": 0,
-          "text": "Installation Source"
-        },
-        {
-          "level": 0,
-          "text": "Where Anaconda pulls packages from (already set if booted from DVD)"
-        },
-        {
-          "level": 0,
-          "text": "Software Selection"
-        },
-        {
-          "level": 0,
-          "text": "Base environment (e.g. Minimal Install = only essential packages) plus add-ons"
-        },
-        {
-          "level": 0,
-          "text": "Installation Destination"
-        },
-        {
-          "level": 0,
-          "text": "Disk selection and partitioning — automatic partitioning uses all available space by default"
-        },
-        {
-          "level": 0,
-          "text": "KDUMP"
-        },
-        {
-          "level": 0,
-          "text": "Enable/disable the crash-dump collection feature"
-        },
-        {
-          "level": 0,
-          "text": "Network & Host Name"
-        },
-        {
-          "level": 0,
-          "text": "Configure detected network connections"
-        },
-        {
-          "level": 0,
-          "text": "Security Policy"
-        },
-        {
-          "level": 0,
-          "text": "Apply a compliance profile (e.g. PCI-DSS) during install"
-        },
-        {
-          "level": 0,
-          "text": "System Purpose"
-        },
-        {
-          "level": 0,
-          "text": "Declare intended system use for entitlement matching"
-        },
-        {
-          "level": 0,
-          "text": "Items Anaconda flags with a warning triangle are mandatory — the orange status bar at the bottom won't clear (and Begin Installation stays unavailable) until they're resolved. Root Password and User Creation are prompted for WHILE the install is running, not on the summary screen."
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL The install cannot finish without a root password being set at some point during the process — Anaconda blocks completion until this happens. Creating a non-root user is optional but strongly recommended practice, not a requirement."
-        },
-        {
-          "level": 2,
-          "text": "Troubleshooting a stuck install"
-        },
-        {
-          "level": 0,
-          "text": "Key sequence"
-        },
-        {
-          "level": 0,
-          "text": "Access"
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+Alt+F1"
-        },
-        {
-          "level": 0,
-          "text": "tmux terminal multiplexer — a real shell for inspecting the system mid-install"
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+Alt+F6"
-        },
-        {
-          "level": 0,
-          "text": "Back to the graphical Anaconda screen (the default view)"
-        },
-        {
-          "level": 0,
-          "text": "Inside tmux, Ctrl+b then a number key switches windows (a shell prompt, log windows, etc.) — Alt+Tab also rotates focus between them."
+          "text": "RH134 — RH134 course material · Personal Tutor Lesson"
         }
       ],
-      "words": 308
+      "words": 9
     },
     {
-      "title": "2. Automating Installation with Kickstart",
+      "title": "What will you learn?",
       "content": [
         {
           "level": 0,
-          "text": "A Kickstart file is a plain-text answer sheet that pre-fills every Anaconda decision, so an installation runs unattended from boot to finished system. This is the single most direct link between everything you've learned about RHEL administration and the automation mindset RH294 builds on next."
-        },
-        {
-          "level": 2,
-          "text": "Kickstart command categories"
+          "text": "By the end of this chapter, you should understand how to:"
         },
         {
           "level": 0,
-          "text": "Category"
+          "text": "Create and manage Logical Volume Manager (LVM) storage."
         },
         {
           "level": 0,
-          "text": "Example commands"
+          "text": "Create logical volumes for files and swap space."
         },
         {
           "level": 0,
-          "text": "Installation"
+          "text": "Add more storage to an existing volume group."
         },
         {
           "level": 0,
-          "text": "url (network install source), repo (extra package repos), text, vnc"
+          "text": "Increase a logical volume's size without deleting its existing files."
         },
         {
           "level": 0,
-          "text": "Partitioning"
+          "text": "Remove a disk from a volume group safely."
         },
         {
           "level": 0,
-          "text": "clearpart, part, autopart, ignoredisk, bootloader, volgroup/logvol (LVM), zerombr"
+          "text": "Verify storage using Linux commands."
         },
         {
           "level": 0,
-          "text": "Network"
-        },
-        {
-          "level": 0,
-          "text": "network (device + bootproto), firewall"
-        },
-        {
-          "level": 0,
-          "text": "Location & Security"
-        },
-        {
-          "level": 0,
-          "text": "lang, keyboard, timezone, authselect, rootpw, selinux, services, group/user"
-        },
-        {
-          "level": 0,
-          "text": "Miscellaneous"
-        },
-        {
-          "level": 0,
-          "text": "logging, firstboot, reboot/poweroff/halt"
-        },
-        {
-          "level": 0,
-          "text": "#version=RHEL8"
-        },
-        {
-          "level": 0,
-          "text": "ignoredisk --only-use=vda"
-        },
-        {
-          "level": 0,
-          "text": "bootloader --location=mbr --boot-drive=vda --timeout=1"
-        },
-        {
-          "level": 0,
-          "text": "zerombr"
-        },
-        {
-          "level": 0,
-          "text": "clearpart --all --initlabel"
-        },
-        {
-          "level": 0,
-          "text": "text"
-        },
-        {
-          "level": 0,
-          "text": "url --url=\"http://server.example.com/content/rhel8/x86_64/dvd/\""
-        },
-        {
-          "level": 0,
-          "text": "keyboard --vckeymap=us --xlayouts=''"
-        },
-        {
-          "level": 0,
-          "text": "lang en_US.UTF-8"
-        },
-        {
-          "level": 0,
-          "text": "timezone --utc Asia/Dhaka"
-        },
-        {
-          "level": 0,
-          "text": "rootpw --iscrypted $6$KUnFfrTzO8jv...XDR1UuchoMG1"
-        },
-        {
-          "level": 0,
-          "text": "selinux --enforcing"
-        },
-        {
-          "level": 0,
-          "text": "firewall --enabled --service=ssh"
-        },
-        {
-          "level": 0,
-          "text": "network --device=eth0 --bootproto=dhcp"
-        },
-        {
-          "level": 0,
-          "text": "autopart"
-        },
-        {
-          "level": 0,
-          "text": "reboot"
-        },
-        {
-          "level": 0,
-          "text": "%packages"
-        },
-        {
-          "level": 0,
-          "text": "@^minimal-environment"
-        },
-        {
-          "level": 0,
-          "text": "vim-enhanced"
-        },
-        {
-          "level": 0,
-          "text": "-firewalld"
-        },
-        {
-          "level": 0,
-          "text": "%end"
-        },
-        {
-          "level": 0,
-          "text": "Package list syntax"
-        },
-        {
-          "level": 0,
-          "text": "Meaning"
-        },
-        {
-          "level": 0,
-          "text": "packagename"
-        },
-        {
-          "level": 0,
-          "text": "Install this individual package"
-        },
-        {
-          "level": 0,
-          "text": "@groupname"
-        },
-        {
-          "level": 0,
-          "text": "Install a package group"
-        },
-        {
-          "level": 0,
-          "text": "@^environmentgroup"
-        },
-        {
-          "level": 0,
-          "text": "Install a whole environment group (a group of groups)"
-        },
-        {
-          "level": 0,
-          "text": "-packagename"
-        },
-        {
-          "level": 0,
-          "text": "Exclude — though mandatory dependencies of other requested packages may still install anyway"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Primary commands must come BEFORE the %pre, %post, and %packages sections — but %pre, %post, and %packages can appear in any order relative to each other. %pre runs before disk partitioning; %post runs after the base install completes."
-        },
-        {
-          "level": 2,
-          "text": "Creating, validating, and publishing the file"
-        },
-        {
-          "level": 0,
-          "text": "Writing a Kickstart file from scratch is rarely worth it — every completed installation leaves a ready-made starting point at /root/anaconda-ks.cfg, containing exactly the choices that install used."
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ ksvalidator /root/anaconda-ks.cfg"
-        },
-        {
-          "level": 0,
-          "text": "ksvalidator (from the pykickstart package) catches syntax errors — unknown commands, invalid options — but it does NOT verify that a URL actually resolves, that a package actually exists in the repo, or that a %post script will succeed."
-        },
-        {
-          "level": 0,
-          "text": "✗ COMMON MISTAKE Treating a clean ksvalidator run as proof the install will succeed. It only checks Kickstart SYNTAX — a perfectly valid firewall --enabled --service=ssh line pointing at a repo URL that's offline will pass validation and still fail during the actual install."
-        },
-        {
-          "level": 2,
-          "text": "The three-step Kickstart workflow"
-        },
-        {
-          "level": 0,
-          "text": "1. Create the Kickstart file (edit a copy of anaconda-ks.cfg, or generate one)."
-        },
-        {
-          "level": 0,
-          "text": "2. Publish it somewhere the installer can reach: an HTTP/FTP/NFS server (best for iterating — one file update serves every future install), USB/CD-ROM (requires rebuilding media on every change), or a local disk."
-        },
-        {
-          "level": 0,
-          "text": "3. Boot Anaconda and point it at the file using the inst.ks= kernel parameter."
-        },
-        {
-          "level": 0,
-          "text": "inst.ks=http://server.example.com/kickstart/ks.cfg"
-        },
-        {
-          "level": 0,
-          "text": "inst.ks=nfs:server.example.com:/kickstart/ks.cfg"
-        },
-        {
-          "level": 0,
-          "text": "inst.ks=hd:sda1:/ks.cfg"
-        },
-        {
-          "level": 0,
-          "text": "💡 WHY THIS MATTERS This is the exact pattern you'll see again in RH294 with Ansible: write the desired state once (the Kickstart file, or later a playbook), publish it somewhere reachable, then point automation at it — instead of repeating manual steps for every new system."
+          "text": "The main idea is simple: LVM makes disk space easier to manage and expand."
         }
       ],
-      "words": 447
+      "words": 72
     },
     {
-      "title": "3. Installing and Configuring Virtual Machines",
+      "title": "1. Why do we need LVM?",
       "content": [
         {
           "level": 0,
-          "text": "RHEL 8 includes KVM (Kernel-based Virtual Machine), a full virtualization solution built directly into the kernel — no separate hypervisor product needed to turn a RHEL box into a virtualization host."
+          "text": "In the previous chapter, you learned how to create partitions and file systems."
         },
         {
           "level": 0,
-          "text": "Where KVM shows up"
+          "text": "Imagine you have a server with a 100 GB disk. You create a 20 GB partition for application data."
         },
         {
           "level": 0,
-          "text": "Context"
+          "text": "After some months, the application needs 35 GB."
         },
         {
           "level": 0,
-          "text": "Standalone RHEL host"
+          "text": "With basic partitions, increasing the space can require additional partition and file-system management. With LVM, if the volume group has enough free space, you can extend the logical volume and its file system more easily."
         },
         {
           "level": 0,
-          "text": "A 'thick host' — runs VMs alongside its own normal services"
+          "text": "henzelmoras.github.io"
         },
         {
           "level": 0,
-          "text": "Red Hat Virtualization (RHV)"
+          "text": "LVM adds a flexible storage-management layer between physical storage and the file systems you use."
+        }
+      ],
+      "words": 91
+    },
+    {
+      "title": "2. Understand the four main LVM concepts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Think of LVM as a storage warehouse."
         },
         {
           "level": 0,
-          "text": "Centralized management across many KVM hosts, with migration/HA"
+          "text": "1. Physical device"
         },
         {
           "level": 0,
-          "text": "Red Hat OpenStack Platform"
+          "text": "The actual storage device, such as a disk or partition."
         },
         {
           "level": 0,
-          "text": "Full public/private cloud built on the same KVM foundation"
-        },
-        {
-          "level": 2,
-          "text": "Turning a RHEL system into a virtualization host"
+          "text": "Example: /dev/vdb1"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# yum module install virt"
+          "text": "2. Physical Volume (PV)"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# virt-host-validate"
+          "text": "A disk or partition initialized for use by LVM."
         },
         {
           "level": 0,
-          "text": "virt-host-validate checks that the hardware actually supports virtualization — Intel VT-x/Intel 64 or AMD-V/AMD64 extensions, /dev/kvm accessibility, and the cgroup controllers KVM depends on. Every check must PASS for the system to reliably host VMs."
+          "text": "Command: pvcreate"
         },
         {
           "level": 0,
-          "text": "⚠ WARNING Running RHEL itself inside a VM (as in most home-lab setups) to then host NESTED VMs is possible but requires nested virtualization to be explicitly enabled on the outer hypervisor — virt-host-validate will fail the hardware virtualization check otherwise, and this is a common home-lab stumbling block worth checking early."
-        },
-        {
-          "level": 2,
-          "text": "Managing VMs"
+          "text": "3. Volume Group (VG)"
         },
         {
           "level": 0,
-          "text": "Tool"
+          "text": "A pool of storage made from one or more physical volumes."
         },
         {
           "level": 0,
-          "text": "Interface"
+          "text": "Command: vgcreate"
         },
         {
           "level": 0,
-          "text": "virsh"
+          "text": "4. Logical Volume (LV)"
         },
         {
           "level": 0,
-          "text": "Command-line management of KVM guests — start/stop/list/define VMs"
+          "text": "A storage area allocated from the volume group's available space. You can put a file system or swap space on it."
         },
         {
           "level": 0,
-          "text": "Cockpit — Virtual Machines"
+          "text": "Command: lvcreate"
         },
         {
           "level": 0,
-          "text": "Web console GUI for creating and managing VMs without memorizing virsh syntax"
+          "text": "Remember the order"
         },
         {
           "level": 0,
-          "text": "Cockpit's Virtual Machines page lets you create a new VM by specifying a name, install media (ISO or network source), memory, and storage — functionally the same decisions Anaconda's Installation Summary screen asks for, just wrapped in a VM-creation dialog instead of a bare-metal install screen."
+          "text": "Physical device → PV → VG → LV → File system → Mount point"
         },
         {
-          "level": 3,
-          "text": "Command Reference — Install, Kickstart, VMs"
+          "level": 0,
+          "text": "For example:"
         },
+        {
+          "level": 0,
+          "text": "/dev/vdb1 is your partition."
+        },
+        {
+          "level": 0,
+          "text": "pvcreate prepares it for LVM."
+        },
+        {
+          "level": 0,
+          "text": "vgcreate combines it into a storage pool."
+        },
+        {
+          "level": 0,
+          "text": "lvcreate allocates part of that pool."
+        },
+        {
+          "level": 0,
+          "text": "mkfs.xfs creates a file system."
+        },
+        {
+          "level": 0,
+          "text": "mount makes the files accessible."
+        },
+        {
+          "level": 0,
+          "text": "Do not confuse a PV with a VG or an LV. Each serves a different purpose."
+        }
+      ],
+      "words": 148
+    },
+    {
+      "title": "3. What are physical extents and logical extents?",
+      "content": [
+        {
+          "level": 0,
+          "text": "LVM divides storage into small units called extents."
+        },
+        {
+          "level": 0,
+          "text": "Physical extent (PE): A small unit of space on a physical volume."
+        },
+        {
+          "level": 0,
+          "text": "Logical extent (LE): A small unit of space belonging to a logical volume."
+        },
+        {
+          "level": 0,
+          "text": "LVM maps logical extents to physical extents. You usually do not need to manage each extent individually, but understanding them helps when reading commands such as lvdisplay."
+        },
+        {
+          "level": 0,
+          "text": "For example, if an extent is 4 MiB, then 100 extents represent 400 MiB of storage."
+        },
+        {
+          "level": 0,
+          "text": "The actual extent size depends on the volume group configuration."
+        }
+      ],
+      "words": 86
+    },
+    {
+      "title": "4. Create a logical volume step by step",
+      "content": [
+        {
+          "level": 0,
+          "text": "We will use an example based on the RH134 guided exercise. The example assumes a disposable test disk with two suitable partitions, /dev/vdb1 and /dev/vdb2."
+        },
+        {
+          "level": 0,
+          "text": "Do not run these commands on your system disk or on partitions containing data you need."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Check available storage"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvs"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvs"
+        },
+        {
+          "level": 0,
+          "text": "These commands show disks and the current LVM configuration."
+        },
+        {
+          "level": 0,
+          "text": "pvs — physical volumes."
+        },
+        {
+          "level": 0,
+          "text": "vgs — volume groups."
+        },
+        {
+          "level": 0,
+          "text": "lvs — logical volumes."
+        },
+        {
+          "level": 0,
+          "text": "If the last three commands show no LVM storage, that may simply mean you have not configured any yet."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Prepare physical volumes"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvcreate /dev/vdb1 /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "This initializes both partitions for LVM."
+        },
+        {
+          "level": 0,
+          "text": "Expected message:"
+        },
+        {
+          "level": 0,
+          "text": "Physical volume \"/dev/vdb1\" successfully created"
+        },
+        {
+          "level": 0,
+          "text": "The exact output may vary."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Create a volume group"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgcreate data_vg /dev/vdb1 /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "This creates a storage pool called data_vg using both physical volumes."
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "You should see data_vg in the output."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Create a logical volume"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvcreate -n data_lv -L 400M data_vg"
+        },
+        {
+          "level": 0,
+          "text": "Understand the command:"
+        },
+        {
+          "level": 0,
+          "text": "lvcreate — create a logical volume."
+        },
+        {
+          "level": 0,
+          "text": "-n data_lv — name the logical volume data_lv."
+        },
+        {
+          "level": 0,
+          "text": "-L 400M — allocate 400 MiB."
+        },
+        {
+          "level": 0,
+          "text": "data_vg — use the storage pool named data_vg."
+        },
+        {
+          "level": 0,
+          "text": "The logical volume will normally be accessible as:"
+        },
+        {
+          "level": 0,
+          "text": "/dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvs"
+        },
+        {
+          "level": 0,
+          "text": "Step 5: Create a file system"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkfs.xfs /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "This creates an XFS file system on the logical volume."
+        },
+        {
+          "level": 0,
+          "text": "Remember: creating the logical volume does not automatically create a file system."
+        },
+        {
+          "level": 0,
+          "text": "Step 6: Create a mount point"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir /data"
+        },
+        {
+          "level": 0,
+          "text": "This creates the directory through which you will access the logical volume."
+        },
+        {
+          "level": 0,
+          "text": "Step 7: Mount the logical volume"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount /dev/data_vg/data_lv /data"
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "findmnt /data"
+        },
+        {
+          "level": 0,
+          "text": "df -h /data"
+        },
+        {
+          "level": 0,
+          "text": "Your logical volume is now available through /data."
+        },
+        {
+          "level": 0,
+          "text": "Step 8: Make the mount persistent"
+        },
+        {
+          "level": 0,
+          "text": "First, find the file system UUID:"
+        },
+        {
+          "level": 0,
+          "text": "sudo blkid /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "Edit the configuration file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Add a line using your actual UUID:"
+        },
+        {
+          "level": 0,
+          "text": "UUID=your-actual-uuid  /data  xfs  defaults  0  0"
+        },
+        {
+          "level": 0,
+          "text": "Then test the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo findmnt --verify --verbose"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -a"
+        },
+        {
+          "level": 0,
+          "text": "findmnt /data"
+        },
+        {
+          "level": 0,
+          "text": "The mount should remain configured after reboot."
+        },
+        {
+          "level": 0,
+          "text": "Practical lesson: LVM manages the storage allocation. XFS manages the files. /etc/fstab configures persistent mounting."
+        }
+      ],
+      "words": 354
+    },
+    {
+      "title": "5. Display LVM information",
+      "content": [
+        {
+          "level": 0,
+          "text": "You must be able to inspect your storage before changing it."
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "What it shows"
+        },
+        {
+          "level": 0,
+          "text": "pvs"
+        },
+        {
+          "level": 0,
+          "text": "Physical volumes and their space"
+        },
+        {
+          "level": 0,
+          "text": "pvdisplay"
+        },
+        {
+          "level": 0,
+          "text": "Detailed physical-volume information"
+        },
+        {
+          "level": 0,
+          "text": "vgs"
+        },
+        {
+          "level": 0,
+          "text": "Volume groups and free space"
+        },
+        {
+          "level": 0,
+          "text": "vgdisplay data_vg"
+        },
+        {
+          "level": 0,
+          "text": "Details about one volume group"
+        },
+        {
+          "level": 0,
+          "text": "lvs"
+        },
+        {
+          "level": 0,
+          "text": "Logical volumes and their sizes"
+        },
+        {
+          "level": 0,
+          "text": "lvdisplay /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "Details about one logical volume"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "Disks, partitions, and storage relationships"
+        },
+        {
+          "level": 0,
+          "text": "df -h /data"
+        },
+        {
+          "level": 0,
+          "text": "Space available in the mounted file system"
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgdisplay data_vg"
+        },
+        {
+          "level": 0,
+          "text": "Look for the free space. This tells you how much additional storage may be available for logical volumes."
+        },
+        {
+          "level": 0,
+          "text": "Important: The size of the volume group is not necessarily the same as the size of the logical volume. A volume group can contain unused space that you allocate later."
+        }
+      ],
+      "words": 120
+    },
+    {
+      "title": "6. Extend a logical volume",
+      "content": [
+        {
+          "level": 0,
+          "text": "This is one of the most important skills in this chapter."
+        },
+        {
+          "level": 0,
+          "text": "Suppose /data is on a 400 MiB logical volume. Later, you need 300 MiB more space."
+        },
+        {
+          "level": 0,
+          "text": "If the volume group has enough free space, you can increase the logical volume without recreating it."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Check free space"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvs"
+        },
+        {
+          "level": 0,
+          "text": "Confirm that the volume group has enough free space for the increase."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Extend the logical volume"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvextend -L +300M /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "The + sign matters."
+        },
+        {
+          "level": 0,
+          "text": "-L +300M means add 300 MiB to the current size."
+        },
+        {
+          "level": 0,
+          "text": "-L 700M means set the logical volume's final size to 700 MiB."
+        },
+        {
+          "level": 0,
+          "text": "Do not confuse these two forms."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Extend the XFS file system"
+        },
+        {
+          "level": 0,
+          "text": "Increasing the logical volume does not always increase the file system automatically."
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "sudo xfs_growfs /data"
+        },
+        {
+          "level": 0,
+          "text": "The XFS file system must be mounted for this command."
+        },
+        {
+          "level": 0,
+          "text": "An alternative, where supported, is to extend the volume and resize the file system in one operation:"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvextend -r -L +300M /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "Use one approach or the other, not both for the same intended increase."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Verify the new size"
+        },
+        {
+          "level": 0,
+          "text": "df -h /data"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvs"
+        },
+        {
+          "level": 0,
+          "text": "The file system should now report the increased capacity."
+        },
+        {
+          "level": 0,
+          "text": "What if the file system is ext4?"
+        },
+        {
+          "level": 0,
+          "text": "For an ext4 file system, use resize2fs instead of xfs_growfs:"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvextend -L +300M /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "sudo resize2fs /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "The correct resize command depends on the file system type."
+        },
+        {
+          "level": 0,
+          "text": "File system"
+        },
+        {
+          "level": 0,
+          "text": "Resize command"
+        },
+        {
+          "level": 0,
+          "text": "XFS"
+        },
+        {
+          "level": 0,
+          "text": "xfs_growfs /mountpoint"
+        },
+        {
+          "level": 0,
+          "text": "ext4"
+        },
+        {
+          "level": 0,
+          "text": "resize2fs /dev/vg_name/lv_name"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Extending the LV gives the file system more underlying storage. Resizing the file system lets it use that extra storage."
+        }
+      ],
+      "words": 263
+    },
+    {
+      "title": "7. Extend a volume group with another disk",
+      "content": [
+        {
+          "level": 0,
+          "text": "What happens when the volume group has no free space?"
+        },
+        {
+          "level": 0,
+          "text": "You can add another suitable disk or partition to the volume group."
+        },
+        {
+          "level": 0,
+          "text": "Suppose /dev/vdb3 is a new, unused partition."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Prepare it as a physical volume"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvcreate /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Add it to the volume group"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgextend data_vg /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "This adds the physical volume's available storage to data_vg."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Verify"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvs"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "The volume group should now have more capacity available."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Allocate the new space to a logical volume"
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvextend -L +1G /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "If the file system is XFS:"
+        },
+        {
+          "level": 0,
+          "text": "sudo xfs_growfs /data"
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "df -h /data"
+        },
+        {
+          "level": 0,
+          "text": "This illustrates why LVM is useful: you can add physical storage to a pool and then allocate it to a logical volume when needed."
+        }
+      ],
+      "words": 131
+    },
+    {
+      "title": "8. Remove a physical volume from a volume group",
+      "content": [
+        {
+          "level": 0,
+          "text": "Sometimes a disk needs replacement or removal."
+        },
+        {
+          "level": 0,
+          "text": "Do not remove a physical volume while it still contains extents used by logical volumes. First, migrate its allocated data to other physical volumes in the same volume group."
+        },
+        {
+          "level": 0,
+          "text": "Suppose /dev/vdb3 is the physical volume you want to remove from data_vg."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Check the volume group"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvs"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvs -a -o +devices"
+        },
+        {
+          "level": 0,
+          "text": "Confirm which physical volumes contain the logical volumes' data and whether other volumes have enough free space."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Move allocated data"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvmove /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "This moves allocated extents from /dev/vdb3 to other suitable physical volumes in the same volume group."
+        },
+        {
+          "level": 0,
+          "text": "It can fail if the remaining physical volumes do not have enough space."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Remove the physical volume from the group"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgreduce data_vg /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "This removes the now-unused physical volume from data_vg."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Verify"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvs"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "The physical volume should no longer belong to data_vg."
+        },
+        {
+          "level": 0,
+          "text": "pvmove moves allocated data."
+        },
+        {
+          "level": 0,
+          "text": "vgreduce removes a physical volume from a volume group."
+        },
+        {
+          "level": 0,
+          "text": "These are different operations. Removing a PV from a VG does not mean you should immediately format or disconnect the disk without checking its status."
+        }
+      ],
+      "words": 192
+    },
+    {
+      "title": "9. Managing logical volumes used as swap",
+      "content": [
+        {
+          "level": 0,
+          "text": "A logical volume can hold swap space instead of a normal file system."
+        },
+        {
+          "level": 0,
+          "text": "For example, a swap LV could be initialized and activated like this:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkswap /dev/data_vg/swap_lv"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapon /dev/data_vg/swap_lv"
+        },
+        {
+          "level": 0,
+          "text": "To extend swap space, the process differs from extending XFS or ext4:"
+        },
+        {
+          "level": 0,
+          "text": "Check the volume group's free space."
+        },
+        {
+          "level": 0,
+          "text": "Deactivate the swap LV with swapoff."
+        },
+        {
+          "level": 0,
+          "text": "Extend the LV with lvextend."
+        },
+        {
+          "level": 0,
+          "text": "Initialize the expanded LV again with mkswap."
+        },
+        {
+          "level": 0,
+          "text": "Reactivate it with swapon."
+        },
+        {
+          "level": 0,
+          "text": "Check its persistent configuration."
+        },
+        {
+          "level": 0,
+          "text": "Example commands:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapoff /dev/data_vg/swap_lv"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvextend -L +512M /dev/data_vg/swap_lv"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkswap /dev/data_vg/swap_lv"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapon /dev/data_vg/swap_lv"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapon --show"
+        },
+        {
+          "level": 0,
+          "text": "These commands assume that the named LV already exists and is configured as swap. The system must have enough available memory to deactivate the swap safely."
+        },
+        {
+          "level": 0,
+          "text": "If the swap LV is listed in /etc/fstab by UUID, reinitializing it with mkswap may change that UUID. Update the entry if necessary before relying on it after reboot."
+        }
+      ],
+      "words": 151
+    },
+    {
+      "title": "10. Common mistakes and troubleshooting",
+      "content": [
+        {
+          "level": 0,
+          "text": "Mistake 1: The volume group has no free space"
+        },
+        {
+          "level": 0,
+          "text": "Check:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vgs"
+        },
+        {
+          "level": 0,
+          "text": "If there is no free space, you may need to add another physical volume with pvcreate and vgextend."
+        },
+        {
+          "level": 0,
+          "text": "Mistake 2: The logical volume grew, but df -h shows the old size"
+        },
+        {
+          "level": 0,
+          "text": "You may have extended the logical volume without resizing the file system."
+        },
+        {
+          "level": 0,
+          "text": "For XFS:"
+        },
+        {
+          "level": 0,
+          "text": "sudo xfs_growfs /data"
+        },
+        {
+          "level": 0,
+          "text": "For ext4:"
+        },
+        {
+          "level": 0,
+          "text": "sudo resize2fs /dev/data_vg/data_lv"
+        },
+        {
+          "level": 0,
+          "text": "Mistake 3: You are unsure which physical volume contains data"
+        },
+        {
+          "level": 0,
+          "text": "Check:"
+        },
+        {
+          "level": 0,
+          "text": "sudo lvs -a -o +devices"
+        },
+        {
+          "level": 0,
+          "text": "This helps you identify which physical devices hold logical-volume data before you attempt to remove a physical volume."
+        },
+        {
+          "level": 0,
+          "text": "Mistake 4: You cannot create a physical volume"
+        },
+        {
+          "level": 0,
+          "text": "Check the device first:"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "sudo pvs"
+        },
+        {
+          "level": 0,
+          "text": "sudo wipefs -n /dev/vdb3"
+        },
+        {
+          "level": 0,
+          "text": "The last command inspects known file-system signatures without erasing them. Ensure the device is the correct one and that you understand any existing data or signatures before proceeding."
+        }
+      ],
+      "words": 146
+    },
+    {
+      "title": "11. Quick command reference",
+      "content": [
         {
           "level": 0,
           "text": "Command"
@@ -493,391 +1081,289 @@
         },
         {
           "level": 0,
-          "text": "ksvalidator FILE"
+          "text": "pvcreate"
         },
         {
           "level": 0,
-          "text": "Check a Kickstart file for syntax errors (not logical/network correctness)"
+          "text": "Initialize a physical volume"
         },
         {
           "level": 0,
-          "text": "/root/anaconda-ks.cfg"
+          "text": "pvs / pvdisplay"
         },
         {
           "level": 0,
-          "text": "Auto-generated Kickstart file from the last install — best starting point for a new one"
+          "text": "Inspect physical volumes"
         },
         {
           "level": 0,
-          "text": "inst.ks=LOCATION"
+          "text": "vgcreate"
         },
         {
           "level": 0,
-          "text": "Kernel boot parameter telling Anaconda where to find the Kickstart file"
+          "text": "Create a volume group"
         },
         {
           "level": 0,
-          "text": "yum module install virt"
+          "text": "vgs / vgdisplay"
         },
         {
           "level": 0,
-          "text": "Install the virtualization package group"
+          "text": "Inspect volume groups"
         },
         {
           "level": 0,
-          "text": "virt-host-validate"
+          "text": "vgextend"
         },
         {
           "level": 0,
-          "text": "Verify hardware/kernel support for KVM"
+          "text": "Add a physical volume to a group"
         },
         {
           "level": 0,
-          "text": "virsh"
+          "text": "pvmove"
         },
         {
           "level": 0,
-          "text": "Command-line VM management"
+          "text": "Move allocated extents between physical volumes"
         },
         {
           "level": 0,
-          "text": "Cockpit → Virtual Machines"
+          "text": "vgreduce"
         },
         {
           "level": 0,
-          "text": "GUI VM management"
+          "text": "Remove a physical volume from a group"
+        },
+        {
+          "level": 0,
+          "text": "lvcreate"
+        },
+        {
+          "level": 0,
+          "text": "Create a logical volume"
+        },
+        {
+          "level": 0,
+          "text": "lvs / lvdisplay"
+        },
+        {
+          "level": 0,
+          "text": "Inspect logical volumes"
+        },
+        {
+          "level": 0,
+          "text": "lvextend"
+        },
+        {
+          "level": 0,
+          "text": "Increase logical-volume size"
+        },
+        {
+          "level": 0,
+          "text": "mkfs.xfs"
+        },
+        {
+          "level": 0,
+          "text": "Create an XFS file system"
+        },
+        {
+          "level": 0,
+          "text": "xfs_growfs"
+        },
+        {
+          "level": 0,
+          "text": "Grow an XFS file system"
+        },
+        {
+          "level": 0,
+          "text": "resize2fs"
+        },
+        {
+          "level": 0,
+          "text": "Resize an ext2/ext3/ext4 file system"
+        },
+        {
+          "level": 0,
+          "text": "mkswap"
+        },
+        {
+          "level": 0,
+          "text": "Initialize swap space"
+        },
+        {
+          "level": 0,
+          "text": "swapon / swapoff"
+        },
+        {
+          "level": 0,
+          "text": "Enable / disable swap"
+        },
+        {
+          "level": 0,
+          "text": "df -h"
+        },
+        {
+          "level": 0,
+          "text": "Check file-system capacity"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "View block devices and partitions"
         }
       ],
-      "words": 328
-    }
-  ],
-  "labs": [
+      "words": 102
+    },
     {
-      "title": "Lab: Building a Kickstart File",
-      "content": [
-        {
-          "level": 3,
-          "text": "Objective"
-        },
-        {
-          "level": 0,
-          "text": "Take an existing anaconda-ks.cfg, adapt it into a reusable Kickstart profile for a specific server role, and validate it before ever using it against real hardware."
-        },
-        {
-          "level": 3,
-          "text": "Scenario"
-        },
-        {
-          "level": 0,
-          "text": "Your team repeatedly builds identical minimal web-server VMs by hand. You're asked to produce a Kickstart file that installs a minimal environment, opens only SSH and HTTP through the firewall, uses LVM with a dedicated /var partition, and disables the graphical firstboot wizard."
-        },
-        {
-          "level": 3,
-          "text": "Environment"
-        },
-        {
-          "level": 0,
-          "text": "A RHEL 8 VM with an existing /root/anaconda-ks.cfg from a prior install (or a blank starting point)"
-        },
-        {
-          "level": 0,
-          "text": "pykickstart installed (for ksvalidator)"
-        },
-        {
-          "level": 3,
-          "text": "Task"
-        },
-        {
-          "level": 0,
-          "text": "1. Start from a copy of anaconda-ks.cfg (or write from scratch using this Part's command reference)"
-        },
-        {
-          "level": 0,
-          "text": "2. Set clearpart --all --initlabel and build an LVM layout with a root LV and a separate /var LV using volgroup/logvol"
-        },
-        {
-          "level": 0,
-          "text": "3. Add firewall --enabled --service=ssh,http"
-        },
-        {
-          "level": 0,
-          "text": "4. Add firstboot --disabled"
-        },
-        {
-          "level": 0,
-          "text": "5. Add a %packages section installing @^minimal-environment plus httpd, and excluding firewalld's competing service if any (illustrative — use -sendmail as the exclusion example)"
-        },
-        {
-          "level": 0,
-          "text": "6. Run ksvalidator against the finished file and fix any errors it reports"
-        },
-        {
-          "level": 3,
-          "text": "Hint"
-        },
-        {
-          "level": 0,
-          "text": "LVM partitioning in Kickstart uses THREE related commands together: part pv.01 (create the physical volume), volgroup (build the VG from that PV), logvol (create each LV). Miss one and the others have nothing to attach to."
-        },
-        {
-          "level": 3,
-          "text": "Checkpoint"
-        },
-        {
-          "level": 0,
-          "text": "Before checking the solution: does your file's %packages section correctly use @^ for the environment group (not a bare @) and a plain package name for httpd? Mixing up @ and @^ is an easy, easy-to-miss mistake."
-        },
-        {
-          "level": 3,
-          "text": "Solution"
-        },
-        {
-          "level": 0,
-          "text": "#version=RHEL8"
-        },
-        {
-          "level": 0,
-          "text": "ignoredisk --only-use=vda"
-        },
-        {
-          "level": 0,
-          "text": "bootloader --location=mbr --boot-drive=vda"
-        },
-        {
-          "level": 0,
-          "text": "zerombr"
-        },
-        {
-          "level": 0,
-          "text": "clearpart --all --initlabel"
-        },
-        {
-          "level": 0,
-          "text": "text"
-        },
-        {
-          "level": 0,
-          "text": "url --url=\"http://server.example.com/content/rhel8/x86_64/dvd/\""
-        },
-        {
-          "level": 0,
-          "text": "keyboard --vckeymap=us --xlayouts=''"
-        },
-        {
-          "level": 0,
-          "text": "lang en_US.UTF-8"
-        },
-        {
-          "level": 0,
-          "text": "timezone --utc Asia/Dhaka"
-        },
-        {
-          "level": 0,
-          "text": "rootpw --plaintext changeme"
-        },
-        {
-          "level": 0,
-          "text": "selinux --enforcing"
-        },
-        {
-          "level": 0,
-          "text": "firewall --enabled --service=ssh,http"
-        },
-        {
-          "level": 0,
-          "text": "firstboot --disabled"
-        },
-        {
-          "level": 0,
-          "text": "network --device=eth0 --bootproto=dhcp"
-        },
-        {
-          "level": 0,
-          "text": "part pv.01 --size=8192 --grow"
-        },
-        {
-          "level": 0,
-          "text": "volgroup vg00 pv.01"
-        },
-        {
-          "level": 0,
-          "text": "logvol / --vgname=vg00 --fstype=xfs --size=4096 --name=rootvol"
-        },
-        {
-          "level": 0,
-          "text": "logvol /var --vgname=vg00 --fstype=xfs --size=2048 --name=varvol"
-        },
-        {
-          "level": 0,
-          "text": "reboot"
-        },
-        {
-          "level": 0,
-          "text": "%packages"
-        },
-        {
-          "level": 0,
-          "text": "@^minimal-environment"
-        },
-        {
-          "level": 0,
-          "text": "httpd"
-        },
-        {
-          "level": 0,
-          "text": "-sendmail"
-        },
-        {
-          "level": 0,
-          "text": "%end"
-        },
-        {
-          "level": 3,
-          "text": "Explanation"
-        },
-        {
-          "level": 0,
-          "text": "part pv.01 creates the physical volume placeholder; volgroup vg00 pv.01 turns it into a volume group; each logvol line then carves a logical volume from that group — the same PV→VG→LV chain from Part 4, just declared instead of typed interactively."
-        },
-        {
-          "level": 0,
-          "text": "firewall --enabled --service=ssh,http pre-configures exactly the two services the role needs — nothing more, following least-privilege by default."
-        },
-        {
-          "level": 0,
-          "text": "firstboot --disabled skips the graphical Initial Setup wizard entirely, appropriate for a server that will never have anyone sitting at its console."
-        },
-        {
-          "level": 0,
-          "text": "@^minimal-environment plus an explicit httpd line gives you a genuinely minimal base PLUS only the one extra package this role actually needs."
-        },
-        {
-          "level": 3,
-          "text": "Verification"
-        },
-        {
-          "level": 0,
-          "text": "ksvalidator ks.cfg should return with no output (silence means no syntax errors found). Manually re-read the file once more anyway — remember ksvalidator can't catch a typo'd repo URL or a package name that doesn't actually exist."
-        },
-        {
-          "level": 3,
-          "text": "Real-world note"
-        },
-        {
-          "level": 0,
-          "text": "This exact exercise — turn a repeated manual build into a declarative file — is precisely the mindset RH294 formalizes with Ansible playbooks. Kickstart handles 'get a system from nothing to booted,' Ansible typically takes over from there for ongoing configuration — the two are complementary, not competing, in most real pipelines."
-        }
-      ]
-    }
-  ],
-  "quizzes": [
-    {
-      "title": "Quiz: Part 7 Checkpoint",
+      "title": "12. Test your understanding",
       "content": [
         {
           "level": 0,
-          "text": "Q1. What's blocked from completing an Anaconda install until it's set, even though it's not on the main Installation Summary screen?"
+          "text": "1. What does a volume group do?"
         },
         {
           "level": 0,
-          "text": "Answer: The root password — Anaconda prompts for it while the install is running and won't let the process finish without it."
+          "text": "Creates user accounts"
         },
         {
           "level": 0,
-          "text": "Q2. Which key sequence gives you a real shell (via tmux) during a stuck graphical install, and which returns you to the graphical screen?"
+          "text": "Combines physical volumes into a storage pool"
         },
         {
           "level": 0,
-          "text": "Answer: Ctrl+Alt+F1 for the tmux shell; Ctrl+Alt+F6 back to the graphical Anaconda screen."
+          "text": "Mounts a file system"
         },
         {
           "level": 0,
-          "text": "Q3. What three Kickstart commands work together to set up LVM, and in what order do they build on each other?"
+          "text": "2. Which command creates a logical volume?"
         },
         {
           "level": 0,
-          "text": "Answer: part pv.01 (create the PV) → volgroup (build a VG from that PV) → logvol (carve LVs from that VG)."
+          "text": "lvcreate"
         },
         {
           "level": 0,
-          "text": "Q4. What does ksvalidator actually check, and what does it NOT check?"
+          "text": "pvcreate"
         },
         {
           "level": 0,
-          "text": "Answer: It checks Kickstart SYNTAX (valid commands/options) only — it does not verify that URLs resolve, packages exist, or %pre/%post scripts will succeed."
+          "text": "vgextend"
         },
         {
           "level": 0,
-          "text": "Q5. Where does a freshly-installed RHEL system automatically save the exact Kickstart directives used for that install?"
+          "text": "3. What does `lvextend -L +300M` mean?"
         },
         {
           "level": 0,
-          "text": "Answer: /root/anaconda-ks.cfg"
+          "text": "Set the size to 300 MiB"
         },
         {
           "level": 0,
-          "text": "Q6. What kernel parameter tells the installer where to find a Kickstart file, and give one example value."
+          "text": "Add 300 MiB to the existing size"
         },
         {
           "level": 0,
-          "text": "Answer: inst.ks=LOCATION, e.g. inst.ks=http://server/dir/file"
+          "text": "Delete 300 MiB"
         },
         {
           "level": 0,
-          "text": "Q7. In a Kickstart %packages section, what's the difference between @groupname and @^groupname?"
+          "text": "4. After extending an XFS logical volume, which command grows its file system?"
         },
         {
           "level": 0,
-          "text": "Answer: @ marks a package GROUP; @^ marks an ENVIRONMENT group (a group of groups, e.g. @^minimal-environment)."
+          "text": "resize2fs"
         },
         {
           "level": 0,
-          "text": "Q8. Where must the primary Kickstart commands (url, clearpart, network, etc.) appear relative to %pre/%post/%packages?"
+          "text": "xfs_growfs"
         },
         {
           "level": 0,
-          "text": "Answer: Before them — primary commands must come first, though %pre/%post/%packages can appear in any order relative to EACH OTHER."
+          "text": "pvmove"
         },
         {
           "level": 0,
-          "text": "Q9. What command verifies a physical system actually has the hardware/kernel support needed to be a KVM virtualization host?"
+          "text": "5. Which command moves allocated extents off a physical volume?"
         },
         {
           "level": 0,
-          "text": "Answer: virt-host-validate"
+          "text": "vgreduce"
         },
         {
           "level": 0,
-          "text": "Q10. Name the two tools RHEL provides for managing KVM virtual machines."
+          "text": "pvmove"
         },
         {
           "level": 0,
-          "text": "Answer: virsh (command-line) and Cockpit's Virtual Machines page (GUI)."
+          "text": "lvcreate"
         },
         {
           "level": 0,
-          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+          "text": "6. Why might `lvextend` fail?"
         },
         {
           "level": 0,
-          "text": "PART 8: COMPREHENSIVE REVIEW + RHCSA READINESS CHECKPOINT"
+          "text": "The volume group lacks enough free space"
         },
         {
           "level": 0,
-          "text": "This closes out the RH134 guide. It's not new material — it's the RH134 half of RHCSA readiness pulled together into one condensed reference, one large integrated lab that forces every chapter to work together, an updated skill map, and a mixed-topic final quiz. RH294 (Ansible) starts fresh after this."
+          "text": "The hostname is too long"
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS The real exam never asks 'what does setfacl -m do' in isolation — it hands you a partially-broken server and expects you to combine ACLs, SELinux, storage, boot, and firewall knowledge to fix it. This Part is deliberately built the same way, because that's the actual skill being tested."
+          "text": "The directory contains files"
+        },
+        {
+          "level": 0,
+          "text": "Score: 0 / 6"
+        },
+        {
+          "level": 0,
+          "text": "Try again"
         }
-      ]
-    }
-  ],
-  "services": [
+      ],
+      "words": 110
+    },
     {
-      "id": "rhel-service-libvirt-kvm-qemu",
-      "why": "Installing and Configuring Virtual Machines"
+      "title": "13. Final recap",
+      "content": [
+        {
+          "level": 0,
+          "text": "Remember the main workflow:"
+        },
+        {
+          "level": 0,
+          "text": "Create: pvcreate → vgcreate → lvcreate"
+        },
+        {
+          "level": 0,
+          "text": "Prepare and use: mkfs.xfs → mount"
+        },
+        {
+          "level": 0,
+          "text": "Expand storage: vgextend if needed → lvextend → resize the file system"
+        },
+        {
+          "level": 0,
+          "text": "Remove a physical volume: pvmove → vgreduce"
+        },
+        {
+          "level": 0,
+          "text": "The most important distinction in Chapter 7 is that the physical volume, volume group, logical volume, and file system are four different things. Knowing which layer you need to change helps you choose the correct command."
+        },
+        {
+          "level": 0,
+          "text": "Practise these tasks on a disposable virtual disk in your RHEL lab before attempting them on a real server. This chapter follows the LVM concepts, guided exercises, and extension procedures in your RH134 book."
+        }
+      ],
+      "words": 105
     }
   ],
-  "currency": []
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
 }

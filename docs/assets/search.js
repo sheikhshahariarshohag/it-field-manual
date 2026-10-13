@@ -46,7 +46,7 @@ export const CORPUS = { commands: [], lessons: [], scenarios: [], quizzes: [], p
 // Keys whose values are identifiers, URLs or metadata rather than prose.
 // Everything else on a content object is fair game for search.
 const SKIP_KEYS = new Set([
-  "id", "kind", "_w", "_km", "url", "image", "aliases",
+  "id", "kind", "_w", "_km", "_blob", "url", "image", "aliases",
   "sources", "source", "verified", "sourceNote", "verifyNote",
 ]);
 
@@ -101,6 +101,16 @@ function buildIndex() {
     deepText(doc, rest);
     bag.push(...tokens(rest.join(" ")));
     for (const t of bag) add(t, id);
+    // One normalised blob of the whole object, built once.
+    //
+    // deepText above puts every word into the candidate index, but scoreDoc
+    // only awarded points for title, summary, task, tags, terms and commands.
+    // A word that lived only in some other field — a Simple Notes "What each
+    // part means" table, a revision table, a lab step — produced a candidate
+    // that then scored zero and was discarded by the `> 0` gate. So
+    // "restorecon", "setsebool" and "lvextend" were visible on the page and
+    // unfindable. This gives scoreDoc something cheap to match against.
+    doc._blob = norm(rest.join(" "));
     return doc;
   };
 
@@ -109,6 +119,63 @@ function buildIndex() {
   for (const p of CORPUS.projects) push({ ...p, kind: "project" }, 2);
   for (const s of CORPUS.scenarios) push({ ...s, kind: "scenario" }, 2);
   for (const q of CORPUS.quizzes) push({ ...q, kind: "quiz" }, 1);
+
+  // The Study Manual and Simple Notes used to be invisible to search entirely:
+  // buildIndex walked commands, lessons, projects, scenarios, quizzes and the
+  // Knowledge Map, and simply never looked at CORPUS.study or CORPUS.notes.
+  // Both are loaded by app.js and both have their own pages, so a search for
+  // "crontab" or "semanage" could return a command or a lesson while being
+  // unable to find the chapter that actually teaches it.
+  //
+  // The bodies of both live in separate lazily-fetched files, so what is
+  // indexed here is the structure: every chapter, unit, part and section
+  // title, plus the one-line main idea behind each Simple Notes concept.
+  // Those are the high-signal phrases a learner would actually type, and they
+  // keep the index small without making search useless.
+  if (CORPUS.study) {
+    for (const book of CORPUS.study.books || []) {
+      for (const u of book.units || []) {
+        const titles = Array.isArray(u.sectionTitles) ? u.sectionTitles : [];
+        push({
+          id: u.id, kind: "unit", _study: true,
+          title: u.display || u.title || u.id,
+          summary: `${book.title} — ${titles.length} section${titles.length === 1 ? "" : "s"}`,
+          tech: "",
+          terms: titles,
+          aliases: [book.code || book.id, book.title].filter(Boolean),
+        }, 2);
+      }
+    }
+  }
+
+  if (CORPUS.notes) {
+    for (const c of CORPUS.notes.chapters || []) {
+      const titles = [];
+      const cmds = [];
+      for (const s of c.sections || []) {
+        titles.push(s.title);
+        for (const q of s.concepts || []) {
+          titles.push(q.title);
+          if (q.main) titles.push(q.main);
+          // The "What each part means" tables name the actual commands and
+          // options, which is what a learner searches for: lvextend, vgextend,
+          // pvmove, OnCalendar. The revision table at the end of every chapter
+          // is a command list too.
+          for (const p of q.parts || []) if (p[0]) cmds.push(p[0]);
+          for (const line of q.example || []) cmds.push(line);
+        }
+      }
+      for (const [task, cmd] of c.revision || []) cmds.push(task, cmd);
+      push({
+        id: c.id, kind: "notes", _notes: true,
+        title: `${c.book} Chapter ${c.n}: ${c.title}`,
+        summary: c.partTitle || "",
+        tech: "",
+        terms: titles.concat(cmds),
+        aliases: [c.title, c.exam].filter(Boolean),
+      }, 2);
+    }
+  }
 
   // The 146 Knowledge Map sessions are searchable too, so a topic that only
   // appears on the roadmap still finds its way home. `terms` is the
@@ -217,24 +284,37 @@ function scoreDoc(d, q, qTokens, aliasTarget) {
   if (aliasTarget && d.id === aliasTarget) s += 160;
 
   // Knowledge Map sessions carry a `terms` list of the distinctive words in
-  // their prose. Matching one is weak evidence on its own — it is a word
-  // appearing somewhere in the session — so it scores low, but not so low
-  // that scoreDoc's `> 0` gate throws the hit away.
+  // their prose. The Study Manual and Simple Notes carry a list of section and
+  // concept titles instead. Matching one is weak evidence on their own — it is
+  // a word appearing somewhere in the chapter — so it scores low, but not so
+  // low that scoreDoc's `> 0` gate throws the hit away.
+  //
+  // The match must be a SUBSTRING test against the joined terms, not
+  // Array.includes. Knowledge Map terms are single words so exact membership
+  // happened to work; the study and notes terms are whole titles like
+  // "2.8 Understand semanage fcontext rules", so exact membership never fired
+  // and searching "semanage", "chcon" or "restorecon" returned nothing at all
+  // despite those terms being present and visible on the page.
   const terms = d.terms && d.terms.length ? d.terms : null;
+  const termsBlob = terms ? norm(terms.join(" ")) : "";
 
   for (const t of qTokens) {
     if (title.includes(t)) s += 26;
     if (task.includes(t)) s += 14;
     if (norm(d.summary).includes(t)) s += 8;
     if ((d.tags || []).some((tag) => norm(tag).includes(t))) s += 10;
-    if (terms && terms.includes(t)) s += 12;
+    if (termsBlob.includes(t)) s += 12;
+    // Found only in the body prose or a table elsewhere on the page. Weak, but
+    // enough to clear the `> 0` gate — which is the difference between a term
+    // being searchable and being invisible.
+    if (d._blob && d._blob.includes(t)) s += 4;
   }
 
   // Small completeness bonus: a doc matching every token beats one matching one.
   const matched = qTokens.filter((t) =>
     title.includes(t) || task.includes(t) || norm(d.summary).includes(t) ||
     (d.tags || []).some((tag) => norm(tag).includes(t)) ||
-    (terms && terms.includes(t)) ||
+    termsBlob.includes(t) || (d._blob && d._blob.includes(t)) ||
     commandLines(d.commands).some((l) => norm(l).includes(t)));
   if (matched.length === qTokens.length && qTokens.length > 1) s += 40;
 

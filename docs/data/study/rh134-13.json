@@ -1,0 +1,1293 @@
+{
+  "id": "rh134-13",
+  "n": 13,
+  "sourceNumber": 13,
+  "kind": "chapter",
+  "title": "Chapter 13 — Comprehensive Review",
+  "display": "Chapter 13 — Comprehensive Review",
+  "exam": "RHCSA (EX200)",
+  "words": 2565,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "RH134: Red Hat Enterprise Linux 8 System Administration II"
+        },
+        {
+          "level": 0,
+          "text": "This chapter is different from the previous chapters. It does not introduce one new technology. It helps you review and combine the skills you learned throughout RH134."
+        },
+        {
+          "level": 0,
+          "text": "The chapter contains three practical labs:"
+        },
+        {
+          "level": 0,
+          "text": "Fixing boot issues and maintaining servers."
+        },
+        {
+          "level": 0,
+          "text": "Configuring and managing file systems and storage."
+        },
+        {
+          "level": 0,
+          "text": "Configuring and managing server security."
+        },
+        {
+          "level": 0,
+          "text": "The goal is to solve realistic administrator tasks without needing step-by-step instructions for every command."
+        },
+        {
+          "level": 0,
+          "text": "Part 1: Review of the RH134 Course"
+        },
+        {
+          "level": 0,
+          "text": "Part 2: Lab 1 — Fixing Boot Issues and Maintaining Servers"
+        },
+        {
+          "level": 0,
+          "text": "Part 3: Lab 2 — Configuring and Managing File Systems and Storage"
+        }
+      ],
+      "words": 105
+    },
+    {
+      "title": "1. Improving command-line productivity",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use shell features and commands to perform tasks more efficiently."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: Instead of typing the same command many times, Linux lets you automate repeated work with shell scripts, loops, conditions, and text-search tools."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "for: Starts a loop."
+        },
+        {
+          "level": 0,
+          "text": "user: A variable that holds one value at a time."
+        },
+        {
+          "level": 0,
+          "text": "in: Introduces the list of values."
+        },
+        {
+          "level": 0,
+          "text": "do and done: Mark the beginning and end of the loop's work."
+        },
+        {
+          "level": 0,
+          "text": "echo: Displays the current value."
+        },
+        {
+          "level": 0,
+          "text": "$user: Reads the variable's value."
+        },
+        {
+          "level": 0,
+          "text": "This displays each name on a separate line."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Loops and scripts let you automate repeated command-line work."
+        }
+      ],
+      "words": 101
+    },
+    {
+      "title": "2. Scheduling future tasks",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux can run commands once in the future or repeatedly on a schedule."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: Imagine setting an alarm. You decide when the task should run, and Linux runs it without you manually entering the command at that time."
+        },
+        {
+          "level": 0,
+          "text": "The course covers at, cron, and systemd timers."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "crontab: Manages a user's scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "-l: Lists the current user's scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "A cron job might run a backup every weekday evening."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use at for a one-time scheduled task, cron for recurring schedules, and systemd timers for timer-based service tasks."
+        }
+      ],
+      "words": 96
+    },
+    {
+      "title": "3. Tuning system performance",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux provides tools for selecting performance profiles and adjusting process priority."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: A computer may run many programs at once. You can influence how much attention the CPU gives to individual processes and select a tuning profile appropriate for the system."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "nice: Starts a command with a chosen scheduling priority."
+        },
+        {
+          "level": 0,
+          "text": "-n 10: Sets the nice value to 10."
+        },
+        {
+          "level": 0,
+          "text": "command: Placeholder for the program you want to run."
+        },
+        {
+          "level": 0,
+          "text": "A higher nice value generally means a lower scheduling priority. The value does not directly specify a percentage of CPU usage."
+        },
+        {
+          "level": 0,
+          "text": "Remember: nice starts a process with a priority setting; renice changes the priority of a running process."
+        }
+      ],
+      "words": 113
+    },
+    {
+      "title": "4. Access Control Lists (ACLs)",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: ACLs let you give specific users or groups permissions beyond the basic owner/group/other permissions."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: Basic Linux permissions provide three broad categories: owner, group, and others. ACLs let you make more specific exceptions."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl: Changes ACL permissions."
+        },
+        {
+          "level": 0,
+          "text": "-m: Modifies or adds an ACL entry."
+        },
+        {
+          "level": 0,
+          "text": "u:alice:rw: Gives user alice read (r) and write (w) permission."
+        },
+        {
+          "level": 0,
+          "text": "report.txt: The file being changed."
+        },
+        {
+          "level": 0,
+          "text": "To inspect ACLs:"
+        },
+        {
+          "level": 0,
+          "text": "Default ACLs on a directory can influence permissions on new files and subdirectories created inside it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use ACLs when ordinary owner, group, and other permissions are not flexible enough."
+        }
+      ],
+      "words": 100
+    },
+    {
+      "title": "5. Managing SELinux security",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux applies additional rules that control how processes access system resources."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: Traditional file permissions are like a key to a room. SELinux is another security check that decides whether a particular process is allowed to perform an action there."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "This shows that SELinux is enforcing its policy."
+        },
+        {
+          "level": 0,
+          "text": "The course also covers SELinux contexts, Booleans, and investigating denials in audit logs."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Do not disable SELinux just because an application fails; inspect the denial and correct the underlying configuration when possible."
+        }
+      ],
+      "words": 87
+    },
+    {
+      "title": "6. Managing storage",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux can partition disks, create file systems, mount storage, and use swap space."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: A disk is storage hardware. A partition divides it into sections. A file system organizes data in a section, and mounting makes that file system accessible through a directory."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "- lsblk: Lists block devices such as disks, partitions, and logical volumes."
+        },
+        {
+          "level": 0,
+          "text": "To use a newly prepared file system, you typically create it with a formatting tool and mount it. Formatting the wrong device can destroy data, so always verify the target first."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A disk, partition, file system, and mount point are different parts of the storage process."
+        }
+      ],
+      "words": 110
+    },
+    {
+      "title": "7. Logical volumes, Stratis, and VDO",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux offers storage-management tools that make storage easier to allocate and maintain."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "LVM: Combines storage into flexible volume groups and creates logical volumes from them."
+        },
+        {
+          "level": 0,
+          "text": "Stratis: Provides a higher-level way to manage local storage pools and file systems."
+        },
+        {
+          "level": 0,
+          "text": "VDO: Can reduce the physical storage used for data through techniques such as compression and deduplication."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "These commands display LVM physical volumes, volume groups, and logical volumes."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "pvs: Shows physical volumes."
+        },
+        {
+          "level": 0,
+          "text": "vgs: Shows volume groups."
+        },
+        {
+          "level": 0,
+          "text": "lvs: Shows logical volumes."
+        },
+        {
+          "level": 0,
+          "text": "Remember: LVM, Stratis, and VDO solve related but different storage-management problems."
+        }
+      ],
+      "words": 97
+    },
+    {
+      "title": "8. Network-attached storage",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux can access storage provided by another computer across a network."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: Instead of keeping all files on the local disk, a server can access a shared directory hosted by another system."
+        },
+        {
+          "level": 0,
+          "text": "NFS is a common protocol for sharing directories between Linux and Unix systems. The course also covers automatic mounting with autofs."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount: Attaches a file system to a directory."
+        },
+        {
+          "level": 0,
+          "text": "servera:/share: The NFS server and exported directory."
+        },
+        {
+          "level": 0,
+          "text": "/local-share: The local directory where the share becomes accessible."
+        },
+        {
+          "level": 0,
+          "text": "For persistent mounting, configure /etc/fstab or an appropriate automounter map."
+        },
+        {
+          "level": 0,
+          "text": "Remember: NFS provides remote file access; /etc/fstab and autofs help control when the share is mounted."
+        }
+      ],
+      "words": 111
+    },
+    {
+      "title": "9. Controlling the boot process",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux uses a boot process and systemd targets to decide how the system starts."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: A systemd target groups services into a desired operating state. A graphical desktop generally uses graphical.target, while a non-graphical multi-user system commonly uses multi-user.target."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "This displays the default target used during boot."
+        },
+        {
+          "level": 0,
+          "text": "To set the default to a non-graphical multi-user system:"
+        },
+        {
+          "level": 0,
+          "text": "This changes the target selected on future boots. It does not immediately switch the current system to that target."
+        },
+        {
+          "level": 0,
+          "text": "Remember: set-default changes the future boot target; isolate changes the current system's active target."
+        }
+      ],
+      "words": 93
+    },
+    {
+      "title": "10. Network security and installation",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The last two chapters covered firewall rules, SELinux port labels, RHEL installation, Kickstart, and virtualization."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: A working network service needs more than an application that starts successfully. Its configuration must permit the required network access, and security policy must allow it to operate."
+        },
+        {
+          "level": 0,
+          "text": "Similarly, installing a server manually is different from automating many installations with Kickstart or running a separate operating system in a virtual machine."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "The first command displays firewall settings for a zone. The second lists SELinux port assignments."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Troubleshoot each layer separately and use the correct installation method for the task."
+        }
+      ],
+      "words": 100
+    },
+    {
+      "title": "11. Understand the lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You will repair a boot failure, change the default systemd target, and schedule a recurring backup."
+        },
+        {
+          "level": 0,
+          "text": "The lab uses serverb. You must fix two deliberately introduced problems and then schedule a backup script."
+        },
+        {
+          "level": 0,
+          "text": "Start on the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "The lab command prepares the training environment. Do not run this command on your personal RHEL installation unless it is part of the matching course lab."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The lab is designed to test your troubleshooting skills, not just your ability to copy commands."
+        }
+      ],
+      "words": 82
+    },
+    {
+      "title": "12. Repair a boot failure",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A system can fail to boot normally when its file-system configuration refers to something that does not exist."
+        },
+        {
+          "level": 0,
+          "text": "First, introduce the lab's fault from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "When serverb fails to boot, open its console and reboot it. Interrupt the GRUB boot menu and edit the boot entry."
+        },
+        {
+          "level": 0,
+          "text": "Append this parameter to the line beginning with linux:"
+        },
+        {
+          "level": 0,
+          "text": "Press Ctrl + x to boot with the temporary change."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit= tells systemd which target to start."
+        },
+        {
+          "level": 0,
+          "text": "emergency.target requests a minimal emergency environment."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl + x starts the system with the edited boot entry."
+        },
+        {
+          "level": 0,
+          "text": "This edit is temporary. It does not permanently change the boot configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Emergency mode gives you a limited environment to investigate a system that cannot boot normally."
+        }
+      ],
+      "words": 124
+    },
+    {
+      "title": "13. Remount the root file system as writable",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Emergency mode may mount the root file system as read-only, so you may need to remount it before editing configuration files."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation: Read-only means you can inspect files but cannot change them. To repair /etc/fstab, the root file system must be writable."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mount: Manages mounted file systems."
+        },
+        {
+          "level": 0,
+          "text": "-o: Supplies mount options."
+        },
+        {
+          "level": 0,
+          "text": "remount: Changes options on an already mounted file system."
+        },
+        {
+          "level": 0,
+          "text": "rw: Read-write mode."
+        },
+        {
+          "level": 0,
+          "text": "/: The root file system."
+        },
+        {
+          "level": 0,
+          "text": "Next, check all file systems listed in /etc/fstab:"
+        },
+        {
+          "level": 0,
+          "text": "In this lab, the command reports a mount failure involving a fake UUID and /FakeMount."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use mount -a to test the file-system entries, but inspect the error before editing anything."
+        }
+      ],
+      "words": 115
+    },
+    {
+      "title": "14. Fix the incorrect /etc/fstab entry",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Remove or comment out the invalid entry that prevents the system from booting."
+        },
+        {
+          "level": 0,
+          "text": "Edit the file:"
+        },
+        {
+          "level": 0,
+          "text": "The lab's invalid line is:"
+        },
+        {
+          "level": 0,
+          "text": "Comment it out by placing # at the beginning:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "UUID=fake: Refers to a device identifier that does not exist."
+        },
+        {
+          "level": 0,
+          "text": "/FakeMount: The intended mount point."
+        },
+        {
+          "level": 0,
+          "text": "xfs: The requested file-system type."
+        },
+        {
+          "level": 0,
+          "text": "defaults: The standard mount options."
+        },
+        {
+          "level": 0,
+          "text": "0 0: Fields controlling backup and file-system checking."
+        },
+        {
+          "level": 0,
+          "text": "Reload systemd's configuration and test the entries:"
+        },
+        {
+          "level": 0,
+          "text": "If the incorrect entry was the cause, the mount error should disappear."
+        },
+        {
+          "level": 0,
+          "text": "Then reboot:"
+        },
+        {
+          "level": 0,
+          "text": "Remember: A bad /etc/fstab entry can interrupt boot; fix the specific invalid entry rather than deleting unrelated configuration."
+        }
+      ],
+      "words": 108
+    },
+    {
+      "title": "15. Change the default target to multi-user",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Set multi-user.target as the default so serverb boots into a non-graphical multi-user environment."
+        },
+        {
+          "level": 0,
+          "text": "Introduce the second fault from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "After serverb boots, connect over SSH:"
+        },
+        {
+          "level": 0,
+          "text": "Check the current default:"
+        },
+        {
+          "level": 0,
+          "text": "The lab expects:"
+        },
+        {
+          "level": 0,
+          "text": "Switch the current system to the multi-user target:"
+        },
+        {
+          "level": 0,
+          "text": "Then change the default:"
+        },
+        {
+          "level": 0,
+          "text": "What each command means:"
+        },
+        {
+          "level": 0,
+          "text": "isolate: Switches the running system to the selected target and its required units."
+        },
+        {
+          "level": 0,
+          "text": "set-default: Changes the target used for future boots."
+        },
+        {
+          "level": 0,
+          "text": "multi-user.target: A multi-user system state without the normal graphical desktop."
+        },
+        {
+          "level": 0,
+          "text": "Reboot and verify:"
+        },
+        {
+          "level": 0,
+          "text": "After reconnecting:"
+        },
+        {
+          "level": 0,
+          "text": "The expected result is multi-user.target."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use isolate for the current session and set-default for future boots."
+        }
+      ],
+      "words": 104
+    },
+    {
+      "title": "16. Schedule a recurring backup",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use cron to run the backup script every hour from 7 p.m. through 9 p.m. on weekdays."
+        },
+        {
+          "level": 0,
+          "text": "On serverb, download the script:"
+        },
+        {
+          "level": 0,
+          "text": "Make it executable:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "wget: Downloads a file from a URL."
+        },
+        {
+          "level": 0,
+          "text": "chmod: Changes file permissions."
+        },
+        {
+          "level": 0,
+          "text": "+x: Adds execute permission."
+        },
+        {
+          "level": 0,
+          "text": "Edit the current user's cron schedule:"
+        },
+        {
+          "level": 0,
+          "text": "Add this line:"
+        },
+        {
+          "level": 0,
+          "text": "Cron's five schedule fields mean:"
+        },
+        {
+          "level": 0,
+          "text": "Field"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "Minute zero"
+        },
+        {
+          "level": 0,
+          "text": "19-21"
+        },
+        {
+          "level": 0,
+          "text": "Hours 19, 20, and 21"
+        },
+        {
+          "level": 0,
+          "text": "*"
+        },
+        {
+          "level": 0,
+          "text": "Every day of the month"
+        },
+        {
+          "level": 0,
+          "text": "*"
+        },
+        {
+          "level": 0,
+          "text": "Every month"
+        },
+        {
+          "level": 0,
+          "text": "Mon-Fri"
+        },
+        {
+          "level": 0,
+          "text": "Monday through Friday"
+        },
+        {
+          "level": 0,
+          "text": "The script runs at 19:00, 20:00, and 21:00 each weekday."
+        },
+        {
+          "level": 0,
+          "text": "Verify the schedule:"
+        },
+        {
+          "level": 0,
+          "text": "Reboot the server, wait for it to return, and grade the lab:"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Cron schedules the command; the script performs the actual backup."
+        }
+      ],
+      "words": 120
+    },
+    {
+      "title": "17. Understand the storage tasks",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You will create an LVM logical volume, mount an NFS share, configure swap, create users, clean temporary files, and set ACLs."
+        },
+        {
+          "level": 0,
+          "text": "Start the lab from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "The required tasks on serverb are:"
+        },
+        {
+          "level": 0,
+          "text": "Create a 2 GiB volume group named extra_storage."
+        },
+        {
+          "level": 0,
+          "text": "Create a 1 GiB logical volume named vol_home."
+        },
+        {
+          "level": 0,
+          "text": "Format it as XFS and mount it persistently at /home-directories."
+        },
+        {
+          "level": 0,
+          "text": "Mount the NFS share /share persistently at /local-share."
+        },
+        {
+          "level": 0,
+          "text": "Create and activate 512 MiB of swap space."
+        },
+        {
+          "level": 0,
+          "text": "Create a production group and four users."
+        },
+        {
+          "level": 0,
+          "text": "Configure temporary-file cleanup for /run/volatile."
+        },
+        {
+          "level": 0,
+          "text": "Configure directory permissions and ACLs for /webcontent."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Storage tasks often change disk layouts, so verify the device names before partitioning or formatting."
+        }
+      ],
+      "words": 112
+    },
+    {
+      "title": "18. Create a partition and LVM logical volume",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: LVM builds flexible logical storage on top of physical storage devices or partitions."
+        },
+        {
+          "level": 0,
+          "text": "The book uses the unpartitioned disk /dev/vdb."
+        },
+        {
+          "level": 0,
+          "text": "Create a partition table and a 2 GiB partition:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "parted: Manages disk partitions."
+        },
+        {
+          "level": 0,
+          "text": "/dev/vdb: The target disk."
+        },
+        {
+          "level": 0,
+          "text": "mklabel msdos: Creates an MBR-style partition table."
+        },
+        {
+          "level": 0,
+          "text": "mkpart primary 1GiB 3GiB: Creates a partition between the specified positions."
+        },
+        {
+          "level": 0,
+          "text": "Warning: mklabel replaces the existing partition table. Use it only on the intended lab disk."
+        },
+        {
+          "level": 0,
+          "text": "Create an LVM physical volume:"
+        },
+        {
+          "level": 0,
+          "text": "Create the volume group:"
+        },
+        {
+          "level": 0,
+          "text": "Create the logical volume:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "pvcreate: Prepares the partition for LVM."
+        },
+        {
+          "level": 0,
+          "text": "vgcreate: Creates the volume group."
+        },
+        {
+          "level": 0,
+          "text": "lvcreate: Creates a logical volume."
+        },
+        {
+          "level": 0,
+          "text": "-L 1GiB: Requests a 1 GiB size."
+        },
+        {
+          "level": 0,
+          "text": "-n vol_home: Sets the logical volume's name."
+        },
+        {
+          "level": 0,
+          "text": "extra_storage: The volume group from which space is allocated."
+        },
+        {
+          "level": 0,
+          "text": "Remember: LVM follows the structure physical volume → volume group → logical volume."
+        }
+      ],
+      "words": 145
+    },
+    {
+      "title": "19. Format and mount the logical volume persistently",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A logical volume needs a file system before it can store ordinary files."
+        },
+        {
+          "level": 0,
+          "text": "Create the mount point:"
+        },
+        {
+          "level": 0,
+          "text": "Format the logical volume:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mkdir: Creates a directory."
+        },
+        {
+          "level": 0,
+          "text": "mkfs: Creates a file system."
+        },
+        {
+          "level": 0,
+          "text": "-t xfs: Selects the XFS file-system type."
+        },
+        {
+          "level": 0,
+          "text": "/dev/extra_storage/vol_home: The logical volume being formatted."
+        },
+        {
+          "level": 0,
+          "text": "Formatting an existing device can destroy its data, so confirm the target before running mkfs."
+        },
+        {
+          "level": 0,
+          "text": "To make the mount persistent, get its UUID:"
+        },
+        {
+          "level": 0,
+          "text": "Add an entry to /etc/fstab using that actual UUID:"
+        },
+        {
+          "level": 0,
+          "text": "Replace YOUR-UUID with the real value; do not type the placeholder literally."
+        },
+        {
+          "level": 0,
+          "text": "Test the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "Remember: /etc/fstab records persistent mounts; mount -a helps test them."
+        }
+      ],
+      "words": 106
+    },
+    {
+      "title": "20. Mount an NFS share persistently",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: NFS lets serverb access a directory exported by servera."
+        },
+        {
+          "level": 0,
+          "text": "Create the local mount point:"
+        },
+        {
+          "level": 0,
+          "text": "Add this line to /etc/fstab:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "servera.lab.example.com:/share: The remote NFS export."
+        },
+        {
+          "level": 0,
+          "text": "/local-share: The local mount point."
+        },
+        {
+          "level": 0,
+          "text": "nfs: The network file-system type."
+        },
+        {
+          "level": 0,
+          "text": "rw,sync: Mount read-write and request synchronous writes."
+        },
+        {
+          "level": 0,
+          "text": "0 0: The backup and file-system check fields."
+        },
+        {
+          "level": 0,
+          "text": "Mount the share:"
+        },
+        {
+          "level": 0,
+          "text": "Check it:"
+        },
+        {
+          "level": 0,
+          "text": "The NFS server must be reachable and exporting /share, and the client must have the required NFS support."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A persistent NFS mount needs a valid export, a local mount point, and a correct /etc/fstab entry."
+        }
+      ],
+      "words": 96
+    },
+    {
+      "title": "21. Create swap space that activates at boot",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Swap provides disk space that Linux can use as backing storage for memory pages."
+        },
+        {
+          "level": 0,
+          "text": "The lab creates a 512 MiB partition on /dev/vdc."
+        },
+        {
+          "level": 0,
+          "text": "Prepare the partition as swap:"
+        },
+        {
+          "level": 0,
+          "text": "Get its UUID:"
+        },
+        {
+          "level": 0,
+          "text": "Add an entry to /etc/fstab:"
+        },
+        {
+          "level": 0,
+          "text": "Replace YOUR-UUID with the actual UUID."
+        },
+        {
+          "level": 0,
+          "text": "Activate the configured swap:"
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mkswap: Prepares a device for swap."
+        },
+        {
+          "level": 0,
+          "text": "swapon -a: Activates swap devices configured in /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "swapon --show: Displays active swap areas."
+        },
+        {
+          "level": 0,
+          "text": "Remember: mkswap prepares swap, swapon activates it, and /etc/fstab makes activation persistent."
+        }
+      ],
+      "words": 85
+    },
+    {
+      "title": "22. Create the production group and users",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Groups let you assign permissions to several users together."
+        },
+        {
+          "level": 0,
+          "text": "Create the group:"
+        },
+        {
+          "level": 0,
+          "text": "Create the four users with production as a supplementary group:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "groupadd: Creates a group."
+        },
+        {
+          "level": 0,
+          "text": "useradd: Creates a user account."
+        },
+        {
+          "level": 0,
+          "text": "-G production: Adds the user to the supplementary group production."
+        },
+        {
+          "level": 0,
+          "text": "production$i: Uses the variable i to generate names such as production1."
+        },
+        {
+          "level": 0,
+          "text": "do and done: Enclose the commands repeated by the loop."
+        },
+        {
+          "level": 0,
+          "text": "Verify group membership:"
+        },
+        {
+          "level": 0,
+          "text": "Remember: A shared group makes it easier to give several users the same access to files and directories."
+        }
+      ],
+      "words": 89
+    },
+    {
+      "title": "23. Configure temporary-file cleanup",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: systemd-tmpfiles can create directories and clean up files according to time-based rules."
+        },
+        {
+          "level": 0,
+          "text": "The lab requires /run/volatile to have permissions 0700 and a cleanup age of 30 seconds."
+        },
+        {
+          "level": 0,
+          "text": "Create the configuration file:"
+        },
+        {
+          "level": 0,
+          "text": "Add:"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "d: Create a directory if needed."
+        },
+        {
+          "level": 0,
+          "text": "/run/volatile: The directory to manage."
+        },
+        {
+          "level": 0,
+          "text": "0700: The owner has full permissions; group and others have none."
+        },
+        {
+          "level": 0,
+          "text": "root root: The owner and group."
+        },
+        {
+          "level": 0,
+          "text": "30s: The configured age threshold."
+        },
+        {
+          "level": 0,
+          "text": "Apply the configuration:"
+        },
+        {
+          "level": 0,
+          "text": "Important: The rule's time field defines the cleanup age; it does not mean every file is guaranteed to disappear exactly 30 seconds after creation. Cleanup timing depends on the relevant systemd-tmpfiles cleanup mechanism."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The tmpfiles configuration defines the rule, while systemd-tmpfiles applies the configuration."
+        }
+      ],
+      "words": 119
+    },
+    {
+      "title": "24. Set directory permissions with ACLs",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: ACLs let you give production group members access while applying a different permission to production1."
+        },
+        {
+          "level": 0,
+          "text": "Create the directory:"
+        },
+        {
+          "level": 0,
+          "text": "The lab requires the owner and group owner to be root, with group members able to read and write. It also requires production1 to have read-only access."
+        }
+      ],
+      "words": 47
+    }
+  ],
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
+}

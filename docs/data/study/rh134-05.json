@@ -2,160 +2,256 @@
   "id": "rh134-05",
   "n": 5,
   "sourceNumber": 5,
-  "kind": "part",
-  "title": "Part 5",
-  "display": "Part 5 — Managing Layered Storage with Stratis; Compressing and Dedu…",
+  "kind": "chapter",
+  "title": "Chapter 5 — Managing SELinux Security",
+  "display": "Chapter 5 — Managing SELinux Security",
   "exam": "RHCSA (EX200)",
-  "words": 2371,
+  "words": 6980,
   "sections": [
     {
-      "title": "1. Managing Layered Storage with Stratis",
+      "title": "Overview",
       "content": [
         {
           "level": 0,
-          "text": "LVM works, but every layer — PV, VG, LV, filesystem — is managed with its own separate command family, and growing a filesystem is always a two-step dance (grow the LV, then grow the filesystem). Stratis is Red Hat's answer to that friction: a single tool that manages block devices, pools, and filesystems together, with thin provisioning and easy snapshots built in from the start."
-        },
-        {
-          "level": 2,
-          "text": "Stratis architecture in one sentence"
+          "text": "RH134 — Red Hat Enterprise Linux 8"
         },
         {
           "level": 0,
-          "text": "A pool is built from one or more block devices; any number of filesystems can be created inside that pool, each one thinly provisioned and able to grow on demand, without you ever running a separate 'extend' command the way you do with LVM."
+          "text": "Part 1 — Changing the SELinux Enforcement Mode"
         },
         {
           "level": 0,
-          "text": "Stratis term"
+          "text": "Part 2 — Controlling SELinux File Contexts"
         },
         {
           "level": 0,
-          "text": "Roughly equivalent LVM concept"
+          "text": "Part 3 — Adjusting SELinux Policy with Booleans"
         },
         {
           "level": 0,
-          "text": "Pool"
+          "text": "Part 4 — Investigating and Resolving SELinux Issues"
         },
         {
           "level": 0,
-          "text": "Volume Group — a collection of block devices"
+          "text": "Part 5 — Lab: Managing SELinux Security"
         },
         {
           "level": 0,
-          "text": "Filesystem (inside a pool)"
-        },
-        {
-          "level": 0,
-          "text": "Logical Volume + filesystem, combined into one object"
-        },
-        {
-          "level": 2,
-          "text": "Setting up Stratis"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# yum install stratis-cli stratisd"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# systemctl enable --now stratisd"
-        },
-        {
-          "level": 0,
-          "text": "Command"
-        },
-        {
-          "level": 0,
-          "text": "Purpose"
-        },
-        {
-          "level": 0,
-          "text": "stratis pool create pool1 /dev/vdb"
-        },
-        {
-          "level": 0,
-          "text": "Create a pool from one or more block devices"
-        },
-        {
-          "level": 0,
-          "text": "stratis pool list"
-        },
-        {
-          "level": 0,
-          "text": "Show pools with total/used physical size"
-        },
-        {
-          "level": 0,
-          "text": "stratis pool add-data pool1 /dev/vdc"
-        },
-        {
-          "level": 0,
-          "text": "Add another block device to an existing pool"
-        },
-        {
-          "level": 0,
-          "text": "stratis blockdev list pool1"
-        },
-        {
-          "level": 0,
-          "text": "Show which devices belong to a pool"
-        },
-        {
-          "level": 0,
-          "text": "stratis filesystem create pool1 fs1"
-        },
-        {
-          "level": 0,
-          "text": "Create a thinly-provisioned filesystem inside a pool"
-        },
-        {
-          "level": 0,
-          "text": "stratis filesystem snapshot pool1 fs1 snap1"
-        },
-        {
-          "level": 0,
-          "text": "Create an independent snapshot of a filesystem"
-        },
-        {
-          "level": 0,
-          "text": "stratis filesystem list"
-        },
-        {
-          "level": 0,
-          "text": "Show filesystems across all pools"
-        },
-        {
-          "level": 0,
-          "text": "A pool's filesystems appear as symlinks under /stratis/poolname/, and can be mounted like any other block device once you know the UUID:"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lsblk --output=UUID /stratis/pool1/filesystem1"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL A Stratis fstab entry MUST include the x-systemd.requires=stratisd.service mount option, or the machine will boot to emergency.target on the next reboot — because systemd will try to mount the filesystem before the stratisd service that makes it available has even started."
-        },
-        {
-          "level": 0,
-          "text": "UUID=31b9...8c55 /dir1 xfs defaults,x-systemd.requires=stratisd.service 0 0"
+          "text": "Part 6 — Chapter Summary and Command Reference"
         }
       ],
-      "words": 316
+      "words": 53
     },
     {
-      "title": "2. Compressing and Deduplicating Storage with VDO",
+      "title": "Chapter goal",
       "content": [
         {
           "level": 0,
-          "text": "VDO (Virtual Data Optimizer) solves a completely different problem from Stratis: not 'make storage easier to manage', but 'make the storage you already have go further' by eliminating waste before it's written to disk."
-        },
+          "text": "By the end of this chapter, you should understand how SELinux protects a Linux server, how to manage its enforcement mode, how to correct file labels, how to adjust SELinux Booleans, and how to investigate access-denied problems."
+        }
+      ],
+      "words": 37
+    },
+    {
+      "title": "1.1 What is SELinux?",
+      "content": [
         {
-          "level": 2,
-          "text": "The three-phase pipeline"
+          "level": 0,
+          "text": "Main idea: SELinux adds an extra layer of security that controls what programs are allowed to access."
         },
         {
           "level": 0,
-          "text": "Phase"
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Linux file permissions control who can access a file. SELinux adds another question: Is this particular program allowed to access this resource?"
+        },
+        {
+          "level": 0,
+          "text": "Imagine an office building. File permissions are like an employee's keycard. SELinux is like an additional security guard who checks whether the employee is allowed to enter a particular room for a particular purpose."
+        },
+        {
+          "level": 0,
+          "text": "For example, Apache is a web server program. It needs access to website files, but it should not automatically be allowed to read every private file on the server."
+        },
+        {
+          "level": 0,
+          "text": "SELinux uses security rules to limit what programs can do, even when a program has been compromised."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Apache normally serves website files from /var/www/html. SELinux policy allows the web server to access files with suitable web-content labels."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Apache or httpd — the web server program."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html — the standard directory for website content."
+        },
+        {
+          "level": 0,
+          "text": "SELinux policy — the rules that determine which actions are allowed."
+        },
+        {
+          "level": 0,
+          "text": "label or context — security information attached to a file or process."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Linux permissions help control who can access a file; SELinux helps control how programs may access resources."
+        }
+      ],
+      "words": 203
+    },
+    {
+      "title": "1.2 Why are normal Linux permissions not enough?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A program can have ordinary file permissions and still need to be restricted by SELinux."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose Apache runs under a dedicated account and has permission to read website files. If an attacker compromises Apache, the attacker may gain the ability to act through that program."
+        },
+        {
+          "level": 0,
+          "text": "Without additional restrictions, the compromised program might try to access other files that its account can read. SELinux helps limit this damage by applying rules to the program itself."
+        },
+        {
+          "level": 0,
+          "text": "SELinux is especially useful because a security problem in one application does not automatically give that application unrestricted access to other services' files."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "A web server needs to read website files, but it should not read MariaDB's private database files merely because it is running on the same computer."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "httpd_t — the SELinux type commonly associated with Apache processes."
+        },
+        {
+          "level": 0,
+          "text": "mysqld_t — the type commonly associated with MariaDB processes."
+        },
+        {
+          "level": 0,
+          "text": "mysqld_db_t — the type commonly associated with MariaDB database files."
+        },
+        {
+          "level": 0,
+          "text": "httpd_sys_content_t — the type commonly used for content Apache is allowed to read."
+        },
+        {
+          "level": 0,
+          "text": "The _t ending is a common clue that a name is an SELinux type."
+        },
+        {
+          "level": 0,
+          "text": "Remember: SELinux limits a program's access according to security rules, not just ordinary file permissions."
+        }
+      ],
+      "words": 203
+    },
+    {
+      "title": "1.3 DAC and MAC: what is the difference?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux permissions and SELinux use two different approaches to control access."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book introduces two security models:"
+        },
+        {
+          "level": 0,
+          "text": "Discretionary Access Control (DAC): ordinary Linux user, group, and other permissions. The file owner can generally decide how access is granted within the limits of the system."
+        },
+        {
+          "level": 0,
+          "text": "Mandatory Access Control (MAC): access is controlled by system security policy, such as SELinux rules."
+        },
+        {
+          "level": 0,
+          "text": "Think of DAC as the owner of a room deciding who receives a key. MAC is an additional building security policy that may still prevent someone from entering even if they have a key."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "A file may have read permission for Apache's Linux account, but SELinux may still prevent Apache from reading it because its security label is unsuitable."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "DAC — access control based on ownership and standard permissions."
+        },
+        {
+          "level": 0,
+          "text": "MAC — access control based on mandatory security policy."
+        },
+        {
+          "level": 0,
+          "text": "SELinux — a system that provides MAC controls in RHEL."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Ordinary permissions and SELinux are separate checks; both can affect whether access succeeds."
+        }
+      ],
+      "words": 170
+    },
+    {
+      "title": "1.4 Understand the three SELinux modes",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux can enforce its rules, report violations without blocking them, or be disabled."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book describes three modes:"
+        },
+        {
+          "level": 0,
+          "text": "Mode"
         },
         {
           "level": 0,
@@ -163,320 +259,2852 @@
         },
         {
           "level": 0,
-          "text": "1. Zero-Block Elimination"
+          "text": "Enforcing"
         },
         {
           "level": 0,
-          "text": "Blocks that are pure zeros are never actually written — only recorded in metadata. This is what makes thin provisioning possible."
+          "text": "Applies SELinux rules and blocks prohibited access."
         },
         {
           "level": 0,
-          "text": "2. Deduplication"
+          "text": "Permissive"
         },
         {
           "level": 0,
-          "text": "Identical data blocks (e.g. multiple copies of the same file) are detected and stored once, with everything else pointing back to that one copy — handled by the uds kernel module."
+          "text": "Does not block access because of SELinux policy, but records violations."
         },
         {
           "level": 0,
-          "text": "3. Compression"
+          "text": "Disabled"
         },
         {
           "level": 0,
-          "text": "Whatever's left is compressed with LZ4 and packed into 4KB blocks — handled by the kvdo kernel module."
+          "text": "SELinux is turned off; SELinux violations are not enforced or recorded."
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS VDO sits BELOW LVM and filesystems in the stack, on top of a raw block device — a VDO volume can itself become an LVM physical volume. This layering is why VDO shows up heavily in virtualization hosts: dozens of near-identical VM disk images compress and deduplicate extremely well."
-        },
-        {
-          "level": 2,
-          "text": "Creating and checking a VDO volume"
+          "text": "Enforcing is the normal recommended operating mode. Permissive can help administrators investigate a problem because it records what SELinux would have denied without blocking the access."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# yum install vdo kmod-kvdo"
+          "text": "Disabled mode is discouraged because it removes this additional protection."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vdo create --name=vdo1 --device=/dev/vdd --vdoLogicalSize=50G"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mkfs.xfs /dev/mapper/vdo1"
+          "text": "getenforce"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vdo status --name=vdo1"
+          "text": "Possible output:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vdo list"
+          "text": "Enforcing"
         },
         {
           "level": 0,
-          "text": "⚠ WARNING Setting --vdoLogicalSize larger than the physical device (as in the example — 50G logical on possibly much smaller physical storage) means the volume can report more free space than physically exists. If real data doesn't compress or deduplicate as well as hoped, you can run out of actual disk before the filesystem thinks it's full."
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL vdostats --verbose is how you proactively monitor real physical usage on a thinly-provisioned VDO volume — this is not optional monitoring, it's the only way to see the gap between logical and physical space before it becomes an outage."
+          "text": "getenforce — displays the current SELinux enforcement mode."
+        },
+        {
+          "level": 0,
+          "text": "Enforcing — SELinux rules are currently being enforced."
+        },
+        {
+          "level": 0,
+          "text": "The command is read-only; it does not change the mode."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Enforcing blocks prohibited access, permissive reports it, and disabled turns SELinux off."
         }
       ],
-      "words": 303
+      "words": 142
     },
     {
-      "title": "3. Mounting Network-Attached Storage with NFS",
+      "title": "1.5 Check the current SELinux mode",
       "content": [
         {
           "level": 0,
-          "text": "Everything so far in RH134 has been local storage. NFS (Network File System) is the standard way RHEL clients mount storage that physically lives on another server — the client sees a normal-looking directory, but every read and write travels over the network."
+          "text": "Main idea: Use getenforce to find out which SELinux mode is active now."
         },
         {
           "level": 0,
-          "text": "Fact"
+          "text": "Simple explanation:"
         },
         {
           "level": 0,
-          "text": "Detail"
+          "text": "Before changing SELinux settings, check its current state. This helps you understand whether SELinux is already enforcing rules or only recording violations."
         },
         {
           "level": 0,
-          "text": "Default version in RHEL 8"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "NFSv4.2"
+          "text": "getenforce"
         },
         {
           "level": 0,
-          "text": "Protocol"
+          "text": "Possible output:"
         },
         {
           "level": 0,
-          "text": "NFSv4 uses TCP only; older versions could also use UDP"
+          "text": "Enforcing"
         },
         {
           "level": 0,
-          "text": "Server side"
+          "text": "If the output is Permissive, SELinux is active but is not blocking access based on its policy. If the output is Disabled, SELinux is disabled."
         },
         {
           "level": 0,
-          "text": "Exports directories (shares)"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "Client side"
+          "text": "get — retrieve or display information."
         },
         {
           "level": 0,
-          "text": "Mounts an exported share onto a local, already-existing mount point"
-        },
-        {
-          "level": 2,
-          "text": "Discovering and mounting shares"
+          "text": "enforce — refers to SELinux enforcement."
         },
         {
           "level": 0,
-          "text": "You can explore what an NFSv4 server exports by mounting its root and browsing (as root — this doesn't grant real access to Kerberos-protected shares, but does reveal their names):"
+          "text": "getenforce — the complete command that displays the current mode."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mkdir mountpoint"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mount serverb:/ mountpoint"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# ls mountpoint"
-        },
-        {
-          "level": 0,
-          "text": "A temporary, non-persistent mount for testing or one-off access:"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mount -t nfs -o rw,sync serverb:/share mountpoint"
-        },
-        {
-          "level": 0,
-          "text": "A persistent mount, added to /etc/fstab exactly like local storage:"
-        },
-        {
-          "level": 0,
-          "text": "serverb:/share /mountpoint nfs rw,soft 0 0"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mount /mountpoint"
-        },
-        {
-          "level": 0,
-          "text": "✗ COMMON MISTAKE Forgetting that the mount point must already exist as a local directory before mounting — NFS doesn't create it for you the way autofs does. mkdir it first."
-        },
-        {
-          "level": 0,
-          "text": "🔎 REAL-WORLD EXTENSION The nfsconf tool (nfsconf --set / --unset) manages settings in /etc/nfs.conf for the various NFS client and server daemons — worth knowing it exists for tuning beyond basic mount/export behavior, though this course keeps the focus on client-side mounting."
+          "text": "Remember: Always check the current mode before attempting to troubleshoot an SELinux problem."
         }
       ],
-      "words": 237
+      "words": 106
     },
     {
-      "title": "4. Automounting Network-Attached Storage",
+      "title": "1.6 Change the current mode with setenforce",
       "content": [
         {
           "level": 0,
-          "text": "A permanent /etc/fstab NFS mount stays connected even when nobody's using it — tying up a network connection and, if the server goes down, potentially hanging commands like df on the client. The automounter (autofs) instead mounts shares ON DEMAND, the moment someone accesses the path, and unmounts them automatically after a period of inactivity."
+          "text": "Main idea: Use setenforce to switch between enforcing and permissive mode without rebooting."
         },
         {
           "level": 0,
-          "text": "Automounter benefit"
+          "text": "Simple explanation:"
         },
         {
           "level": 0,
-          "text": "Why it matters"
+          "text": "The setenforce command changes the current enforcement mode. This is a temporary change: it does not by itself change the default mode stored in the configuration file."
         },
         {
           "level": 0,
-          "text": "No root required by end users"
+          "text": "Example 1 — Switch to permissive mode:"
         },
         {
           "level": 0,
-          "text": "Regular users trigger the mount just by accessing the path"
+          "text": "sudo setenforce 0"
         },
         {
           "level": 0,
-          "text": "Configured entirely client-side"
+          "text": "getenforce"
         },
         {
           "level": 0,
-          "text": "No server-side changes needed"
+          "text": "Expected output from the second command:"
         },
         {
           "level": 0,
-          "text": "Mount points created/removed automatically"
+          "text": "Permissive"
         },
         {
           "level": 0,
-          "text": "Nothing lingers when not in use — saves network and system resources"
-        },
-        {
-          "level": 2,
-          "text": "Building an indirect map (the common case)"
+          "text": "Example 2 — Return to enforcing mode:"
         },
         {
           "level": 0,
-          "text": "Three files work together: a master map (which base directory maps to which mapping file), a mapping file (the actual mount details), and the autofs service itself."
+          "text": "sudo setenforce 1"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# yum install autofs"
+          "text": "getenforce"
         },
         {
           "level": 0,
-          "text": "# /etc/auto.master.d/demo.autofs (master map)"
+          "text": "Expected output:"
         },
         {
           "level": 0,
-          "text": "/shares /etc/auto.demo"
+          "text": "Enforcing"
         },
         {
           "level": 0,
-          "text": "# /etc/auto.demo (mapping file)"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "work -rw,sync serverb:/shares/work"
+          "text": "sudo — runs the command with elevated privileges."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# systemctl enable --now autofs"
+          "text": "setenforce — changes the current SELinux mode."
         },
         {
           "level": 0,
-          "text": "Accessing /shares/work triggers autofs to create that directory on the fly, mount serverb:/shares/work onto it, and remove the directory again once it's idle — you never manually mkdir or mount anything."
-        },
-        {
-          "level": 2,
-          "text": "Direct maps vs. indirect maps"
+          "text": "0 — selects permissive mode."
         },
         {
           "level": 0,
-          "text": "Map type"
+          "text": "1 — selects enforcing mode."
         },
         {
           "level": 0,
-          "text": "Master map entry"
+          "text": "getenforce — checks the result."
         },
         {
           "level": 0,
-          "text": "Use case"
+          "text": "The 0 and 1 values are short alternatives to the words Permissive and Enforcing."
         },
         {
           "level": 0,
-          "text": "Indirect (default)"
+          "text": "Remember: setenforce changes the current mode; it does not make that choice the permanent boot-time default."
+        }
+      ],
+      "words": 138
+    },
+    {
+      "title": "1.7 Set the default mode in /etc/selinux/config",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Edit /etc/selinux/config to choose the SELinux mode used at boot."
         },
         {
           "level": 0,
-          "text": "/shares /etc/auto.demo"
+          "text": "Simple explanation:"
         },
         {
           "level": 0,
-          "text": "Mount points live under one common base directory autofs manages entirely"
+          "text": "There is a difference between changing the current mode and changing the system's configured default. The /etc/selinux/config file stores the default SELinux setting."
         },
         {
           "level": 0,
-          "text": "Direct"
+          "text": "The system reads this file during boot. A change to this file does not immediately change the mode of a system that is already running."
         },
         {
           "level": 0,
-          "text": "/- /etc/auto.direct"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "Mount points are existing absolute paths anywhere on the filesystem, not confined to one base directory"
+          "text": "Open the configuration file:"
         },
         {
           "level": 0,
-          "text": "A direct map's mapping file uses the full absolute path as the key instead of a relative name:"
+          "text": "sudo vim /etc/selinux/config"
         },
         {
           "level": 0,
-          "text": "# /etc/auto.direct"
+          "text": "Find the setting:"
         },
         {
           "level": 0,
-          "text": "/mnt/docs -rw,sync serverb:/shares/docs"
-        },
-        {
-          "level": 2,
-          "text": "Indirect wildcard maps — one entry for many subdirectories"
+          "text": "SELINUX=enforcing"
         },
         {
           "level": 0,
-          "text": "When a server exports several subdirectories that all use the same mount options, a single wildcard entry handles all of them:"
+          "text": "To make permissive the configured default, change it to:"
         },
         {
           "level": 0,
-          "text": "# /etc/auto.demo"
+          "text": "SELINUX=permissive"
         },
         {
           "level": 0,
-          "text": "* -rw,sync serverb:/shares/&"
+          "text": "Verify the setting:"
         },
         {
           "level": 0,
-          "text": "The * matches whatever name is accessed under /shares/, and & substitutes that same name into the source path — so accessing /shares/anything automatically maps to serverb:/shares/anything, with no per-directory configuration needed."
+          "text": "grep '^SELINUX' /etc/selinux/config"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Know the three master-map/mapping-file patterns cold: plain indirect (/base → mapping file with named keys), direct (/- → mapping file with absolute-path keys), and indirect wildcard (* key with & substitution). The exam expects you to build any of the three from a written scenario."
+          "text": "Possible output:"
         },
         {
-          "level": 3,
-          "text": "Command Reference — Advanced Storage + NFS"
+          "level": 0,
+          "text": "SELINUX=permissive"
         },
+        {
+          "level": 0,
+          "text": "SELINUXTYPE=targeted"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/selinux/config — the SELinux configuration file."
+        },
+        {
+          "level": 0,
+          "text": "SELINUX= — specifies the configured mode."
+        },
+        {
+          "level": 0,
+          "text": "grep — searches text for a matching pattern."
+        },
+        {
+          "level": 0,
+          "text": "^SELINUX — ^ means the beginning of a line, so the search finds lines beginning with SELINUX."
+        },
+        {
+          "level": 0,
+          "text": "SELINUXTYPE=targeted — identifies the SELinux policy type; it is not the enforcement mode."
+        },
+        {
+          "level": 0,
+          "text": "Remember: setenforce changes the running mode; SELINUX= in the configuration file sets the default for boot."
+        }
+      ],
+      "words": 164
+    },
+    {
+      "title": "1.8 Understand the SELINUXTYPE setting",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELINUXTYPE selects the SELinux policy type rather than the enforcement mode."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The configuration file can contain both SELINUX and SELINUXTYPE. These settings answer different questions."
+        },
+        {
+          "level": 0,
+          "text": "SELINUX=enforcing says whether policy rules are enforced."
+        },
+        {
+          "level": 0,
+          "text": "SELINUXTYPE=targeted selects the policy type."
+        },
+        {
+          "level": 0,
+          "text": "The book identifies targeted as the default policy in RHEL. It focuses protection on targeted processes, such as important system services."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "SELINUX=enforcing"
+        },
+        {
+          "level": 0,
+          "text": "SELINUXTYPE=targeted"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "SELINUX= — the enforcement mode."
+        },
+        {
+          "level": 0,
+          "text": "SELINUXTYPE= — the policy type."
+        },
+        {
+          "level": 0,
+          "text": "targeted — the policy type commonly used by RHEL."
+        },
+        {
+          "level": 0,
+          "text": "= — assigns a value to the setting."
+        },
+        {
+          "level": 0,
+          "text": "Remember: SELINUX controls the mode; SELINUXTYPE controls which policy is used."
+        }
+      ],
+      "words": 107
+    },
+    {
+      "title": "1.9 Kernel parameters and boot-time settings",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Kernel parameters can affect the SELinux state during boot."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book also explains that kernel parameters can specify SELinux behavior during startup. These parameters can override the settings in /etc/selinux/config."
+        },
+        {
+          "level": 0,
+          "text": "The important examples from the book are:"
+        },
+        {
+          "level": 0,
+          "text": "Parameter"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "enforcing=0"
+        },
+        {
+          "level": 0,
+          "text": "Boot into permissive mode."
+        },
+        {
+          "level": 0,
+          "text": "enforcing=1"
+        },
+        {
+          "level": 0,
+          "text": "Boot into enforcing mode."
+        },
+        {
+          "level": 0,
+          "text": "selinux=0"
+        },
+        {
+          "level": 0,
+          "text": "Disable SELinux."
+        },
+        {
+          "level": 0,
+          "text": "selinux=1"
+        },
+        {
+          "level": 0,
+          "text": "Enable SELinux."
+        },
+        {
+          "level": 0,
+          "text": "These are boot parameters, not ordinary shell commands to run by themselves."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "A kernel boot configuration containing enforcing=0 requests permissive mode during startup."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "enforcing — controls whether SELinux policy is enforced."
+        },
+        {
+          "level": 0,
+          "text": "selinux — controls whether SELinux is enabled."
+        },
+        {
+          "level": 0,
+          "text": "=0 and =1 — specify the parameter values."
+        },
+        {
+          "level": 0,
+          "text": "Do not casually disable SELinux on a production server. If you are troubleshooting, use the narrowest safe method and return to enforcing mode when appropriate."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Boot parameters influence startup behavior and may override the configured default."
+        }
+      ],
+      "words": 147
+    },
+    {
+      "title": "1.10 Guided exercise — Changing the SELinux Enforcement Mode",
+      "content": [
+        {
+          "level": 0,
+          "text": "The book's guided exercise practices both persistent configuration and temporary mode changes."
+        },
+        {
+          "level": 0,
+          "text": "Main idea: You must be able to change the configured default, reboot to apply it, and change the current mode separately."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The exercise uses a training machine called servera. You connect to it, become root, change the default to permissive, reboot, and confirm the result. Then you change the configured default back to enforcing and use setenforce to apply enforcing mode immediately."
+        },
+        {
+          "level": 0,
+          "text": "Example sequence:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/selinux/config"
+        },
+        {
+          "level": 0,
+          "text": "grep '^SELINUX' /etc/selinux/config"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "After reconnecting, check the mode:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "Then change the configuration back to SELINUX=enforcing and run:"
+        },
+        {
+          "level": 0,
+          "text": "sudo setenforce 1"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "Expected final output:"
+        },
+        {
+          "level": 0,
+          "text": "Enforcing"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl reboot — asks systemd to reboot the machine."
+        },
+        {
+          "level": 0,
+          "text": "grep '^SELINUX' — verifies the configured setting."
+        },
+        {
+          "level": 0,
+          "text": "getenforce — verifies the active mode."
+        },
+        {
+          "level": 0,
+          "text": "setenforce 1 — switches the running system to enforcing mode."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The exercise teaches you to distinguish the configured default from the mode currently in effect."
+        }
+      ],
+      "words": 163
+    },
+    {
+      "title": "2.1 What is an SELinux context?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An SELinux context is a security label that helps SELinux decide how a file or process may be used."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "SELinux labels files, directories, processes, and other resources. The policy uses these labels to determine whether an action is permitted."
+        },
+        {
+          "level": 0,
+          "text": "Think of the label as a category printed on a file folder. A program is allowed to use the folder only when the security rules permit that category of access."
+        },
+        {
+          "level": 0,
+          "text": "The book describes context fields for user, role, type, and sensitivity. In RHEL's default targeted policy, the type field is especially important."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html"
+        },
+        {
+          "level": 0,
+          "text": "The output includes file names and SELinux labels. A typical web-content label contains:"
+        },
+        {
+          "level": 0,
+          "text": "httpd_sys_content_t"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ls — lists files."
+        },
+        {
+          "level": 0,
+          "text": "-Z — displays SELinux security contexts."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html — the directory being inspected."
+        },
+        {
+          "level": 0,
+          "text": "httpd_sys_content_t — a type commonly used for web content readable by Apache."
+        },
+        {
+          "level": 0,
+          "text": "Remember: SELinux contexts label resources, and the policy uses those labels to make access decisions."
+        }
+      ],
+      "words": 160
+    },
+    {
+      "title": "2.2 Understand the four context fields",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An SELinux context contains several fields, and each field provides a different kind of security information."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A context commonly looks like this:"
+        },
+        {
+          "level": 0,
+          "text": "system_u:object_r:httpd_sys_content_t:s0"
+        },
+        {
+          "level": 0,
+          "text": "It is divided by colon symbols (:). Each colon separates one field from the next."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "system_u — the SELinux user field."
+        },
+        {
+          "level": 0,
+          "text": "object_r — the role field for this object."
+        },
+        {
+          "level": 0,
+          "text": "httpd_sys_content_t — the type field."
+        },
+        {
+          "level": 0,
+          "text": "s0 — the sensitivity level."
+        },
+        {
+          "level": 0,
+          "text": "In the targeted policy discussed in this chapter, the type field is the main field you will usually investigate when troubleshooting web-content access."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html/index.html"
+        },
+        {
+          "level": 0,
+          "text": "The output displays the file's SELinux context alongside its normal file information."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Contexts contain several fields, but the type is particularly important in the targeted policy."
+        }
+      ],
+      "words": 124
+    },
+    {
+      "title": "2.3 Display contexts for files and processes",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Commands such as ls and ps can show SELinux labels when used with -Z."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "You often need to compare the label of a file with the label of the program trying to access it. The -Z option exposes this information."
+        },
+        {
+          "level": 0,
+          "text": "Example 1 — Display a file label:"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html"
+        },
+        {
+          "level": 0,
+          "text": "Example 2 — Display process labels:"
+        },
+        {
+          "level": 0,
+          "text": "ps axZ"
+        },
+        {
+          "level": 0,
+          "text": "Example 3 — Display labels for Apache processes:"
+        },
+        {
+          "level": 0,
+          "text": "ps -ZC httpd"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ps — displays process information."
+        },
+        {
+          "level": 0,
+          "text": "a and x — select a broad set of processes, including processes without a controlling terminal."
+        },
+        {
+          "level": 0,
+          "text": "Z — displays SELinux context information."
+        },
+        {
+          "level": 0,
+          "text": "-C httpd — selects processes whose command name is httpd."
+        },
+        {
+          "level": 0,
+          "text": "ls -Z — displays SELinux labels for files."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use ls -Z to inspect file labels and ps with Z to inspect process labels."
+        }
+      ],
+      "words": 138
+    },
+    {
+      "title": "2.4 How files receive their initial contexts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: New files normally receive a suitable SELinux context from their parent directory."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "When you create a file inside a directory, Linux usually assigns a context appropriate to that location. This helps files receive labels expected by the applications that use them."
+        },
+        {
+          "level": 0,
+          "text": "Problems can occur when a file is moved from one location to another. The moved file can keep its original context, even though its new directory expects a different one."
+        },
+        {
+          "level": 0,
+          "text": "Copying can behave differently: a normal copy generally receives a context appropriate to the destination, while a copy that preserves metadata can preserve the original context."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "touch /tmp/file1"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /tmp/file1"
+        },
+        {
+          "level": 0,
+          "text": "A file created in /tmp normally receives a temporary-file context."
+        },
+        {
+          "level": 0,
+          "text": "If you move that file into /var/www/html, it may retain a context unsuitable for web content."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "touch — creates an empty file if needed."
+        },
+        {
+          "level": 0,
+          "text": "/tmp/file1 — the file being created."
+        },
+        {
+          "level": 0,
+          "text": "ls -Z — shows the file's SELinux context."
+        },
+        {
+          "level": 0,
+          "text": "mv — moves a file; moving does not necessarily correct its SELinux context."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Moving a file does not guarantee that its SELinux label becomes correct for its new location."
+        }
+      ],
+      "words": 189
+    },
+    {
+      "title": "2.5 Why moving and copying files can cause problems",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A file may have normal Linux permissions but the wrong SELinux context for its destination."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine moving a folder from a private office into a public reception area. The folder's original classification may no longer be appropriate for its new purpose."
+        },
+        {
+          "level": 0,
+          "text": "SELinux labels work similarly. A file moved from /tmp or a user's home directory into a website directory can keep a label associated with its old location."
+        },
+        {
+          "level": 0,
+          "text": "Apache may then refuse to serve the file, even when its ordinary read permissions look correct."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "mv /tmp/file1 /var/www/html/"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html/file1"
+        },
+        {
+          "level": 0,
+          "text": "Inspect the label. If it still has a temporary-file type rather than the expected web-content type, that may explain the access problem."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mv — moves the file."
+        },
+        {
+          "level": 0,
+          "text": "/tmp/file1 — original location."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/ — destination."
+        },
+        {
+          "level": 0,
+          "text": "ls -Z — displays the context so you can check it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: When an application cannot access a file, inspect the SELinux label instead of assuming ordinary permissions are the only cause."
+        }
+      ],
+      "words": 165
+    },
+    {
+      "title": "2.6 The three commands used to change contexts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: semanage fcontext, restorecon, and chcon are related but serve different purposes."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book introduces three commands for managing file contexts."
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext — defines or changes the stored rules that describe which contexts files should receive."
+        },
+        {
+          "level": 0,
+          "text": "restorecon — applies the context expected by the configured rules."
+        },
+        {
+          "level": 0,
+          "text": "chcon — directly changes a file's current context."
+        },
+        {
+          "level": 0,
+          "text": "For persistent administration, the preferred method in the book is to define the correct rule with semanage fcontext and then apply it with restorecon."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -v /var/www/html/index.html"
+        },
+        {
+          "level": 0,
+          "text": "This asks the system to restore the file's context according to the configured rules."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — runs the command with elevated privileges."
+        },
+        {
+          "level": 0,
+          "text": "restorecon — restores the expected SELinux context."
+        },
+        {
+          "level": 0,
+          "text": "-v — verbose output; shows information about the operation."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/index.html — the file being checked and relabeled if necessary."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Define the correct rule first when necessary, then use restorecon to apply it."
+        }
+      ],
+      "words": 153
+    },
+    {
+      "title": "2.7 Why chcon is not the preferred permanent fix",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: chcon changes a file's current label but does not create the persistent labeling rule."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The chcon command is useful for testing or experimenting with a context. However, the change is not stored as a rule in the SELinux file-context database."
+        },
+        {
+          "level": 0,
+          "text": "If restorecon runs later, it can undo the manual label change. A full filesystem relabel can also restore the context expected by the policy."
+        },
+        {
+          "level": 0,
+          "text": "For this reason, the book recommends semanage fcontext with restorecon when you need a lasting configuration."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo chcon -t httpd_sys_content_t /virtual"
+        },
+        {
+          "level": 0,
+          "text": "ls -Zd /virtual"
+        },
+        {
+          "level": 0,
+          "text": "The directory's type is changed to httpd_sys_content_t."
+        },
+        {
+          "level": 0,
+          "text": "Now run:"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -v /virtual"
+        },
+        {
+          "level": 0,
+          "text": "If the configured rule expects another type, restorecon can return the directory to that expected type."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "chcon — directly changes a context."
+        },
+        {
+          "level": 0,
+          "text": "-t — specifies the SELinux type."
+        },
+        {
+          "level": 0,
+          "text": "httpd_sys_content_t — the requested type."
+        },
+        {
+          "level": 0,
+          "text": "ls -Zd — displays the context of the directory itself."
+        },
+        {
+          "level": 0,
+          "text": "restorecon — restores the context expected by the rules."
+        },
+        {
+          "level": 0,
+          "text": "Remember: chcon changes the current label; it does not replace a persistent file-context rule."
+        }
+      ],
+      "words": 176
+    },
+    {
+      "title": "2.8 Understand semanage fcontext rules",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: semanage fcontext stores rules that describe the expected SELinux contexts for file paths."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The system needs to know which context belongs to which location. semanage fcontext lets an administrator add, remove, or list these rules."
+        },
+        {
+          "level": 0,
+          "text": "The book explains these common options:"
+        },
+        {
+          "level": 0,
+          "text": "Option"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "-a"
+        },
+        {
+          "level": 0,
+          "text": "Add a rule."
+        },
+        {
+          "level": 0,
+          "text": "-d"
+        },
+        {
+          "level": 0,
+          "text": "Delete a rule."
+        },
+        {
+          "level": 0,
+          "text": "-l"
+        },
+        {
+          "level": 0,
+          "text": "List rules."
+        },
+        {
+          "level": 0,
+          "text": "-t"
+        },
+        {
+          "level": 0,
+          "text": "Specify the SELinux type when defining a rule."
+        },
+        {
+          "level": 0,
+          "text": "Example — List file-context rules:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage fcontext -l"
+        },
+        {
+          "level": 0,
+          "text": "The output lists configured file-context rules. It can be lengthy because the system has many rules."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "semanage — manages SELinux policy settings."
+        },
+        {
+          "level": 0,
+          "text": "fcontext — selects file-context rule management."
+        },
+        {
+          "level": 0,
+          "text": "-l — requests a list."
+        },
+        {
+          "level": 0,
+          "text": "sudo — provides the privileges needed for administration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: semanage fcontext defines the expected labels; restorecon applies them to files."
+        }
+      ],
+      "words": 133
+    },
+    {
+      "title": "2.9 Understand the (/.*)? pattern",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The (/.*)? pattern lets a file-context rule match a directory and its contents."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book uses regular expressions in file-context rules. You do not need to memorize every detail immediately, but you must understand the common pattern used in this chapter."
+        },
+        {
+          "level": 0,
+          "text": "In '/custom(/.*)?':"
+        },
+        {
+          "level": 0,
+          "text": "/custom identifies the directory."
+        },
+        {
+          "level": 0,
+          "text": "/ represents a slash."
+        },
+        {
+          "level": 0,
+          "text": ". matches a character."
+        },
+        {
+          "level": 0,
+          "text": "* means zero or more repetitions of the preceding pattern."
+        },
+        {
+          "level": 0,
+          "text": "Parentheses group part of the pattern."
+        },
+        {
+          "level": 0,
+          "text": "? makes the grouped part optional."
+        },
+        {
+          "level": 0,
+          "text": "Single quotes keep the pattern together so the shell passes it as one argument."
+        },
+        {
+          "level": 0,
+          "text": "Together, the pattern matches /custom itself and paths below it."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage fcontext -a -t httpd_sys_content_t '/custom(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "-a — add a rule."
+        },
+        {
+          "level": 0,
+          "text": "-t httpd_sys_content_t — set the requested type."
+        },
+        {
+          "level": 0,
+          "text": "'/custom(/.*)?' — match the directory and its contents."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The quoted (/.*)? pattern allows the rule to cover a directory and the paths beneath it."
+        }
+      ],
+      "words": 154
+    },
+    {
+      "title": "2.10 Configure a persistent context for a website directory",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: To serve web content from a non-standard directory, define the correct context rule and apply it."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's guided exercise configures Apache to serve a website from /custom rather than the standard /var/www/html directory."
+        },
+        {
+          "level": 0,
+          "text": "Changing Apache's document root is not enough. SELinux must also allow Apache to access files in the new location."
+        },
+        {
+          "level": 0,
+          "text": "Example — Define the rule and apply it:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage fcontext -a -t httpd_sys_content_t '/custom(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -Rv /custom"
+        },
+        {
+          "level": 0,
+          "text": "Expected output from restorecon resembles:"
+        },
+        {
+          "level": 0,
+          "text": "Relabeled /custom from ...:default_t:... to ...:httpd_sys_content_t:..."
+        },
+        {
+          "level": 0,
+          "text": "Relabeled /custom/index.html from ...:default_t:... to ...:httpd_sys_content_t:..."
+        },
+        {
+          "level": 0,
+          "text": "The exact context fields and output can differ by system."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext — adds the rule to the file-context database."
+        },
+        {
+          "level": 0,
+          "text": "-a — adds the rule."
+        },
+        {
+          "level": 0,
+          "text": "-t httpd_sys_content_t — selects the web-content type."
+        },
+        {
+          "level": 0,
+          "text": "restorecon — applies the expected label."
+        },
+        {
+          "level": 0,
+          "text": "-R — processes the directory recursively, including its contents."
+        },
+        {
+          "level": 0,
+          "text": "-v — displays details of relabeling."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A non-standard website directory needs both the correct Apache configuration and a suitable SELinux context."
+        }
+      ],
+      "words": 166
+    },
+    {
+      "title": "2.11 Guided exercise — Controlling SELinux File Contexts",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The exercise shows how to make Apache serve files from a directory outside the standard web root."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's exercise uses servera. It creates /custom, puts an index.html file inside it, and changes Apache's configuration to use /custom as its document root."
+        },
+        {
+          "level": 0,
+          "text": "The web server starts, but the browser cannot access the page because the directory initially has an unsuitable SELinux context."
+        },
+        {
+          "level": 0,
+          "text": "The solution is to define a persistent file-context rule and apply it."
+        },
+        {
+          "level": 0,
+          "text": "Example sequence:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir /custom"
+        },
+        {
+          "level": 0,
+          "text": "echo 'This is SERVERA.' | sudo tee /custom/index.html"
+        },
+        {
+          "level": 0,
+          "text": "After configuring Apache's document root, apply the SELinux rule:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage fcontext -a -t httpd_sys_content_t '/custom(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -Rv /custom"
+        },
+        {
+          "level": 0,
+          "text": "Then test the website again."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "mkdir — creates the directory."
+        },
+        {
+          "level": 0,
+          "text": "echo — produces the text."
+        },
+        {
+          "level": 0,
+          "text": "| — passes that text to the next command."
+        },
+        {
+          "level": 0,
+          "text": "tee — writes received text to a file."
+        },
+        {
+          "level": 0,
+          "text": "index.html — the web page being served."
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext and restorecon — configure and apply the required labels."
+        },
+        {
+          "level": 0,
+          "text": "Remember: When the website configuration is correct but access still fails, investigate the file's SELinux context."
+        }
+      ],
+      "words": 181
+    },
+    {
+      "title": "3.1 What is an SELinux Boolean?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An SELinux Boolean is a switch that enables or disables a specific part of SELinux policy."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "SELinux policy contains many rules. Sometimes a service needs an additional, specific capability that is disabled by default."
+        },
+        {
+          "level": 0,
+          "text": "Rather than disabling SELinux entirely or writing a new policy, an administrator may be able to enable a suitable Boolean."
+        },
+        {
+          "level": 0,
+          "text": "Think of a Boolean as an extra permission switch on a control panel. Turning it on enables the behavior described by that switch; turning it off disables that behavior."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "The book uses httpd_enable_homedirs, which controls whether Apache can access users' home directories for web publishing."
+        },
+        {
+          "level": 0,
+          "text": "Check its current state:"
+        },
+        {
+          "level": 0,
+          "text": "getsebool httpd_enable_homedirs"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "httpd_enable_homedirs --> off"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "getsebool — displays SELinux Boolean values."
+        },
+        {
+          "level": 0,
+          "text": "httpd_enable_homedirs — the Boolean being checked."
+        },
+        {
+          "level": 0,
+          "text": "off — the setting is currently disabled."
+        },
+        {
+          "level": 0,
+          "text": "--> — the output shows the value associated with the Boolean."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A Boolean changes a specific policy behavior without turning off SELinux as a whole."
+        }
+      ],
+      "words": 164
+    },
+    {
+      "title": "3.2 List and inspect Booleans",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use getsebool to check Boolean states and semanage boolean to inspect their descriptions and defaults."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Before changing a Boolean, identify the correct one and understand what it controls. The system may contain many Booleans, so searching for a related word can help."
+        },
+        {
+          "level": 0,
+          "text": "Example 1 — List all Boolean states:"
+        },
+        {
+          "level": 0,
+          "text": "getsebool -a"
+        },
+        {
+          "level": 0,
+          "text": "The -a option requests all Booleans."
+        },
+        {
+          "level": 0,
+          "text": "Example 2 — Search for Booleans related to home directories:"
+        },
+        {
+          "level": 0,
+          "text": "getsebool -a | grep home"
+        },
+        {
+          "level": 0,
+          "text": "The pipe (|) sends the output of getsebool to grep, which displays matching lines."
+        },
+        {
+          "level": 0,
+          "text": "Example 3 — View descriptions and defaults:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage boolean -l"
+        },
+        {
+          "level": 0,
+          "text": "To show Booleans whose current state differs from their configured default, use:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage boolean -l -C"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "-a — list all Boolean states."
+        },
+        {
+          "level": 0,
+          "text": "grep home — show lines containing home."
+        },
+        {
+          "level": 0,
+          "text": "semanage boolean -l — list Boolean information."
+        },
+        {
+          "level": 0,
+          "text": "-C — show local customizations where the current state differs from the default."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Find the correct Boolean and understand its purpose before changing it."
+        }
+      ],
+      "words": 167
+    },
+    {
+      "title": "3.3 Change a Boolean temporarily",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: setsebool changes a Boolean's active value."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A Boolean can allow a specific service behavior. For example, Apache may need permission to publish content from users' home directories."
+        },
+        {
+          "level": 0,
+          "text": "The book's example uses httpd_enable_homedirs. Changing it to on permits the policy behavior associated with that Boolean."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo setsebool httpd_enable_homedirs on"
+        },
+        {
+          "level": 0,
+          "text": "getsebool httpd_enable_homedirs"
+        },
+        {
+          "level": 0,
+          "text": "Expected output:"
+        },
+        {
+          "level": 0,
+          "text": "httpd_enable_homedirs --> on"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "setsebool — changes a Boolean."
+        },
+        {
+          "level": 0,
+          "text": "httpd_enable_homedirs — identifies the Boolean."
+        },
+        {
+          "level": 0,
+          "text": "on — enables the behavior."
+        },
+        {
+          "level": 0,
+          "text": "sudo — provides the administrative privileges needed to change the setting."
+        },
+        {
+          "level": 0,
+          "text": "getsebool — checks the new value."
+        },
+        {
+          "level": 0,
+          "text": "Without the persistent option, the change is not guaranteed to survive a reboot."
+        },
+        {
+          "level": 0,
+          "text": "Remember: setsebool NAME on enables a Boolean for the running system."
+        }
+      ],
+      "words": 120
+    },
+    {
+      "title": "3.4 Make a Boolean change persistent",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use setsebool -P to save a Boolean change so it remains in effect after a reboot."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A temporary change may solve the current problem, but the setting could return to its default after restarting the system."
+        },
+        {
+          "level": 0,
+          "text": "The -P option tells setsebool to make the change persistent."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo setsebool -P httpd_enable_homedirs on"
+        },
+        {
+          "level": 0,
+          "text": "Verify the state:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage boolean -l | grep httpd_enable_homedirs"
+        },
+        {
+          "level": 0,
+          "text": "The output may show:"
+        },
+        {
+          "level": 0,
+          "text": "httpd_enable_homedirs (on , on) Allow httpd to enable homedirs"
+        },
+        {
+          "level": 0,
+          "text": "The two values represent the current state and the default state. In this example, both are on."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "setsebool — changes a Boolean."
+        },
+        {
+          "level": 0,
+          "text": "-P — makes the change persistent."
+        },
+        {
+          "level": 0,
+          "text": "on — enables the Boolean."
+        },
+        {
+          "level": 0,
+          "text": "semanage boolean -l — lists the Boolean and its values."
+        },
+        {
+          "level": 0,
+          "text": "| grep httpd_enable_homedirs — filters the output to the requested Boolean."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use -P when the Boolean change must survive a reboot."
+        }
+      ],
+      "words": 148
+    },
+    {
+      "title": "3.5 Find information about a Boolean",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux documentation can explain what a Boolean controls and when it should be enabled."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Do not enable a Boolean merely because its name sounds relevant. First read its description and confirm that the behavior is appropriate for your server."
+        },
+        {
+          "level": 0,
+          "text": "The book explains that SELinux policy documentation provides manual pages for services and their Booleans."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "man -k '_selinux'"
+        },
+        {
+          "level": 0,
+          "text": "This searches manual-page descriptions for entries matching _selinux."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "man — opens or searches manual-page documentation."
+        },
+        {
+          "level": 0,
+          "text": "-k — searches manual-page names and short descriptions."
+        },
+        {
+          "level": 0,
+          "text": "'_selinux' — the search term, enclosed in quotes."
+        },
+        {
+          "level": 0,
+          "text": "_selinux — often appears in manual-page names related to SELinux policy for a service."
+        },
+        {
+          "level": 0,
+          "text": "The book notes that the selinux-policy-doc package provides relevant SELinux policy documentation."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Read the documentation before enabling a Boolean, because each switch has a specific security effect."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "3.6 Guided exercise — Allow Apache to publish home-directory content",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The exercise uses an SELinux Boolean to permit Apache to serve content from a user's home directory."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "By default, Apache may be prevented from publishing content from users' home directories. The exercise configures Apache's user-directory feature and then changes the relevant SELinux Boolean."
+        },
+        {
+          "level": 0,
+          "text": "First, the Apache configuration must allow the feature. Then the user's public_html directory and page must exist, and normal directory permissions must allow Apache to reach the content. Finally, SELinux must permit the behavior."
+        },
+        {
+          "level": 0,
+          "text": "Example commands from the exercise:"
+        },
+        {
+          "level": 0,
+          "text": "Check the Boolean:"
+        },
+        {
+          "level": 0,
+          "text": "getsebool -a | grep home"
+        },
+        {
+          "level": 0,
+          "text": "Enable it persistently:"
+        },
+        {
+          "level": 0,
+          "text": "sudo setsebool -P httpd_enable_homedirs on"
+        },
+        {
+          "level": 0,
+          "text": "The page can then be tested at a URL like:"
+        },
+        {
+          "level": 0,
+          "text": "http://servera/~student/index.html"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "public_html — a directory used for a user's published web content in this exercise."
+        },
+        {
+          "level": 0,
+          "text": "httpd_enable_homedirs — the Boolean controlling Apache's home-directory access."
+        },
+        {
+          "level": 0,
+          "text": "-P — makes the Boolean change persistent."
+        },
+        {
+          "level": 0,
+          "text": "~student — refers to the student user's home-directory web content in the URL format used by Apache."
+        },
+        {
+          "level": 0,
+          "text": "This exercise is from the book's training environment. Use a controlled lab before changing production web-server access."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Apache configuration, Linux permissions, and SELinux policy must all allow the requested access."
+        }
+      ],
+      "words": 194
+    },
+    {
+      "title": "4.1 Why can SELinux block access?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux can deny an action when the security policy does not permit it."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose Apache should display a website page, but the browser shows an access-denied error. Ordinary file permissions may appear correct, yet the request still fails."
+        },
+        {
+          "level": 0,
+          "text": "One possible reason is that the file has the wrong SELinux context. Another possibility is that a required policy behavior is disabled by a Boolean."
+        },
+        {
+          "level": 0,
+          "text": "Do not immediately disable SELinux. First determine whether the access should actually be allowed, and then identify the specific reason for the denial."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://localhost/file3"
+        },
+        {
+          "level": 0,
+          "text": "If Apache cannot serve the file, the command may return an HTTP 403 Forbidden response."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "curl — makes a request to a web address and displays the response."
+        },
+        {
+          "level": 0,
+          "text": "http://localhost/file3 — requests file3 from the web server on the same machine."
+        },
+        {
+          "level": 0,
+          "text": "403 Forbidden — the server refused the request; this alone does not prove SELinux caused the problem."
+        },
+        {
+          "level": 0,
+          "text": "Remember: An access-denied error is a clue, not a diagnosis; investigate the cause before changing security settings."
+        }
+      ],
+      "words": 171
+    },
+    {
+      "title": "4.2 Follow a safe troubleshooting order",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Investigate an SELinux denial before changing labels, Booleans, or policy."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book recommends a deliberate troubleshooting process:"
+        },
+        {
+          "level": 0,
+          "text": "Decide whether the requested access should be allowed at all."
+        },
+        {
+          "level": 0,
+          "text": "Check whether the file has an incorrect SELinux context."
+        },
+        {
+          "level": 0,
+          "text": "If appropriate, consider whether a Boolean should be changed."
+        },
+        {
+          "level": 0,
+          "text": "If the evidence suggests a policy bug, follow the appropriate support process."
+        },
+        {
+          "level": 0,
+          "text": "The common problem is an incorrect file context, especially after moving a file. In that case, restorecon may be the narrowest and most suitable fix."
+        },
+        {
+          "level": 0,
+          "text": "Changing Booleans requires more care because it can permit additional behavior across a service."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html/file3"
+        },
+        {
+          "level": 0,
+          "text": "Inspect the file's context before deciding what to change."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ls — lists the file."
+        },
+        {
+          "level": 0,
+          "text": "-Z — displays its SELinux context."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/file3 — the file being investigated."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Confirm the cause first, then apply the smallest appropriate correction."
+        }
+      ],
+      "words": 145
+    },
+    {
+      "title": "4.3 Understand SELinux denial messages",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux logs contain evidence about which process attempted an action and why it was denied."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "When SELinux denies an action, the audit log can record an event known as an AVC denial. AVC stands for Access Vector Cache."
+        },
+        {
+          "level": 0,
+          "text": "The record may include the process, the target file, the requested action, and the source and target contexts. These details help you identify the mismatch."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo ausearch -m AVC -ts recent"
+        },
+        {
+          "level": 0,
+          "text": "This searches recent audit records for AVC messages."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ausearch — searches the audit log."
+        },
+        {
+          "level": 0,
+          "text": "-m AVC — filters for AVC message types."
+        },
+        {
+          "level": 0,
+          "text": "-ts recent — limits the search to recent events."
+        },
+        {
+          "level": 0,
+          "text": "sudo — provides access to audit information that may require elevated privileges."
+        },
+        {
+          "level": 0,
+          "text": "An AVC denial is evidence of a policy restriction. It does not automatically mean SELinux is wrong; the denied action may be unsafe or unintended."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Read the denial details to identify the process, target, and action before choosing a fix."
+        }
+      ],
+      "words": 162
+    },
+    {
+      "title": "4.4 Understand the source context and target context",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An SELinux denial often identifies both the process making the request and the resource it tried to access."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "In an audit record, the source context describes the process that attempted the action. The target context describes the resource that the process tried to access."
+        },
+        {
+          "level": 0,
+          "text": "For example, Apache may run with the source type httpd_t. If it tries to access a file labeled default_t, the policy may not permit the requested operation."
+        },
+        {
+          "level": 0,
+          "text": "That mismatch can explain why a website fails even when ordinary permissions seem reasonable."
+        },
+        {
+          "level": 0,
+          "text": "Example of the important fields:"
+        },
+        {
+          "level": 0,
+          "text": "scontext=system_u:system_r:httpd_t:s0"
+        },
+        {
+          "level": 0,
+          "text": "tcontext=unconfined_u:object_r:default_t:s0"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "scontext — the source security context."
+        },
+        {
+          "level": 0,
+          "text": "tcontext — the target security context."
+        },
+        {
+          "level": 0,
+          "text": "httpd_t — the process type associated with Apache."
+        },
+        {
+          "level": 0,
+          "text": "default_t — a generic type that may be unsuitable for files Apache must serve."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Compare the process context and file context to understand why the policy may have denied access."
+        }
+      ],
+      "words": 151
+    },
+    {
+      "title": "4.5 Read SELinux messages in /var/log/messages",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The system message log may contain a summary of an SELinux denial and a reference for investigating it."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book describes the setroubleshoot-server package, which listens for audit messages and sends a summary to /var/log/messages."
+        },
+        {
+          "level": 0,
+          "text": "The summary can include a unique identifier for an incident. That identifier can be used with sealert to display a more detailed report."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo less /var/log/messages"
+        },
+        {
+          "level": 0,
+          "text": "Inside less, type:"
+        },
+        {
+          "level": 0,
+          "text": "/sealert"
+        },
+        {
+          "level": 0,
+          "text": "Press Enter to search for the term. Press n to find the next match and q to quit."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "less — displays a file one screen at a time."
+        },
+        {
+          "level": 0,
+          "text": "/var/log/messages — a system message log."
+        },
+        {
+          "level": 0,
+          "text": "/sealert — the slash begins a search within less."
+        },
+        {
+          "level": 0,
+          "text": "n — moves to the next matching result."
+        },
+        {
+          "level": 0,
+          "text": "q — quits the viewer."
+        },
+        {
+          "level": 0,
+          "text": "The exact logging setup can vary. If the expected summary is absent, check the available audit logs and installed troubleshooting tools."
+        },
+        {
+          "level": 0,
+          "text": "Remember: System logs can point you toward the detailed SELinux report for an incident."
+        }
+      ],
+      "words": 165
+    },
+    {
+      "title": "4.6 Use sealert to inspect a denial",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: sealert provides a readable report explaining an SELinux alert."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "An audit record can contain many technical fields. sealert helps organize the information into a report that is easier to investigate."
+        },
+        {
+          "level": 0,
+          "text": "The book shows using a unique identifier found in the log summary. It also shows analyzing the audit log file for multiple incidents."
+        },
+        {
+          "level": 0,
+          "text": "Example 1 — Inspect one incident:"
+        },
+        {
+          "level": 0,
+          "text": "sudo sealert -l YOUR-ALERT-ID"
+        },
+        {
+          "level": 0,
+          "text": "Replace YOUR-ALERT-ID with the actual identifier from your system."
+        },
+        {
+          "level": 0,
+          "text": "Example 2 — Analyze the audit log:"
+        },
+        {
+          "level": 0,
+          "text": "sudo sealert -a /var/log/audit/audit.log"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sealert — displays SELinux troubleshooting information."
+        },
+        {
+          "level": 0,
+          "text": "-l — looks up a particular alert by its identifier."
+        },
+        {
+          "level": 0,
+          "text": "-a — analyzes the specified log file."
+        },
+        {
+          "level": 0,
+          "text": "/var/log/audit/audit.log — the audit log being examined."
+        },
+        {
+          "level": 0,
+          "text": "The report can show the source context, target context, affected object, and possible explanations."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use sealert to understand an alert before deciding whether a context correction or another fix is appropriate."
+        }
+      ],
+      "words": 153
+    },
+    {
+      "title": "4.7 Understand the ausearch command",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: ausearch searches the audit log for events that match specified criteria."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The audit log can contain a large number of records. Rather than reading the entire file manually, ausearch lets you filter the information."
+        },
+        {
+          "level": 0,
+          "text": "The book demonstrates searching for AVC messages and limiting the results to recent events."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo ausearch -m AVC -ts recent"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "ausearch — searches audit records."
+        },
+        {
+          "level": 0,
+          "text": "-m AVC — selects AVC message types."
+        },
+        {
+          "level": 0,
+          "text": "-ts recent — selects recent events."
+        },
+        {
+          "level": 0,
+          "text": "sudo — runs the command with elevated privileges."
+        },
+        {
+          "level": 0,
+          "text": "Use the output to identify the process, the file or other resource, and the operation that was denied."
+        },
+        {
+          "level": 0,
+          "text": "Remember: ausearch helps locate the relevant audit evidence instead of forcing you to read every log entry."
+        }
+      ],
+      "words": 124
+    },
+    {
+      "title": "4.8 Correct an incorrect file context",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: When the evidence confirms that a file has the wrong label, use the configured context rules to correct it."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book demonstrates a file that was moved into Apache's web directory but retained an unsuitable context. The web server could not serve it."
+        },
+        {
+          "level": 0,
+          "text": "The recommended approach is to ensure a correct file-context rule exists and then run restorecon."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -v /var/www/html/file3"
+        },
+        {
+          "level": 0,
+          "text": "If the expected rule already exists, this command can restore the file's correct context."
+        },
+        {
+          "level": 0,
+          "text": "For a directory and its contents:"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -Rv /var/www/html/"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "restorecon — restores the expected context."
+        },
+        {
+          "level": 0,
+          "text": "-v — displays relabeling details."
+        },
+        {
+          "level": 0,
+          "text": "-R — processes the directory recursively."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/ — the directory being corrected."
+        },
+        {
+          "level": 0,
+          "text": "Do not use a generic label change without checking the expected policy. If the directory is non-standard, first define the appropriate persistent rule."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Correct a context according to the intended policy instead of granting broader access than necessary."
+        }
+      ],
+      "words": 157
+    },
+    {
+      "title": "4.9 Should you generate a custom SELinux policy?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Creating a custom policy is not the first solution to every SELinux denial."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Some troubleshooting reports may suggest generating a custom policy module. However, the book emphasizes checking whether the access is legitimate and whether the problem is simply an incorrect context."
+        },
+        {
+          "level": 0,
+          "text": "A custom policy can grant additional permissions. If the actual problem is a mislabeled file, adding permissions may hide the mistake and weaken security."
+        },
+        {
+          "level": 0,
+          "text": "First inspect the denial, verify the source and target contexts, and correct a labeling issue when that is the cause. Consider more advanced policy changes only when the evidence supports them and you understand their security impact."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "If Apache cannot serve /custom/index.html because the file has default_t instead of the expected web-content type, fix the file-context rule rather than immediately generating a policy module."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "default_t — the file's current type in this example."
+        },
+        {
+          "level": 0,
+          "text": "httpd_sys_content_t — the intended type for read-only web content."
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext — defines the persistent rule."
+        },
+        {
+          "level": 0,
+          "text": "restorecon — applies the expected label."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Do not create broader permissions to solve a problem that can be fixed by restoring the correct context."
+        }
+      ],
+      "words": 189
+    },
+    {
+      "title": "4.10 Troubleshoot SELinux using the Web Console",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The RHEL Web Console can display SELinux alerts and help you investigate their details."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book explains that, when Web Console is installed, its SELinux section can show the current policy information and detected access-control errors."
+        },
+        {
+          "level": 0,
+          "text": "You can open an error to inspect its details and possible solutions. After correcting the cause, check whether the alert remains."
+        },
+        {
+          "level": 0,
+          "text": "Example workflow:"
+        },
+        {
+          "level": 0,
+          "text": "Sign in to Web Console."
+        },
+        {
+          "level": 0,
+          "text": "Select the SELinux section."
+        },
+        {
+          "level": 0,
+          "text": "Find the relevant access-control error."
+        },
+        {
+          "level": 0,
+          "text": "Open the error details."
+        },
+        {
+          "level": 0,
+          "text": "Review the suggested explanation and possible solution."
+        },
+        {
+          "level": 0,
+          "text": "Correct the underlying issue and check the alerts again."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Web Console — a browser-based interface for administering a Linux system."
+        },
+        {
+          "level": 0,
+          "text": "SELinux Policy — the interface section for SELinux information."
+        },
+        {
+          "level": 0,
+          "text": "Access Control Errors — the area where detected access problems may be listed."
+        },
+        {
+          "level": 0,
+          "text": "The exact interface depends on the installed Web Console version and configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Web Console is another way to inspect SELinux problems; it does not replace understanding the underlying cause."
+        }
+      ],
+      "words": 164
+    },
+    {
+      "title": "4.11 Guided exercise — Investigating and Resolving SELinux Issues",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The exercise teaches you to diagnose a denied web request using logs and correct the underlying file context."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's exercise prepares a problem with a web directory called /custom. When you try to open the website, Apache returns an access-denied error."
+        },
+        {
+          "level": 0,
+          "text": "You inspect /var/log/messages for the alert identifier, use sealert to examine the incident, and use ausearch to find related audit records. The evidence identifies the Apache process and the file whose context is unsuitable."
+        },
+        {
+          "level": 0,
+          "text": "Example command sequence:"
+        },
+        {
+          "level": 0,
+          "text": "sudo less /var/log/messages"
+        },
+        {
+          "level": 0,
+          "text": "sudo sealert -l YOUR-ALERT-ID"
+        },
+        {
+          "level": 0,
+          "text": "sudo ausearch -m AVC -ts recent"
+        },
+        {
+          "level": 0,
+          "text": "After confirming that the file context is the problem, correct it:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage fcontext -a -t httpd_sys_content_t '/custom(/.*)?'"
+        },
+        {
+          "level": 0,
+          "text": "sudo restorecon -Rv /custom"
+        },
+        {
+          "level": 0,
+          "text": "Replace the placeholder alert ID with the actual value reported by your system."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "less — reads the system message log."
+        },
+        {
+          "level": 0,
+          "text": "sealert — explains the selected incident."
+        },
+        {
+          "level": 0,
+          "text": "ausearch — searches audit records."
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext — defines the persistent labeling rule."
+        },
+        {
+          "level": 0,
+          "text": "restorecon — applies the rule to the directory and its contents."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Diagnose the denial from the logs, identify the cause, fix the context, and test the website again."
+        }
+      ],
+      "words": 190
+    },
+    {
+      "title": "5.1 What is the purpose of the final lab?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The final lab combines SELinux troubleshooting skills to solve a real access-denied problem."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The book's final lab presents a web server that cannot deliver content while SELinux is enforcing. Your job is to inspect the problem and adjust the configuration correctly."
+        },
+        {
+          "level": 0,
+          "text": "The lab is intended to check that you can recognize relevant log messages, investigate the SELinux denial, and make the appropriate configuration change."
+        },
+        {
+          "level": 0,
+          "text": "The exact setup and task instructions belong to the book's training environment. On your own system, use equivalent paths and configuration only after checking what is actually installed."
+        },
+        {
+          "level": 0,
+          "text": "Example — Start by checking the mode:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "Then inspect the relevant web-server files and contexts:"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html"
+        },
+        {
+          "level": 0,
+          "text": "If the web server uses a non-standard directory, inspect that directory instead."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce — identifies the current SELinux mode."
+        },
+        {
+          "level": 0,
+          "text": "ls -Z — displays file labels."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html — the standard web-content directory in the book's examples."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The final lab tests whether you can investigate and correct the cause rather than simply disabling SELinux."
+        }
+      ],
+      "words": 172
+    },
+    {
+      "title": "5.2 A practical troubleshooting checklist",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use a repeatable sequence to investigate SELinux access problems."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "When a service cannot access a file, follow this order:"
+        },
+        {
+          "level": 0,
+          "text": "Confirm the service should have access to the resource."
+        },
+        {
+          "level": 0,
+          "text": "Check the service status and the normal file permissions."
+        },
+        {
+          "level": 0,
+          "text": "Check the file's SELinux context with ls -Z."
+        },
+        {
+          "level": 0,
+          "text": "Inspect recent SELinux denials with ausearch."
+        },
+        {
+          "level": 0,
+          "text": "Use sealert when available to understand the incident."
+        },
+        {
+          "level": 0,
+          "text": "If the context is wrong, define the correct rule when necessary and run restorecon."
+        },
+        {
+          "level": 0,
+          "text": "If the behavior is controlled by a Boolean, check its purpose and current state before changing it."
+        },
+        {
+          "level": 0,
+          "text": "Test the service again and confirm that the problem is resolved."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /custom"
+        },
+        {
+          "level": 0,
+          "text": "sudo ausearch -m AVC -ts recent"
+        },
+        {
+          "level": 0,
+          "text": "If evidence points to a context problem, review the matching semanage fcontext rule and use restorecon as appropriate."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce — checks whether SELinux is enforcing."
+        },
+        {
+          "level": 0,
+          "text": "ls -Z — displays security labels."
+        },
+        {
+          "level": 0,
+          "text": "ausearch -m AVC -ts recent — searches recent SELinux denial records."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Diagnose first, make the smallest appropriate change, and test the result."
+        }
+      ],
+      "words": 174
+    },
+    {
+      "title": "6.1 The four main ideas",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux administration in this chapter is about controlling enforcement, assigning correct labels, adjusting policy switches, and investigating denials."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "These four ideas fit together:"
+        },
+        {
+          "level": 0,
+          "text": "Enforcement mode: Determines whether SELinux blocks prohibited access or only reports violations."
+        },
+        {
+          "level": 0,
+          "text": "File contexts: Give resources the labels used by SELinux policy."
+        },
+        {
+          "level": 0,
+          "text": "Booleans: Enable or disable specific policy behaviors."
+        },
+        {
+          "level": 0,
+          "text": "Troubleshooting: Uses logs and diagnostic tools to identify why an action was denied."
+        },
+        {
+          "level": 0,
+          "text": "When a service fails, you should not immediately assume SELinux is the cause. Check the service, ordinary permissions, configuration, and logs as appropriate."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "For an Apache access problem, you might check:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status httpd"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "ls -Z /var/www/html"
+        },
+        {
+          "level": 0,
+          "text": "sudo ausearch -m AVC -ts recent"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status httpd — checks the web-server service."
+        },
+        {
+          "level": 0,
+          "text": "getenforce — checks the SELinux mode."
+        },
+        {
+          "level": 0,
+          "text": "ls -Z — displays file labels."
+        },
+        {
+          "level": 0,
+          "text": "ausearch — looks for relevant audit records."
+        },
+        {
+          "level": 0,
+          "text": "Remember: SELinux troubleshooting is a process of gathering evidence and correcting the specific cause."
+        }
+      ],
+      "words": 159
+    },
+    {
+      "title": "6.2 Important commands at a glance",
+      "content": [
         {
           "level": 0,
           "text": "Command"
@@ -487,363 +3115,265 @@
         },
         {
           "level": 0,
-          "text": "stratis pool create / filesystem create"
+          "text": "getenforce"
         },
         {
           "level": 0,
-          "text": "Build a Stratis pool and filesystem"
+          "text": "Display the current SELinux mode."
         },
         {
           "level": 0,
-          "text": "stratis filesystem snapshot"
+          "text": "setenforce 0"
         },
         {
           "level": 0,
-          "text": "Create an independent snapshot"
+          "text": "Switch the current mode to permissive."
         },
         {
           "level": 0,
-          "text": "vdo create --device= --vdoLogicalSize="
+          "text": "setenforce 1"
         },
         {
           "level": 0,
-          "text": "Create a VDO volume"
+          "text": "Switch the current mode to enforcing."
         },
         {
           "level": 0,
-          "text": "vdo status / vdo list / vdostats --verbose"
+          "text": "sudo vim /etc/selinux/config"
         },
         {
           "level": 0,
-          "text": "Inspect VDO volume health and real usage"
+          "text": "Edit the persistent SELinux configuration."
         },
         {
           "level": 0,
-          "text": "mount -t nfs -o opts server:/share mountpoint"
+          "text": "ls -Z PATH"
         },
         {
           "level": 0,
-          "text": "Manual NFS mount"
+          "text": "Display a file's SELinux context."
         },
         {
           "level": 0,
-          "text": "yum install autofs / systemctl enable --now autofs"
+          "text": "ls -Zd PATH"
         },
         {
           "level": 0,
-          "text": "Install and activate the automounter"
+          "text": "Display a directory's SELinux context."
         },
         {
           "level": 0,
-          "text": "/etc/auto.master.d/*.autofs"
+          "text": "ps axZ"
         },
         {
           "level": 0,
-          "text": "Master map — defines base dir → mapping file"
+          "text": "Display processes with SELinux contexts."
         },
         {
           "level": 0,
-          "text": "/etc/auto.NAME"
+          "text": "ps -ZC httpd"
         },
         {
           "level": 0,
-          "text": "Mapping file — defines mount point, options, source"
+          "text": "Display SELinux contexts for processes named httpd."
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext -l"
+        },
+        {
+          "level": 0,
+          "text": "List file-context rules."
+        },
+        {
+          "level": 0,
+          "text": "semanage fcontext -a -t TYPE 'PATH_PATTERN'"
+        },
+        {
+          "level": 0,
+          "text": "Add a persistent file-context rule."
+        },
+        {
+          "level": 0,
+          "text": "restorecon -v FILE"
+        },
+        {
+          "level": 0,
+          "text": "Restore the expected context of a file."
+        },
+        {
+          "level": 0,
+          "text": "restorecon -Rv DIRECTORY"
+        },
+        {
+          "level": 0,
+          "text": "Recursively restore expected contexts."
+        },
+        {
+          "level": 0,
+          "text": "chcon -t TYPE FILE"
+        },
+        {
+          "level": 0,
+          "text": "Directly change a file's current type."
+        },
+        {
+          "level": 0,
+          "text": "getsebool -a"
+        },
+        {
+          "level": 0,
+          "text": "List SELinux Booleans and their states."
+        },
+        {
+          "level": 0,
+          "text": "getsebool BOOLEAN"
+        },
+        {
+          "level": 0,
+          "text": "Check a specific Boolean."
+        },
+        {
+          "level": 0,
+          "text": "setsebool BOOLEAN on"
+        },
+        {
+          "level": 0,
+          "text": "Enable a Boolean for the running system."
+        },
+        {
+          "level": 0,
+          "text": "setsebool -P BOOLEAN on"
+        },
+        {
+          "level": 0,
+          "text": "Enable a Boolean persistently."
+        },
+        {
+          "level": 0,
+          "text": "semanage boolean -l"
+        },
+        {
+          "level": 0,
+          "text": "List Boolean information and descriptions."
+        },
+        {
+          "level": 0,
+          "text": "semanage boolean -l -C"
+        },
+        {
+          "level": 0,
+          "text": "List Boolean customizations that differ from defaults."
+        },
+        {
+          "level": 0,
+          "text": "ausearch -m AVC -ts recent"
+        },
+        {
+          "level": 0,
+          "text": "Search recent AVC audit records."
+        },
+        {
+          "level": 0,
+          "text": "sealert -l ALERT_ID"
+        },
+        {
+          "level": 0,
+          "text": "Display details for a particular alert."
+        },
+        {
+          "level": 0,
+          "text": "sealert -a /var/log/audit/audit.log"
+        },
+        {
+          "level": 0,
+          "text": "Analyze the audit log for SELinux incidents."
+        },
+        {
+          "level": 0,
+          "text": "man -k '_selinux'"
+        },
+        {
+          "level": 0,
+          "text": "Search manual-page descriptions for SELinux-related entries."
         }
       ],
-      "words": 466
-    }
-  ],
-  "labs": [
+      "words": 198
+    },
     {
-      "title": "Lab: Advanced Storage + Automounted NFS",
-      "content": [
-        {
-          "level": 3,
-          "text": "Objective"
-        },
-        {
-          "level": 0,
-          "text": "Build a Stratis-backed filesystem with correct boot-safe persistence, and configure an indirect autofs wildcard map for an NFS export."
-        },
-        {
-          "level": 3,
-          "text": "Scenario"
-        },
-        {
-          "level": 0,
-          "text": "Your team wants a quick, easy-to-grow filesystem for build artifacts using Stratis (rather than the multi-step LVM dance from Part 4). Separately, a shared NFS server (serverb) exports several per-team subdirectories under /shares, and you want any of them automatically available under /shares/<team> on demand, without hand-configuring each one."
-        },
-        {
-          "level": 3,
-          "text": "Environment"
-        },
-        {
-          "level": 0,
-          "text": "One RHEL 8 VM with an unused virtual disk /dev/vdc for Stratis, sudo access"
-        },
-        {
-          "level": 0,
-          "text": "An NFS server named serverb exporting /shares/dev, /shares/qa, /shares/ops with matching permissions"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part A (Stratis)"
-        },
-        {
-          "level": 0,
-          "text": "1. Install and enable stratisd, create a pool named buildpool from /dev/vdc"
-        },
-        {
-          "level": 0,
-          "text": "2. Create a filesystem named artifacts inside that pool"
-        },
-        {
-          "level": 0,
-          "text": "3. Add a persistent /etc/fstab entry for it that will NOT put the machine into emergency mode on reboot"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part B (autofs)"
-        },
-        {
-          "level": 0,
-          "text": "1. Install and enable autofs"
-        },
-        {
-          "level": 0,
-          "text": "2. Configure an indirect WILDCARD map so /shares/dev, /shares/qa, /shares/ops (and any future team directory) all automount without editing config again"
-        },
-        {
-          "level": 0,
-          "text": "3. Verify by accessing one of the paths and confirming it mounts on demand"
-        },
-        {
-          "level": 3,
-          "text": "Hint"
-        },
-        {
-          "level": 0,
-          "text": "Part A: the fstab mount option that prevents the emergency-boot problem was covered in Section 5.1 — it's not optional. Part B: a wildcard map uses * as the key and & to echo that match into the source path, exactly once per line."
-        },
-        {
-          "level": 3,
-          "text": "Checkpoint"
-        },
-        {
-          "level": 0,
-          "text": "Before checking the solution: if you rebooted right now, would the Stratis filesystem mount cleanly, or would the machine drop to emergency mode? If you're not 100% sure, re-check your fstab line against Section 5.1 before moving on — this is not a mistake you want to make on real hardware."
-        },
-        {
-          "level": 3,
-          "text": "Solution"
-        },
-        {
-          "level": 0,
-          "text": "# Part A — Stratis"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# yum install stratis-cli stratisd -y"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# systemctl enable --now stratisd"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# stratis pool create buildpool /dev/vdc"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# stratis filesystem create buildpool artifacts"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lsblk --output=UUID /stratis/buildpool/artifacts"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# echo 'UUID=<uuid> /build xfs defaults,x-systemd.requires=stratisd.service 0 0' >> /etc/fstab"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mkdir /build && systemctl daemon-reload && mount /build"
-        },
-        {
-          "level": 0,
-          "text": "# Part B — autofs"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# yum install autofs -y"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# echo '/shares /etc/auto.teams' > /etc/auto.master.d/teams.autofs"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# echo '* -rw,sync serverb:/shares/&' > /etc/auto.teams"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# systemctl enable --now autofs"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# ls /shares/dev # triggers on-demand mount"
-        },
-        {
-          "level": 3,
-          "text": "Explanation"
-        },
-        {
-          "level": 0,
-          "text": "x-systemd.requires=stratisd.service is the whole reason this fstab entry is safe — it tells systemd to wait for stratisd before attempting the mount, avoiding the emergency-boot trap."
-        },
-        {
-          "level": 0,
-          "text": "The wildcard map's single line (* serverb:/shares/&) covers dev, qa, ops, and any future team directory the NFS server adds — no autofs config change needed when a new team shows up."
-        },
-        {
-          "level": 0,
-          "text": "ls /shares/dev is what actually triggers the mount — autofs mounts are lazy, so nothing happens until the path is accessed."
-        },
-        {
-          "level": 3,
-          "text": "Verification"
-        },
-        {
-          "level": 0,
-          "text": "mount | grep stratis and mount | grep shares/dev should both show active mounts. Waiting past the idle timeout and checking mount again should show the autofs entry gone (unmounted automatically) while the Stratis mount remains — the key behavioral difference between the two."
-        },
-        {
-          "level": 3,
-          "text": "Real-world note"
-        },
-        {
-          "level": 0,
-          "text": "This pairing — an easy-to-grow local filesystem for build output, plus on-demand NFS for shared team resources — is a genuinely common CI/build-server pattern. Stratis in particular is worth knowing even outside the exam: as Red Hat continues investing in it, it's positioned as the long-term easier alternative to hand-managing LVM for straightforward cases."
-        }
-      ]
-    }
-  ],
-  "quizzes": [
-    {
-      "title": "Quiz: Part 5 Checkpoint",
+      "title": "6.3 Symbols and options to remember",
       "content": [
         {
           "level": 0,
-          "text": "Q1. What's the core difference in what problem Stratis solves versus what problem VDO solves?"
+          "text": "-Z — show SELinux context information with supported commands."
         },
         {
           "level": 0,
-          "text": "Answer: Stratis makes storage management SIMPLER (combining pool/volume/filesystem management into one tool); VDO makes existing storage go FURTHER (compression and deduplication) — they solve different problems and can even be combined."
+          "text": "-R — process a directory recursively."
         },
         {
           "level": 0,
-          "text": "Q2. What critical mount option must a Stratis fstab entry include, and what happens if you omit it?"
+          "text": "-v — display additional operation details."
         },
         {
           "level": 0,
-          "text": "Answer: x-systemd.requires=stratisd.service — without it, the machine boots to emergency.target because systemd tries to mount before stratisd is running."
+          "text": "-t — specify the SELinux type in the relevant command."
         },
         {
           "level": 0,
-          "text": "Q3. Name VDO's three data-reduction phases in order."
+          "text": "-a — add a file-context rule with semanage fcontext, or analyze a log with sealert; the meaning depends on the command."
         },
         {
           "level": 0,
-          "text": "Answer: Zero-Block Elimination, Deduplication, Compression."
+          "text": "-l — list information with semanage, or look up a specific alert with sealert; the meaning depends on the command."
         },
         {
           "level": 0,
-          "text": "Q4. Why must you monitor vdostats --verbose on a thinly-provisioned VDO volume?"
+          "text": "-P — make a Boolean change persistent with setsebool."
         },
         {
           "level": 0,
-          "text": "Answer: The logical size can exceed physical size — real usage can approach the physical limit even while the filesystem still reports free logical space."
+          "text": "| — send the output of one command into another command."
         },
         {
           "level": 0,
-          "text": "Q5. What's the default NFS version in RHEL 8, and what transport protocol does it use exclusively?"
+          "text": "> — redirect normal output to a file, replacing the file's existing contents."
         },
         {
           "level": 0,
-          "text": "Answer: NFSv4.2, using TCP only (unlike older NFS versions which could also use UDP)."
+          "text": ": — separates fields inside an SELinux context."
         },
         {
           "level": 0,
-          "text": "Q6. Does an NFS client need the mount point directory to already exist before mounting?"
+          "text": "* — in the file-context pattern, matches zero or more occurrences of the preceding pattern."
         },
         {
           "level": 0,
-          "text": "Answer: Yes — unlike autofs, a manual or fstab NFS mount requires the local mount point directory to already exist."
+          "text": "? — in the pattern (/.*)?, makes the grouped part optional."
         },
         {
           "level": 0,
-          "text": "Q7. Name three benefits of using autofs over a permanent /etc/fstab NFS mount."
-        },
-        {
-          "level": 0,
-          "text": "Answer: Any three of: no root required for regular users, mounts only exist when actually in use (saving resources), mount points are created/removed automatically, entirely client-side configuration."
-        },
-        {
-          "level": 0,
-          "text": "Q8. What master map entry marks a mapping file as using DIRECT maps rather than indirect?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: /- (a literal slash-dash) as the base directory."
-        },
-        {
-          "level": 0,
-          "text": "Q9. In the wildcard map line * -rw,sync serverb:/shares/&, what does the & do?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: It substitutes whatever name matched the * wildcard into the source path — so accessing /shares/dev maps to serverb:/shares/dev automatically."
-        },
-        {
-          "level": 0,
-          "text": "Q10. Why is autofs generally preferred over a plain fstab entry for NFS shares that aren't used constantly?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: It avoids tying up a permanent network connection and system resources for a share that's only occasionally needed, and avoids commands hanging if the NFS server becomes unreachable while the share sits unused."
-        },
-        {
-          "level": 0,
-          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
-        },
-        {
-          "level": 0,
-          "text": "PART 6: THE BOOT PROCESS + NETWORK SECURITY"
-        },
-        {
-          "level": 0,
-          "text": "This Part covers RH134 Chapter 10 (Controlling the Boot Process) and Chapter 11 (Managing Network Security). Both chapters are about the moments admins dread most: a system that won't boot, and a firewall that's blocking something it shouldn't (or letting through something it should block)."
-        },
-        {
-          "level": 0,
-          "text": "💡 WHY THIS MATTERS Root password recovery and fstab boot-failure repair are hands-on RHCSA tasks, not theory — you will be asked to actually fix a broken boot on the exam. firewalld and SELinux port labeling are the natural conclusion of Part 3's SELinux material: a service can have correct permissions, correct SELinux file context, AND still fail — because the firewall or the SELinux port label is wrong. This Part closes that loop."
+          "text": "Single quotes ('...') — keep the pattern together as one shell argument."
         }
-      ]
-    }
-  ],
-  "services": [
-    {
-      "id": "rhel-service-nfs",
-      "why": "Advanced Storage + Automounted NFS"
+      ],
+      "words": 151
     },
     {
-      "id": "rhel-service-samba-smb",
-      "why": "Advanced Storage — network file services"
-    },
-    {
-      "id": "rhel-service-autofs",
-      "why": "Advanced Storage + Automounted NFS"
+      "title": "Final memory rule",
+      "content": [
+        {
+          "level": 0,
+          "text": "Check the mode → inspect the context → understand the policy → read the denial → apply the smallest correct fix."
+        },
+        {
+          "level": 0,
+          "text": "That is the core skill of Chapter 5: use SELinux as an additional layer of protection, and learn to diagnose its decisions instead of disabling that protection whenever something fails."
+        }
+      ],
+      "words": 51
     }
   ],
-  "currency": []
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
 }

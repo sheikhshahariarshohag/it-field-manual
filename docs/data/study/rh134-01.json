@@ -2,260 +2,454 @@
   "id": "rh134-01",
   "n": 1,
   "sourceNumber": 1,
-  "kind": "part",
-  "title": "Part 1",
-  "display": "Part 1 — Writing Simple Bash Scripts; Running Commands More Efficien…",
+  "kind": "chapter",
+  "title": "Chapter 1 — Improving Command-Line Productivity",
+  "display": "Chapter 1 — Improving Command-Line Productivity",
   "exam": "RHCSA (EX200)",
-  "words": 2743,
+  "words": 6163,
   "sections": [
     {
-      "title": "1. Writing Simple Bash Scripts",
+      "title": "Overview",
       "content": [
         {
-          "level": 2,
-          "text": "What a shell script actually is"
+          "level": 0,
+          "text": "Based on the supplied RH134 course material (RH134) book, Chapter 1, pages 1–36."
         },
         {
           "level": 0,
-          "text": "A shell script is just a text file containing a sequence of commands you'd otherwise type one at a time. Instead of running five commands by hand every time you provision a server, you write them once into a file and run the file. The shell reads the file line by line and executes each line exactly as if you'd typed it at the prompt."
+          "text": "The goal of this chapter is simple: learn how to make Linux perform repetitive tasks automatically, make decisions, and find important information quickly."
         },
         {
           "level": 0,
-          "text": "The value isn't the individual commands — you already know those from RH124. The value is repeatability: the same five commands, run the same way, every single time, with zero chance of forgetting a step or fat-fingering an option under pressure."
-        },
-        {
-          "level": 2,
-          "text": "The shebang: telling Linux which interpreter to use"
+          "text": "The book divides the chapter into three main topics:"
         },
         {
           "level": 0,
-          "text": "The first line of a script tells the kernel which program should interpret the rest of the file. This line is called the shebang (from \"hash-bang\" — the # and ! characters)."
+          "text": "Writing Simple Bash Scripts"
         },
         {
           "level": 0,
-          "text": "#!/bin/bash"
+          "text": "Running Commands More Efficiently Using Loops"
         },
         {
           "level": 0,
-          "text": "echo \"Hello, world\""
+          "text": "Matching Text in Command Output with Regular Expressions"
         },
         {
           "level": 0,
-          "text": "Without a shebang, the script would be interpreted by whatever shell happens to be running it — which is a portability trap. Always start scripts with an explicit shebang."
+          "text": "We will follow this order, including the main concepts and practical examples. At the end, we will connect all three topics into one system administration task."
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL You must be able to write, save, make executable (chmod +x), and run a Bash script from memory. This exact sequence shows up directly on the RHCSA exam."
-        },
-        {
-          "level": 3,
-          "text": "Making a script executable and running it"
+          "text": "Topic 1: Writing Simple Bash Scripts"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ vim myscript.sh"
+          "text": "Topic 2: Running Commands More Efficiently Using Loops"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ chmod +x myscript.sh"
+          "text": "Topic 3: Matching Text in Command Output with Regular Expressions"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ ./myscript.sh"
-        },
-        {
-          "level": 0,
-          "text": "The ./ matters. Linux does not search the current directory for commands by default (unlike some other operating systems), so a bare myscript.sh will usually fail with \"command not found\" unless your current directory happens to be in your PATH — which it normally isn't and shouldn't be. You can also skip the chmod entirely and hand the file straight to the interpreter:"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ bash myscript.sh"
-        },
-        {
-          "level": 0,
-          "text": "✗ COMMON MISTAKE Forgetting chmod +x, then trying ./script.sh and getting \"Permission denied.\" The execute bit and the shebang are two separate requirements — you need both to run a script as ./script.sh."
-        },
-        {
-          "level": 2,
-          "text": "Quoting: controlling how the shell interprets special characters"
-        },
-        {
-          "level": 0,
-          "text": "Bash treats certain characters as special: $ for variables, * for globbing, spaces as word separators, and so on. Quoting lets you turn that special meaning off when you want the literal character instead."
-        },
-        {
-          "level": 0,
-          "text": "Quoting method"
-        },
-        {
-          "level": 0,
-          "text": "Effect"
-        },
-        {
-          "level": 0,
-          "text": "Backslash \\X"
-        },
-        {
-          "level": 0,
-          "text": "Escapes a single character — removes its special meaning"
-        },
-        {
-          "level": 0,
-          "text": "Single quotes 'text'"
-        },
-        {
-          "level": 0,
-          "text": "Suppresses ALL special meaning inside — even $ and backticks are literal"
-        },
-        {
-          "level": 0,
-          "text": "Double quotes \"text\""
-        },
-        {
-          "level": 0,
-          "text": "Suppresses globbing and word-splitting, but still expands $variables and `commands`"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ NAME=Sheikh"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ echo 'Hello, $NAME'"
-        },
-        {
-          "level": 0,
-          "text": "Hello, $NAME"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ echo \"Hello, $NAME\""
-        },
-        {
-          "level": 0,
-          "text": "Hello, Sheikh"
-        },
-        {
-          "level": 0,
-          "text": "💡 WHY THIS MATTERS This distinction trips up almost everyone at least once. When a script isn't substituting a variable and you can't figure out why — check whether it's wrapped in single quotes. This is the single most common source of \"my script prints the wrong thing\" bugs."
-        },
-        {
-          "level": 2,
-          "text": "Producing output from a script"
-        },
-        {
-          "level": 0,
-          "text": "echo is the simplest way to print output. It's used constantly for status messages, confirmations, and debugging."
-        },
-        {
-          "level": 0,
-          "text": "echo \"Starting backup of /var/www...\""
-        },
-        {
-          "level": 0,
-          "text": "echo \"Backup complete. Exit code: $?\""
-        },
-        {
-          "level": 0,
-          "text": "🔎 REAL-WORLD EXTENSION printf gives you more control over formatting (padding, decimal places, no automatic trailing newline) and is worth knowing for real-world scripting, but RH134 focuses on echo — that's what the exam expects."
-        },
-        {
-          "level": 3,
-          "text": "Command Reference — Section 1.1"
-        },
-        {
-          "level": 0,
-          "text": "Command / Syntax"
-        },
-        {
-          "level": 0,
-          "text": "Purpose"
-        },
-        {
-          "level": 0,
-          "text": "Verify / Notes"
-        },
-        {
-          "level": 0,
-          "text": "#!/bin/bash"
-        },
-        {
-          "level": 0,
-          "text": "Shebang — declares the interpreter for the script"
-        },
-        {
-          "level": 0,
-          "text": "Must be the very first line, no leading blank lines"
-        },
-        {
-          "level": 0,
-          "text": "chmod +x file.sh"
-        },
-        {
-          "level": 0,
-          "text": "Adds execute permission"
-        },
-        {
-          "level": 0,
-          "text": "ls -l file.sh — look for the x bits"
-        },
-        {
-          "level": 0,
-          "text": "./file.sh"
-        },
-        {
-          "level": 0,
-          "text": "Runs an executable script in the current directory"
-        },
-        {
-          "level": 0,
-          "text": "Requires +x and a valid shebang"
-        },
-        {
-          "level": 0,
-          "text": "bash file.sh"
-        },
-        {
-          "level": 0,
-          "text": "Runs a script by explicitly invoking the interpreter"
-        },
-        {
-          "level": 0,
-          "text": "Works even without +x set"
-        },
-        {
-          "level": 0,
-          "text": "echo \"text\""
-        },
-        {
-          "level": 0,
-          "text": "Prints text to standard output"
-        },
-        {
-          "level": 0,
-          "text": "Use double quotes to allow variable expansion"
+          "text": "Connecting the entire chapter"
         }
       ],
-      "words": 644
+      "words": 117
     },
     {
-      "title": "2. Running Commands More Efficiently Using Loops",
+      "title": "1.1 Creating and executing Bash shell scripts",
       "content": [
         {
-          "level": 2,
-          "text": "The for loop"
+          "level": 0,
+          "text": "Main idea: A Bash script is a text file containing commands that Linux can execute in sequence."
         },
         {
           "level": 0,
-          "text": "System administration is full of repetition: check ten servers, restart three services, process every file in a directory. The for loop runs the same block of commands once per item in a list."
+          "text": "Simple explanation: Imagine checking a server manually every morning. You run lsblk, then df -h, then check other information. A script is like a checklist that performs these commands for you."
         },
         {
           "level": 0,
-          "text": "for VARIABLE in LIST; do"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "COMMAND $VARIABLE"
+          "text": "Create a file named firstscript.sh:"
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Server report\""
+        },
+        {
+          "level": 0,
+          "text": "date"
+        },
+        {
+          "level": 0,
+          "text": "df -h"
+        },
+        {
+          "level": 0,
+          "text": "Run it:"
+        },
+        {
+          "level": 0,
+          "text": "bash firstscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash — tells Linux which command interpreter should run the script when it is executed directly."
+        },
+        {
+          "level": 0,
+          "text": "echo — displays a message."
+        },
+        {
+          "level": 0,
+          "text": "date — displays the current date and time."
+        },
+        {
+          "level": 0,
+          "text": "df -h — displays filesystem space in readable units, such as GB."
+        },
+        {
+          "level": 0,
+          "text": "bash firstscript.sh — asks Bash to read and execute the commands in the file."
+        },
+        {
+          "level": 0,
+          "text": "Linux runs the commands from top to bottom. You write the commands once and can run them whenever needed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A script turns a list of commands into a reusable task."
+        }
+      ],
+      "words": 155
+    },
+    {
+      "title": "1.2 Specifying the command interpreter",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The first line tells Linux which interpreter should understand the script."
+        },
+        {
+          "level": 0,
+          "text": "The book calls #! the shebang. Think of it as a label telling Linux which tool should read the instructions."
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "#! — identifies the interpreter instruction."
+        },
+        {
+          "level": 0,
+          "text": "/bin/bash — the location of the Bash interpreter."
+        },
+        {
+          "level": 0,
+          "text": "Without the correct interpreter, a script might not be processed as intended when executed directly."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The shebang identifies the interpreter for your script."
+        }
+      ],
+      "words": 72
+    },
+    {
+      "title": "1.3 Executing a Bash shell script",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: To run a script directly like an ordinary command, it needs execute permission."
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "chmod u+x firstscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "./firstscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "chmod — changes file permissions."
+        },
+        {
+          "level": 0,
+          "text": "u+x — adds execute permission for the file's owner."
+        },
+        {
+          "level": 0,
+          "text": "./ — tells Linux to look for the script in the current directory."
+        },
+        {
+          "level": 0,
+          "text": "firstscript.sh — the script to execute."
+        },
+        {
+          "level": 0,
+          "text": "There are two common ways to run it:"
+        },
+        {
+          "level": 0,
+          "text": "bash firstscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "./firstscript.sh"
+        },
+        {
+          "level": 0,
+          "text": "The first explicitly starts Bash to read the file. The second executes the script directly, requiring suitable execute permission and a valid interpreter line."
+        },
+        {
+          "level": 0,
+          "text": "The book also introduces PATH, the list of directories Bash searches when you type a command name."
+        },
+        {
+          "level": 0,
+          "text": "echo \"$PATH\""
+        },
+        {
+          "level": 0,
+          "text": "which bash"
+        },
+        {
+          "level": 0,
+          "text": "echo \"$PATH\" — displays the directories in PATH."
+        },
+        {
+          "level": 0,
+          "text": "which bash — shows the location of the Bash executable found through the command search path."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use bash script.sh to run through Bash, or ./script.sh to execute the script directly."
+        }
+      ],
+      "words": 153
+    },
+    {
+      "title": "1.4 Quoting special characters",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Quotes and backslashes help Bash understand whether a character is an instruction or ordinary text."
+        },
+        {
+          "level": 0,
+          "text": "Bash gives special meaning to characters such as #, $, *, and ?. Sometimes you want to display those characters instead of letting Bash interpret them."
+        },
+        {
+          "level": 0,
+          "text": "Think of quotation marks as putting a protective cover around text."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "echo '# not a comment'"
+        },
+        {
+          "level": 0,
+          "text": "echo \"My username is $USER\""
+        },
+        {
+          "level": 0,
+          "text": "echo 'My username is $USER'"
+        },
+        {
+          "level": 0,
+          "text": "What happens:"
+        },
+        {
+          "level": 0,
+          "text": "echo '# not a comment' displays # not a comment."
+        },
+        {
+          "level": 0,
+          "text": "echo \"My username is $USER\" displays the value stored in USER."
+        },
+        {
+          "level": 0,
+          "text": "echo 'My username is $USER' displays $USER literally."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "Single quotes ' ' — preserve the enclosed text literally."
+        },
+        {
+          "level": 0,
+          "text": "Double quotes \" \" — allow variable and command substitution but prevent many unwanted expansions."
+        },
+        {
+          "level": 0,
+          "text": "Backslash \\ — protects the special meaning of the character immediately after it."
+        },
+        {
+          "level": 0,
+          "text": "$USER — accesses the value stored in the USER variable."
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "echo \\$USER"
+        },
+        {
+          "level": 0,
+          "text": "This displays $USER instead of your username."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Single quotes preserve text literally; double quotes allow variables to be expanded."
+        }
+      ],
+      "words": 177
+    },
+    {
+      "title": "1.5 Providing output from a shell script",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A script can display messages, send errors separately, and save its output to files."
+        },
+        {
+          "level": 0,
+          "text": "Imagine a server report with two types of information: normal results and error messages. Linux provides separate output channels for these."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "#!/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Server report\""
+        },
+        {
+          "level": 0,
+          "text": "echo \"ERROR: Check the service\" >&2"
+        },
+        {
+          "level": 0,
+          "text": "Run it with:"
+        },
+        {
+          "level": 0,
+          "text": "bash report.sh 2> errors.log"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Server report\" — sends normal output to standard output, called STDOUT."
+        },
+        {
+          "level": 0,
+          "text": ">&2 — sends the error message to standard error, called STDERR."
+        },
+        {
+          "level": 0,
+          "text": "2> — redirects standard error into a file."
+        },
+        {
+          "level": 0,
+          "text": "errors.log — stores the error message."
+        },
+        {
+          "level": 0,
+          "text": "The terminal displays Server report, while errors.log contains the error message."
+        },
+        {
+          "level": 0,
+          "text": "The book also shows how to save normal output using > and add more output using >>."
+        },
+        {
+          "level": 0,
+          "text": "echo \"First line\" > report.txt"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Second line\" >> report.txt"
+        },
+        {
+          "level": 0,
+          "text": "> creates or overwrites the file; >> adds to the end."
+        },
+        {
+          "level": 0,
+          "text": "Remember: STDOUT is for normal results, STDERR is for errors, and redirection controls where they go."
+        }
+      ],
+      "words": 161
+    },
+    {
+      "title": "2.1 Using loops to repeat commands",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A loop repeats commands for multiple items without requiring you to type the same command repeatedly."
+        },
+        {
+          "level": 0,
+          "text": "Imagine checking the hostname of five servers. You could run the command five times, or give Bash a list of server names and let it repeat the task."
+        },
+        {
+          "level": 0,
+          "text": "The book introduces the for loop."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "for HOST in servera serverb serverc"
+        },
+        {
+          "level": 0,
+          "text": "do"
+        },
+        {
+          "level": 0,
+          "text": "echo \"$HOST\""
         },
         {
           "level": 0,
@@ -263,63 +457,269 @@
         },
         {
           "level": 0,
-          "text": "The list can come from several sources, and this flexibility is the actual skill here — knowing which expansion to reach for."
+          "text": "Output:"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ for HOST in host1 host2 host3; do echo $HOST; done"
+          "text": "servera"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ for HOST in host{1..3}; do echo $HOST; done # brace expansion"
+          "text": "serverb"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ for FILE in file*; do ls $FILE; done # file-name (glob) expansion"
+          "text": "serverc"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ for EVEN in $(seq 2 2 10); do echo $EVEN; done # command substitution"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Brace expansion (host{1..3}) and command substitution ($(seq ...)) inside a for loop are both fair game on the exam. Know the difference between generating a list with braces versus generating one from a command's output."
-        },
-        {
-          "level": 2,
-          "text": "Exit codes: how a command reports success or failure"
+          "text": "for — starts the loop."
         },
         {
           "level": 0,
-          "text": "Every command that finishes returns a number to whatever called it — the exit code. Zero means success. Anything else means some kind of failure, and different nonzero values can mean different specific failures."
+          "text": "HOST — a variable that temporarily holds one item."
         },
         {
           "level": 0,
-          "text": "[user@host bin]$ cat hello"
+          "text": "in — introduces the list of items."
         },
         {
           "level": 0,
-          "text": "#!/bin/bash"
+          "text": "do — begins the commands to repeat."
         },
         {
           "level": 0,
-          "text": "echo \"Hello, world\""
+          "text": "echo \"$HOST\" — displays the current item."
         },
         {
           "level": 0,
-          "text": "exit 0"
+          "text": "done — marks the end of the loop."
         },
         {
           "level": 0,
-          "text": "[user@host bin]$ ./hello"
+          "text": "Bash runs the commands once for each item. First, HOST contains servera, then serverb, then serverc."
         },
         {
           "level": 0,
-          "text": "Hello, world"
+          "text": "Remember: A for loop takes a list, handles one item at a time, and repeats the same commands."
+        }
+      ],
+      "words": 148
+    },
+    {
+      "title": "2.2 Providing lists to a loop",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A loop's list can be typed manually or generated by Bash."
         },
         {
           "level": 0,
-          "text": "[user@host bin]$ echo $?"
+          "text": "The book demonstrates several ways to create lists."
+        },
+        {
+          "level": 0,
+          "text": "Example 1 — Type the items directly:"
+        },
+        {
+          "level": 0,
+          "text": "for HOST in servera serverb serverc"
+        },
+        {
+          "level": 0,
+          "text": "do"
+        },
+        {
+          "level": 0,
+          "text": "echo \"$HOST\""
+        },
+        {
+          "level": 0,
+          "text": "done"
+        },
+        {
+          "level": 0,
+          "text": "Example 2 — Use brace expansion:"
+        },
+        {
+          "level": 0,
+          "text": "for HOST in server{a,b,c}"
+        },
+        {
+          "level": 0,
+          "text": "do"
+        },
+        {
+          "level": 0,
+          "text": "echo \"$HOST\""
+        },
+        {
+          "level": 0,
+          "text": "done"
+        },
+        {
+          "level": 0,
+          "text": "Example 3 — Generate a numbered list:"
+        },
+        {
+          "level": 0,
+          "text": "for NUM in {1..3}"
+        },
+        {
+          "level": 0,
+          "text": "do"
+        },
+        {
+          "level": 0,
+          "text": "echo \"$NUM\""
+        },
+        {
+          "level": 0,
+          "text": "done"
+        },
+        {
+          "level": 0,
+          "text": "The last example displays 1, 2, and 3."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "{a,b,c} — produces the listed alternatives."
+        },
+        {
+          "level": 0,
+          "text": "{1..3} — produces a sequence from 1 to 3."
+        },
+        {
+          "level": 0,
+          "text": "$NUM — retrieves the current value of the variable."
+        },
+        {
+          "level": 0,
+          "text": "The book also demonstrates filename expansion, such as file*, and command substitution, which uses the output of another command to generate list items."
+        },
+        {
+          "level": 0,
+          "text": "Remember: You do not always need to type every list item manually; Bash can generate the list."
+        }
+      ],
+      "words": 143
+    },
+    {
+      "title": "2.3 Using loops to check multiple servers",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Loops become especially useful when combined with real administration commands."
+        },
+        {
+          "level": 0,
+          "text": "The book's guided exercise uses SSH to obtain hostnames from multiple servers."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "for HOST in servera serverb"
+        },
+        {
+          "level": 0,
+          "text": "do"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@\"$HOST\" hostname"
+        },
+        {
+          "level": 0,
+          "text": "done"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "serverb.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "HOST — holds the current server name."
+        },
+        {
+          "level": 0,
+          "text": "ssh — connects to a remote server."
+        },
+        {
+          "level": 0,
+          "text": "student@\"$HOST\" — connects as user student to the server stored in HOST."
+        },
+        {
+          "level": 0,
+          "text": "hostname — asks the remote server to display its hostname."
+        },
+        {
+          "level": 0,
+          "text": "done — ends the loop."
+        },
+        {
+          "level": 0,
+          "text": "Instead of manually connecting to each server and typing hostname, the loop handles both servers automatically."
+        },
+        {
+          "level": 0,
+          "text": "The book then extends this idea by putting the loop inside a script, allowing you to reuse the same process later."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A loop combined with SSH can automate the same administrative check across many servers."
+        }
+      ],
+      "words": 136
+    },
+    {
+      "title": "2.4 Understanding exit codes",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An exit code tells you whether a command or script completed successfully."
+        },
+        {
+          "level": 0,
+          "text": "Imagine a command returns a small result card after finishing: 0 means success, while a nonzero number indicates failure."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "ls /etc"
+        },
+        {
+          "level": 0,
+          "text": "echo $?"
+        },
+        {
+          "level": 0,
+          "text": "The first command lists /etc. If it succeeds, the second command normally displays:"
         },
         {
           "level": 0,
@@ -327,23 +727,93 @@
         },
         {
           "level": 0,
-          "text": "$? always holds the exit code of the last command that ran — check it immediately, because the next command you run overwrites it."
+          "text": "Now try:"
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS Exit codes are the entire foundation of scripted decision-making. Every if statement, every && and ||, every Ansible task's success/failure logic ultimately comes down to reading a 0-or-nonzero exit code."
-        },
-        {
-          "level": 2,
-          "text": "Testing conditions with test / [ ] / [[ ]]"
+          "text": "ls /directory-that-does-not-exist"
         },
         {
           "level": 0,
-          "text": "The test command (usually written as [ condition ]) evaluates a condition and returns an exit code — 0 if true, 1 if false. The newer [[ condition ]] extended syntax does the same thing but also supports glob and regex pattern matching."
+          "text": "echo $?"
         },
         {
           "level": 0,
-          "text": "Category"
+          "text": "The second command will display a nonzero exit code."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "echo — displays a value."
+        },
+        {
+          "level": 0,
+          "text": "$? — contains the exit code of the most recently executed command."
+        },
+        {
+          "level": 0,
+          "text": "exit 0 — ends a script and reports success."
+        },
+        {
+          "level": 0,
+          "text": "exit 1 — ends a script and reports a failure status."
+        },
+        {
+          "level": 0,
+          "text": "A critical detail: check $? immediately after the command you want to evaluate. Running another command first changes the value."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Exit code 0 means success; a nonzero exit code means something did not succeed."
+        }
+      ],
+      "words": 143
+    },
+    {
+      "title": "2.5 Testing conditions with operators",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Tests let Bash compare values and determine whether a condition is true or false."
+        },
+        {
+          "level": 0,
+          "text": "Imagine checking whether a disk has more than 10 GB of free space. Before deciding what to do, you need a way to compare values."
+        },
+        {
+          "level": 0,
+          "text": "The book introduces Bash's test command and its bracket forms."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "[ 8 -gt 2 ]"
+        },
+        {
+          "level": 0,
+          "text": "echo $?"
+        },
+        {
+          "level": 0,
+          "text": "Output:"
+        },
+        {
+          "level": 0,
+          "text": "0"
+        },
+        {
+          "level": 0,
+          "text": "The test succeeds because 8 is greater than 2."
+        },
+        {
+          "level": 0,
+          "text": "Important comparison operators from the book:"
         },
         {
           "level": 0,
@@ -355,55 +825,59 @@
         },
         {
           "level": 0,
-          "text": "Numeric"
+          "text": "-eq"
         },
         {
           "level": 0,
-          "text": "-eq / -ne"
+          "text": "Equal to"
         },
         {
           "level": 0,
-          "text": "equal to / not equal to"
+          "text": "-ne"
         },
         {
           "level": 0,
-          "text": "Numeric"
+          "text": "Not equal to"
         },
         {
           "level": 0,
-          "text": "-gt / -ge"
+          "text": "-gt"
         },
         {
           "level": 0,
-          "text": "greater than / greater than or equal to"
+          "text": "Greater than"
         },
         {
           "level": 0,
-          "text": "Numeric"
+          "text": "-ge"
         },
         {
           "level": 0,
-          "text": "-lt / -le"
+          "text": "Greater than or equal to"
         },
         {
           "level": 0,
-          "text": "less than / less than or equal to"
+          "text": "-lt"
         },
         {
           "level": 0,
-          "text": "String"
+          "text": "Less than"
         },
         {
           "level": 0,
-          "text": "= / =="
+          "text": "-le"
         },
         {
           "level": 0,
-          "text": "strings are equal"
+          "text": "Less than or equal to"
         },
         {
           "level": 0,
-          "text": "String"
+          "text": "= or =="
+        },
+        {
+          "level": 0,
+          "text": "Strings are equal"
         },
         {
           "level": 0,
@@ -411,87 +885,73 @@
         },
         {
           "level": 0,
-          "text": "strings are not equal"
+          "text": "Strings are different"
         },
         {
           "level": 0,
-          "text": "String"
+          "text": "-z"
         },
         {
           "level": 0,
-          "text": "-z / -n"
+          "text": "String is empty"
         },
         {
           "level": 0,
-          "text": "string is empty / string is not empty"
+          "text": "-n"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ [ 1 -eq 1 ]; echo $?"
+          "text": "String is not empty"
         },
         {
           "level": 0,
-          "text": "0"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ [ 2 -lt 2 ]; echo $?"
+          "text": "[ ... ] — asks Bash to evaluate a test."
         },
         {
           "level": 0,
-          "text": "1"
+          "text": "8 and 2 — the values being compared."
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ [ abc != def ]; echo $?"
+          "text": "-gt — the numeric comparison being performed."
         },
         {
           "level": 0,
-          "text": "0"
+          "text": "Spaces inside the brackets are required."
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ STRING=''; [ -z \"$STRING\" ]; echo $?"
+          "text": "Remember: A test evaluates a condition, and its exit code tells you whether the condition succeeded."
+        }
+      ],
+      "words": 173
+    },
+    {
+      "title": "2.6 Conditional structures: if and then",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An if statement allows a script to perform an action only when a condition succeeds."
         },
         {
           "level": 0,
-          "text": "0"
+          "text": "Think of a security checkpoint: if your identification is valid, you enter; otherwise, you do not."
         },
         {
           "level": 0,
-          "text": "⚠ WARNING Spaces inside [ ] are mandatory — [ $x -eq 1 ] works, [$x -eq 1] does not. The bracket is literally an alias for the test command, and commands need spaces between their arguments."
-        },
-        {
-          "level": 2,
-          "text": "Conditional structures: if/then/else"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "if <CONDITION>; then"
+          "text": "if [ 8 -gt 2 ]; then"
         },
         {
           "level": 0,
-          "text": "<STATEMENT>"
-        },
-        {
-          "level": 0,
-          "text": "fi"
-        },
-        {
-          "level": 0,
-          "text": "This is the simplest branch: run the block only if the condition's exit code is 0 (true). A practical example — start a service only if it isn't already running:"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ systemctl is-active psacct > /dev/null 2>&1"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ if [ $? -ne 0 ]; then"
-        },
-        {
-          "level": 0,
-          "text": "sudo systemctl start psacct"
+          "text": "echo \"The condition is true\""
         },
         {
           "level": 0,
@@ -499,23 +959,61 @@
         },
         {
           "level": 0,
-          "text": "Add an else branch to handle the failure case, and elif to test additional conditions in sequence:"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "if [ CONDITION1 ]; then"
+          "text": "if — begins the decision."
         },
         {
           "level": 0,
-          "text": "STATEMENT"
+          "text": "[ 8 -gt 2 ] — checks whether 8 is greater than 2."
         },
         {
           "level": 0,
-          "text": "elif [ CONDITION2 ]; then"
+          "text": "then — introduces the action to perform if the test succeeds."
         },
         {
           "level": 0,
-          "text": "STATEMENT"
+          "text": "echo — displays the message."
+        },
+        {
+          "level": 0,
+          "text": "fi — closes the if statement. It is if spelled backward."
+        },
+        {
+          "level": 0,
+          "text": "The command inside the block runs because the condition is true. If the condition were false, Bash would skip the block."
+        },
+        {
+          "level": 0,
+          "text": "The book applies this concept to system administration by checking whether a service is active before deciding whether to start it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: if checks a condition; then tells Bash what to do when it succeeds."
+        }
+      ],
+      "words": 152
+    },
+    {
+      "title": "2.7 Using if/then/else",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: else gives your script an alternative action when the condition fails."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "if [ 8 -gt 10 ]; then"
+        },
+        {
+          "level": 0,
+          "text": "echo \"The number is greater than 10\""
         },
         {
           "level": 0,
@@ -523,7 +1021,7 @@
         },
         {
           "level": 0,
-          "text": "STATEMENT"
+          "text": "echo \"The number is not greater than 10\""
         },
         {
           "level": 0,
@@ -531,113 +1029,299 @@
         },
         {
           "level": 0,
-          "text": "🔎 REAL-WORLD EXTENSION while and until loops (repeat based on a condition instead of a list) aren't covered in this RH134 chapter, but they're common in real scripts — worth knowing the syntax exists even though it isn't exam material here."
-        },
-        {
-          "level": 3,
-          "text": "Command Reference — Section 1.2"
+          "text": "Output:"
         },
         {
           "level": 0,
-          "text": "Command / Syntax"
+          "text": "The number is not greater than 10"
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "Common Mistake"
+          "text": "if — checks the condition."
         },
         {
           "level": 0,
-          "text": "for X in LIST; do ...; done"
+          "text": "then — defines the action when the condition is true."
         },
         {
           "level": 0,
-          "text": "Iterate a command block once per item"
+          "text": "else — defines the alternative action when it is false."
         },
         {
           "level": 0,
-          "text": "Forgetting `done`, or using a variable name that shadows an existing one"
+          "text": "fi — closes the complete decision."
         },
         {
           "level": 0,
-          "text": "$?"
+          "text": "Only one branch runs. Since 8 is not greater than 10, Bash executes the else branch."
         },
         {
           "level": 0,
-          "text": "Holds the exit code of the last command"
-        },
-        {
-          "level": 0,
-          "text": "Checking it after running an unrelated command in between"
-        },
-        {
-          "level": 0,
-          "text": "exit N"
-        },
-        {
-          "level": 0,
-          "text": "Ends a script immediately with exit code N"
-        },
-        {
-          "level": 0,
-          "text": "Using exit inside a function when you meant `return`"
-        },
-        {
-          "level": 0,
-          "text": "[ expr ] / [[ expr ]]"
-        },
-        {
-          "level": 0,
-          "text": "Evaluates a condition, sets $?"
-        },
-        {
-          "level": 0,
-          "text": "Missing spaces around the brackets or the operator"
-        },
-        {
-          "level": 0,
-          "text": "if / elif / else / fi"
-        },
-        {
-          "level": 0,
-          "text": "Branches execution based on a condition"
-        },
-        {
-          "level": 0,
-          "text": "Forgetting the closing `fi`"
+          "text": "Remember: if/then/else lets a script choose between two paths."
         }
       ],
-      "words": 717
+      "words": 106
     },
     {
-      "title": "3. Matching Text in Command Output with Regular Expressions",
+      "title": "2.8 Using if/then/elif/then/else",
       "content": [
         {
-          "level": 2,
-          "text": "What a regular expression is"
+          "level": 0,
+          "text": "Main idea: elif allows a script to check additional conditions before choosing a final alternative."
         },
         {
           "level": 0,
-          "text": "A regular expression (regex) is a pattern that describes text you want to find — not a literal string, a pattern. grep, vim, less, sed, and most scripting languages all understand regex, though the exact syntax varies slightly between tools."
+          "text": "Imagine checking which database service is available. You might prefer MariaDB, use PostgreSQL if MariaDB is unavailable, and choose another option if neither is active."
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS Regex is what turns \"scroll through a 10,000-line log file looking for errors\" into a five-second grep command. It's arguably the single highest-leverage skill in this entire chapter for day-to-day troubleshooting."
-        },
-        {
-          "level": 2,
-          "text": "Exact matches and anchors"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "The simplest regex is just the literal text you're searching for — cat matches cat wherever it occurs, including inside concatenate or category. To control where in the line the match must occur, use anchors:"
+          "text": "if [ \"STATUS&quot;=&quot;running&quot;];thenecho&quot;Serviceisrunning&quot;elif[&quot;STATUS\" = \"stopped\" ]; then"
         },
         {
           "level": 0,
-          "text": "Anchor"
+          "text": "echo \"Service is stopped\""
+        },
+        {
+          "level": 0,
+          "text": "else"
+        },
+        {
+          "level": 0,
+          "text": "echo \"Status is unknown\""
+        },
+        {
+          "level": 0,
+          "text": "fi"
+        },
+        {
+          "level": 0,
+          "text": "Here, STATUS is a variable containing a value."
+        },
+        {
+          "level": 0,
+          "text": "if — checks the first condition."
+        },
+        {
+          "level": 0,
+          "text": "elif — checks another condition if the first fails."
+        },
+        {
+          "level": 0,
+          "text": "else — handles all remaining cases."
+        },
+        {
+          "level": 0,
+          "text": "fi — closes the decision structure."
+        },
+        {
+          "level": 0,
+          "text": "Bash checks conditions in order and runs the first matching branch. It skips the remaining branches afterward."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use elif when you need to choose among more than two possible outcomes."
+        }
+      ],
+      "words": 124
+    },
+    {
+      "title": "3.1 Writing regular expressions",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A regular expression is a pattern that describes the text you want to find."
+        },
+        {
+          "level": 0,
+          "text": "Imagine searching a large book for every line containing the word cat. A regular expression tells Linux what pattern to look for."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose a file contains:"
+        },
+        {
+          "level": 0,
+          "text": "cat"
+        },
+        {
+          "level": 0,
+          "text": "dog"
+        },
+        {
+          "level": 0,
+          "text": "concatenate"
+        },
+        {
+          "level": 0,
+          "text": "category"
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "grep 'cat' animals.txt"
+        },
+        {
+          "level": 0,
+          "text": "Output:"
+        },
+        {
+          "level": 0,
+          "text": "cat"
+        },
+        {
+          "level": 0,
+          "text": "concatenate"
+        },
+        {
+          "level": 0,
+          "text": "category"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "grep — searches text for matching patterns."
+        },
+        {
+          "level": 0,
+          "text": "'cat' — the pattern to search for."
+        },
+        {
+          "level": 0,
+          "text": "animals.txt — the file being searched."
+        },
+        {
+          "level": 0,
+          "text": "The search matches cat wherever it appears in a line, including inside longer words."
+        },
+        {
+          "level": 0,
+          "text": "Regular expressions are used by tools such as grep, vim, and less. They have their own symbols and rules for describing more specific patterns."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A regular expression describes what text to find; grep searches for it."
+        }
+      ],
+      "words": 130
+    },
+    {
+      "title": "3.2 Matching the start and end of a line",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The ^ and $ symbols restrict a match to a particular position in a line."
+        },
+        {
+          "level": 0,
+          "text": "Without these symbols, grep 'cat' matches cat anywhere in a line. Sometimes you only want lines that begin or end with particular text."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "grep '^cat' animals.txt"
+        },
+        {
+          "level": 0,
+          "text": "grep 'cat$' animals.txt"
+        },
+        {
+          "level": 0,
+          "text": "^cat — matches lines beginning with cat."
+        },
+        {
+          "level": 0,
+          "text": "cat$ — matches lines ending with cat."
+        },
+        {
+          "level": 0,
+          "text": "^ — marks the beginning of a line."
+        },
+        {
+          "level": 0,
+          "text": "$ — marks the end of a line."
+        },
+        {
+          "level": 0,
+          "text": "For example, ^cat matches category, because it begins with cat. It does not match concatenate, because that line begins with con."
+        },
+        {
+          "level": 0,
+          "text": "Likewise, cat$ matches a line containing only cat, but not category."
+        },
+        {
+          "level": 0,
+          "text": "Remember: ^ controls the beginning of a line; $ controls the end."
+        }
+      ],
+      "words": 121
+    },
+    {
+      "title": "3.3 Matching individual characters",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Character patterns let you match more than one possible character at a position."
+        },
+        {
+          "level": 0,
+          "text": "Square brackets [] define a set of characters that can match at that position."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "grep 'c[ao]t' animals.txt"
+        },
+        {
+          "level": 0,
+          "text": "This searches for cat or cot."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "c — the first character must be c."
+        },
+        {
+          "level": 0,
+          "text": "[ao] — the next character can be a or o."
+        },
+        {
+          "level": 0,
+          "text": "t — the last character must be t."
+        },
+        {
+          "level": 0,
+          "text": "Other useful patterns include:"
+        },
+        {
+          "level": 0,
+          "text": "Pattern"
         },
         {
           "level": 0,
@@ -645,31 +1329,73 @@
         },
         {
           "level": 0,
-          "text": "^pattern"
+          "text": "[abc]"
         },
         {
           "level": 0,
-          "text": "Matches only at the start of a line"
+          "text": "Match a, b, or c"
         },
         {
           "level": 0,
-          "text": "pattern$"
+          "text": "[a-z]"
         },
         {
           "level": 0,
-          "text": "Matches only at the end of a line"
+          "text": "Match a lowercase letter in the range"
         },
         {
           "level": 0,
-          "text": "^pattern$"
+          "text": "[0-9]"
         },
         {
           "level": 0,
-          "text": "The entire line must be exactly this pattern"
+          "text": "Match a digit"
         },
         {
-          "level": 2,
-          "text": "Wildcards and multipliers"
+          "level": 0,
+          "text": "[^abc]"
+        },
+        {
+          "level": 0,
+          "text": "Match a character other than a, b, or c"
+        },
+        {
+          "level": 0,
+          "text": "The ^ symbol has a different meaning inside a character set when it appears immediately after [; there it means “not these characters.”"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Square brackets describe which characters are allowed at a position."
+        }
+      ],
+      "words": 137
+    },
+    {
+      "title": "3.4 Matching repeated characters",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Regular-expression repetition symbols control how many times a pattern can appear."
+        },
+        {
+          "level": 0,
+          "text": "Suppose you want to find words containing zero or more occurrences of a particular character. Instead of writing a separate pattern for every possible length, you can use repetition symbols."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "grep 'c.*t' animals.txt"
+        },
+        {
+          "level": 0,
+          "text": "This matches lines where a c is followed later by a t, with any characters in between, including none."
+        },
+        {
+          "level": 0,
+          "text": "Important symbols:"
         },
         {
           "level": 0,
@@ -685,15 +1411,7 @@
         },
         {
           "level": 0,
-          "text": "Matches any single character"
-        },
-        {
-          "level": 0,
-          "text": "?"
-        },
-        {
-          "level": 0,
-          "text": "The preceding item is optional (0 or 1 times)"
+          "text": "Any single character"
         },
         {
           "level": 0,
@@ -701,135 +1419,101 @@
         },
         {
           "level": 0,
-          "text": "The preceding item matches 0 or more times"
+          "text": "Zero or more occurrences of the preceding pattern"
         },
         {
           "level": 0,
-          "text": "+"
+          "text": "\\{n\\}"
         },
         {
           "level": 0,
-          "text": "The preceding item matches 1 or more times"
+          "text": "Exactly n occurrences in basic regular expressions"
         },
         {
           "level": 0,
-          "text": "{n}"
+          "text": "\\{n,m\\}"
         },
         {
           "level": 0,
-          "text": "The preceding item matches exactly n times"
+          "text": "Between n and m occurrences"
         },
         {
           "level": 0,
-          "text": "{n,}"
+          "text": "\\{n,\\}"
         },
         {
           "level": 0,
-          "text": "n or more times"
+          "text": "At least n occurrences"
         },
         {
           "level": 0,
-          "text": "{,m}"
+          "text": "For example:"
         },
         {
           "level": 0,
-          "text": "at most m times"
+          "text": "grep '^[0-9]\\{3\\}$' numbers.txt"
         },
         {
           "level": 0,
-          "text": "{n,m}"
+          "text": "This matches lines containing exactly three digits, such as 123 or 007."
         },
         {
           "level": 0,
-          "text": "at least n, at most m times"
+          "text": "^ — beginning of line."
         },
         {
           "level": 0,
-          "text": "[abc]"
+          "text": "[0-9] — a digit."
         },
         {
           "level": 0,
-          "text": "Matches any one of the listed characters"
+          "text": "\\{3\\} — exactly three occurrences."
         },
         {
           "level": 0,
-          "text": "[^abc]"
+          "text": "$ — end of line."
         },
         {
           "level": 0,
-          "text": "Matches any character NOT listed"
+          "text": "Remember: Repetition symbols let you describe how many times a character or pattern may occur."
+        }
+      ],
+      "words": 153
+    },
+    {
+      "title": "3.5 Understanding character classes",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Character classes provide readable ways to describe groups of characters."
         },
         {
           "level": 0,
-          "text": "Example: c.*t matches anything starting with c and ending with t, with anything (or nothing) in between — cat, coat, culvert, even ct itself."
+          "text": "Instead of listing every possible digit or letter, you can use a named character class."
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ grep 'c.\\{2\\}t' file.txt # c, exactly 2 chars, then t"
+          "text": "Examples from the book include:"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Wrap regex patterns in single quotes on the command line. Characters like $, *, and {} mean something to Bash too — single quotes stop the shell from interpreting them before grep ever sees the pattern."
-        },
-        {
-          "level": 3,
-          "text": "POSIX character classes"
+          "text": "Character class"
         },
         {
           "level": 0,
-          "text": "Instead of spelling out [a-zA-Z0-9] every time, POSIX classes give you named shortcuts:"
+          "text": "Meaning"
         },
         {
           "level": 0,
-          "text": "Class"
+          "text": "[[:digit:]]"
         },
         {
           "level": 0,
-          "text": "Matches"
+          "text": "Digits"
         },
         {
           "level": 0,
-          "text": "[:alpha:]"
-        },
-        {
-          "level": 0,
-          "text": "Letters"
-        },
-        {
-          "level": 0,
-          "text": "[:digit:]"
-        },
-        {
-          "level": 0,
-          "text": "Digits 0-9"
-        },
-        {
-          "level": 0,
-          "text": "[:alnum:]"
-        },
-        {
-          "level": 0,
-          "text": "Letters and digits"
-        },
-        {
-          "level": 0,
-          "text": "[:space:]"
-        },
-        {
-          "level": 0,
-          "text": "Whitespace (space, tab, newline)"
-        },
-        {
-          "level": 0,
-          "text": "[:upper:]"
-        },
-        {
-          "level": 0,
-          "text": "Uppercase letters"
-        },
-        {
-          "level": 0,
-          "text": "[:lower:]"
+          "text": "[[:lower:]]"
         },
         {
           "level": 0,
@@ -837,15 +1521,155 @@
         },
         {
           "level": 0,
-          "text": "[:punct:]"
+          "text": "[[:upper:]]"
+        },
+        {
+          "level": 0,
+          "text": "Uppercase letters"
+        },
+        {
+          "level": 0,
+          "text": "[[:alpha:]]"
+        },
+        {
+          "level": 0,
+          "text": "Letters"
+        },
+        {
+          "level": 0,
+          "text": "[[:alnum:]]"
+        },
+        {
+          "level": 0,
+          "text": "Letters and digits"
+        },
+        {
+          "level": 0,
+          "text": "[[:space:]]"
+        },
+        {
+          "level": 0,
+          "text": "Whitespace, such as spaces and tabs"
+        },
+        {
+          "level": 0,
+          "text": "[[:punct:]]"
         },
         {
           "level": 0,
           "text": "Punctuation characters"
         },
         {
-          "level": 2,
-          "text": "Applying regex with grep"
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "grep '[[:digit:]]' report.txt"
+        },
+        {
+          "level": 0,
+          "text": "This displays lines containing at least one digit."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "grep — searches the file."
+        },
+        {
+          "level": 0,
+          "text": "[[:digit:]] — matches a digit."
+        },
+        {
+          "level": 0,
+          "text": "report.txt — the file to search."
+        },
+        {
+          "level": 0,
+          "text": "These classes are particularly useful when searching configuration files and logs containing usernames, IDs, numbers, or status messages."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Character classes describe groups of characters without requiring you to list them individually."
+        }
+      ],
+      "words": 123
+    },
+    {
+      "title": "3.6 Matching regular expressions with grep",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: grep applies your pattern to a file or to text received from another command."
+        },
+        {
+          "level": 0,
+          "text": "You have already seen how grep searches for words and character patterns. The next step is to use it in everyday administration."
+        },
+        {
+          "level": 0,
+          "text": "Example 1 — Search a configuration file:"
+        },
+        {
+          "level": 0,
+          "text": "grep -i 'serverroot' /etc/httpd/conf/httpd.conf"
+        },
+        {
+          "level": 0,
+          "text": "-i — ignores uppercase/lowercase differences."
+        },
+        {
+          "level": 0,
+          "text": "'serverroot' — the search pattern."
+        },
+        {
+          "level": 0,
+          "text": "/etc/httpd/conf/httpd.conf — the file being searched."
+        },
+        {
+          "level": 0,
+          "text": "Example 2 — Search running-process information:"
+        },
+        {
+          "level": 0,
+          "text": "ps aux | grep 'chrony'"
+        },
+        {
+          "level": 0,
+          "text": "ps aux — displays process information."
+        },
+        {
+          "level": 0,
+          "text": "| — sends the output of the first command to the next command."
+        },
+        {
+          "level": 0,
+          "text": "grep 'chrony' — displays lines containing chrony."
+        },
+        {
+          "level": 0,
+          "text": "This is called a pipeline. Think of it as an assembly line: the first command produces information, and the second filters it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: grep searches text in files or filters the output of other commands."
+        }
+      ],
+      "words": 137
+    },
+    {
+      "title": "3.7 Useful grep options",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Options change which matching lines grep displays."
+        },
+        {
+          "level": 0,
+          "text": "The book highlights these options:"
         },
         {
           "level": 0,
@@ -853,7 +1677,7 @@
         },
         {
           "level": 0,
-          "text": "Function"
+          "text": "Purpose"
         },
         {
           "level": 0,
@@ -861,7 +1685,7 @@
         },
         {
           "level": 0,
-          "text": "Case-insensitive match"
+          "text": "Ignore case differences"
         },
         {
           "level": 0,
@@ -869,7 +1693,7 @@
         },
         {
           "level": 0,
-          "text": "Invert — show lines that do NOT match"
+          "text": "Show lines that do not match"
         },
         {
           "level": 0,
@@ -877,23 +1701,23 @@
         },
         {
           "level": 0,
-          "text": "Recurse into a directory of files"
+          "text": "Search files recursively in directories"
         },
         {
           "level": 0,
-          "text": "-A N"
+          "text": "-A NUMBER"
         },
         {
           "level": 0,
-          "text": "Show N lines of context after each match"
+          "text": "Show a number of lines after a match"
         },
         {
           "level": 0,
-          "text": "-B N"
+          "text": "-B NUMBER"
         },
         {
           "level": 0,
-          "text": "Show N lines of context before each match"
+          "text": "Show a number of lines before a match"
         },
         {
           "level": 0,
@@ -901,163 +1725,105 @@
         },
         {
           "level": 0,
-          "text": "Supply multiple patterns (OR logic) with repeated -e"
+          "text": "Specify a pattern; multiple -e options can search for alternatives"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ grep -i serverroot /etc/httpd/conf/httpd.conf"
+          "text": "Examples:"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ grep -v server /etc/hosts # lines NOT containing 'server'"
+          "text": "grep -i 'error' /var/log/messages"
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ grep -e error -e warning /var/log/messages"
+          "text": "Searches for error regardless of letter case."
         },
         {
           "level": 0,
-          "text": "🔎 REAL-WORLD EXTENSION What you've learned here is Basic Regular Expression (BRE) syntax, where + and ? need a backslash (\\+, \\?) to work, and {n,m} needs escaping too (\\{n,m\\}) unless you use grep -E (Extended Regular Expressions), which drops those backslashes. This course teaches BRE by default — know that grep -E / egrep exists for when you want the cleaner ERE syntax."
-        },
-        {
-          "level": 3,
-          "text": "Command Reference — Section 1.3"
+          "text": "grep -v 'error' report.txt"
         },
         {
           "level": 0,
-          "text": "Command / Syntax"
+          "text": "Displays lines that do not match error."
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "grep -A 2 'error' report.txt"
         },
         {
           "level": 0,
-          "text": "grep 'pattern' file"
+          "text": "Displays each matching line and two lines after it."
         },
         {
           "level": 0,
-          "text": "Search file for lines matching pattern"
-        },
-        {
-          "level": 0,
-          "text": "grep -i 'pattern' file"
-        },
-        {
-          "level": 0,
-          "text": "Case-insensitive search"
-        },
-        {
-          "level": 0,
-          "text": "grep -v 'pattern' file"
-        },
-        {
-          "level": 0,
-          "text": "Show non-matching lines"
-        },
-        {
-          "level": 0,
-          "text": "grep -r 'pattern' dir/"
-        },
-        {
-          "level": 0,
-          "text": "Recursive search through a directory"
-        },
-        {
-          "level": 0,
-          "text": "grep -e p1 -e p2 file"
-        },
-        {
-          "level": 0,
-          "text": "Match either pattern (logical OR)"
-        },
-        {
-          "level": 0,
-          "text": "grep -E 'pattern' file"
-        },
-        {
-          "level": 0,
-          "text": "Use extended regex syntax (no backslashes needed for +,?,{})"
+          "text": "Remember: Learn the pattern first, then use options to control the results."
         }
       ],
-      "words": 550
-    }
-  ],
-  "labs": [
+      "words": 113
+    },
     {
-      "title": "Lab: Improving Command-Line Productivity",
+      "title": "3.8 Searching command output and configuration files",
       "content": [
         {
-          "level": 3,
-          "text": "Objective"
+          "level": 0,
+          "text": "Main idea: Combining pipes, patterns, and grep makes it easier to find important information in large amounts of output."
         },
         {
           "level": 0,
-          "text": "Write a Bash script that combines a loop, a conditional, and a regex-based check into one useful admin tool."
-        },
-        {
-          "level": 3,
-          "text": "Scenario"
+          "text": "Imagine a server has hundreds of running processes. You do not need to read every line manually; you can filter the results."
         },
         {
           "level": 0,
-          "text": "You maintain a small fleet of RHEL servers. You want a quick script that checks a list of usernames against /etc/passwd and reports which ones exist and which don't — the kind of sanity check you'd run before an onboarding/offboarding automation job."
-        },
-        {
-          "level": 3,
-          "text": "Environment"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "One RHEL 8 VM (or your home-lab VM) with normal user access and sudo"
+          "text": "systemctl list-units | grep -i 'ssh'"
         },
         {
           "level": 0,
-          "text": "A text file named checklist.txt containing five usernames, one per line — mix of real and fake accounts"
-        },
-        {
-          "level": 3,
-          "text": "Task"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "Write a script called checkusers.sh that:"
+          "text": "systemctl list-units — lists systemd units currently loaded."
         },
         {
           "level": 0,
-          "text": "1. Reads each username from checklist.txt using a for loop"
+          "text": "| — passes the output to the next command."
         },
         {
           "level": 0,
-          "text": "2. Uses grep to check whether that username exists in /etc/passwd (anchored, so 'sam' doesn't match 'samantha')"
+          "text": "grep -i 'ssh' — shows lines containing ssh, without case sensitivity."
         },
         {
           "level": 0,
-          "text": "3. Prints \"FOUND: <user>\" or \"MISSING: <user>\" for each one"
+          "text": "The same idea works with configuration files and logs. You can search for errors, service names, usernames, or specific settings."
         },
         {
           "level": 0,
-          "text": "4. Exits with code 0 if all users were found, or 1 if any were missing"
-        },
-        {
-          "level": 3,
-          "text": "Hint"
+          "text": "The book recommends placing regular-expression patterns in single quotes because symbols such as $, *, and {} can otherwise be interpreted by Bash before grep receives them."
         },
         {
           "level": 0,
-          "text": "You'll need a for loop reading from $(cat checklist.txt), a grep pattern anchored with ^ and : (the field separator in /etc/passwd), an if/then/else, and a variable to track whether anything was missing so you can set the right final exit code."
-        },
-        {
-          "level": 3,
-          "text": "Checkpoint"
+          "text": "Remember: First generate the information, then filter it to find what matters."
         },
         {
           "level": 0,
-          "text": "Before checking the solution: does your script correctly print MISSING for a username that's a substring of a real one (e.g. checking 'sam' when 'samantha' exists)? If it does, your grep pattern isn't anchored correctly."
+          "text": "Now let's connect all three topics into one practical example."
         },
         {
-          "level": 3,
-          "text": "Solution"
+          "level": 0,
+          "text": "Imagine you are a Linux administrator responsible for checking two servers. You want to collect their hostnames, check whether a service is running, and search the results for a particular word."
+        },
+        {
+          "level": 0,
+          "text": "1. Script"
+        },
+        {
+          "level": 0,
+          "text": "Create a file containing the commands you want to run."
         },
         {
           "level": 0,
@@ -1065,35 +1831,39 @@
         },
         {
           "level": 0,
-          "text": "MISSING_FOUND=0"
+          "text": "echo \"Checking server\""
         },
         {
           "level": 0,
-          "text": "for USERNAME in $(cat checklist.txt); do"
+          "text": "hostname"
         },
         {
           "level": 0,
-          "text": "if grep -q \"^${USERNAME}:\" /etc/passwd; then"
+          "text": "systemctl is-active sshd"
         },
         {
           "level": 0,
-          "text": "echo \"FOUND: $USERNAME\""
+          "text": "The script organizes the task into reusable instructions."
         },
         {
           "level": 0,
-          "text": "else"
+          "text": "2. Loop and condition"
         },
         {
           "level": 0,
-          "text": "echo \"MISSING: $USERNAME\""
+          "text": "Repeat a check for multiple servers and make decisions based on the results."
         },
         {
           "level": 0,
-          "text": "MISSING_FOUND=1"
+          "text": "for HOST in servera serverb"
         },
         {
           "level": 0,
-          "text": "fi"
+          "text": "do"
+        },
+        {
+          "level": 0,
+          "text": "ssh \"$HOST\" hostname"
         },
         {
           "level": 0,
@@ -1101,169 +1871,1749 @@
         },
         {
           "level": 0,
-          "text": "exit $MISSING_FOUND"
-        },
-        {
-          "level": 3,
-          "text": "Explanation"
+          "text": "The loop handles each server; conditions can decide what to do based on success or failure."
         },
         {
           "level": 0,
-          "text": "for USERNAME in $(cat checklist.txt) — command substitution feeds each line as a loop item."
+          "text": "3. Search results"
         },
         {
           "level": 0,
-          "text": "grep -q \"^${USERNAME}:\" /etc/passwd — -q suppresses output (we only want the exit code), ^ anchors to the start of the line, and the trailing : matches the field separator so 'sam' can never match 'samantha:'."
+          "text": "Filter output to find a particular service or error."
         },
         {
           "level": 0,
-          "text": "MISSING_FOUND is a tracking variable, initialized to 0 (success) and flipped to 1 the moment any user is missing."
+          "text": "systemctl --failed | grep -i 'failed'"
         },
         {
           "level": 0,
-          "text": "exit $MISSING_FOUND at the very end reports overall success/failure to whatever calls this script — exactly the pattern Ansible and monitoring tools expect."
-        },
-        {
-          "level": 3,
-          "text": "Verification"
+          "text": "The pipeline passes the output to grep, which searches for matching lines."
         },
         {
           "level": 0,
-          "text": "[user@host ~]$ chmod +x checkusers.sh"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ ./checkusers.sh; echo \"Exit code: $?\""
-        },
-        {
-          "level": 0,
-          "text": "Confirm the exit code is 0 only when every username in your test file is a real account."
-        },
-        {
-          "level": 3,
-          "text": "Real-world note"
-        },
-        {
-          "level": 0,
-          "text": "This exact pattern — loop, anchored regex check, exit-code tracking — is the backbone of pre-flight checks in real automation pipelines: verify state before you change it, and fail loudly (nonzero exit) if something's not as expected, instead of plowing ahead."
+          "text": "These examples illustrate how the concepts fit together; they are not a complete production monitoring script. Remote service checks also depend on SSH access and suitable permissions."
         }
-      ]
-    }
-  ],
-  "quizzes": [
+      ],
+      "words": 308
+    },
     {
-      "title": "Quiz: Part 1 Checkpoint",
+      "title": "The big picture",
       "content": [
         {
           "level": 0,
-          "text": "Q1. What are the two requirements for running a script as ./myscript.sh (not bash myscript.sh)?"
+          "text": "Bash scripts — automate"
         },
         {
           "level": 0,
-          "text": "Answer: The file needs the execute permission (chmod +x) AND a valid shebang line as the first line."
+          "text": "Save a sequence of commands so you can reuse it."
         },
         {
           "level": 0,
-          "text": "Q2. What's the difference between echo \"$VAR\" and echo '$VAR'?"
+          "text": "Loops and conditions — control"
         },
         {
           "level": 0,
-          "text": "Answer: Double quotes allow variable expansion (prints the value); single quotes suppress it entirely (prints the literal text $VAR)."
+          "text": "Repeat actions for multiple items and choose what happens next."
         },
         {
           "level": 0,
-          "text": "Q3. Write a for loop header that iterates over host1 through host5 using brace expansion."
+          "text": "Regular expressions and grep — find"
         },
         {
           "level": 0,
-          "text": "Answer: for HOST in host{1..5}; do"
+          "text": "Search files and command output for the information you need."
         },
         {
           "level": 0,
-          "text": "Q4. What does $? contain immediately after a command runs?"
+          "text": "Remember this sequence: Automate → Repeat and decide → Search and filter."
         },
         {
           "level": 0,
-          "text": "Answer: The exit code of that command — 0 for success, nonzero for failure."
-        },
-        {
-          "level": 0,
-          "text": "Q5. Which test operator checks that a string variable is empty?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: -z (as in [ -z \"$VAR\" ])."
-        },
-        {
-          "level": 0,
-          "text": "Q6. What does the regex ^error match that error alone would not exclude?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: ^error only matches lines where 'error' is the very first thing on the line — it excludes lines where 'error' appears mid-line, e.g. 'previous error found'."
-        },
-        {
-          "level": 0,
-          "text": "Q7. What does grep -v do?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: Inverts the match — prints only the lines that do NOT match the pattern."
-        },
-        {
-          "level": 0,
-          "text": "Q8. Why should regex patterns on the command line be wrapped in single quotes?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: To stop Bash itself from interpreting shell metacharacters like $, *, and {} before grep ever sees the pattern."
-        },
-        {
-          "level": 0,
-          "text": "Q9. In BRE (the default grep syntax used in this chapter), how do you match \"exactly 3 of the previous character\"?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: \\{3\\} — the braces need to be escaped in Basic Regular Expressions."
-        },
-        {
-          "level": 0,
-          "text": "Q10. What's the practical difference between if/then/else and if/then/elif/then/else?"
-        },
-        {
-          "level": 0,
-          "text": "Answer: elif lets you test additional distinct conditions in sequence within the same construct, instead of only having a single fallback else branch."
-        },
-        {
-          "level": 0,
-          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
-        },
-        {
-          "level": 0,
-          "text": "PART 2: SCHEDULING FUTURE TASKS + TUNING SYSTEM PERFORMANCE"
-        },
-        {
-          "level": 0,
-          "text": "This Part covers RH134 Chapter 2 (Scheduling Future Tasks) and Chapter 3 (Tuning System Performance). Both chapters are about controlling when and how things happen on a system you're not sitting in front of 24/7 — deferred one-off jobs, recurring jobs, automatic cleanup, and making sure the right processes get the CPU time they need."
-        },
-        {
-          "level": 0,
-          "text": "💡 WHY THIS MATTERS Scheduling and process priority are exactly the kind of thing a junior admin gets asked to fix at 2am: 'the backup didn't run' or 'this report generator is starving the database.' Both problems trace back to what's in this Part."
+          "text": "That is the central idea of Chapter 1: making command-line administration more efficient, repeatable, and accurate."
         }
-      ]
+      ],
+      "words": 73
+    },
+    {
+      "title": "Check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "Try answering these three questions in your own words:"
+        },
+        {
+          "level": 0,
+          "text": "1. What is the main purpose of a Bash script?"
+        },
+        {
+          "level": 0,
+          "text": "To store and run a sequence of commands"
+        },
+        {
+          "level": 0,
+          "text": "To replace the Linux kernel"
+        },
+        {
+          "level": 0,
+          "text": "To create user accounts automatically in every case"
+        },
+        {
+          "level": 0,
+          "text": "2. What does a for loop do?"
+        },
+        {
+          "level": 0,
+          "text": "Searches a file for a word"
+        },
+        {
+          "level": 0,
+          "text": "Repeats commands for each item in a list"
+        },
+        {
+          "level": 0,
+          "text": "Changes file permissions"
+        },
+        {
+          "level": 0,
+          "text": "3. What is the relationship between grep and a regular expression?"
+        },
+        {
+          "level": 0,
+          "text": "They are exactly the same thing"
+        },
+        {
+          "level": 0,
+          "text": "grep creates files, while regular expressions delete them"
+        },
+        {
+          "level": 0,
+          "text": "grep searches text using a pattern that can be a regular expression"
+        },
+        {
+          "level": 0,
+          "text": "Try again"
+        },
+        {
+          "level": 0,
+          "text": "Once these ideas make sense, you have the foundation needed to understand the chapter's guided exercises and final lab."
+        },
+        {
+          "level": 0,
+          "text": "Chapter 2: Scheduling Future Tasks — Complete Simple Notes"
+        },
+        {
+          "level": 0,
+          "text": "Based on your RH134 RHEL 8 chapter, explained in simple English with practical commands, examples, and the important details you need to understand."
+        }
+      ],
+      "words": 154
+    },
+    {
+      "title": "Part 1 — Scheduling one-time jobs with at",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. What are deferred jobs?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A deferred job is a command that you schedule to run once at a future time."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine setting an alarm to remind you to do something later. Instead of waiting to run a Linux command yourself, you schedule it in advance."
+        },
+        {
+          "level": 0,
+          "text": "RHEL provides the at tool for this purpose."
+        },
+        {
+          "level": 0,
+          "text": "at schedules a job."
+        },
+        {
+          "level": 0,
+          "text": "atd is the background service that runs scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "atq lists jobs waiting to run."
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "at now +5min"
+        },
+        {
+          "level": 0,
+          "text": "Then enter:"
+        },
+        {
+          "level": 0,
+          "text": "touch /tmp/testfile"
+        },
+        {
+          "level": 0,
+          "text": "Press Ctrl+D to submit the job."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "at — schedule a job."
+        },
+        {
+          "level": 0,
+          "text": "now +5min — run it five minutes from now."
+        },
+        {
+          "level": 0,
+          "text": "touch — create an empty file if it does not exist."
+        },
+        {
+          "level": 0,
+          "text": "/tmp/testfile — the file to create."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+D — finish entering the job."
+        },
+        {
+          "level": 0,
+          "text": "Remember: at is for one-time future jobs."
+        },
+        {
+          "level": 0,
+          "text": "2. Scheduling jobs using different times"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The time specification tells Linux when the job should run."
+        },
+        {
+          "level": 0,
+          "text": "Examples:"
+        },
+        {
+          "level": 0,
+          "text": "at now +5min"
+        },
+        {
+          "level": 0,
+          "text": "at noon +4 days"
+        },
+        {
+          "level": 0,
+          "text": "at teatime tomorrow"
+        },
+        {
+          "level": 0,
+          "text": "at 15:59"
+        },
+        {
+          "level": 0,
+          "text": "now +5min — five minutes from now."
+        },
+        {
+          "level": 0,
+          "text": "noon +4 days — noon, four days from now."
+        },
+        {
+          "level": 0,
+          "text": "teatime tomorrow — tomorrow at 4:00 PM."
+        },
+        {
+          "level": 0,
+          "text": "15:59 — 3:59 PM today if that time has not passed."
+        },
+        {
+          "level": 0,
+          "text": "You can also provide commands through a file:"
+        },
+        {
+          "level": 0,
+          "text": "at now +5min < myscript"
+        },
+        {
+          "level": 0,
+          "text": "Here, < means read input from a file rather than from the keyboard. The file must contain the commands you want to schedule."
+        },
+        {
+          "level": 0,
+          "text": "Remember: TIMESPEC is the time and date description used by at."
+        },
+        {
+          "level": 0,
+          "text": "3. Listing and inspecting deferred jobs"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: You can check which jobs are waiting and inspect the commands they will execute."
+        },
+        {
+          "level": 0,
+          "text": "List pending jobs:"
+        },
+        {
+          "level": 0,
+          "text": "atq"
+        },
+        {
+          "level": 0,
+          "text": "Or:"
+        },
+        {
+          "level": 0,
+          "text": "at -l"
+        },
+        {
+          "level": 0,
+          "text": "Example output:"
+        },
+        {
+          "level": 0,
+          "text": "28  Mon Feb  2 05:13:00 2015 a user"
+        },
+        {
+          "level": 0,
+          "text": "28 — unique job number."
+        },
+        {
+          "level": 0,
+          "text": "Mon Feb 2 05:13:00 2015 — scheduled execution date and time."
+        },
+        {
+          "level": 0,
+          "text": "a — queue name; a is the default queue."
+        },
+        {
+          "level": 0,
+          "text": "user — the account that owns and runs the job."
+        },
+        {
+          "level": 0,
+          "text": "To inspect job 28:"
+        },
+        {
+          "level": 0,
+          "text": "at -c 28"
+        },
+        {
+          "level": 0,
+          "text": "The output shows the saved environment settings followed by the commands that will run."
+        },
+        {
+          "level": 0,
+          "text": "Permissions: Normal users can manage their own jobs. The root user can manage jobs belonging to all users."
+        },
+        {
+          "level": 0,
+          "text": "Remember: atq lists pending jobs; at -c JOBNUMBER shows the saved job details."
+        }
+      ],
+      "words": 377
+    },
+    {
+      "title": "Part 2 — Scheduling recurring user jobs with cron",
+      "content": [
+        {
+          "level": 0,
+          "text": "4. What are recurring jobs?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A recurring job runs repeatedly according to a schedule."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine an alarm that rings every morning instead of only once. Linux uses cron to schedule repeated tasks such as backups, reports, and maintenance."
+        },
+        {
+          "level": 0,
+          "text": "crond — the background service that runs scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "cronie — the software package that provides cron functionality."
+        },
+        {
+          "level": 0,
+          "text": "crontab — the command used to manage scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "On a typical RHEL installation, the cron service is enabled and running by default."
+        },
+        {
+          "level": 0,
+          "text": "Remember: at schedules a one-time job; cron schedules repeating jobs."
+        },
+        {
+          "level": 0,
+          "text": "5. Managing your personal crontab"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The crontab command lets you view, edit, and remove your own scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "crontab -l"
+        },
+        {
+          "level": 0,
+          "text": "List your jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e"
+        },
+        {
+          "level": 0,
+          "text": "Edit your jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -r"
+        },
+        {
+          "level": 0,
+          "text": "Remove all your jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab filename"
+        },
+        {
+          "level": 0,
+          "text": "Replace your jobs with the entries in a file"
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e"
+        },
+        {
+          "level": 0,
+          "text": "This opens your scheduled-job file in an editor, usually Vim unless another editor is configured."
+        },
+        {
+          "level": 0,
+          "text": "Enter one job per line and save the file."
+        },
+        {
+          "level": 0,
+          "text": "Important: crontab -r removes all jobs for the current user. Check them with crontab -l first."
+        },
+        {
+          "level": 0,
+          "text": "The root user can manage another user's crontab with the -u option, for example:"
+        },
+        {
+          "level": 0,
+          "text": "crontab -u student -l"
+        },
+        {
+          "level": 0,
+          "text": "This lists the jobs belonging to student."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use crontab for user jobs, not for system-wide jobs."
+        },
+        {
+          "level": 0,
+          "text": "6. Understanding the five cron time fields"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The first five fields specify when the command should run; everything after them is the command itself."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "0 9 * * 1-5 /usr/local/bin/daily_report"
+        },
+        {
+          "level": 0,
+          "text": "Read the fields from left to right:"
+        }
+      ],
+      "words": 260
+    },
+    {
+      "title": "0",
+      "content": [
+        {
+          "level": 0,
+          "text": "Minute"
+        }
+      ],
+      "words": 1
+    },
+    {
+      "title": "9",
+      "content": [
+        {
+          "level": 0,
+          "text": "Hour"
+        }
+      ],
+      "words": 1
+    },
+    {
+      "title": "*",
+      "content": [
+        {
+          "level": 0,
+          "text": "Day of month"
+        }
+      ],
+      "words": 3
+    },
+    {
+      "title": "*",
+      "content": [
+        {
+          "level": 0,
+          "text": "Month"
+        }
+      ],
+      "words": 1
+    },
+    {
+      "title": "1-5",
+      "content": [
+        {
+          "level": 0,
+          "text": "Weekday"
+        },
+        {
+          "level": 0,
+          "text": "Command: /usr/local/bin/daily_report"
+        },
+        {
+          "level": 0,
+          "text": "0 — at minute zero."
+        },
+        {
+          "level": 0,
+          "text": "9 — at 9 AM."
+        },
+        {
+          "level": 0,
+          "text": "First * — every day of the month."
+        },
+        {
+          "level": 0,
+          "text": "Second * — every month."
+        },
+        {
+          "level": 0,
+          "text": "1-5 — Monday through Friday."
+        },
+        {
+          "level": 0,
+          "text": "Result: The report runs at 9:00 AM every weekday."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Cron's five fields are minute, hour, day of month, month, and day of week."
+        },
+        {
+          "level": 0,
+          "text": "7. Understanding cron symbols"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Symbols let you describe repeating times without writing a separate job for every time."
+        },
+        {
+          "level": 0,
+          "text": "Symbol"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "*"
+        },
+        {
+          "level": 0,
+          "text": "Every value"
+        },
+        {
+          "level": 0,
+          "text": "* in the hour field means every hour"
+        },
+        {
+          "level": 0,
+          "text": "-"
+        },
+        {
+          "level": 0,
+          "text": "A range, including both ends"
+        },
+        {
+          "level": 0,
+          "text": "9-16 means hours 9 through 16"
+        },
+        {
+          "level": 0,
+          "text": ","
+        },
+        {
+          "level": 0,
+          "text": "Selected values"
+        },
+        {
+          "level": 0,
+          "text": "1,3,5 selects three values"
+        },
+        {
+          "level": 0,
+          "text": "*/x"
+        },
+        {
+          "level": 0,
+          "text": "Every x units"
+        },
+        {
+          "level": 0,
+          "text": "*/5 in minutes means every five minutes"
+        },
+        {
+          "level": 0,
+          "text": "Weekday numbers are:"
+        },
+        {
+          "level": 0,
+          "text": "0 or 7 = Sunday"
+        },
+        {
+          "level": 0,
+          "text": "1 = Monday"
+        },
+        {
+          "level": 0,
+          "text": "2 = Tuesday"
+        },
+        {
+          "level": 0,
+          "text": "3 = Wednesday"
+        },
+        {
+          "level": 0,
+          "text": "4 = Thursday"
+        },
+        {
+          "level": 0,
+          "text": "5 = Friday"
+        },
+        {
+          "level": 0,
+          "text": "6 = Saturday"
+        },
+        {
+          "level": 0,
+          "text": "You can also use abbreviations such as Mon, Fri, and Jan."
+        },
+        {
+          "level": 0,
+          "text": "Examples"
+        },
+        {
+          "level": 0,
+          "text": "*/5 * * * * command"
+        },
+        {
+          "level": 0,
+          "text": "Runs every five minutes."
+        },
+        {
+          "level": 0,
+          "text": "0 9 * * 1-5 command"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 9 AM, Monday through Friday."
+        },
+        {
+          "level": 0,
+          "text": "0 8 1,15 * * command"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 8 AM on the first and fifteenth of every month."
+        },
+        {
+          "level": 0,
+          "text": "Remember: * means every value, - means a range, , means selected values, and */x means an interval."
+        },
+        {
+          "level": 0,
+          "text": "8. An important rule: day of month versus day of week"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: When both fields contain specific restrictions, cron runs the job when either field matches."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "15 12 15 * Fri command"
+        },
+        {
+          "level": 0,
+          "text": "This runs at 12:15 PM on:"
+        },
+        {
+          "level": 0,
+          "text": "The 15th day of every month, or"
+        },
+        {
+          "level": 0,
+          "text": "Every Friday."
+        },
+        {
+          "level": 0,
+          "text": "It does not require both conditions to be true simultaneously."
+        },
+        {
+          "level": 0,
+          "text": "Remember: When both day fields are restricted, cron uses OR logic between them."
+        },
+        {
+          "level": 0,
+          "text": "9. Practical recurring-job examples"
+        },
+        {
+          "level": 0,
+          "text": "Example A — Yearly backup"
+        },
+        {
+          "level": 0,
+          "text": "0 9 2 2 * /usr/local/bin/yearly_backup"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 9 AM every February 2."
+        },
+        {
+          "level": 0,
+          "text": "Example B — Every five minutes during Friday working hours in July"
+        },
+        {
+          "level": 0,
+          "text": "*/5 9-16 * Jul 5 echo \"Chime\""
+        },
+        {
+          "level": 0,
+          "text": "Runs every five minutes from 9:00 AM through 4:55 PM on Fridays in July."
+        },
+        {
+          "level": 0,
+          "text": "echo \"Chime\" prints the word Chime. Because cron may email command output, this message may be emailed to the job owner if mail is configured."
+        },
+        {
+          "level": 0,
+          "text": "Example C — Daily report before midnight on weekdays"
+        },
+        {
+          "level": 0,
+          "text": "58 23 * * 1-5 /usr/local/bin/daily_report"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 11:58 PM, Monday through Friday."
+        },
+        {
+          "level": 0,
+          "text": "Example D — Send an email using mutt"
+        },
+        {
+          "level": 0,
+          "text": "0 9 * * 1-5 mutt -s \"Checking in\" boss@example.com %Hi there boss"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 9 AM on weekdays. The % introduces input for the command, allowing the message body to be supplied through standard input. In a crontab, an unescaped % is treated as a newline."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Read each field from left to right before deciding when a job will run."
+        },
+        {
+          "level": 0,
+          "text": "10. Cron environment and output"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Cron needs to know which shell to use and where to send command output."
+        },
+        {
+          "level": 0,
+          "text": "A crontab can contain comments and environment settings:"
+        },
+        {
+          "level": 0,
+          "text": "# Daily maintenance"
+        },
+        {
+          "level": 0,
+          "text": "SHELL=/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "MAILTO=root"
+        },
+        {
+          "level": 0,
+          "text": "0 2 * * * /usr/local/bin/cleanup"
+        },
+        {
+          "level": 0,
+          "text": "# — begins a comment."
+        },
+        {
+          "level": 0,
+          "text": "SHELL=/bin/bash — selects Bash for interpreting commands."
+        },
+        {
+          "level": 0,
+          "text": "MAILTO=root — directs emailed job output to root, provided the mail system is configured."
+        },
+        {
+          "level": 0,
+          "text": "0 2 * * * — runs at 2 AM every day."
+        },
+        {
+          "level": 0,
+          "text": "If a command produces output or errors that are not redirected, cron may attempt to email them."
+        },
+        {
+          "level": 0,
+          "text": "Email delivery depends on the system's mail configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Cron commands run in a scheduled environment, not necessarily the same environment as your interactive terminal."
+        }
+      ],
+      "words": 580
+    },
+    {
+      "title": "Part 3 — Scheduling recurring system jobs",
+      "content": [
+        {
+          "level": 0,
+          "text": "11. What are system-wide cron jobs?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: System jobs are recurring tasks configured by administrators to run under a chosen system account."
+        },
+        {
+          "level": 0,
+          "text": "A personal crontab belongs to one user. A system-wide cron entry includes an additional field that specifies which user runs the command."
+        },
+        {
+          "level": 0,
+          "text": "Example file: /etc/cron.d/mybackup"
+        },
+        {
+          "level": 0,
+          "text": "0 2 * * * root /usr/local/bin/backup"
+        },
+        {
+          "level": 0,
+          "text": "This runs the backup command at 2 AM every day as root."
+        },
+        {
+          "level": 0,
+          "text": "The extra root field is important: it appears before the command in system-wide cron files, but not in a user's personal crontab."
+        },
+        {
+          "level": 0,
+          "text": "Where should custom system jobs go?"
+        },
+        {
+          "level": 0,
+          "text": "/etc/crontab — the main system-wide cron file."
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.d/ — separate system-wide cron files, including custom jobs."
+        },
+        {
+          "level": 0,
+          "text": "Prefer placing your own jobs in /etc/cron.d/ rather than modifying /etc/crontab. Package updates may replace the main file, while separate administrator-managed files are easier to maintain."
+        },
+        {
+          "level": 0,
+          "text": "Remember: System-wide cron entries have six parts: five time fields, a username, and a command."
+        },
+        {
+          "level": 0,
+          "text": "12. Hourly, daily, weekly, and monthly scripts"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: RHEL provides special directories for scripts that should run at regular intervals."
+        },
+        {
+          "level": 0,
+          "text": "Directory"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.hourly/"
+        },
+        {
+          "level": 0,
+          "text": "Hourly scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.daily/"
+        },
+        {
+          "level": 0,
+          "text": "Daily scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.weekly/"
+        },
+        {
+          "level": 0,
+          "text": "Weekly scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.monthly/"
+        },
+        {
+          "level": 0,
+          "text": "Monthly scripts"
+        },
+        {
+          "level": 0,
+          "text": "These directories contain executable scripts, not ordinary crontab entries."
+        },
+        {
+          "level": 0,
+          "text": "Make a script executable:"
+        },
+        {
+          "level": 0,
+          "text": "chmod +x myscript"
+        },
+        {
+          "level": 0,
+          "text": "chmod changes permissions."
+        },
+        {
+          "level": 0,
+          "text": "+x adds execute permission."
+        },
+        {
+          "level": 0,
+          "text": "myscript is the script file."
+        },
+        {
+          "level": 0,
+          "text": "The run-parts command runs scripts from these directories. The hourly directory is commonly handled through /etc/cron.d/0hourly; daily, weekly, and monthly jobs are commonly handled through /etc/anacrontab."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Put a script in the correct interval directory and make sure it is executable."
+        },
+        {
+          "level": 0,
+          "text": "13. What is Anacron?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Anacron helps periodic system jobs run even if the computer was off when they were due."
+        },
+        {
+          "level": 0,
+          "text": "Imagine a computer that is shut down overnight. A daily maintenance job might miss its normal schedule. Anacron helps the system catch up after it becomes available again."
+        },
+        {
+          "level": 0,
+          "text": "In RHEL 7 and later, the regular crond service also processes /etc/anacrontab; a separate Anacron service is not required for this role."
+        },
+        {
+          "level": 0,
+          "text": "Example entry:"
+        },
+        {
+          "level": 0,
+          "text": "1 5 daily-task /usr/local/bin/cleanup"
+        },
+        {
+          "level": 0,
+          "text": "Field"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "Run every one day"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "Wait five minutes before starting"
+        },
+        {
+          "level": 0,
+          "text": "daily-task"
+        },
+        {
+          "level": 0,
+          "text": "Job identifier"
+        },
+        {
+          "level": 0,
+          "text": "/usr/local/bin/cleanup"
+        },
+        {
+          "level": 0,
+          "text": "Command to run"
+        },
+        {
+          "level": 0,
+          "text": "The @daily macro is equivalent to a one-day interval, and @weekly is equivalent to seven days."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Anacron helps recover missed periodic jobs, rather than relying only on an exact clock time."
+        },
+        {
+          "level": 0,
+          "text": "14. Anacron time limits and tracking"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Anacron uses time windows and timestamps to decide when a job can run and whether it is due."
+        },
+        {
+          "level": 0,
+          "text": "The START_HOURS_RANGE setting in /etc/anacrontab specifies the hours when jobs are allowed to start. If a job cannot start within that window, it waits until the next day."
+        },
+        {
+          "level": 0,
+          "text": "Files under /var/spool/anacron/ track when daily, weekly, and monthly jobs last ran."
+        },
+        {
+          "level": 0,
+          "text": "Think of these files as a checklist showing when each periodic task was last completed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Anacron uses its schedule, allowed start window, and recorded timestamps to decide when to run jobs."
+        },
+        {
+          "level": 0,
+          "text": "15. What are systemd timers?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A systemd timer schedules another systemd unit, often a service, to start at a specified time or interval."
+        },
+        {
+          "level": 0,
+          "text": "For example, the sysstat package provides a timer that collects system activity information every ten minutes."
+        },
+        {
+          "level": 0,
+          "text": "Example timer setting:"
+        },
+        {
+          "level": 0,
+          "text": "[Timer]"
+        },
+        {
+          "level": 0,
+          "text": "OnCalendar=*:00/10"
+        },
+        {
+          "level": 0,
+          "text": "[Timer] — the timer configuration section."
+        },
+        {
+          "level": 0,
+          "text": "OnCalendar=*:00/10 — schedule activation every ten minutes."
+        },
+        {
+          "level": 0,
+          "text": "The matching service unit performs the actual work."
+        },
+        {
+          "level": 0,
+          "text": "Another option is:"
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec=15min"
+        },
+        {
+          "level": 0,
+          "text": "This schedules the associated unit for activation 15 minutes after its previous activation."
+        },
+        {
+          "level": 0,
+          "text": "A timer is like an alarm clock, while the service is the worker that performs the task."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The timer decides when to activate the service; the service defines what work gets done."
+        },
+        {
+          "level": 0,
+          "text": "16. Safely changing systemd timer configuration"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Store administrator changes under /etc/systemd/system/ so package updates do not overwrite the original vendor configuration."
+        },
+        {
+          "level": 0,
+          "text": "Vendor-provided unit files are commonly stored under:"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/systemd/system/"
+        },
+        {
+          "level": 0,
+          "text": "Do not edit those files directly. Instead, create an appropriate administrator-managed copy or override under /etc/systemd/system/."
+        },
+        {
+          "level": 0,
+          "text": "After making the change:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now mytask.timer"
+        },
+        {
+          "level": 0,
+          "text": "daemon-reload — tells systemd to reread unit configuration."
+        },
+        {
+          "level": 0,
+          "text": "enable — configures automatic startup at boot."
+        },
+        {
+          "level": 0,
+          "text": "--now — starts the timer immediately."
+        },
+        {
+          "level": 0,
+          "text": "mytask.timer — the timer unit to activate."
+        },
+        {
+          "level": 0,
+          "text": "If files with the same name exist in both locations, the administrator configuration under /etc/systemd/system/ takes precedence."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Customize under /etc, reload systemd, then enable and start the timer."
+        }
+      ],
+      "words": 715
+    },
+    {
+      "title": "Part 4 — Managing temporary files",
+      "content": [
+        {
+          "level": 0,
+          "text": "17. What are temporary files?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Temporary files hold data that applications or services need for a short time."
+        },
+        {
+          "level": 0,
+          "text": "Examples include:"
+        },
+        {
+          "level": 0,
+          "text": "/tmp — temporary data used by applications and users."
+        },
+        {
+          "level": 0,
+          "text": "/run — runtime information used by services and other processes."
+        },
+        {
+          "level": 0,
+          "text": "Much of /run is stored in memory. This is called volatile storage, meaning its contents are lost when the system reboots or loses power."
+        },
+        {
+          "level": 0,
+          "text": "Linux must create required temporary directories when needed and remove old files so they do not waste storage or leave outdated information behind."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Temporary data helps applications work, but old data may need cleaning."
+        },
+        {
+          "level": 0,
+          "text": "18. What is systemd-tmpfiles?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: systemd-tmpfiles creates, removes, and manages temporary files and directories according to configuration rules."
+        },
+        {
+          "level": 0,
+          "text": "When RHEL starts, an early service runs:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --create --remove"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles — the management tool."
+        },
+        {
+          "level": 0,
+          "text": "--create — creates configured files and directories when needed."
+        },
+        {
+          "level": 0,
+          "text": "--remove — removes items marked for removal in the configuration."
+        },
+        {
+          "level": 0,
+          "text": "It reads configuration files from:"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Think of it as a maintenance worker following a written checklist."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The configuration defines what should be created, removed, or have its permissions corrected."
+        },
+        {
+          "level": 0,
+          "text": "19. Automatically cleaning temporary files"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A systemd timer regularly triggers a service that removes temporary files that have exceeded their configured age."
+        },
+        {
+          "level": 0,
+          "text": "The timer is:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles-clean.timer"
+        },
+        {
+          "level": 0,
+          "text": "It activates:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles-clean.service"
+        },
+        {
+          "level": 0,
+          "text": "That service runs:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "To inspect the timer configuration:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl cat systemd-tmpfiles-clean.timer"
+        },
+        {
+          "level": 0,
+          "text": "Two important timer settings are:"
+        },
+        {
+          "level": 0,
+          "text": "OnBootSec=15min"
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec=1d"
+        },
+        {
+          "level": 0,
+          "text": "OnBootSec=15min — schedule the first activation 15 minutes after boot."
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec=1d — schedule another activation one day after the associated unit was last activated."
+        },
+        {
+          "level": 0,
+          "text": "Changing the interval to 30min makes subsequent activations occur every 30 minutes after the timer configuration is applied, subject to timer and service behavior."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The timer schedules cleanup; the service performs it."
+        },
+        {
+          "level": 0,
+          "text": "20. Cleaning temporary files manually"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: You can run the cleanup command yourself instead of waiting for the timer."
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "The tool checks the configured age limits and removes eligible files. It does not automatically delete every temporary file."
+        },
+        {
+          "level": 0,
+          "text": "For example, a configuration can specify that files older than one day should be removed during cleanup."
+        },
+        {
+          "level": 0,
+          "text": "Remember: --clean applies the cleanup rules already defined in the configuration files."
+        },
+        {
+          "level": 0,
+          "text": "21. Understanding the seven tmpfiles fields"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Each tmpfiles rule describes the action, path, permissions, ownership, age, and optional extra information."
+        },
+        {
+          "level": 0,
+          "text": "The general format is:"
+        },
+        {
+          "level": 0,
+          "text": "Type Path Mode UID GID Age Argument"
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "d /run/systemd/seats 0755 root root -"
+        },
+        {
+          "level": 0,
+          "text": "Field"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "d"
+        },
+        {
+          "level": 0,
+          "text": "Create the directory if it does not exist"
+        },
+        {
+          "level": 0,
+          "text": "/run/systemd/seats"
+        },
+        {
+          "level": 0,
+          "text": "Directory path"
+        },
+        {
+          "level": 0,
+          "text": "0755"
+        },
+        {
+          "level": 0,
+          "text": "Permissions"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "Owner"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "Group"
+        },
+        {
+          "level": 0,
+          "text": "-"
+        },
+        {
+          "level": 0,
+          "text": "No age limit specified"
+        },
+        {
+          "level": 0,
+          "text": "No value"
+        },
+        {
+          "level": 0,
+          "text": "No additional argument"
+        },
+        {
+          "level": 0,
+          "text": "0755 means the owner can read, write, and enter the directory, while group members and others can read and enter it."
+        },
+        {
+          "level": 0,
+          "text": "22. Important tmpfiles rule types"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The type letter tells systemd-tmpfiles what action to perform."
+        },
+        {
+          "level": 0,
+          "text": "Example A — Create a directory"
+        },
+        {
+          "level": 0,
+          "text": "d /run/systemd/seats 0755 root root -"
+        },
+        {
+          "level": 0,
+          "text": "Creates the directory if necessary, with the specified ownership and permissions. This rule does not set an age-based cleanup limit."
+        },
+        {
+          "level": 0,
+          "text": "Example B — Create and clean a directory"
+        },
+        {
+          "level": 0,
+          "text": "D /home/student 0700 student student 1d"
+        },
+        {
+          "level": 0,
+          "text": "Creates the directory if needed and allows its contents to be cleaned according to the one-day age rule."
+        },
+        {
+          "level": 0,
+          "text": "Example C — Create a symbolic link"
+        },
+        {
+          "level": 0,
+          "text": "L /run/fstablink - root root - /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Creates /run/fstablink pointing to /etc/fstab. A symbolic link is like a shortcut to another file."
+        },
+        {
+          "level": 0,
+          "text": "Example D — Restore security settings"
+        },
+        {
+          "level": 0,
+          "text": "The type Z recursively restores SELinux contexts, file permissions, and ownership according to the rule."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The type determines the action; the remaining fields tell the tool where and how to apply it."
+        },
+        {
+          "level": 0,
+          "text": "23. Configuration file precedence"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: If configuration files have the same name, the file in the higher-priority location takes precedence."
+        },
+        {
+          "level": 0,
+          "text": "Location"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Administrator settings"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Temporary runtime settings"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Package-provided defaults"
+        },
+        {
+          "level": 0,
+          "text": "The priority is:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/ — highest"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/ — lowest"
+        },
+        {
+          "level": 0,
+          "text": "For example, if a package provides a configuration file under /usr/lib/tmpfiles.d/, an administrator can create a file with the same name under /etc/tmpfiles.d/ to override it."
+        },
+        {
+          "level": 0,
+          "text": "Avoid editing package-provided files directly because package updates may replace them."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Put your custom tmpfiles rules under /etc/tmpfiles.d/."
+        }
+      ],
+      "words": 691
+    },
+    {
+      "title": "Final revision — Commands and concepts to remember",
+      "content": [
+        {
+          "level": 0,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "Command or location"
+        },
+        {
+          "level": 0,
+          "text": "Schedule a one-time job"
+        },
+        {
+          "level": 0,
+          "text": "at"
+        },
+        {
+          "level": 0,
+          "text": "List pending one-time jobs"
+        },
+        {
+          "level": 0,
+          "text": "atq"
+        },
+        {
+          "level": 0,
+          "text": "Inspect a scheduled job"
+        },
+        {
+          "level": 0,
+          "text": "at -c JOBNUMBER"
+        },
+        {
+          "level": 0,
+          "text": "List personal cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -l"
+        },
+        {
+          "level": 0,
+          "text": "Edit personal cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e"
+        },
+        {
+          "level": 0,
+          "text": "Remove personal cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -r"
+        },
+        {
+          "level": 0,
+          "text": "Configure system cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.d/"
+        },
+        {
+          "level": 0,
+          "text": "Run interval-based scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.hourly/, /etc/cron.daily/, etc."
+        },
+        {
+          "level": 0,
+          "text": "Configure periodic catch-up jobs"
+        },
+        {
+          "level": 0,
+          "text": "/etc/anacrontab"
+        },
+        {
+          "level": 0,
+          "text": "Reload systemd configuration"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "Enable and start a timer"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now NAME.timer"
+        },
+        {
+          "level": 0,
+          "text": "Create or remove configured temporary files"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --create --remove"
+        },
+        {
+          "level": 0,
+          "text": "Clean eligible temporary files"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "Configure temporary-file rules"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "The whole chapter in one sentence"
+        },
+        {
+          "level": 0,
+          "text": "Use at for one-time future tasks, cron for recurring schedules, Anacron to help periodic jobs catch up after downtime, systemd timers to activate systemd units, and systemd-tmpfiles to manage temporary files."
+        }
+      ],
+      "words": 125
     }
   ],
-  "services": [],
-  "currency": [
-    {
-      "id": "stratis-vdo",
-      "severity": "medium",
-      "title": "Stratis and VDO are still taught, but they are not on the RHCSA exam",
-      "found": "Part 5 covers Stratis layered storage and VDO compression/deduplication in depth.",
-      "current": "Stratis remains available in RHEL and is a reasonable way to manage layered storage, but the EX200 objective wording is about local storage, LVM, and mounting by UUID or label. VDO is niche and largely absent from enterprise datacentres today.",
-      "action": "Learn these for understanding, but prioritise the LVM objectives — pvcreate, vgcreate, lvcreate, and mounting by UUID — which are directly examined.",
-      "verified": "2026-10-12",
-      "source": "EX200 objectives, read 2026-10-10"
-    }
-  ]
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
 }

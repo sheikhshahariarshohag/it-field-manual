@@ -2,703 +2,1147 @@
   "id": "rh134-04",
   "n": 4,
   "sourceNumber": 4,
-  "kind": "part",
-  "title": "Part 4",
-  "display": "Part 4 — Partitioning a Disk; Creating Filesystems and Persistent Mo…",
+  "kind": "chapter",
+  "title": "Chapter 4 — Controlling Access to Files with ACLs",
+  "display": "Chapter 4 — Controlling Access to Files with ACLs",
   "exam": "RHCSA (EX200)",
-  "words": 2610,
+  "words": 2697,
   "sections": [
     {
-      "title": "1. Partitioning a Disk",
+      "title": "Overview",
       "content": [
         {
           "level": 0,
-          "text": "Before a disk can store a filesystem, it needs a partition table describing how the disk is divided. RHEL 8 supports two partitioning schemes:"
-        },
-        {
-          "level": 0,
-          "text": "Scheme"
-        },
-        {
-          "level": 0,
-          "text": "Key facts"
-        },
-        {
-          "level": 0,
-          "text": "MBR (msdos)"
-        },
-        {
-          "level": 0,
-          "text": "Legacy BIOS standard. Maximum 4 primary partitions per disk — need a 5th? Convert one primary to an extended partition and create logical partitions inside it. 2TB size limit per partition."
-        },
-        {
-          "level": 0,
-          "text": "GPT"
-        },
-        {
-          "level": 0,
-          "text": "Modern UEFI standard. Up to 128 partitions with no primary/extended distinction, and no practical size limit. Use this by default on new systems."
-        },
-        {
-          "level": 2,
-          "text": "Managing partitions with parted"
-        },
-        {
-          "level": 0,
-          "text": "parted takes a whole-disk device as its argument. Run it with a subcommand for one-shot changes, or with no subcommand for an interactive session."
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted /dev/vdb print"
-        },
-        {
-          "level": 0,
-          "text": "Model: Virtio Block Device (virtblk)"
-        },
-        {
-          "level": 0,
-          "text": "Disk /dev/vdb: 5369MB"
-        },
-        {
-          "level": 0,
-          "text": "Partition Table: gpt"
-        },
-        {
-          "level": 0,
-          "text": "Number Start End Size File system Name Flags"
-        },
-        {
-          "level": 0,
-          "text": "1 1049kB 1001MB 1000MB data"
-        },
-        {
-          "level": 0,
-          "text": "Creating a partition non-interactively in one line:"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted /dev/vdb mkpart primary xfs 2048s 1000MB"
-        },
-        {
-          "level": 0,
-          "text": "Or interactively, where parted prompts for each value:"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted /dev/vdb"
-        },
-        {
-          "level": 0,
-          "text": "(parted) mkpart"
-        },
-        {
-          "level": 0,
-          "text": "Partition type? primary/extended? primary"
-        },
-        {
-          "level": 0,
-          "text": "File system type? [ext2]? xfs"
-        },
-        {
-          "level": 0,
-          "text": "Start? 2048s"
-        },
-        {
-          "level": 0,
-          "text": "End? 1000MB"
-        },
-        {
-          "level": 0,
-          "text": "(parted) quit"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL mkpart's 'file system type' prompt does NOT create a filesystem — it only tags the partition type. You still have to run mkfs afterward. This distinction is exactly the kind of thing the exam tests: parted partitions, mkfs formats — two separate steps, always."
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING After creating or deleting a partition, run udevadm settle before using the new device — it waits until the kernel has actually created the /dev entry. Skipping this and immediately running mkfs against a device that doesn't exist yet is a common source of confusing failures."
+          "text": "RH134 — RH134 course material"
         }
       ],
-      "words": 282
+      "words": 5
     },
     {
-      "title": "2. Creating Filesystems and Persistent Mounts",
+      "title": "What will you learn?",
       "content": [
         {
           "level": 0,
-          "text": "Command"
+          "text": "By the end of this chapter, you should understand how Linux controls access to files and directories using Access Control Lists (ACLs)."
         },
         {
           "level": 0,
-          "text": "Creates"
+          "text": "You will learn how to:"
         },
         {
           "level": 0,
-          "text": "mkfs.xfs /dev/vdb1"
+          "text": "Understand why ACLs are needed."
         },
         {
           "level": 0,
-          "text": "XFS filesystem (RHEL 8 default)"
+          "text": "View and read ACL permissions."
         },
         {
           "level": 0,
-          "text": "mkfs.ext4 /dev/vdb1"
+          "text": "Understand the ACL mask and permission precedence."
         },
         {
           "level": 0,
-          "text": "ext4 filesystem"
+          "text": "Add, change and remove ACL entries."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mount /dev/vdb1 /mnt"
+          "text": "Configure default ACLs so new files and directories inherit permissions."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mount | grep vdb1"
+          "text": "Verify permissions and practise realistic administration tasks."
         },
         {
           "level": 0,
-          "text": "/dev/vdb1 on /mnt type xfs (rw,relatime,seclabel,attr2,inode64,noquota)"
-        },
-        {
-          "level": 0,
-          "text": "A manual mount like this doesn't survive a reboot. For that, add a line to /etc/fstab — six whitespace-delimited fields."
-        },
-        {
-          "level": 0,
-          "text": "Field #"
-        },
-        {
-          "level": 0,
-          "text": "Content"
-        },
-        {
-          "level": 0,
-          "text": "Notes"
-        },
-        {
-          "level": 0,
-          "text": "1"
-        },
-        {
-          "level": 0,
-          "text": "Device (UUID=... preferred, or /dev/path)"
-        },
-        {
-          "level": 0,
-          "text": "UUID survives device-name reordering across reboots; the device path might not"
-        },
-        {
-          "level": 0,
-          "text": "2"
-        },
-        {
-          "level": 0,
-          "text": "Mount point"
-        },
-        {
-          "level": 0,
-          "text": "Must already exist — create with mkdir first"
-        },
-        {
-          "level": 0,
-          "text": "3"
-        },
-        {
-          "level": 0,
-          "text": "Filesystem type"
-        },
-        {
-          "level": 0,
-          "text": "xfs, ext4, swap, etc."
-        },
-        {
-          "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "Options"
-        },
-        {
-          "level": 0,
-          "text": "defaults covers the common case"
-        },
-        {
-          "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "Dump flag"
-        },
-        {
-          "level": 0,
-          "text": "Almost always 0 — only the dump backup utility uses this"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "fsck order"
-        },
-        {
-          "level": 0,
-          "text": "0 for XFS (doesn't use fsck); for ext4: 1 for root, 2 for everything else"
-        },
-        {
-          "level": 0,
-          "text": "UUID=a8063676-44dd-409a-b584-68be2c9f5570 / xfs defaults 0 0"
-        },
-        {
-          "level": 0,
-          "text": "UUID=7a20315d-ed8b-4e75-a5b6-24ff9e1f9838 /dbdata xfs defaults 0 0"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lsblk --fs # find UUIDs for every block device"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Always run systemctl daemon-reload after editing /etc/fstab, and ALWAYS verify with mount /mountpoint (or findmnt --verify) BEFORE rebooting. A broken fstab entry can leave a machine unable to boot to a normal login — this is one of the few RH134 mistakes with real consequences, and it's exactly why RH134 Chapter 10 later teaches you how to recover from it."
+          "text": "The main idea is simple: ACLs allow you to give different permissions to additional users and groups without changing the owner of a file."
         }
       ],
-      "words": 215
+      "words": 91
     },
     {
-      "title": "3. Managing Swap Space",
+      "title": "Part 1 — Understanding ACLs",
       "content": [
         {
           "level": 0,
-          "text": "Swap is disk space the kernel uses to hold memory pages that don't fit in RAM. It's a safety net, not a performance feature — swap is always dramatically slower than RAM."
+          "text": "1. What is an ACL?"
         },
         {
           "level": 0,
-          "text": "Physical RAM"
+          "text": "ACL stands for Access Control List."
         },
         {
           "level": 0,
-          "text": "Recommended swap"
+          "text": "Linux normally uses three main permission categories:"
         },
         {
           "level": 0,
-          "text": "Swap if hibernation needed"
+          "text": "Owner: The user who owns the file."
         },
         {
           "level": 0,
-          "text": "2 GiB or less"
+          "text": "Group: The group associated with the file."
         },
         {
           "level": 0,
-          "text": "Twice the RAM"
+          "text": "Others: Everyone else who is not covered by the applicable owner or group permissions."
         },
         {
           "level": 0,
-          "text": "Three times the RAM"
+          "text": "For example, suppose a file belongs to the user alice and the group developers."
         },
         {
           "level": 0,
-          "text": "2-8 GiB"
+          "text": "You want:"
         },
         {
           "level": 0,
-          "text": "Same as RAM"
+          "text": "Alice to read and edit the file."
         },
         {
           "level": 0,
-          "text": "Twice the RAM"
+          "text": "Members of developers to read the file."
         },
         {
           "level": 0,
-          "text": "8-64 GiB"
+          "text": "A second user, bob, to read the file."
         },
         {
           "level": 0,
-          "text": "At least 4 GiB"
+          "text": "Everyone else to have no access."
         },
         {
           "level": 0,
-          "text": "1.5x RAM"
+          "text": "Ordinary owner, group and other permissions may not express all these requirements conveniently. ACLs let you add a separate permission entry for Bob without changing the file's owner or group."
         },
         {
           "level": 0,
-          "text": "More than 64 GiB"
+          "text": "Think of ordinary permissions as three access lists. ACLs let you add more specific entries for named users and groups."
         },
         {
           "level": 0,
-          "text": "At least 4 GiB"
+          "text": "2. Understand read, write and execute permissions"
         },
         {
           "level": 0,
-          "text": "Hibernation not recommended"
-        },
-        {
-          "level": 2,
-          "text": "Creating and activating swap"
+          "text": "ACLs use the same basic permissions as ordinary Linux file permissions."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# parted /dev/vdb mkpart primary linux-swap 1001MB 1257MB"
+          "text": "Permission"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# udevadm settle"
+          "text": "Letter"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mkswap /dev/vdb2"
+          "text": "Meaning for a file"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# swapon /dev/vdb2"
+          "text": "Meaning for a directory"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# free"
+          "text": "Read"
         },
         {
           "level": 0,
-          "text": "For persistence, /etc/fstab uses swap as a placeholder in the mount-point field (swap has no directory location):"
+          "text": "r"
         },
         {
           "level": 0,
-          "text": "UUID=39e2667a-9458-42fe-9665-c5c854605881 swap swap defaults 0 0"
+          "text": "Read file contents"
         },
         {
           "level": 0,
-          "text": "Multiple swap devices are used in series by default — the kernel fills the first before touching the second. Override that with the pri= mount option; higher priority is used first, and equal priorities round-robin."
+          "text": "List directory entries"
         },
         {
           "level": 0,
-          "text": "✗ COMMON MISTAKE Setting the fs-type tag when partitioning swap and assuming that alone activates it. Modern tools don't look at the partition type flag to decide anything — you still need mkswap to write the actual swap signature, and swapon (or an fstab entry) to activate it."
+          "text": "Write"
+        },
+        {
+          "level": 0,
+          "text": "w"
+        },
+        {
+          "level": 0,
+          "text": "Change file contents"
+        },
+        {
+          "level": 0,
+          "text": "Create, remove or rename entries, subject to other restrictions"
+        },
+        {
+          "level": 0,
+          "text": "Execute"
+        },
+        {
+          "level": 0,
+          "text": "x"
+        },
+        {
+          "level": 0,
+          "text": "Run an executable file"
+        },
+        {
+          "level": 0,
+          "text": "Search or enter the directory"
+        },
+        {
+          "level": 0,
+          "text": "Directory permissions need special attention."
+        },
+        {
+          "level": 0,
+          "text": "A user may have permission to read a directory's listing but still be unable to enter it if the user lacks execute permission."
+        },
+        {
+          "level": 0,
+          "text": "Also, a user generally needs execute permission on the directory path leading to a file to access that file."
+        },
+        {
+          "level": 0,
+          "text": "3. Important ACL terms"
+        },
+        {
+          "level": 0,
+          "text": "Named user: An additional user who receives a specific ACL entry."
+        },
+        {
+          "level": 0,
+          "text": "Example: user:bob:r--"
+        },
+        {
+          "level": 0,
+          "text": "Named group: An additional group that receives a specific ACL entry."
+        },
+        {
+          "level": 0,
+          "text": "Example: group:developers:rwx"
+        },
+        {
+          "level": 0,
+          "text": "Default ACL: An ACL attached to a directory that provides permission settings inherited by newly created files and subdirectories."
+        },
+        {
+          "level": 0,
+          "text": "ACL mask: A limit on the effective permissions of named users, the owning group and named groups. It does not limit the file owner's permissions or the permissions assigned to others."
+        },
+        {
+          "level": 0,
+          "text": "Remember that the mask can reduce the effective permissions granted by an ACL entry."
+        },
+        {
+          "level": 0,
+          "text": "4. Check whether a file has an ACL"
+        },
+        {
+          "level": 0,
+          "text": "Use:"
+        },
+        {
+          "level": 0,
+          "text": "ls -l report.txt"
+        },
+        {
+          "level": 0,
+          "text": "A file with an extended ACL commonly shows a plus sign (+) after its permission string."
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "-rw-rw-r--+ 1 alice developers 1200 Oct 10 09:00 report.txt"
+        },
+        {
+          "level": 0,
+          "text": "The + indicates that additional access-control information exists."
+        },
+        {
+          "level": 0,
+          "text": "However, ls -l does not explain every ACL entry. Use getfacl for the full details."
+        },
+        {
+          "level": 0,
+          "text": "getfacl report.txt"
+        },
+        {
+          "level": 0,
+          "text": "This displays the file's ACL entries, including the owner, owning group, named users or groups, mask and other permissions when applicable."
+        },
+        {
+          "level": 0,
+          "text": "To inspect a directory:"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shared"
+        },
+        {
+          "level": 0,
+          "text": "To inspect a file and its directory:"
+        },
+        {
+          "level": 0,
+          "text": "ls -ld /shared"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shared"
+        },
+        {
+          "level": 0,
+          "text": "The -d option with ls displays information about the directory itself rather than listing its contents."
+        },
+        {
+          "level": 0,
+          "text": "5. Understand the output of getfacl"
+        },
+        {
+          "level": 0,
+          "text": "Suppose getfacl report.txt displays:"
+        },
+        {
+          "level": 0,
+          "text": "# file: report.txt"
+        },
+        {
+          "level": 0,
+          "text": "# owner: alice"
+        },
+        {
+          "level": 0,
+          "text": "# group: developers"
+        },
+        {
+          "level": 0,
+          "text": "user::rw-"
+        },
+        {
+          "level": 0,
+          "text": "user:bob:r--"
+        },
+        {
+          "level": 0,
+          "text": "group::r--"
+        },
+        {
+          "level": 0,
+          "text": "mask::r--"
+        },
+        {
+          "level": 0,
+          "text": "other::---"
+        },
+        {
+          "level": 0,
+          "text": "Read the entries as follows:"
+        },
+        {
+          "level": 0,
+          "text": "user::rw- — the file owner has read and write permissions."
+        },
+        {
+          "level": 0,
+          "text": "user:bob:r-- — Bob has a named-user ACL entry granting read permission."
+        },
+        {
+          "level": 0,
+          "text": "group::r-- — the owning group has read permission."
+        },
+        {
+          "level": 0,
+          "text": "mask::r-- — the maximum effective permissions for mask-controlled entries are read-only."
+        },
+        {
+          "level": 0,
+          "text": "other::--- — other users have no permissions."
+        },
+        {
+          "level": 0,
+          "text": "The empty name in user:: identifies the file owner. Similarly, group:: identifies the owning group."
+        },
+        {
+          "level": 0,
+          "text": "Important: An ACL entry is not always the same as the effective permission. You must also check the mask when one applies."
+        },
+        {
+          "level": 0,
+          "text": "6. Understand the ACL mask"
+        },
+        {
+          "level": 0,
+          "text": "The mask sets the maximum effective permissions for:"
+        },
+        {
+          "level": 0,
+          "text": "Named users, excluding the file owner."
+        },
+        {
+          "level": 0,
+          "text": "The owning group."
+        },
+        {
+          "level": 0,
+          "text": "Named groups."
+        },
+        {
+          "level": 0,
+          "text": "For example:"
+        },
+        {
+          "level": 0,
+          "text": "user::rw-"
+        },
+        {
+          "level": 0,
+          "text": "user:bob:rwx                  #effective:r--"
+        },
+        {
+          "level": 0,
+          "text": "group::r--"
+        },
+        {
+          "level": 0,
+          "text": "mask::r--"
+        },
+        {
+          "level": 0,
+          "text": "other::---"
+        },
+        {
+          "level": 0,
+          "text": "Bob's entry requests read, write and execute permissions, but the mask permits only read access."
+        },
+        {
+          "level": 0,
+          "text": "Therefore, Bob's effective permission is r--."
+        },
+        {
+          "level": 0,
+          "text": "The mask does not restrict the file owner's permissions or the other entry."
+        },
+        {
+          "level": 0,
+          "text": "The mask can be calculated automatically when ACL entries are modified. You can also set it explicitly."
+        },
+        {
+          "level": 0,
+          "text": "To inspect the effective permissions, use:"
+        },
+        {
+          "level": 0,
+          "text": "getfacl report.txt"
+        },
+        {
+          "level": 0,
+          "text": "Look for comments such as #effective:r--."
+        },
+        {
+          "level": 0,
+          "text": "7. Understand permission precedence"
+        },
+        {
+          "level": 0,
+          "text": "When Linux checks whether a user can access a file, it evaluates the applicable permission category."
+        },
+        {
+          "level": 0,
+          "text": "The main rules are:"
+        },
+        {
+          "level": 0,
+          "text": "If the user owns the file, the owner's ACL entry applies."
+        },
+        {
+          "level": 0,
+          "text": "Otherwise, if the user has a matching named-user entry, that entry applies, subject to the mask."
+        },
+        {
+          "level": 0,
+          "text": "Otherwise, if the user's groups match the owning group or a named-group entry, the applicable group permissions apply, subject to the mask."
+        },
+        {
+          "level": 0,
+          "text": "If none of these categories applies, the other permissions apply."
+        },
+        {
+          "level": 0,
+          "text": "Do not assume Linux simply adds every permission together. The applicable category and the ACL mask determine the result."
+        },
+        {
+          "level": 0,
+          "text": "8. Where does RHEL use ACLs?"
+        },
+        {
+          "level": 0,
+          "text": "ACLs are useful when a system needs more flexible access control than the traditional owner/group/other model."
+        },
+        {
+          "level": 0,
+          "text": "For example, systemd's journal files can use ACLs to grant selected groups read access to logs without making those files generally readable by everyone."
+        },
+        {
+          "level": 0,
+          "text": "RHEL filesystems must support ACLs, and the filesystem must be mounted with ACL support enabled. XFS supports ACLs and is commonly used by RHEL."
         }
       ],
-      "words": 212
+      "words": 843
     },
     {
-      "title": "4. LVM Concepts and Creating Logical Volumes",
+      "title": "Part 2 — Managing ACL permissions",
       "content": [
         {
           "level": 0,
-          "text": "Partitions are fixed the moment you create them — resizing usually means backing up data, deleting, and recreating. LVM adds a flexible layer in between so storage can grow (and sometimes shrink) without that disruption."
+          "text": "9. Add or modify an ACL entry"
         },
         {
           "level": 0,
-          "text": "Layer"
+          "text": "The setfacl command manages ACL permissions."
         },
         {
           "level": 0,
-          "text": "What it is"
+          "text": "Basic format:"
         },
         {
           "level": 0,
-          "text": "Physical device"
+          "text": "setfacl -m ACL_ENTRY file"
         },
         {
           "level": 0,
-          "text": "A raw disk or partition"
+          "text": "Example:"
         },
         {
           "level": 0,
-          "text": "Physical Volume (PV)"
+          "text": "setfacl -m u:bob:r-- report.txt"
         },
         {
           "level": 0,
-          "text": "A physical device labeled for LVM use, chopped into fixed-size Physical Extents (PEs)"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "Volume Group (VG)"
+          "text": "setfacl — manages access-control lists."
         },
         {
           "level": 0,
-          "text": "A pool of PEs combined from one or more PVs — functionally 'a virtual disk'"
+          "text": "-m — modifies or adds an ACL entry."
         },
         {
           "level": 0,
-          "text": "Logical Volume (LV)"
+          "text": "u:bob:r-- — gives the named user Bob read permission."
         },
         {
           "level": 0,
-          "text": "A chunk of a VG's PEs, presented as a block device you format and mount like any partition"
+          "text": "report.txt — the file being changed."
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS The entire value proposition of LVM in one sentence: a VG can span multiple physical disks, and an LV can be grown any time the VG has free PEs — no unmounting, no data migration, often no downtime at all."
-        },
-        {
-          "level": 2,
-          "text": "Building the stack: pvcreate → vgcreate → lvcreate"
+          "text": "The entry has three parts:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 769MiB"
+          "text": "u means user."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb set 1 lvm on"
+          "text": "bob is the username."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# pvcreate /dev/vdb1"
+          "text": "r-- grants read permission only."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vgcreate vg01 /dev/vdb1"
+          "text": "Verify the result:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# lvcreate -n lv01 -L 700M vg01"
+          "text": "getfacl report.txt"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mkfs -t xfs /dev/vg01/lv01"
+          "text": "You should see an entry for Bob."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mkdir /mnt/data"
+          "text": "10. Give a named group permissions"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# mount /dev/vg01/lv01 /mnt/data"
+          "text": "Suppose the group developers needs read and write access to a file."
         },
         {
           "level": 0,
-          "text": "lvcreate sizing option"
+          "text": "Run:"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "setfacl -m g:developers:rw- report.txt"
         },
         {
           "level": 0,
-          "text": "-L 128M"
+          "text": "Meaning:"
         },
         {
           "level": 0,
-          "text": "Exactly 128 MiB"
+          "text": "g identifies a group entry."
         },
         {
           "level": 0,
-          "text": "-l 128"
+          "text": "developers is the group name."
         },
         {
           "level": 0,
-          "text": "Exactly 128 physical extents"
+          "text": "rw- grants read and write permissions."
         },
         {
           "level": 0,
-          "text": "-l +50%FREE"
+          "text": "report.txt is the target file."
         },
         {
           "level": 0,
-          "text": "Add 50% of the VG's current free space"
+          "text": "Verify the ACL:"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL An LV device shows up under two equally valid names: /dev/vgname/lvname (traditional) and /dev/mapper/vgname-lvname (device-mapper). Different commands and different output favor one or the other — recognize both as the same device."
-        },
-        {
-          "level": 2,
-          "text": "Status commands"
+          "text": "getfacl report.txt"
         },
         {
           "level": 0,
-          "text": "Level"
+          "text": "Remember: Adding a named-group entry does not change the file's owner or owning group."
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "11. Apply ACLs recursively"
         },
         {
           "level": 0,
-          "text": "Physical Volume"
+          "text": "Suppose you want to apply an ACL to a directory and its existing contents."
         },
         {
           "level": 0,
-          "text": "pvdisplay / pvs"
+          "text": "Use the -R option:"
         },
         {
           "level": 0,
-          "text": "Volume Group"
+          "text": "setfacl -R -m u:bob:r-X /shared"
         },
         {
           "level": 0,
-          "text": "vgdisplay / vgs"
+          "text": "What the command does:"
         },
         {
           "level": 0,
-          "text": "Logical Volume"
+          "text": "-R applies the change recursively."
         },
         {
           "level": 0,
-          "text": "lvdisplay / lvs"
+          "text": "-m modifies or adds an ACL entry."
         },
         {
           "level": 0,
-          "text": "The long-form display commands (pvdisplay, vgdisplay, lvdisplay) give full detail on one item at a time; the short-form (pvs, vgs, lvs) give a compact one-line-per-item summary — reach for the short form when scanning many volumes at once."
-        },
-        {
-          "level": 2,
-          "text": "Removing the stack (reverse order)"
+          "text": "u:bob:r-X gives Bob read permission and conditional execute permission."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# umount /mnt/data"
+          "text": "/shared is the target directory."
         },
         {
           "level": 0,
-          "text": "# remove the /etc/fstab entry"
+          "text": "The uppercase X is important. It adds execute permission to directories and preserves or grants execute permission to regular files according to the conditional rules of X."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# lvremove /dev/vg01/lv01"
+          "text": "This helps users search directories without unnecessarily making every regular file executable."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vgremove vg01"
+          "text": "Verify the result on the directory and selected files:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# pvremove /dev/vdb1"
+          "text": "getfacl /shared"
         },
         {
           "level": 0,
-          "text": "⚠ WARNING lvremove destroys the LV's data immediately once confirmed. Back up or move anything worth keeping before you run it — there's no undo."
+          "text": "getfacl /shared/report.txt"
+        },
+        {
+          "level": 0,
+          "text": "Use recursive ACL changes carefully because they affect existing contents."
+        },
+        {
+          "level": 0,
+          "text": "12. Remove a specific ACL entry"
+        },
+        {
+          "level": 0,
+          "text": "Use -x to remove an individual ACL entry."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -x u:bob report.txt"
+        },
+        {
+          "level": 0,
+          "text": "This removes Bob's named-user ACL entry from report.txt."
+        },
+        {
+          "level": 0,
+          "text": "To remove a named-group entry:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -x g:developers report.txt"
+        },
+        {
+          "level": 0,
+          "text": "The command removes the specified entry but leaves other ACL entries in place."
+        },
+        {
+          "level": 0,
+          "text": "Verify the change:"
+        },
+        {
+          "level": 0,
+          "text": "getfacl report.txt"
+        },
+        {
+          "level": 0,
+          "text": "13. Remove extended ACL entries"
+        },
+        {
+          "level": 0,
+          "text": "To remove extended ACL entries from a file, use:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -b report.txt"
+        },
+        {
+          "level": 0,
+          "text": "This removes the extended ACL entries, leaving the basic owner, group and other permissions."
+        },
+        {
+          "level": 0,
+          "text": "For a directory, -b also removes its extended access ACL entries, but it does not remove its default ACL. Use -k to remove the default ACL."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -k /shared"
+        },
+        {
+          "level": 0,
+          "text": "This removes all default ACL entries from /shared."
+        },
+        {
+          "level": 0,
+          "text": "Remember:"
+        },
+        {
+          "level": 0,
+          "text": "-x removes selected ACL entries."
+        },
+        {
+          "level": 0,
+          "text": "-b removes extended access ACL entries."
+        },
+        {
+          "level": 0,
+          "text": "-k removes a directory's default ACL."
         }
       ],
-      "words": 372
+      "words": 409
     },
     {
-      "title": "5. Extending Volume Groups and Logical Volumes",
+      "title": "Part 3 — Default ACLs",
       "content": [
         {
           "level": 0,
-          "text": "This is the single most exam-relevant LVM skill: grow storage live, without unmounting, without downtime."
-        },
-        {
-          "level": 2,
-          "text": "Extending a volume group"
+          "text": "14. What is a default ACL?"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1027MiB 1539MiB"
+          "text": "A normal ACL controls access to the file or directory on which it is set."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb set 3 lvm on"
+          "text": "A default ACL on a directory provides permission settings that newly created files and subdirectories can inherit."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# pvcreate /dev/vdb3"
+          "text": "Imagine that a shared project directory is used by several team members. You want new content created inside that directory to receive suitable access permissions automatically."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vgextend vg01 /dev/vdb3"
+          "text": "Without a default ACL, you might need to adjust every new file separately."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vgdisplay vg01 # confirm 'Free PE / Size' is non-zero"
-        },
-        {
-          "level": 2,
-          "text": "Reducing a volume group (removing a PV)"
+          "text": "A default ACL helps establish the intended permission rules for new content."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# pvmove /dev/vdb3 # relocate extents to other PVs first"
+          "text": "Important: A default ACL controls inheritance. It does not itself grant access to the directory on which it is configured. The directory still needs appropriate access ACL entries."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vgreduce vg01 /dev/vdb3"
+          "text": "15. Create a default ACL for a user"
         },
         {
           "level": 0,
-          "text": "⚠ WARNING pvmove requires enough free space on the VG's OTHER physical volumes to receive everything being moved off — and an interrupted pvmove (e.g. a power loss mid-move) risks leaving the VG in an inconsistent state. Back up before running it."
-        },
-        {
-          "level": 2,
-          "text": "Extending a logical volume + its filesystem"
+          "text": "Suppose Bob should receive read and execute permissions through the default ACL of /shared."
         },
         {
           "level": 0,
-          "text": "Two separate operations, always in this order: grow the LV first, then grow the filesystem living on it. The filesystem step differs by filesystem type — this is the detail the exam loves to test."
+          "text": "Run:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# vgdisplay vg01 # confirm free PE / size first"
+          "text": "setfacl -m d:u:bob:rx /shared"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# lvextend -L +300M /dev/vg01/lv01"
+          "text": "What each part means:"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# xfs_growfs /mnt/data # XFS: takes the MOUNT POINT"
+          "text": "-m modifies the ACL."
         },
         {
           "level": 0,
-          "text": "[root@host ~]# resize2fs /dev/vg01/lv01 # ext4: takes the LV DEVICE"
+          "text": "d: identifies a default ACL entry."
         },
         {
           "level": 0,
-          "text": "lvextend sizing option"
+          "text": "u:bob identifies the named user."
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "rx requests read and execute permissions."
         },
         {
           "level": 0,
-          "text": "-L 128M"
+          "text": "/shared is the directory receiving the default ACL."
         },
         {
           "level": 0,
-          "text": "Resize to exactly 128 MiB total"
+          "text": "Verify it:"
         },
         {
           "level": 0,
-          "text": "-L +128M"
+          "text": "getfacl /shared"
         },
         {
           "level": 0,
-          "text": "Add 128 MiB to current size"
+          "text": "The output should contain a default entry for Bob."
         },
         {
           "level": 0,
-          "text": "-l +128"
+          "text": "16. Create a default ACL for a group"
         },
         {
           "level": 0,
-          "text": "Add 128 extents"
+          "text": "Suppose the developers group should inherit read and execute permissions."
         },
         {
           "level": 0,
-          "text": "-l +50%FREE"
+          "text": "Run:"
         },
         {
           "level": 0,
-          "text": "Add 50% of the VG's current free space"
+          "text": "setfacl -m d:g:developers:rx /shared"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL xfs_growfs takes the MOUNT POINT as its argument. resize2fs takes the LOGICAL VOLUME DEVICE. Mixing these up is the single most common mistake in this entire chapter — and both commands work while the filesystem stays mounted and in use, no downtime required."
+          "text": "Then check the result:"
         },
         {
           "level": 0,
-          "text": "🔎 REAL-WORLD EXTENSION lvextend -r combines 'grow the LV' and 'grow the filesystem' into one command, using fsadm under the hood — it works for both XFS and ext4. It's genuinely useful in real work, but know the two-step manual process cold, since that's what the exam and this chapter emphasize."
+          "text": "getfacl /shared"
         },
         {
           "level": 0,
-          "text": "Swap logical volumes extend differently — you can't grow a swap LV in place while it's active. The pattern is: swapoff, lvextend, mkswap again (which re-labels it), then swapon."
+          "text": "You should see a default group entry."
         },
         {
-          "level": 3,
-          "text": "Command Reference — Storage + LVM"
+          "level": 0,
+          "text": "Default permissions are inherited by newly created content, but the final permissions also depend on the type of object created and the permissions requested when it is created."
         },
+        {
+          "level": 0,
+          "text": "For example, regular files do not automatically become executable merely because a default ACL includes execute permission. Newly created regular files normally do not receive execute permission when their creation mode excludes it."
+        },
+        {
+          "level": 0,
+          "text": "17. Remove a default ACL entry"
+        },
+        {
+          "level": 0,
+          "text": "To remove Bob's default ACL entry:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -x d:u:bob /shared"
+        },
+        {
+          "level": 0,
+          "text": "To remove all default ACL entries from the directory:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -k /shared"
+        },
+        {
+          "level": 0,
+          "text": "Verify the change:"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shared"
+        },
+        {
+          "level": 0,
+          "text": "The default entries should no longer appear if they were all removed."
+        },
+        {
+          "level": 0,
+          "text": "18. Understand ACL inheritance and directory access"
+        },
+        {
+          "level": 0,
+          "text": "Suppose /shared has a default ACL for the developers group."
+        },
+        {
+          "level": 0,
+          "text": "When a user creates a new file or subdirectory inside /shared, the new object can inherit ACL entries from the parent directory's default ACL."
+        },
+        {
+          "level": 0,
+          "text": "However, inheritance does not mean every new object receives identical effective permissions in every situation. The requested creation permissions and the type of object matter."
+        },
+        {
+          "level": 0,
+          "text": "Also remember that users need permission to search the parent directories in the path. An ACL on a file does not bypass restrictions on the directories leading to it."
+        }
+      ],
+      "words": 427
+    },
+    {
+      "title": "Part 4 — Practical administration exercise",
+      "content": [
+        {
+          "level": 0,
+          "text": "19. Scenario: Share a directory with a group"
+        },
+        {
+          "level": 0,
+          "text": "You are responsible for a shared directory:"
+        },
+        {
+          "level": 0,
+          "text": "/shares/content"
+        },
+        {
+          "level": 0,
+          "text": "The consultants group needs access to the directory and its existing contents. However, the user consultant1 must not have access."
+        },
+        {
+          "level": 0,
+          "text": "Future files and directories must also receive suitable ACL settings."
+        },
+        {
+          "level": 0,
+          "text": "This resembles the access-control task in the RH134 guided exercise."
+        },
+        {
+          "level": 0,
+          "text": "Before beginning: Practise only in a disposable lab environment. Use test users and directories, and do not change permissions on important system directories."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Inspect the existing permissions"
+        },
+        {
+          "level": 0,
+          "text": "ls -ld /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "Check the owner, owning group, existing ACL entries and mask."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Grant access to the consultants group"
+        },
+        {
+          "level": 0,
+          "text": "The following example grants read, write and execute permissions to the named group recursively:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -R -m g:consultants:rwx /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "This adds or updates the named-group ACL entry on the directory and its existing contents."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Restrict the named user"
+        },
+        {
+          "level": 0,
+          "text": "The named-user entry takes precedence over group entries for that user when the user is not the file owner."
+        },
+        {
+          "level": 0,
+          "text": "For the example user, apply:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -R -m u:consultant1:--- /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "This gives consultant1 no permissions through that named-user entry. Ensure the mask and other directory permissions do not undermine the intended access policy."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Configure default permissions"
+        },
+        {
+          "level": 0,
+          "text": "To provide suitable inherited permissions for new content, configure default ACLs on the directory:"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m d:g:consultants:rwx /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m d:u:consultant1:--- /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "The first command adds a default entry for the consultants group. The second adds a default entry for the named user."
+        },
+        {
+          "level": 0,
+          "text": "Default ACL inheritance and effective permissions still depend on the creation mode and ACL mask. Verify the actual results rather than assuming that every new file will have identical permissions."
+        },
+        {
+          "level": 0,
+          "text": "Step 5: Verify the ACLs"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shares/content"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shares/content/loadvg.sh"
+        },
+        {
+          "level": 0,
+          "text": "Check that the intended entries exist and that their effective permissions are correct."
+        },
+        {
+          "level": 0,
+          "text": "Create a test file in the lab directory and inspect its ACL:"
+        },
+        {
+          "level": 0,
+          "text": "touch /shares/content/testfile.txt"
+        },
+        {
+          "level": 0,
+          "text": "getfacl /shares/content/testfile.txt"
+        },
+        {
+          "level": 0,
+          "text": "Check the inherited entries and their effective permissions."
+        },
+        {
+          "level": 0,
+          "text": "Step 6: Test access"
+        },
+        {
+          "level": 0,
+          "text": "Where the required lab users and permissions are configured, test whether:"
+        },
+        {
+          "level": 0,
+          "text": "A member of consultants can perform the intended operations."
+        },
+        {
+          "level": 0,
+          "text": "consultant1 is denied the intended access."
+        },
+        {
+          "level": 0,
+          "text": "Newly created files and directories receive the expected ACL entries."
+        },
+        {
+          "level": 0,
+          "text": "If a result differs from what you expected, inspect the full ACL and its mask before making further changes."
+        },
+        {
+          "level": 0,
+          "text": "20. Common ACL mistakes"
+        },
+        {
+          "level": 0,
+          "text": "Checking only ls -l: Use getfacl to inspect extended ACL entries."
+        },
+        {
+          "level": 0,
+          "text": "Ignoring the mask: A named user or group can have fewer effective permissions than its ACL entry appears to grant."
+        },
+        {
+          "level": 0,
+          "text": "Confusing default ACLs with access ACLs: Default ACLs control inheritance; they do not replace the permissions required to access the directory itself."
+        },
+        {
+          "level": 0,
+          "text": "Forgetting directory execute permission: Users generally need execute permission on directories in the path to reach a file."
+        },
+        {
+          "level": 0,
+          "text": "Using recursive changes without checking the target: Recursive changes can alter many files and directories."
+        },
+        {
+          "level": 0,
+          "text": "Assuming new files become executable: File creation modes can limit inherited permissions."
+        },
+        {
+          "level": 0,
+          "text": "Removing the wrong entries: Understand the difference between -x, -b and -k before changing a live system."
+        }
+      ],
+      "words": 502
+    },
+    {
+      "title": "Part 5 — ACL command reference",
+      "content": [
         {
           "level": 0,
           "text": "Command"
@@ -709,406 +1153,233 @@
         },
         {
           "level": 0,
-          "text": "parted DEVICE mkpart TYPE FS-TYPE START END"
+          "text": "ls -l file"
         },
         {
           "level": 0,
-          "text": "Create a partition"
+          "text": "Show ordinary permissions and indicate extended ACLs"
         },
         {
           "level": 0,
-          "text": "mkfs.xfs / mkfs.ext4 DEVICE"
+          "text": "getfacl file"
         },
         {
           "level": 0,
-          "text": "Format a partition or LV with a filesystem"
+          "text": "Display ACL entries and effective permissions"
         },
         {
           "level": 0,
-          "text": "mount DEVICE MOUNTPOINT"
+          "text": "setfacl -m u:bob:r-- file"
         },
         {
           "level": 0,
-          "text": "Mount manually (non-persistent)"
+          "text": "Add or modify a named-user entry"
         },
         {
           "level": 0,
-          "text": "/etc/fstab"
+          "text": "setfacl -m g:developers:rw- file"
         },
         {
           "level": 0,
-          "text": "Persistent mount config — 6 fields, verify with mount before reboot"
+          "text": "Add or modify a named-group entry"
         },
         {
           "level": 0,
-          "text": "mkswap DEVICE / swapon DEVICE"
+          "text": "setfacl -R -m ... directory"
         },
         {
           "level": 0,
-          "text": "Format / activate swap"
+          "text": "Apply an ACL change recursively"
         },
         {
           "level": 0,
-          "text": "pvcreate / vgcreate / lvcreate"
+          "text": "setfacl -x u:bob file"
         },
         {
           "level": 0,
-          "text": "Build the PV → VG → LV stack"
+          "text": "Remove a named-user entry"
         },
         {
           "level": 0,
-          "text": "pvs / vgs / lvs"
+          "text": "setfacl -b file"
         },
         {
           "level": 0,
-          "text": "Quick status at each layer"
+          "text": "Remove extended access ACL entries"
         },
         {
           "level": 0,
-          "text": "vgextend VG PV"
+          "text": "setfacl -k directory"
         },
         {
           "level": 0,
-          "text": "Add a physical volume to a volume group"
+          "text": "Remove default ACL entries"
         },
         {
           "level": 0,
-          "text": "lvextend -L +SIZE LV"
+          "text": "setfacl -m d:u:bob:rx directory"
         },
         {
           "level": 0,
-          "text": "Grow a logical volume"
-        },
-        {
-          "level": 0,
-          "text": "xfs_growfs MOUNTPOINT / resize2fs LV"
-        },
-        {
-          "level": 0,
-          "text": "Grow the filesystem after the LV (XFS takes mountpoint, ext4 takes device)"
+          "text": "Add a default named-user entry"
         }
       ],
-      "words": 480
-    }
-  ],
-  "labs": [
+      "words": 82
+    },
     {
-      "title": "Lab: Storage + LVM End-to-End",
-      "content": [
-        {
-          "level": 3,
-          "text": "Objective"
-        },
-        {
-          "level": 0,
-          "text": "Build a complete LVM stack from a raw disk to a mounted, persistent filesystem — then extend it live without unmounting."
-        },
-        {
-          "level": 3,
-          "text": "Scenario"
-        },
-        {
-          "level": 0,
-          "text": "A new application needs 500 MiB of persistent storage at /data. Six months later, it's grown and needs another 300 MiB — and you're not allowed to take it offline to do it."
-        },
-        {
-          "level": 3,
-          "text": "Environment"
-        },
-        {
-          "level": 0,
-          "text": "One RHEL 8 VM with a second, unused virtual disk attached — /dev/vdb, entirely empty"
-        },
-        {
-          "level": 0,
-          "text": "sudo/root access"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part A (build)"
-        },
-        {
-          "level": 0,
-          "text": "1. Partition /dev/vdb (GPT), mark it for LVM use, and create a PV"
-        },
-        {
-          "level": 0,
-          "text": "2. Create a volume group named appvg from that PV"
-        },
-        {
-          "level": 0,
-          "text": "3. Create a 500 MiB logical volume named datalv in appvg"
-        },
-        {
-          "level": 0,
-          "text": "4. Format it XFS, create /data, mount it, and make the mount persistent via /etc/fstab (UUID-based)"
-        },
-        {
-          "level": 0,
-          "text": "5. Verify the mount survives by testing with mount /data after unmounting — WITHOUT rebooting"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part B (extend live)"
-        },
-        {
-          "level": 0,
-          "text": "1. Confirm free space exists in appvg with vgdisplay (there should be leftover PEs from the original disk size)"
-        },
-        {
-          "level": 0,
-          "text": "2. Extend datalv by 300 MiB"
-        },
-        {
-          "level": 0,
-          "text": "3. Grow the XFS filesystem to use the new space, with /data still mounted"
-        },
-        {
-          "level": 0,
-          "text": "4. Verify the new total size with df -h /data"
-        },
-        {
-          "level": 3,
-          "text": "Hint"
-        },
-        {
-          "level": 0,
-          "text": "Part A's persistence check is important: don't just trust that the fstab line 'looks right' — actually unmount and remount using only the fstab entry (umount /data; mount /data) to prove it works, exactly as the chapter recommends doing before ever rebooting a real machine."
-        },
-        {
-          "level": 3,
-          "text": "Checkpoint"
-        },
-        {
-          "level": 0,
-          "text": "Before checking the solution: which command grows the XFS filesystem in Part B — the mount point or the device name? If you're not sure without looking it up, re-read Section 4.5 before continuing — this is the exam's favorite trap in this whole chapter."
-        },
-        {
-          "level": 3,
-          "text": "Solution"
-        },
-        {
-          "level": 0,
-          "text": "# Part A"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb mklabel gpt"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 100%"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# parted -s /dev/vdb set 1 lvm on"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# udevadm settle"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# pvcreate /dev/vdb1"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# vgcreate appvg /dev/vdb1"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lvcreate -n datalv -L 500M appvg"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mkfs.xfs /dev/appvg/datalv"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mkdir /data"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lsblk --fs | grep datalv # grab the UUID"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# echo 'UUID=<uuid> /data xfs defaults 0 0' >> /etc/fstab"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# systemctl daemon-reload"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# mount /data"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# umount /data && mount /data # prove the fstab entry works alone"
-        },
-        {
-          "level": 0,
-          "text": "# Part B"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# vgdisplay appvg | grep Free"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# lvextend -L +300M /dev/appvg/datalv"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# xfs_growfs /data"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# df -h /data"
-        },
-        {
-          "level": 3,
-          "text": "Explanation"
-        },
-        {
-          "level": 0,
-          "text": "parted mkpart primary 1MiB 100% uses the whole remaining disk in one partition — a common real-world pattern for a disk dedicated entirely to LVM."
-        },
-        {
-          "level": 0,
-          "text": "udevadm settle before pvcreate avoids a race where LVM tools try to use a device node the kernel hasn't finished creating yet."
-        },
-        {
-          "level": 0,
-          "text": "The umount/mount cycle in Part A is the exact 'verify before reboot' habit the chapter recommends — catching a broken fstab entry now is vastly better than catching it after a reboot leaves the system unbootable."
-        },
-        {
-          "level": 0,
-          "text": "xfs_growfs takes /data (the mount point), not the LV device — get this backwards and the command simply fails with an error rather than silently doing the wrong thing."
-        },
-        {
-          "level": 3,
-          "text": "Verification"
-        },
-        {
-          "level": 0,
-          "text": "df -h /data should show approximately 800M total after Part B, and the filesystem should have remained mounted and writable throughout the entire extension — confirm with a quick touch /data/testfile before and after."
-        },
-        {
-          "level": 3,
-          "text": "Real-world note"
-        },
-        {
-          "level": 0,
-          "text": "This exact workflow — start small, extend later, zero downtime — is why LVM is still the default storage layer under most RHEL deployments even with newer options like Stratis available (covered in Part 5). The ability to grow storage live without a maintenance window is worth the extra abstraction layer in almost every production scenario."
-        }
-      ]
-    }
-  ],
-  "quizzes": [
-    {
-      "title": "Quiz: Part 4 Checkpoint",
+      "title": "Part 6 — Check your understanding",
       "content": [
         {
           "level": 0,
-          "text": "Q1. What's the maximum number of primary partitions on an MBR disk, and how do you work around that limit?"
+          "text": "Try answering these questions without looking at the lesson."
         },
         {
           "level": 0,
-          "text": "Answer: 4 — work around it by making one of them an extended partition, inside which you create logical partitions."
+          "text": "1. What is the main purpose of an ACL?"
         },
         {
           "level": 0,
-          "text": "Q2. Does parted's mkpart command create a filesystem on the new partition?"
+          "text": "A. To format a disk B. To provide more flexible permissions for named users and groups C. To start a service"
         },
         {
           "level": 0,
-          "text": "Answer: No — it only tags the partition's intended filesystem type. You still need to run mkfs separately."
+          "text": "2. Which command displays a file's ACL?"
         },
         {
           "level": 0,
-          "text": "Q3. Why is UUID preferred over a device path like /dev/vdb1 in /etc/fstab?"
+          "text": "A. getfacl file B. mkfs.xfs file C. systemctl file"
         },
         {
           "level": 0,
-          "text": "Answer: Device names can change (different boot order, cloud storage changes) but the UUID stored in the filesystem's superblock stays constant."
+          "text": "3. What does the ACL mask do?"
         },
         {
           "level": 0,
-          "text": "Q4. What should you do BEFORE rebooting after editing /etc/fstab?"
+          "text": "A. Changes the file owner B. Limits the effective permissions of mask-controlled ACL entries C. Deletes all default ACLs"
         },
         {
           "level": 0,
-          "text": "Answer: Run systemctl daemon-reload, then verify the entry works with mount /mountpoint (or findmnt --verify) — a bad entry can make the system fail to boot normally."
+          "text": "4. Which option adds or modifies an ACL entry?"
         },
         {
           "level": 0,
-          "text": "Q5. What are the four layers of the LVM stack, from bottom to top?"
+          "text": "A. -m B. -k C. -b"
         },
         {
           "level": 0,
-          "text": "Answer: Physical device → Physical Volume (PV) → Volume Group (VG) → Logical Volume (LV)."
+          "text": "5. What is the purpose of a default ACL?"
         },
         {
           "level": 0,
-          "text": "Q6. What are the two equally valid device paths for an LV named lv01 in VG vg01?"
+          "text": "A. To automatically change the owner of every file B. To provide ACL settings that new content can inherit C. To remove the parent directory"
         },
         {
           "level": 0,
-          "text": "Answer: /dev/vg01/lv01 and /dev/mapper/vg01-lv01."
+          "text": "6. Which command removes all default ACL entries from a directory?"
         },
         {
           "level": 0,
-          "text": "Q7. What command shows whether a volume group has free physical extents available to extend an LV?"
+          "text": "A. setfacl -x B. setfacl -k C. getfacl"
         },
         {
           "level": 0,
-          "text": "Answer: vgdisplay VGNAME — check the 'Free PE / Size' line."
+          "text": "7. A named user has an ACL entry granting rwx, but the mask allows only r--. What are the effective permissions?"
         },
         {
           "level": 0,
-          "text": "Q8. After lvextend, which command grows an XFS filesystem, and what argument does it take?"
+          "text": "A. rwx B. r-- C. ---"
         },
         {
           "level": 0,
-          "text": "Answer: xfs_growfs, and it takes the MOUNT POINT, not the device."
+          "text": "8. Why should you check the ACL of a newly created file?"
         },
         {
           "level": 0,
-          "text": "Q9. Which command grows an ext4 filesystem after lvextend, and what argument does IT take?"
+          "text": "A. To confirm that the inherited entries and effective permissions are correct B. To change the filesystem type C. To restart the computer"
         },
         {
           "level": 0,
-          "text": "Answer: resize2fs, and it takes the LOGICAL VOLUME DEVICE, not the mount point."
+          "text": "Answers"
         },
         {
           "level": 0,
-          "text": "Q10. Can you extend a mounted XFS filesystem while it's actively in use?"
+          "text": "B"
         },
         {
           "level": 0,
-          "text": "Answer: Yes — both lvextend and xfs_growfs work on a live, mounted, in-use filesystem with no downtime required."
+          "text": "A"
         },
         {
           "level": 0,
-          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+          "text": "B"
         },
         {
           "level": 0,
-          "text": "PART 5: ADVANCED STORAGE (STRATIS/VDO) + NFS/AUTOFS"
+          "text": "A"
         },
         {
           "level": 0,
-          "text": "This Part covers RH134 Chapter 8 (Implementing Advanced Storage Features — Stratis and VDO) and Chapter 9 (Accessing Network-Attached Storage — NFS and the automounter). Both chapters are narrower in scope than Part 4's LVM material, but each introduces a genuinely different storage philosophy worth understanding on its own terms."
+          "text": "B"
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS These four technologies represent four different answers to 'how do I manage storage?' — LVM (manual layer management), Stratis (an easier LVM-like experience), VDO (squeeze more out of existing space), and NFS (storage that isn't even local). Knowing which philosophy fits which problem is the actual skill here, more than any single command."
+          "text": "B"
+        },
+        {
+          "level": 0,
+          "text": "B"
+        },
+        {
+          "level": 0,
+          "text": "A"
         }
-      ]
+      ],
+      "words": 220
+    },
+    {
+      "title": "Final recap",
+      "content": [
+        {
+          "level": 0,
+          "text": "Remember these key points:"
+        },
+        {
+          "level": 0,
+          "text": "ACLs extend the traditional Linux owner, group and other permission model."
+        },
+        {
+          "level": 0,
+          "text": "getfacl displays ACL entries and effective permissions."
+        },
+        {
+          "level": 0,
+          "text": "setfacl -m adds or modifies ACL entries."
+        },
+        {
+          "level": 0,
+          "text": "The ACL mask limits effective permissions for named users, the owning group and named groups."
+        },
+        {
+          "level": 0,
+          "text": "Default ACLs provide permission settings for new files and subdirectories."
+        },
+        {
+          "level": 0,
+          "text": "setfacl -x removes selected entries, setfacl -b removes extended access ACL entries, and setfacl -k removes default ACL entries."
+        },
+        {
+          "level": 0,
+          "text": "Always verify your changes with getfacl and test the intended access in a safe lab."
+        },
+        {
+          "level": 0,
+          "text": "The central lesson of Chapter 4 is that ACLs let administrators manage detailed file and directory access without having to rely only on the traditional owner, group and other permissions."
+        }
+      ],
+      "words": 118
     }
   ],
-  "services": [],
-  "currency": []
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
 }

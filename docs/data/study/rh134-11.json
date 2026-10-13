@@ -1,0 +1,2689 @@
+{
+  "id": "rh134-11",
+  "n": 11,
+  "sourceNumber": 11,
+  "kind": "chapter",
+  "title": "Chapter 11 — Managing Network Security",
+  "display": "Chapter 11 — Managing Network Security",
+  "exam": "RHCSA (EX200)",
+  "words": 4954,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "RH134: Red Hat Enterprise Linux 8 System Administration II"
+        },
+        {
+          "level": 0,
+          "text": "This chapter teaches you two important things:"
+        },
+        {
+          "level": 0,
+          "text": "Firewall: Control which network connections can reach your Linux server."
+        },
+        {
+          "level": 0,
+          "text": "SELinux port labeling: Control which network ports a service is allowed to use."
+        },
+        {
+          "level": 0,
+          "text": "We will follow your tutor format: small concepts, simple explanations, real commands, explanations of each command part, and practical labs. The book uses RHEL 8, so I will point out where your RHEL 10 lab may differ."
+        },
+        {
+          "level": 0,
+          "text": "Part 1: Managing Server Firewalls"
+        },
+        {
+          "level": 0,
+          "text": "Part 2: Guided Exercise — Managing Server Firewalls"
+        },
+        {
+          "level": 0,
+          "text": "Part 3: Controlling SELinux Port Labeling"
+        },
+        {
+          "level": 0,
+          "text": "Part 4: Guided Exercise — Controlling SELinux Port Labeling"
+        },
+        {
+          "level": 0,
+          "text": "Part 5: Final Performance Lab — Managing Network Security"
+        },
+        {
+          "level": 0,
+          "text": "Part 6: Troubleshooting and Revision"
+        }
+      ],
+      "words": 118
+    },
+    {
+      "title": "1. What is a firewall?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A firewall controls which network traffic is allowed to enter or pass through a computer."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine your Linux server is a building. The firewall is the security guard at the entrance. The guard checks incoming connections and allows only traffic permitted by the rules."
+        },
+        {
+          "level": 0,
+          "text": "For example, a web server usually needs to accept connections on port 80 for HTTP and port 443 for HTTPS. If those ports are blocked, people might not be able to open your website."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --list-all"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — run the command with administrator privileges."
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd — the command-line tool for managing firewalld."
+        },
+        {
+          "level": 0,
+          "text": "--list-all — display the firewall settings for a zone, including allowed services and ports."
+        },
+        {
+          "level": 0,
+          "text": "What happens: You see the active zone's settings, including which services and ports are allowed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A service can be running correctly but remain unreachable because the firewall blocks its connections."
+        }
+      ],
+      "words": 151
+    },
+    {
+      "title": "2. How Linux processes network traffic",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Linux checks network packets using its kernel networking framework before the packets reach their destination."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A packet is a small unit of data sent over a network. Imagine each packet as a delivery package."
+        },
+        {
+          "level": 0,
+          "text": "Linux uses Netfilter, a framework inside the Linux kernel, to inspect and handle packets. It can allow, reject, drop, or modify traffic, depending on the rules."
+        },
+        {
+          "level": 0,
+          "text": "RHEL 8 uses nftables as its modern packet-filtering system. The nft command manages its rules. firewalld provides a simpler way to manage firewall rules without requiring you to write low-level rules yourself."
+        },
+        {
+          "level": 0,
+          "text": "Think of the relationship this way:"
+        },
+        {
+          "level": 0,
+          "text": "Netfilter: The packet-handling machinery."
+        },
+        {
+          "level": 0,
+          "text": "nftables: The firewall rules system."
+        },
+        {
+          "level": 0,
+          "text": "firewalld: The manager that helps you configure those rules."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl status firewalld"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl — manages and checks system services."
+        },
+        {
+          "level": 0,
+          "text": "status — shows the current state."
+        },
+        {
+          "level": 0,
+          "text": "firewalld — the firewall service."
+        },
+        {
+          "level": 0,
+          "text": "What happens: You can see whether the firewall service is running."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Netfilter handles packets, nftables supplies rules, and firewalld helps you manage them."
+        }
+      ],
+      "words": 171
+    },
+    {
+      "title": "3. Why use firewalld instead of older tools?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: firewalld makes firewall management easier by using zones and predefined services."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Older tools such as iptables and ip6tables were commonly used to configure Linux firewalls. RHEL 8 uses nftables as the modern replacement, and firewalld is the recommended management tool."
+        },
+        {
+          "level": 0,
+          "text": "Imagine managing building security. Instead of writing separate instructions for every door, you create security areas with predefined rules."
+        },
+        {
+          "level": 0,
+          "text": "That is the idea behind firewalld zones. You can assign a network connection to a zone and control the traffic allowed through that zone."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-zones"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd — manages firewalld."
+        },
+        {
+          "level": 0,
+          "text": "--get-zones — lists the available zones."
+        },
+        {
+          "level": 0,
+          "text": "What happens: You see zone names such as public, home, work, trusted, and others."
+        },
+        {
+          "level": 0,
+          "text": "The exact available zones can depend on the installed configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Zones let you manage groups of firewall rules instead of creating every rule separately."
+        }
+      ],
+      "words": 144
+    },
+    {
+      "title": "4. Understanding firewall zones",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A zone is a group of firewall rules that defines which incoming connections are allowed."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine your server has different security settings for your home network, office network, and an untrusted public network. A zone lets you apply different rules to each situation."
+        },
+        {
+          "level": 0,
+          "text": "For example, you might allow more services on a trusted home network but only SSH on a public network."
+        },
+        {
+          "level": 0,
+          "text": "Here are the predefined zones described in the RHEL 8 book:"
+        },
+        {
+          "level": 0,
+          "text": "Zone"
+        },
+        {
+          "level": 0,
+          "text": "Simple meaning"
+        },
+        {
+          "level": 0,
+          "text": "trusted"
+        },
+        {
+          "level": 0,
+          "text": "Allows all incoming traffic."
+        },
+        {
+          "level": 0,
+          "text": "home"
+        },
+        {
+          "level": 0,
+          "text": "Allows selected services, including SSH, mDNS, printing, Samba client, and DHCPv6 client."
+        },
+        {
+          "level": 0,
+          "text": "internal"
+        },
+        {
+          "level": 0,
+          "text": "Similar initial defaults to home."
+        },
+        {
+          "level": 0,
+          "text": "work"
+        },
+        {
+          "level": 0,
+          "text": "Allows selected services, including SSH, printing, and DHCPv6 client."
+        },
+        {
+          "level": 0,
+          "text": "public"
+        },
+        {
+          "level": 0,
+          "text": "Intended for untrusted public networks; SSH and DHCPv6 client are initially allowed."
+        },
+        {
+          "level": 0,
+          "text": "external"
+        },
+        {
+          "level": 0,
+          "text": "For networks where outgoing IPv4 traffic may need masquerading."
+        },
+        {
+          "level": 0,
+          "text": "dmz"
+        },
+        {
+          "level": 0,
+          "text": "For servers that need limited incoming access from external networks."
+        },
+        {
+          "level": 0,
+          "text": "block"
+        },
+        {
+          "level": 0,
+          "text": "Rejects incoming traffic that is not related to outgoing connections."
+        },
+        {
+          "level": 0,
+          "text": "drop"
+        },
+        {
+          "level": 0,
+          "text": "Silently discards incoming traffic that is not related to outgoing connections."
+        },
+        {
+          "level": 0,
+          "text": "These are initial defaults; administrators can change the rules."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-default-zone"
+        },
+        {
+          "level": 0,
+          "text": "This displays the default zone, often public on a standard setup."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Choose a zone based on how much trust you place in the network."
+        }
+      ],
+      "words": 209
+    },
+    {
+      "title": "5. What is the default zone?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The default zone is the zone firewalld uses when traffic has not been assigned to another zone."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of a default zone as the default security policy for a visitor when no special rule identifies them."
+        },
+        {
+          "level": 0,
+          "text": "Firewalld determines which zone applies using rules such as these:"
+        },
+        {
+          "level": 0,
+          "text": "If a source IP address has been assigned to a zone, that zone applies."
+        },
+        {
+          "level": 0,
+          "text": "Otherwise, the zone assigned to the incoming network interface applies."
+        },
+        {
+          "level": 0,
+          "text": "If neither assignment applies, firewalld uses the default zone."
+        },
+        {
+          "level": 0,
+          "text": "An interface is a network connection, such as ens160. A source IP identifies the machine or network sending traffic."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-default-zone"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "public"
+        },
+        {
+          "level": 0,
+          "text": "To change the default zone:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --set-default-zone=work"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--set-default-zone — changes the default zone."
+        },
+        {
+          "level": 0,
+          "text": "work — the new zone name."
+        },
+        {
+          "level": 0,
+          "text": "This command changes the runtime and permanent default zone."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The default zone is a designation; it is not a separate firewall zone of its own."
+        }
+      ],
+      "words": 159
+    },
+    {
+      "title": "6. Understanding predefined firewall services",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A firewalld service is a named set of network ports and protocols needed by an application."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine a service name as a shortcut. Instead of remembering every port used by an application, you can allow the named service."
+        },
+        {
+          "level": 0,
+          "text": "For example, the ssh service allows the standard SSH connection on TCP port 22."
+        },
+        {
+          "level": 0,
+          "text": "Some RHEL 8 examples are:"
+        },
+        {
+          "level": 0,
+          "text": "Service"
+        },
+        {
+          "level": 0,
+          "text": "Port/protocol"
+        },
+        {
+          "level": 0,
+          "text": "ssh"
+        },
+        {
+          "level": 0,
+          "text": "22/tcp"
+        },
+        {
+          "level": 0,
+          "text": "dhcpv6-client"
+        },
+        {
+          "level": 0,
+          "text": "546/udp"
+        },
+        {
+          "level": 0,
+          "text": "ipp-client"
+        },
+        {
+          "level": 0,
+          "text": "631/udp"
+        },
+        {
+          "level": 0,
+          "text": "samba-client"
+        },
+        {
+          "level": 0,
+          "text": "137/udp, 138/udp"
+        },
+        {
+          "level": 0,
+          "text": "mdns"
+        },
+        {
+          "level": 0,
+          "text": "5353/udp"
+        },
+        {
+          "level": 0,
+          "text": "A protocol is the agreed method used for communication. TCP and UDP are two common transport protocols."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-services"
+        },
+        {
+          "level": 0,
+          "text": "What happens: Firewalld lists the predefined service names available on your system."
+        },
+        {
+          "level": 0,
+          "text": "Their service definitions are normally stored in:"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/firewalld/services/"
+        },
+        {
+          "level": 0,
+          "text": "Remember: A service name saves you from manually specifying its port and protocol."
+        }
+      ],
+      "words": 128
+    },
+    {
+      "title": "7. Allow a service through the firewall",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Adding a service to a zone allows the network traffic defined by that service."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose SSH is not allowed by the rules of your chosen zone. Adding the ssh service allows the connection covered by that service definition."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --add-service=http"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — run with administrator privileges."
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd — manage firewalld."
+        },
+        {
+          "level": 0,
+          "text": "--add-service=http — allow the predefined HTTP service in the default zone."
+        },
+        {
+          "level": 0,
+          "text": "HTTP normally uses TCP port 80."
+        },
+        {
+          "level": 0,
+          "text": "This command changes the runtime configuration. That means the rule is applied now but is not automatically saved for future restarts."
+        },
+        {
+          "level": 0,
+          "text": "To make the change permanent:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --add-service=http"
+        },
+        {
+          "level": 0,
+          "text": "To apply permanent changes to the running firewall:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Runtime changes apply now; permanent changes are saved and can be loaded into the running firewall."
+        }
+      ],
+      "words": 135
+    },
+    {
+      "title": "8. Allow a port directly",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can allow a specific port and protocol without using a predefined service name."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Suppose an application listens on TCP port 1001, but there is no convenient predefined service for it. You can open that port directly."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --add-port=1001/tcp"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--permanent — save the rule in permanent configuration."
+        },
+        {
+          "level": 0,
+          "text": "--add-port — add a port rule."
+        },
+        {
+          "level": 0,
+          "text": "1001 — the port number."
+        },
+        {
+          "level": 0,
+          "text": "/tcp — the protocol used by the port."
+        },
+        {
+          "level": 0,
+          "text": "Apply the change:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "Verify it:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --list-ports"
+        },
+        {
+          "level": 0,
+          "text": "Expected output should include:"
+        },
+        {
+          "level": 0,
+          "text": "1001/tcp"
+        },
+        {
+          "level": 0,
+          "text": "The port must also be used by a running application, and SELinux must permit the application to use it."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Opening a firewall port does not start an application or override SELinux restrictions."
+        }
+      ],
+      "words": 126
+    },
+    {
+      "title": "9. Remove a service or port",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can remove firewall permissions that are no longer required."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "If your server no longer provides a website, you might remove its HTTP permission. Think of this as removing a key from the security guard's approved list."
+        },
+        {
+          "level": 0,
+          "text": "Example — remove HTTP from the runtime configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --remove-service=http"
+        },
+        {
+          "level": 0,
+          "text": "Example — remove a port permanently:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --remove-port=1001/tcp"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--remove-service=http — removes permission for the HTTP service."
+        },
+        {
+          "level": 0,
+          "text": "--remove-port=1001/tcp — removes the specified TCP port rule."
+        },
+        {
+          "level": 0,
+          "text": "--reload — loads the saved configuration into the running firewall."
+        },
+        {
+          "level": 0,
+          "text": "If you remove a rule only from runtime, a previously saved permanent rule may reappear after reloading."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Remove unnecessary permissions, but do not accidentally block SSH or another connection you need to administer the server."
+        }
+      ],
+      "words": 131
+    },
+    {
+      "title": "10. Runtime and permanent configuration",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Firewalld keeps active rules and saved rules, and they are not always identical."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of runtime configuration as the instructions currently being used by the security guard. Permanent configuration is the saved instruction sheet."
+        },
+        {
+          "level": 0,
+          "text": "If you add a runtime rule, it takes effect immediately but may disappear after a reload or restart. If you add a permanent rule, it is saved but normally needs a reload before it affects runtime."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --add-service=https"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --list-services"
+        },
+        {
+          "level": 0,
+          "text": "What each command does:"
+        },
+        {
+          "level": 0,
+          "text": "--permanent --add-service=https — saves permission for HTTPS."
+        },
+        {
+          "level": 0,
+          "text": "--reload — applies the saved configuration to runtime."
+        },
+        {
+          "level": 0,
+          "text": "--list-services — displays services allowed in the runtime zone."
+        },
+        {
+          "level": 0,
+          "text": "HTTPS normally uses TCP port 443."
+        },
+        {
+          "level": 0,
+          "text": "Important: The --set-default-zone command is an exception to the usual pattern: it changes both runtime and permanent configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: For a lasting firewall change, save it permanently and then reload when required."
+        }
+      ],
+      "words": 151
+    },
+    {
+      "title": "11. List zones and inspect their rules",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Inspecting firewall configuration helps you understand where traffic is allowed."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Before changing security rules, check the current configuration. Otherwise, you might remove an important permission or open the wrong zone."
+        },
+        {
+          "level": 0,
+          "text": "Useful commands:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-zones"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-active-zones"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --list-all"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --list-all-zones"
+        },
+        {
+          "level": 0,
+          "text": "What each command means:"
+        },
+        {
+          "level": 0,
+          "text": "--get-zones — lists all available zones."
+        },
+        {
+          "level": 0,
+          "text": "--get-active-zones — shows zones currently in use and their associated interfaces or sources."
+        },
+        {
+          "level": 0,
+          "text": "--list-all — shows the rules for the default zone."
+        },
+        {
+          "level": 0,
+          "text": "--list-all-zones — shows the rules for all zones."
+        },
+        {
+          "level": 0,
+          "text": "To inspect a specific zone:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --zone=public --list-all"
+        },
+        {
+          "level": 0,
+          "text": "Here, --zone=public selects the public zone rather than the default zone."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Inspect the correct zone before changing it."
+        }
+      ],
+      "words": 116
+    },
+    {
+      "title": "12. Assign a network interface to a zone",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: An interface can be associated with a zone to apply that zone's rules to incoming traffic on the interface."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine a building with separate entrances. Each entrance can have its own security policy. A network interface is like an entrance through which packets arrive."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --zone=internal --change-interface=ens224"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--zone=internal — select the internal zone."
+        },
+        {
+          "level": 0,
+          "text": "--change-interface=ens224 — associate ens224 with that zone."
+        },
+        {
+          "level": 0,
+          "text": "To see the current assignments:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-active-zones"
+        },
+        {
+          "level": 0,
+          "text": "To make an interface assignment permanent, use the permanent option and follow the NetworkManager/firewalld configuration method appropriate for your system. Interface assignments may be managed through NetworkManager, so verify the result rather than assuming the runtime command persists."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Assign interfaces carefully: the wrong zone can expose services or block required connections."
+        }
+      ],
+      "words": 130
+    },
+    {
+      "title": "13. Assign a source network to a zone",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can apply firewall rules to traffic coming from a particular source IP address or network."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Instead of assigning rules to a physical entrance, you can identify visitors by their originating network."
+        },
+        {
+          "level": 0,
+          "text": "For example, you might place traffic from 192.168.1.0/24 in the internal zone. The /24 is CIDR notation: it describes a network containing addresses in that subnet."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --zone=internal --add-source=192.168.1.0/24"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--zone=internal — choose the zone."
+        },
+        {
+          "level": 0,
+          "text": "--add-source=192.168.1.0/24 — associate that source network with the zone."
+        },
+        {
+          "level": 0,
+          "text": "--permanent — save the change."
+        },
+        {
+          "level": 0,
+          "text": "--reload — apply the saved configuration."
+        },
+        {
+          "level": 0,
+          "text": "To remove the source assignment, use --remove-source with the same network and zone."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Source-based zone assignment identifies traffic by where it comes from, not by which interface it uses."
+        }
+      ],
+      "words": 130
+    },
+    {
+      "title": "14. Set the default zone and reload the firewall",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can change the default zone and reload firewall rules when needed."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --set-default-zone=dmz"
+        },
+        {
+          "level": 0,
+          "text": "This makes dmz the default zone. Use it only if that matches your intended security design."
+        },
+        {
+          "level": 0,
+          "text": "To reload saved rules:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "Why this matters: A reload is often necessary after adding or removing permanent services, ports, or source assignments. It applies the saved configuration without requiring a full system reboot."
+        },
+        {
+          "level": 0,
+          "text": "The book also describes configuring firewall services through the Web Console. You can open the server's Cockpit interface, go to Networking → Firewall, choose the relevant zone, and add the service you need. The exact screen can vary with the installed Cockpit version."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Check the zone and existing rules before making a change, and verify the result afterward."
+        }
+      ],
+      "words": 129
+    },
+    {
+      "title": "15. Understand the purpose of the exercise",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You will configure a web server so HTTPS works while HTTP remains blocked by the firewall."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The exercise uses servera as a web server. You install the web service, create a test page, and check whether the page is reachable over HTTP and HTTPS."
+        },
+        {
+          "level": 0,
+          "text": "HTTP uses TCP port 80. HTTPS uses TCP port 443 and encrypts the web connection."
+        },
+        {
+          "level": 0,
+          "text": "The exercise demonstrates an important difference: installing and starting a service does not automatically mean the firewall permits access to it."
+        },
+        {
+          "level": 0,
+          "text": "The book's lab commands are intended for its training environment. Run the lab commands only in the matching course lab, not on a production server."
+        }
+      ],
+      "words": 109
+    },
+    {
+      "title": "16. Start the firewall lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-firewalls start"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "lab — the training environment's lab-management command."
+        },
+        {
+          "level": 0,
+          "text": "netsecurity-firewalls — the name of the exercise."
+        },
+        {
+          "level": 0,
+          "text": "start — prepares the lab."
+        },
+        {
+          "level": 0,
+          "text": "Then connect to the server from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@servera"
+        },
+        {
+          "level": 0,
+          "text": "ssh — connects securely to another computer."
+        },
+        {
+          "level": 0,
+          "text": "student — the remote username."
+        },
+        {
+          "level": 0,
+          "text": "servera — the target host."
+        },
+        {
+          "level": 0,
+          "text": "The lab's DNS configuration must resolve servera correctly."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Start the correct training lab before following its instructions."
+        }
+      ],
+      "words": 72
+    },
+    {
+      "title": "17. Install and start the web server",
+      "content": [
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo dnf install httpd mod_ssl"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "sudo — run as an administrator."
+        },
+        {
+          "level": 0,
+          "text": "dnf — the package manager."
+        },
+        {
+          "level": 0,
+          "text": "install — install software."
+        },
+        {
+          "level": 0,
+          "text": "httpd — the Apache web server."
+        },
+        {
+          "level": 0,
+          "text": "mod_ssl — provides SSL/TLS support for HTTPS."
+        },
+        {
+          "level": 0,
+          "text": "Create the test page:"
+        },
+        {
+          "level": 0,
+          "text": "sudo bash -c \"echo 'I am servera.' > /var/www/html/index.html\""
+        },
+        {
+          "level": 0,
+          "text": "bash -c — asks Bash to execute the command inside the quotes."
+        },
+        {
+          "level": 0,
+          "text": "echo — prints the text."
+        },
+        {
+          "level": 0,
+          "text": "> — redirects the text into a file, replacing the file's existing contents."
+        },
+        {
+          "level": 0,
+          "text": "/var/www/html/index.html — the website's default page in this lab."
+        },
+        {
+          "level": 0,
+          "text": "Start the service and enable it at boot:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now httpd"
+        },
+        {
+          "level": 0,
+          "text": "enable — configure the service to start at boot."
+        },
+        {
+          "level": 0,
+          "text": "--now — start it immediately as well."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The web server must be installed, have a page to serve, and be running before you test access."
+        }
+      ],
+      "words": 138
+    },
+    {
+      "title": "18. Test HTTP and HTTPS",
+      "content": [
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "curl -k http://servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "curl -k https://servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "curl — sends a request to a URL and displays the response."
+        },
+        {
+          "level": 0,
+          "text": "http:// — uses HTTP."
+        },
+        {
+          "level": 0,
+          "text": "https:// — uses HTTPS."
+        },
+        {
+          "level": 0,
+          "text": "-k — allows curl to continue even if the HTTPS certificate cannot be verified."
+        },
+        {
+          "level": 0,
+          "text": "Initially, the lab expects both requests to fail because the required web traffic is blocked."
+        },
+        {
+          "level": 0,
+          "text": "Next, ensure the firewall manager is available and the older standalone nftables service is masked as directed by the lab:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl mask nftables"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now firewalld"
+        },
+        {
+          "level": 0,
+          "text": "Why? The lab is designed to use firewalld to manage the firewall, rather than a separately managed nftables service."
+        },
+        {
+          "level": 0,
+          "text": "Remember: A failed curl request may indicate a firewall problem, but always check the service and the error before deciding."
+        }
+      ],
+      "words": 128
+    },
+    {
+      "title": "19. Allow HTTPS through the Web Console",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can use Cockpit's Web Console to allow a service without typing the firewall rule manually."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "The Web Console provides a graphical interface for server administration. It is useful when you want to inspect settings visually."
+        },
+        {
+          "level": 0,
+          "text": "In the book's exercise:"
+        },
+        {
+          "level": 0,
+          "text": "Open https://servera.lab.example.com:9090 from the workstation."
+        },
+        {
+          "level": 0,
+          "text": "Log in with the lab account and privileged access as instructed."
+        },
+        {
+          "level": 0,
+          "text": "Open Networking → Firewall."
+        },
+        {
+          "level": 0,
+          "text": "Select the public zone."
+        },
+        {
+          "level": 0,
+          "text": "Choose Add Services."
+        },
+        {
+          "level": 0,
+          "text": "Find and select Secure WWW (HTTPS)."
+        },
+        {
+          "level": 0,
+          "text": "Add the service."
+        },
+        {
+          "level": 0,
+          "text": "Port 9090 is the Web Console's usual port, but it must be reachable and Cockpit must be running."
+        },
+        {
+          "level": 0,
+          "text": "Now test again:"
+        },
+        {
+          "level": 0,
+          "text": "curl -k https://servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "curl -k http://servera.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "The expected lab result is that HTTPS succeeds and displays:"
+        },
+        {
+          "level": 0,
+          "text": "I am servera."
+        },
+        {
+          "level": 0,
+          "text": "HTTP should still fail because it has not been allowed through the firewall."
+        },
+        {
+          "level": 0,
+          "text": "Finish the exercise from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-firewalls finish"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Allowing HTTPS does not automatically allow HTTP; they are separate firewall services."
+        }
+      ],
+      "words": 155
+    },
+    {
+      "title": "20. What is SELinux?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux adds security checks that can prevent a service from doing something even when normal Linux permissions allow it."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine the firewall as the security guard at the building entrance. SELinux is the permission system inside the building. Even if a visitor gets through the entrance, the permission system can still stop them from entering a restricted room."
+        },
+        {
+          "level": 0,
+          "text": "SELinux can restrict which ports a service is allowed to use. This helps prevent an unexpected or misconfigured application from taking over a network port."
+        },
+        {
+          "level": 0,
+          "text": "For example, Apache normally serves HTTP on TCP port 80 and HTTPS on TCP port 443. If you configure Apache to listen on another port, SELinux may need an appropriate port label."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "Possible output:"
+        },
+        {
+          "level": 0,
+          "text": "Enforcing"
+        },
+        {
+          "level": 0,
+          "text": "getenforce — displays the current SELinux mode."
+        },
+        {
+          "level": 0,
+          "text": "Enforcing — SELinux actively enforces its rules."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The firewall controls network access, while SELinux controls what a service is permitted to do."
+        }
+      ],
+      "words": 154
+    },
+    {
+      "title": "21. What is an SELinux port label?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: A port label identifies the security type assigned to a network port."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "SELinux labels help the operating system decide which services can use particular resources. A port label is like a sign on a door that identifies what kind of access is appropriate."
+        },
+        {
+          "level": 0,
+          "text": "Examples from the book:"
+        },
+        {
+          "level": 0,
+          "text": "Port"
+        },
+        {
+          "level": 0,
+          "text": "Typical SELinux type"
+        },
+        {
+          "level": 0,
+          "text": "22/tcp"
+        },
+        {
+          "level": 0,
+          "text": "ssh_port_t"
+        },
+        {
+          "level": 0,
+          "text": "80/tcp"
+        },
+        {
+          "level": 0,
+          "text": "http_port_t"
+        },
+        {
+          "level": 0,
+          "text": "443/tcp"
+        },
+        {
+          "level": 0,
+          "text": "http_port_t"
+        },
+        {
+          "level": 0,
+          "text": "The suffix _t indicates an SELinux type. The type is part of SELinux's security labeling system."
+        },
+        {
+          "level": 0,
+          "text": "If Apache tries to listen on a port that is not labeled appropriately, SELinux can deny the action—even when the firewall permits the port."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -l | grep http"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "semanage port -l — lists SELinux port assignments."
+        },
+        {
+          "level": 0,
+          "text": "| — sends the first command's output to the next command."
+        },
+        {
+          "level": 0,
+          "text": "grep http — displays lines containing http."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Before changing SELinux port rules, check the existing label."
+        }
+      ],
+      "words": 149
+    },
+    {
+      "title": "22. What is semanage?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: semanage manages parts of SELinux policy, including port labels."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "A policy is a set of security rules. semanage lets an administrator make supported changes to those rules without manually rewriting the entire SELinux policy."
+        },
+        {
+          "level": 0,
+          "text": "To list port assignments:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -l"
+        },
+        {
+          "level": 0,
+          "text": "The output identifies the SELinux type, protocol, and port numbers assigned to it."
+        },
+        {
+          "level": 0,
+          "text": "To see local custom changes:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -l -C"
+        },
+        {
+          "level": 0,
+          "text": "The -C option shows local customizations rather than simply listing the full policy."
+        },
+        {
+          "level": 0,
+          "text": "If the command is missing, the required administration tools may not be installed. On RHEL systems, the package is commonly policycoreutils-python-utils."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use semanage port -l to inspect port labels before making changes."
+        }
+      ],
+      "words": 115
+    },
+    {
+      "title": "23. Add an SELinux port label",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You can assign an appropriate SELinux type to a port that a service needs to use."
+        },
+        {
+          "level": 0,
+          "text": "Example from the book:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -a -t http_port_t -p tcp 82"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "semanage port — manage port labels."
+        },
+        {
+          "level": 0,
+          "text": "-a — add a new port assignment."
+        },
+        {
+          "level": 0,
+          "text": "-t http_port_t — choose the HTTP port type."
+        },
+        {
+          "level": 0,
+          "text": "-p tcp — specify the TCP protocol."
+        },
+        {
+          "level": 0,
+          "text": "82 — the port number."
+        },
+        {
+          "level": 0,
+          "text": "This allows port 82 to use the http_port_t label, which is suitable for web-server ports."
+        },
+        {
+          "level": 0,
+          "text": "Important: This command may fail if the port already has an assignment that conflicts with the requested change. Inspect the current rules before changing anything."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The label must be suitable for the service; do not label a port merely to silence an error."
+        }
+      ],
+      "words": 127
+    },
+    {
+      "title": "24. Modify or remove a port label",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Use the appropriate semanage option to add, change, or remove a local port assignment."
+        },
+        {
+          "level": 0,
+          "text": "Examples:"
+        },
+        {
+          "level": 0,
+          "text": "Add a new assignment:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -a -t gopher_port_t -p tcp 71"
+        },
+        {
+          "level": 0,
+          "text": "Modify an existing assignment:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -m -t http_port_t -p tcp 71"
+        },
+        {
+          "level": 0,
+          "text": "Remove an assignment:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -d -t gopher_port_t -p tcp 71"
+        },
+        {
+          "level": 0,
+          "text": "What the options mean:"
+        },
+        {
+          "level": 0,
+          "text": "-a — add an assignment."
+        },
+        {
+          "level": 0,
+          "text": "-m — modify an existing assignment."
+        },
+        {
+          "level": 0,
+          "text": "-d — delete an assignment."
+        },
+        {
+          "level": 0,
+          "text": "-t — specify the SELinux type."
+        },
+        {
+          "level": 0,
+          "text": "-p — specify TCP or UDP."
+        },
+        {
+          "level": 0,
+          "text": "The examples illustrate the syntax; use them only in a suitable test environment."
+        },
+        {
+          "level": 0,
+          "text": "The book also explains that port assignments defined by policy modules may not be changed with a simple local modification. Replacing policy modules is beyond this chapter."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Inspect the existing assignment and choose -a, -m, or -d according to the task."
+        }
+      ],
+      "words": 142
+    },
+    {
+      "title": "25. Find SELinux documentation",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: SELinux's manual pages help you investigate security types and errors."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "man -k _selinux"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "man — opens manual documentation."
+        },
+        {
+          "level": 0,
+          "text": "-k — searches manual-page descriptions by keyword."
+        },
+        {
+          "level": 0,
+          "text": "_selinux — the search term."
+        },
+        {
+          "level": 0,
+          "text": "The book also shows installing the SELinux policy documentation package:"
+        },
+        {
+          "level": 0,
+          "text": "sudo dnf install selinux-policy-doc"
+        },
+        {
+          "level": 0,
+          "text": "This can provide additional policy documentation on supported systems."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use the manual pages and policy documentation when you need to understand why a security rule exists."
+        }
+      ],
+      "words": 78
+    },
+    {
+      "title": "26. Start the SELinux port lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You will fix an Apache service that cannot listen on TCP port 82 because of SELinux."
+        },
+        {
+          "level": 0,
+          "text": "Start the lab on the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-ports start"
+        },
+        {
+          "level": 0,
+          "text": "Connect to servera:"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@servera"
+        },
+        {
+          "level": 0,
+          "text": "Become root for the lab tasks:"
+        },
+        {
+          "level": 0,
+          "text": "sudo -i"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-ports start — prepares the exercise."
+        },
+        {
+          "level": 0,
+          "text": "ssh student@servera — connects to the training server."
+        },
+        {
+          "level": 0,
+          "text": "sudo -i — starts a root login shell, giving you administrator privileges."
+        },
+        {
+          "level": 0,
+          "text": "Be careful when working as root: commands can change important system settings without further permission checks."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Start the correct lab and use administrator privileges only when required."
+        }
+      ],
+      "words": 99
+    },
+    {
+      "title": "27. Investigate why Apache fails",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Check the service's error before changing SELinux settings."
+        },
+        {
+          "level": 0,
+          "text": "The lab configures Apache to listen on TCP port 82. Restart the service:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl restart httpd"
+        },
+        {
+          "level": 0,
+          "text": "Then inspect its status:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status -l httpd.service"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "restart — stop and start the service again."
+        },
+        {
+          "level": 0,
+          "text": "status — display its current state and recent messages."
+        },
+        {
+          "level": 0,
+          "text": "-l — show full lines instead of shortening long messages."
+        },
+        {
+          "level": 0,
+          "text": "httpd.service — the Apache service unit."
+        },
+        {
+          "level": 0,
+          "text": "The lab expects an error indicating that Apache cannot bind to port 82."
+        },
+        {
+          "level": 0,
+          "text": "Bind means attaching a service to a local IP address and port so it can receive connections."
+        },
+        {
+          "level": 0,
+          "text": "Next, inspect SELinux alerts:"
+        },
+        {
+          "level": 0,
+          "text": "sealert -a /var/log/audit/audit.log"
+        },
+        {
+          "level": 0,
+          "text": "sealert — interprets SELinux alerts."
+        },
+        {
+          "level": 0,
+          "text": "-a — analyze a file."
+        },
+        {
+          "level": 0,
+          "text": "/var/log/audit/audit.log — the audit log that records security events."
+        },
+        {
+          "level": 0,
+          "text": "The lab should identify SELinux blocking Apache's attempt to use TCP port 82."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Diagnose the denial first; do not assume every service failure is a firewall problem."
+        }
+      ],
+      "words": 155
+    },
+    {
+      "title": "28. Fix the SELinux port label",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Assign port 82 the HTTP port type so Apache can use it under the lab's policy."
+        },
+        {
+          "level": 0,
+          "text": "First, inspect the existing HTTP labels:"
+        },
+        {
+          "level": 0,
+          "text": "semanage port -l | grep http"
+        },
+        {
+          "level": 0,
+          "text": "Then add the required assignment:"
+        },
+        {
+          "level": 0,
+          "text": "semanage port -a -t http_port_t -p tcp 82"
+        },
+        {
+          "level": 0,
+          "text": "Restart Apache:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl restart httpd"
+        },
+        {
+          "level": 0,
+          "text": "Test locally on servera:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://servera.lab.example.com:82"
+        },
+        {
+          "level": 0,
+          "text": "The lab expects the page to return:"
+        },
+        {
+          "level": 0,
+          "text": "Hello"
+        },
+        {
+          "level": 0,
+          "text": "Why might the workstation still fail?"
+        },
+        {
+          "level": 0,
+          "text": "SELinux and the firewall perform different jobs. You have corrected the SELinux restriction, but the firewall may still block incoming connections on port 82."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Fixing the SELinux label lets Apache use the port; it does not automatically open that port to network traffic."
+        }
+      ],
+      "words": 112
+    },
+    {
+      "title": "29. Open port 82 in the firewall",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: After correcting SELinux, allow the required port through the firewall."
+        },
+        {
+          "level": 0,
+          "text": "Run on servera:"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --permanent --add-port=82/tcp"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--permanent — save the rule."
+        },
+        {
+          "level": 0,
+          "text": "--add-port=82/tcp — allow TCP port 82."
+        },
+        {
+          "level": 0,
+          "text": "--reload — apply the saved configuration."
+        },
+        {
+          "level": 0,
+          "text": "Now test from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://servera.lab.example.com:82"
+        },
+        {
+          "level": 0,
+          "text": "The expected response is:"
+        },
+        {
+          "level": 0,
+          "text": "Hello"
+        },
+        {
+          "level": 0,
+          "text": "Finish the lab from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-ports finish"
+        },
+        {
+          "level": 0,
+          "text": "Remember: A successful network service may require both a suitable SELinux label and a firewall rule."
+        }
+      ],
+      "words": 78
+    },
+    {
+      "title": "30. Understand the final task",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: You must make the web application on serverb reachable on ports 80 and 1001 while preserving other required connections."
+        },
+        {
+          "level": 0,
+          "text": "The lab requires:"
+        },
+        {
+          "level": 0,
+          "text": "HTTP on TCP port 80."
+        },
+        {
+          "level": 0,
+          "text": "A second web application on TCP port 1001."
+        },
+        {
+          "level": 0,
+          "text": "SSH on TCP port 22 to remain available."
+        },
+        {
+          "level": 0,
+          "text": "VNC on TCP port 5900 to remain available."
+        },
+        {
+          "level": 0,
+          "text": "All changes to persist."
+        },
+        {
+          "level": 0,
+          "text": "Think of this as a real administration task: fix only what is broken and preserve services that other people depend on."
+        },
+        {
+          "level": 0,
+          "text": "Start the lab from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-review start"
+        },
+        {
+          "level": 0,
+          "text": "Test both web addresses:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://serverb.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "curl http://serverb.lab.example.com:1001"
+        },
+        {
+          "level": 0,
+          "text": "The initial tests should reveal that the application is not fully accessible."
+        },
+        {
+          "level": 0,
+          "text": "Connect to the server:"
+        },
+        {
+          "level": 0,
+          "text": "ssh student@serverb"
+        },
+        {
+          "level": 0,
+          "text": "Remember: Before changing a server, understand the required outcome and identify what is failing."
+        }
+      ],
+      "words": 127
+    },
+    {
+      "title": "31. Check and start Apache",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Confirm the service state before diagnosing its network problems."
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl is-active httpd"
+        },
+        {
+          "level": 0,
+          "text": "The lab initially expects:"
+        },
+        {
+          "level": 0,
+          "text": "inactive"
+        },
+        {
+          "level": 0,
+          "text": "Start Apache and configure it to start at boot:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now httpd"
+        },
+        {
+          "level": 0,
+          "text": "The command is expected to fail initially because Apache is configured to use port 1001, which lacks the required SELinux port assignment."
+        },
+        {
+          "level": 0,
+          "text": "Inspect the service:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status -l httpd.service"
+        },
+        {
+          "level": 0,
+          "text": "Then check SELinux alerts:"
+        },
+        {
+          "level": 0,
+          "text": "sudo sealert -a /var/log/audit/audit.log"
+        },
+        {
+          "level": 0,
+          "text": "These commands help you identify the reason Apache cannot start."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use service status and security logs to identify the cause instead of guessing."
+        }
+      ],
+      "words": 95
+    },
+    {
+      "title": "32. Allow Apache to use port 1001",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Assign the correct SELinux type to TCP port 1001."
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -a -t http_port_t -p tcp 1001"
+        },
+        {
+          "level": 0,
+          "text": "Then start and enable Apache:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl enable --now httpd"
+        },
+        {
+          "level": 0,
+          "text": "Test the standard website:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://serverb.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "The expected response is:"
+        },
+        {
+          "level": 0,
+          "text": "SERVER B"
+        },
+        {
+          "level": 0,
+          "text": "The application on port 1001 may still fail from the workstation because the firewall rule has not yet been added."
+        },
+        {
+          "level": 0,
+          "text": "Why? SELinux now permits Apache to use port 1001, but the firewall still controls whether incoming network traffic can reach that port."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Correct the service's permissions first, then investigate network access separately."
+        }
+      ],
+      "words": 96
+    },
+    {
+      "title": "33. Open port 1001 permanently",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Save a firewall rule that permits the web application on TCP port 1001."
+        },
+        {
+          "level": 0,
+          "text": "Check the default zone:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --get-default-zone"
+        },
+        {
+          "level": 0,
+          "text": "The lab expects public."
+        },
+        {
+          "level": 0,
+          "text": "Inspect its permanent rules:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --zone=public --list-all"
+        },
+        {
+          "level": 0,
+          "text": "Now allow port 1001:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --permanent --zone=public --add-port=1001/tcp"
+        },
+        {
+          "level": 0,
+          "text": "Apply the saved configuration:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "--zone=public — choose the public zone."
+        },
+        {
+          "level": 0,
+          "text": "--add-port=1001/tcp — allow TCP port 1001."
+        },
+        {
+          "level": 0,
+          "text": "--permanent — save the change."
+        },
+        {
+          "level": 0,
+          "text": "--reload — apply the saved firewall rules."
+        },
+        {
+          "level": 0,
+          "text": "The task is not to disable the firewall. It is to permit the specific required traffic while preserving SSH, VNC, and other required rules."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Open only the port you need in the correct zone."
+        }
+      ],
+      "words": 114
+    },
+    {
+      "title": "34. Verify the final lab",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Test both web applications and confirm the expected results."
+        },
+        {
+          "level": 0,
+          "text": "Run from the workstation:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://serverb.lab.example.com"
+        },
+        {
+          "level": 0,
+          "text": "curl http://serverb.lab.example.com:1001"
+        },
+        {
+          "level": 0,
+          "text": "Expected responses:"
+        },
+        {
+          "level": 0,
+          "text": "SERVER B"
+        },
+        {
+          "level": 0,
+          "text": "and:"
+        },
+        {
+          "level": 0,
+          "text": "VHOST 1"
+        },
+        {
+          "level": 0,
+          "text": "The second response confirms that the application listening on port 1001 is reachable."
+        },
+        {
+          "level": 0,
+          "text": "Grade the lab:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-review grade"
+        },
+        {
+          "level": 0,
+          "text": "Finish it:"
+        },
+        {
+          "level": 0,
+          "text": "lab netsecurity-review finish"
+        },
+        {
+          "level": 0,
+          "text": "Remember: A configuration change is not complete until you test the actual service from the intended client."
+        }
+      ],
+      "words": 67
+    },
+    {
+      "title": "35. What if the website still does not work?",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: Check each layer separately instead of changing random settings."
+        },
+        {
+          "level": 0,
+          "text": "Use this troubleshooting order:"
+        },
+        {
+          "level": 0,
+          "text": "Check"
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Is Apache running?"
+        },
+        {
+          "level": 0,
+          "text": "systemctl status httpd"
+        },
+        {
+          "level": 0,
+          "text": "Is Apache listening on a port?"
+        },
+        {
+          "level": 0,
+          "text": "sudo ss -lntp"
+        },
+        {
+          "level": 0,
+          "text": "Is the firewall allowing traffic?"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --list-all"
+        },
+        {
+          "level": 0,
+          "text": "Is SELinux enforcing?"
+        },
+        {
+          "level": 0,
+          "text": "getenforce"
+        },
+        {
+          "level": 0,
+          "text": "What SELinux port labels exist?"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -l \\| grep http"
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Think of a website connection as a journey through several checkpoints:"
+        },
+        {
+          "level": 0,
+          "text": "Apache must be running."
+        },
+        {
+          "level": 0,
+          "text": "Apache must listen on the correct port."
+        },
+        {
+          "level": 0,
+          "text": "SELinux must permit Apache to use that port."
+        },
+        {
+          "level": 0,
+          "text": "The firewall must allow incoming traffic."
+        },
+        {
+          "level": 0,
+          "text": "The client must connect to the correct address and port."
+        },
+        {
+          "level": 0,
+          "text": "A failure at any checkpoint can prevent access."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "curl http://serverb.lab.example.com:1001"
+        },
+        {
+          "level": 0,
+          "text": "If this fails, inspect the service, port, SELinux, and firewall settings. Do not immediately disable security features."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Diagnose the failing layer and fix that layer only."
+        }
+      ],
+      "words": 142
+    },
+    {
+      "title": "36. Important RHEL 8 and RHEL 10 differences",
+      "content": [
+        {
+          "level": 0,
+          "text": "Main idea: The book teaches RHEL 8, so verify commands and package availability on your RHEL 10 system."
+        },
+        {
+          "level": 0,
+          "text": "The fundamental ideas in this chapter—firewall zones, ports, SELinux labels, and service troubleshooting—remain useful. However, versions can differ in installed packages, defaults, and available tools."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "sudo firewall-cmd --state"
+        },
+        {
+          "level": 0,
+          "text": "This checks whether firewalld is running."
+        },
+        {
+          "level": 0,
+          "text": "For SELinux port assignments:"
+        },
+        {
+          "level": 0,
+          "text": "sudo semanage port -l"
+        },
+        {
+          "level": 0,
+          "text": "If semanage is unavailable, check whether its supporting package is installed before continuing."
+        },
+        {
+          "level": 0,
+          "text": "Also remember:"
+        },
+        {
+          "level": 0,
+          "text": "RHEL 8 uses nftables through firewalld by default."
+        },
+        {
+          "level": 0,
+          "text": "Your RHEL 10 installation may have different default firewall rules or zone assignments."
+        },
+        {
+          "level": 0,
+          "text": "The training commands lab ... start, grade, and finish require the course lab environment; they are not general-purpose RHEL commands."
+        },
+        {
+          "level": 0,
+          "text": "Do not copy the lab's security changes to your everyday machine without understanding their effects."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Learn the book's expected behavior, then verify your own system before applying changes."
+        }
+      ],
+      "words": 146
+    },
+    {
+      "title": "37. Quick revision quiz",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. What is the main job of a firewall?"
+        },
+        {
+          "level": 0,
+          "text": "Start web services"
+        },
+        {
+          "level": 0,
+          "text": "Control network traffic"
+        },
+        {
+          "level": 0,
+          "text": "Assign file ownership"
+        },
+        {
+          "level": 0,
+          "text": "2. Which command lists the available firewalld zones?"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --get-zones"
+        },
+        {
+          "level": 0,
+          "text": "firewall-cmd --reload"
+        },
+        {
+          "level": 0,
+          "text": "systemctl --get-zones"
+        },
+        {
+          "level": 0,
+          "text": "3. What does --permanent do in a firewall-cmd command?"
+        },
+        {
+          "level": 0,
+          "text": "Immediately reboots the server"
+        },
+        {
+          "level": 0,
+          "text": "Saves the change in permanent configuration"
+        },
+        {
+          "level": 0,
+          "text": "Disables SELinux"
+        },
+        {
+          "level": 0,
+          "text": "4. Which command manages SELinux port assignments?"
+        },
+        {
+          "level": 0,
+          "text": "semanage port"
+        },
+        {
+          "level": 0,
+          "text": "curl port"
+        },
+        {
+          "level": 0,
+          "text": "systemctl port"
+        },
+        {
+          "level": 0,
+          "text": "5. If Apache can use a port under SELinux but clients cannot connect, what else should you check?"
+        },
+        {
+          "level": 0,
+          "text": "The firewall and network path"
+        },
+        {
+          "level": 0,
+          "text": "The keyboard layout"
+        },
+        {
+          "level": 0,
+          "text": "The file's owner only"
+        },
+        {
+          "level": 0,
+          "text": "6. Which SELinux type is used for standard HTTP web-server ports?"
+        },
+        {
+          "level": 0,
+          "text": "ssh_port_t"
+        },
+        {
+          "level": 0,
+          "text": "http_port_t"
+        },
+        {
+          "level": 0,
+          "text": "home_port_t"
+        },
+        {
+          "level": 0,
+          "text": "Try again"
+        }
+      ],
+      "words": 112
+    },
+    {
+      "title": "38. Chapter 11 — Final recap",
+      "content": [
+        {
+          "level": 0,
+          "text": "Firewall: Controls which network connections are allowed."
+        },
+        {
+          "level": 0,
+          "text": "Netfilter: Linux kernel framework that handles network packets."
+        },
+        {
+          "level": 0,
+          "text": "nftables: Modern packet-filtering rules system."
+        },
+        {
+          "level": 0,
+          "text": "firewalld: Manages firewall rules using zones and services."
+        },
+        {
+          "level": 0,
+          "text": "Zone: A group of firewall rules for a type of network connection."
+        },
+        {
+          "level": 0,
+          "text": "Service: A predefined set of ports and protocols."
+        },
+        {
+          "level": 0,
+          "text": "Runtime: Rules currently active."
+        },
+        {
+          "level": 0,
+          "text": "Permanent: Rules saved for future use."
+        },
+        {
+          "level": 0,
+          "text": "SELinux: Adds security restrictions on what services can do."
+        },
+        {
+          "level": 0,
+          "text": "SELinux port label: Identifies the security type assigned to a network port."
+        },
+        {
+          "level": 0,
+          "text": "semanage port: Lists and changes SELinux port assignments."
+        },
+        {
+          "level": 0,
+          "text": "The most important lesson is that a network service needs to be running, permitted by SELinux, and reachable through the firewall. When troubleshooting, check each of those conditions separately."
+        }
+      ],
+      "words": 116
+    }
+  ],
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
+}

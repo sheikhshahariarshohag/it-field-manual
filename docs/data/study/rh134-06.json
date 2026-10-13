@@ -2,736 +2,646 @@
   "id": "rh134-06",
   "n": 6,
   "sourceNumber": 6,
-  "kind": "part",
-  "title": "Part 6",
-  "display": "Part 6 — The Boot Process, Step by Step; Selecting the Boot Target; …",
+  "kind": "chapter",
+  "title": "Chapter 6 — Managing Basic Storage",
+  "display": "Chapter 6 — Managing Basic Storage",
   "exam": "RHCSA (EX200)",
-  "words": 3207,
+  "words": 2147,
   "sections": [
     {
-      "title": "1. The Boot Process, Step by Step",
+      "title": "Overview",
       "content": [
         {
           "level": 0,
-          "text": "A high-level walk from powered-off to a login prompt:"
-        },
-        {
-          "level": 0,
-          "text": "Stage"
-        },
-        {
-          "level": 0,
-          "text": "What happens"
-        },
-        {
-          "level": 0,
-          "text": "Firmware (UEFI/BIOS)"
-        },
-        {
-          "level": 0,
-          "text": "Power-On Self Test, then searches for a bootable device"
-        },
-        {
-          "level": 0,
-          "text": "Boot loader (GRUB2)"
-        },
-        {
-          "level": 0,
-          "text": "Firmware hands off to GRUB2, which reads /boot/grub2/grub.cfg and shows the kernel-selection menu"
-        },
-        {
-          "level": 0,
-          "text": "Kernel + initramfs load"
-        },
-        {
-          "level": 0,
-          "text": "GRUB2 loads the chosen kernel and its initramfs (a self-contained mini-system with drivers and init scripts) into memory"
-        },
-        {
-          "level": 0,
-          "text": "Kernel executes /sbin/init"
-        },
-        {
-          "level": 0,
-          "text": "The kernel hands off to /sbin/init (a symlink to systemd) as PID 1, running from the initramfs"
-        },
-        {
-          "level": 0,
-          "text": "initrd.target"
-        },
-        {
-          "level": 0,
-          "text": "This systemd instance mounts the real root filesystem onto /sysroot (per /etc/fstab)"
-        },
-        {
-          "level": 0,
-          "text": "Pivot + re-exec"
-        },
-        {
-          "level": 0,
-          "text": "The kernel switches root from initramfs to /sysroot, and systemd re-executes itself using the copy installed on disk"
-        },
-        {
-          "level": 0,
-          "text": "Default target"
-        },
-        {
-          "level": 0,
-          "text": "systemd starts whatever units the default target requires, resolving dependencies automatically, ending at a login prompt"
-        },
-        {
-          "level": 0,
-          "text": "GRUB2's config file itself is generated, not hand-edited: grub2-mkconfig reads /etc/default/grub and the scripts in /etc/grub.d/ to produce /boot/grub2/grub.cfg."
-        },
-        {
-          "level": 2,
-          "text": "Powering off and rebooting"
-        },
-        {
-          "level": 0,
-          "text": "Command"
-        },
-        {
-          "level": 0,
-          "text": "Effect"
-        },
-        {
-          "level": 0,
-          "text": "systemctl poweroff / poweroff"
-        },
-        {
-          "level": 0,
-          "text": "Stops services, unmounts filesystems, powers down"
-        },
-        {
-          "level": 0,
-          "text": "systemctl reboot / reboot"
-        },
-        {
-          "level": 0,
-          "text": "Stops services, unmounts filesystems, reboots"
-        },
-        {
-          "level": 0,
-          "text": "systemctl halt / halt"
-        },
-        {
-          "level": 0,
-          "text": "Brings the system to a safe-to-power-off state, but does NOT power off automatically"
+          "text": "RH134 — RH134 course material · Personal Tutor Lesson"
         }
       ],
-      "words": 194
+      "words": 9
     },
     {
-      "title": "2. Selecting the Boot Target",
+      "title": "What will you learn?",
       "content": [
         {
           "level": 0,
-          "text": "A systemd target is a named collection of units the system activates to reach a desired state — the RHEL 8 replacement for old-style SysV runlevels."
+          "text": "By the end of this chapter, you should be able to create disk partitions, prepare them for storing files, mount them, make them available after reboot, and manage swap space."
         },
         {
           "level": 0,
-          "text": "Target"
-        },
-        {
-          "level": 0,
-          "text": "Purpose"
-        },
-        {
-          "level": 0,
-          "text": "graphical.target"
-        },
-        {
-          "level": 0,
-          "text": "Multi-user, graphical and text logins"
-        },
-        {
-          "level": 0,
-          "text": "multi-user.target"
-        },
-        {
-          "level": 0,
-          "text": "Multi-user, text-based logins only"
-        },
-        {
-          "level": 0,
-          "text": "rescue.target"
-        },
-        {
-          "level": 0,
-          "text": "sulogin prompt, after basic system initialization completes"
-        },
-        {
-          "level": 0,
-          "text": "emergency.target"
-        },
-        {
-          "level": 0,
-          "text": "sulogin prompt, immediately after the initramfs pivot — root mounted read-only, almost nothing else started"
-        },
-        {
-          "level": 0,
-          "text": "Targets nest — graphical.target requires multi-user.target, which requires basic.target, and so on. See the full chain with:"
-        },
-        {
-          "level": 0,
-          "text": "[user@host ~]$ systemctl list-dependencies graphical.target | grep target"
-        },
-        {
-          "level": 2,
-          "text": "Switching targets"
-        },
-        {
-          "level": 0,
-          "text": "Command"
-        },
-        {
-          "level": 0,
-          "text": "Purpose"
-        },
-        {
-          "level": 0,
-          "text": "systemctl isolate TARGET"
-        },
-        {
-          "level": 0,
-          "text": "Switch to a target NOW — stops everything not required by it, starts anything required that isn't running"
-        },
-        {
-          "level": 0,
-          "text": "systemctl get-default"
-        },
-        {
-          "level": 0,
-          "text": "Show the current default (boot) target"
-        },
-        {
-          "level": 0,
-          "text": "systemctl set-default TARGET"
-        },
-        {
-          "level": 0,
-          "text": "Change the default target persistently"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING Not every target can be isolated — only ones with AllowIsolate=yes in their unit file (check with systemctl cat TARGET). graphical.target and rescue.target qualify; something like cryptsetup.target does not, because isolating it wouldn't make sense as a standalone system state."
-        },
-        {
-          "level": 2,
-          "text": "Booting into a different target for ONE boot only"
-        },
-        {
-          "level": 0,
-          "text": "Interrupt the GRUB menu, press e to edit the entry, find the line starting with linux, and append:"
-        },
-        {
-          "level": 0,
-          "text": "systemd.unit=rescue.target"
-        },
-        {
-          "level": 0,
-          "text": "Then press Ctrl+x to boot with that change. This affects only this one boot — nothing persists, making it the safe way to test a problem target without risking a misconfigured default."
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL The full GRUB edit sequence — interrupt countdown, e to edit, find the linux line, append the option, Ctrl+x to boot — must be committed to memory. This exact mechanic is reused for rd.break (root password reset) and systemd.unit=emergency.target (fstab repair), both covered next."
+          "text": "We will learn the chapter in small pieces, with commands and practical examples."
         }
       ],
-      "words": 279
+      "words": 43
     },
     {
-      "title": "3. Resetting the Root Password",
+      "title": "1. Understand the basic storage concepts",
       "content": [
         {
           "level": 0,
-          "text": "When nobody is logged in and the root password is lost, RHEL 8's method uses rd.break — a kernel argument that pauses the initramfs just before it hands control to the real system, dropping you into a root shell with the real filesystem mounted (but read-only) on /sysroot."
-        },
-        {
-          "level": 2,
-          "text": "The procedure"
+          "text": "Imagine your computer is an office."
         },
         {
           "level": 0,
-          "text": "1. Reboot the system."
+          "text": "Disk: The whole storage cabinet."
         },
         {
           "level": 0,
-          "text": "2. Interrupt the GRUB countdown (any key except Enter)."
+          "text": "Partition: A separate section inside the cabinet."
         },
         {
           "level": 0,
-          "text": "3. Press e to edit the boot entry."
+          "text": "File system: The system that organizes files inside a section."
         },
         {
           "level": 0,
-          "text": "4. Find the line starting with linux, and append rd.break."
+          "text": "Mount point: The directory through which Linux accesses that file system."
         },
         {
           "level": 0,
-          "text": "5. Press Ctrl+x to boot with the change."
+          "text": "Swap space: Disk space Linux can use to supplement RAM when memory is under pressure."
         },
         {
           "level": 0,
-          "text": "switch_root:/# mount -o remount,rw /sysroot"
+          "text": "easy-peasy.ai"
         },
         {
           "level": 0,
-          "text": "switch_root:/# chroot /sysroot"
+          "text": "Example"
         },
         {
           "level": 0,
-          "text": "sh-4.4# passwd root"
+          "text": "Suppose you add a new 10 GB disk to your RHEL server."
         },
         {
           "level": 0,
-          "text": "sh-4.4# touch /.autorelabel"
+          "text": "You want to use it to store backup files. The process is:"
         },
         {
           "level": 0,
-          "text": "sh-4.4# exit"
+          "text": "Find the new disk."
         },
         {
           "level": 0,
-          "text": "switch_root:/# exit"
+          "text": "Create a partition on it."
         },
         {
           "level": 0,
-          "text": "Step"
+          "text": "Create a file system on the partition."
         },
         {
           "level": 0,
-          "text": "Why it's needed"
+          "text": "Create a directory to use as the mount point."
         },
         {
           "level": 0,
-          "text": "mount -o remount,rw /sysroot"
+          "text": "Mount the partition to that directory."
         },
         {
           "level": 0,
-          "text": "/sysroot starts read-only; you can't change the password on a read-only filesystem"
+          "text": "Configure it to mount automatically after reboot."
         },
         {
           "level": 0,
-          "text": "chroot /sysroot"
-        },
-        {
-          "level": 0,
-          "text": "Treats /sysroot as the root of the filesystem tree so passwd edits the REAL /etc/shadow, not the initramfs's own"
-        },
-        {
-          "level": 0,
-          "text": "touch /.autorelabel"
-        },
-        {
-          "level": 0,
-          "text": "SELinux isn't active yet at this point, so any file passwd rewrites (it replaces /etc/shadow rather than editing in place) has NO SELinux context — this flag forces a full relabel on the next boot to fix that"
-        },
-        {
-          "level": 0,
-          "text": "exit (twice)"
-        },
-        {
-          "level": 0,
-          "text": "First exit leaves the chroot, second exit leaves the initramfs debug shell and lets the boot continue"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Forgetting touch /.autorelabel is the single most common mistake here. The password change itself will work, but /etc/shadow will be left with no (or an incorrect) SELinux context, which can cause login/authentication failures even though the password is technically correct — SELinux denies access before the password is ever checked."
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING The autorelabel triggers a FULL filesystem relabel on the next boot, which can take a noticeably long time on a large disk — don't assume the system has hung if the next boot takes longer than usual after this procedure."
+          "text": "Important: Creating a partition does not automatically make it ready to store files. You must also create a file system and mount it."
         }
       ],
-      "words": 303
+      "words": 141
     },
     {
-      "title": "4. Repairing systemd and Filesystem Boot Issues",
+      "title": "2. What is disk partitioning?",
       "content": [
         {
-          "level": 2,
-          "text": "Diagnostic tools"
+          "level": 0,
+          "text": "Disk partitioning divides one physical disk into separate logical storage areas."
         },
         {
           "level": 0,
-          "text": "Tool"
+          "text": "For example, a disk might contain:"
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "One partition for the operating system."
         },
         {
           "level": 0,
-          "text": "systemctl enable debug-shell.service"
+          "text": "One partition for user data."
         },
         {
           "level": 0,
-          "text": "Spawns a root shell on TTY9 (Ctrl+Alt+F9), auto-logged-in as root, very early in boot — for live debugging"
+          "text": "One partition for swap space."
         },
         {
           "level": 0,
-          "text": "systemd.unit=rescue.target / emergency.target (GRUB edit)"
+          "text": "This can help separate data, manage storage, and limit the space used by different purposes."
         },
         {
           "level": 0,
-          "text": "Boots straight into a recovery shell instead of the normal target — both require the root password"
+          "text": "MBR and GPT"
         },
         {
           "level": 0,
-          "text": "systemctl list-jobs"
+          "text": "These are two ways to organize a disk's partition information."
         },
         {
           "level": 0,
-          "text": "Shows startup jobs stuck as 'running', which block other jobs listed as 'waiting'"
+          "text": "Feature"
         },
         {
           "level": 0,
-          "text": "journalctl -b -p err"
+          "text": "MBR"
         },
         {
           "level": 0,
-          "text": "Shows all error-or-worse messages from the current (or specified) boot"
+          "text": "GPT"
         },
         {
           "level": 0,
-          "text": "rescue.target vs emergency.target"
+          "text": "Full name"
         },
         {
           "level": 0,
-          "text": "Key difference"
+          "text": "Master Boot Record"
         },
         {
           "level": 0,
-          "text": "rescue.target"
+          "text": "GUID Partition Table"
         },
         {
           "level": 0,
-          "text": "Waits for sysinit.target first — more of the system is up (logging, filesystems mounted)"
+          "text": "Partition limit"
         },
         {
           "level": 0,
-          "text": "emergency.target"
+          "text": "Four primary partitions, with extended/logical partitioning available"
         },
         {
           "level": 0,
-          "text": "Spawns immediately after the initramfs pivot — root filesystem mounted READ-ONLY, almost nothing else initialized"
+          "text": "Commonly up to 128 partitions on standard systems"
         },
         {
           "level": 0,
-          "text": "⚠ WARNING Never leave debug-shell.service enabled after you're done — it's an unauthenticated root shell available to anyone with local console access. Disable it as soon as debugging is finished."
-        },
-        {
-          "level": 2,
-          "text": "Common /etc/fstab problems and how systemd reacts"
+          "text": "Disk size limit"
         },
         {
           "level": 0,
-          "text": "Problem"
+          "text": "About 2 TiB"
         },
         {
           "level": 0,
-          "text": "Result"
+          "text": "Much larger"
         },
         {
           "level": 0,
-          "text": "Corrupt filesystem"
+          "text": "Modern usage"
         },
         {
           "level": 0,
-          "text": "systemd attempts an automatic repair; if too severe, drops to emergency shell"
+          "text": "Older systems"
         },
         {
           "level": 0,
-          "text": "Nonexistent device/UUID in fstab"
+          "text": "Modern systems"
         },
         {
           "level": 0,
-          "text": "Waits a timeout period for the device to appear, then drops to emergency shell"
-        },
-        {
-          "level": 0,
-          "text": "Nonexistent mount point directory"
-        },
-        {
-          "level": 0,
-          "text": "Drops straight to emergency shell"
-        },
-        {
-          "level": 0,
-          "text": "Incorrect mount option"
-        },
-        {
-          "level": 0,
-          "text": "Drops straight to emergency shell"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# mount -o remount,rw /"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# vim /etc/fstab # fix the bad entry"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# systemctl daemon-reload"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# exit"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL Two steps people forget under exam pressure: remounting / read-write BEFORE editing fstab (the emergency shell mounts it read-only), and systemctl daemon-reload AFTER editing it — without the reload, systemd may still be using the old, broken configuration in memory even though the file on disk is fixed."
-        },
-        {
-          "level": 0,
-          "text": "✗ COMMON MISTAKE Reaching for nofail as a general-purpose fix for a flaky mount. nofail lets the boot continue even if that filesystem fails to mount — which means an application can start with its storage silently missing. It's a deliberate design choice for genuinely optional mounts, not a workaround for a mount you actually need working."
+          "text": "Remember: GPT is the modern choice for most new systems. MBR remains relevant for older systems and compatibility needs."
         }
       ],
-      "words": 327
+      "words": 122
     },
     {
-      "title": "5. Managing Server Firewalls with firewalld",
+      "title": "3. Find and inspect disks",
       "content": [
         {
           "level": 0,
-          "text": "firewalld is a dynamic firewall manager — a friendlier front end over the kernel's netfilter/nftables packet filtering, organized around zones rather than raw rule chains. Rules can be added and removed without dropping active connections, which is the whole point of 'dynamic.'"
-        },
-        {
-          "level": 2,
-          "text": "Zones: trust levels for network interfaces"
+          "text": "Before changing storage, identify the correct disk. This is one of the most important administrator habits."
         },
         {
           "level": 0,
-          "text": "Every network interface belongs to exactly one zone at a time, and each zone has its own list of allowed services/ports. public is the default zone for newly added interfaces; the loopback interface (lo) is mapped to trusted."
+          "text": "Command 1: lsblk"
         },
         {
           "level": 0,
-          "text": "Zone"
+          "text": "lsblk"
         },
         {
           "level": 0,
-          "text": "Default behavior"
+          "text": "This displays disks, partitions, and their relationships."
         },
         {
           "level": 0,
-          "text": "trusted"
+          "text": "Example output:"
         },
         {
           "level": 0,
-          "text": "Allow ALL incoming traffic"
+          "text": "NAME   MAJ:MIN RM  SIZE TYPE MOUNTPOINTS"
         },
         {
           "level": 0,
-          "text": "home / internal"
+          "text": "vda    252:0    0   20G disk"
         },
         {
           "level": 0,
-          "text": "Reject incoming unless related to outgoing, or matching ssh, mdns, ipp-client, samba-client, dhcpv6-client"
+          "text": "├─vda1 252:1    0    1G part /boot"
         },
         {
           "level": 0,
-          "text": "work"
+          "text": "└─vda2 252:2    0   19G part /"
         },
         {
           "level": 0,
-          "text": "Reject incoming unless related to outgoing, or matching ssh, ipp-client, dhcpv6-client"
+          "text": "vdb    252:16   0   10G disk"
         },
         {
           "level": 0,
-          "text": "public"
+          "text": "Understand the output:"
         },
         {
           "level": 0,
-          "text": "Reject incoming unless related to outgoing, or matching ssh, dhcpv6-client — the default zone for new interfaces"
+          "text": "vda — the first disk."
         },
         {
           "level": 0,
-          "text": "external"
+          "text": "vda1 — the first partition on that disk."
         },
         {
           "level": 0,
-          "text": "Same as public, PLUS masquerades (NAT) outgoing IPv4 traffic to look like it came from the outgoing interface"
+          "text": "vda2 — the second partition."
         },
         {
           "level": 0,
-          "text": "dmz"
+          "text": "vdb — a second disk."
         },
         {
           "level": 0,
-          "text": "Reject incoming unless related to outgoing, or matching ssh"
+          "text": "disk — a whole disk."
         },
         {
           "level": 0,
-          "text": "block"
+          "text": "part — a partition."
         },
         {
           "level": 0,
-          "text": "Reject ALL incoming traffic"
+          "text": "MOUNTPOINTS — where a file system is currently accessible."
         },
         {
           "level": 0,
-          "text": "drop"
+          "text": "In this example, /dev/vdb is the new 10 GB disk."
         },
         {
           "level": 0,
-          "text": "DROP all incoming traffic — no response at all, not even an ICMP rejection"
+          "text": "Command 2: Show file system information"
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS This is the practical reason zones exist: a laptop's Wi-Fi interface on a coffee-shop network wants the strict public zone, while the same laptop's interface on your home LAN can safely use the more permissive home zone — same machine, different trust level per interface, switched automatically or manually as needed."
-        },
-        {
-          "level": 2,
-          "text": "Configuring firewalld from the command line"
+          "text": "lsblk --fs"
         },
         {
           "level": 0,
-          "text": "Most firewall-cmd commands affect the RUNTIME configuration only, unless you add --permanent — which writes to the persistent configuration but does NOT take effect immediately. You need both, or a --reload, to make a permanent change active right now."
+          "text": "This displays file system types, labels, UUIDs, and mount points where available."
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "A UUID is a unique identifier for a file system or storage device. It is often safer to use a UUID in the boot-time mount configuration than to rely only on a device name."
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "Command 3: Display disk partition information"
         },
         {
           "level": 0,
-          "text": "firewall-cmd --get-default-zone"
+          "text": "sudo parted /dev/vdb print"
         },
         {
           "level": 0,
-          "text": "Show the current default zone"
+          "text": "This shows the partition table of /dev/vdb."
         },
         {
           "level": 0,
-          "text": "firewall-cmd --set-default-zone=ZONE"
+          "text": "Here, /dev/vdb is an example. Always replace it with the correct disk in your lab."
         },
         {
           "level": 0,
-          "text": "Change the default zone (runtime AND permanent)"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --get-active-zones"
-        },
-        {
-          "level": 0,
-          "text": "Show zones currently tied to an interface/source"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --list-all [--zone=Z]"
-        },
-        {
-          "level": 0,
-          "text": "Show everything configured for a zone"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --add-service=SVC [--zone=Z]"
-        },
-        {
-          "level": 0,
-          "text": "Allow a predefined service"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --add-port=PORT/PROTO [--zone=Z]"
-        },
-        {
-          "level": 0,
-          "text": "Allow a specific port/protocol"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --remove-service / --remove-port"
-        },
-        {
-          "level": 0,
-          "text": "Reverse the above"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --add-source=CIDR [--zone=Z]"
-        },
-        {
-          "level": 0,
-          "text": "Route all traffic from an IP/network into a specific zone"
-        },
-        {
-          "level": 0,
-          "text": "firewall-cmd --reload"
-        },
-        {
-          "level": 0,
-          "text": "Discard runtime config, reapply the permanent config"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --permanent --zone=internal --add-source=192.168.0.0/24"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --permanent --zone=internal --add-service=mysql"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --reload"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL A firewall-cmd command WITHOUT --permanent takes effect immediately but is lost on reboot or reload. A command WITH --permanent survives reboot but does nothing right now until you also run --reload (or reboot). Forgetting one half of this pair is the #1 firewalld mistake — 'it worked in my test, then vanished' means you forgot --permanent; 'I added the rule and it's still not working' often means you forgot --reload."
-        },
-        {
-          "level": 0,
-          "text": "🔎 REAL-WORLD EXTENSION Rich rules and Direct Configuration (raw nft syntax) exist for firewall logic firewall-cmd's basic syntax can't express — out of scope for this chapter, but worth knowing they exist for real-world edge cases."
+          "text": "Safety warning: Never assume that /dev/vdb is the correct disk on your computer. Partitioning or formatting the wrong disk can destroy important data."
         }
       ],
-      "words": 494
+      "words": 220
     },
     {
-      "title": "6. Controlling SELinux Port Labeling",
+      "title": "4. Create a partition using parted",
       "content": [
         {
           "level": 0,
-          "text": "The firewall isn't the only gatekeeper for network access — SELinux labels ports too, independently. Port 22/TCP carries the label ssh_port_t; ports 80 and 443 carry http_port_t. When a process tries to bind a port, SELinux checks whether that process's domain is allowed to bind a port with that label — completely separately from whether the firewall allows the traffic."
+          "text": "The parted command lets you create, inspect, and delete disk partitions."
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS This closes the loop from Part 3: a service can have correct file permissions, correct SELinux file context, AND a correctly open firewall port, and STILL fail — because it's trying to listen on a port SELinux hasn't labeled for its domain. Running a web server on a nonstandard port like 8088 instead of 80 is the classic trigger."
-        },
-        {
-          "level": 2,
-          "text": "Listing and managing port labels"
+          "text": "Step 1: Open the disk"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# semanage port -l | grep http"
+          "text": "sudo parted /dev/vdb"
         },
         {
           "level": 0,
-          "text": "http_port_t tcp 80, 81, 443, 488, 8008, 8009, 8443, 9000"
+          "text": "You enter the interactive parted prompt. This means you can type parted commands directly instead of running separate Linux commands."
         },
         {
           "level": 0,
-          "text": "Notice 8008 and 8009 are already labeled http_port_t — meaning httpd can already bind those out of the box. A truly nonstandard port needs an explicit label added:"
+          "text": "Step 2: Display the partition table"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# semanage port -a -t http_port_t -p tcp 8088"
+          "text": "(parted) print"
         },
         {
           "level": 0,
-          "text": "[root@host ~]# semanage port -l -C # show only LOCAL changes to the default policy"
+          "text": "This shows the disk size, partition table type, and existing partitions."
         },
         {
           "level": 0,
-          "text": "Flag"
+          "text": "Step 3: Create a GPT partition table — only on a blank test disk"
+        },
+        {
+          "level": 0,
+          "text": "(parted) mklabel gpt"
+        },
+        {
+          "level": 0,
+          "text": "Warning: This replaces the disk's existing partition table. Do not run it on a disk containing data you need."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Create a partition"
+        },
+        {
+          "level": 0,
+          "text": "On a blank test disk, create a 2 GB partition starting at 1 MiB:"
+        },
+        {
+          "level": 0,
+          "text": "(parted) mkpart data xfs 1MiB 2GiB"
+        },
+        {
+          "level": 0,
+          "text": "The parts mean:"
+        },
+        {
+          "level": 0,
+          "text": "mkpart — create a partition."
+        },
+        {
+          "level": 0,
+          "text": "data — the partition name."
+        },
+        {
+          "level": 0,
+          "text": "xfs — the intended file system type."
+        },
+        {
+          "level": 0,
+          "text": "1MiB — starting position."
+        },
+        {
+          "level": 0,
+          "text": "2GiB — ending position."
+        },
+        {
+          "level": 0,
+          "text": "The partition will be approximately 2 GiB in size."
+        },
+        {
+          "level": 0,
+          "text": "Step 5: Exit"
+        },
+        {
+          "level": 0,
+          "text": "(parted) quit"
+        },
+        {
+          "level": 0,
+          "text": "Step 6: Verify the partition"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "You should see a new partition under /dev/vdb, such as /dev/vdb1."
+        },
+        {
+          "level": 0,
+          "text": "Remember that mkpart creates the partition; it does not create the XFS file system itself."
+        }
+      ],
+      "words": 193
+    },
+    {
+      "title": "5. Create a file system",
+      "content": [
+        {
+          "level": 0,
+          "text": "A partition needs a file system before Linux can normally store files on it."
+        },
+        {
+          "level": 0,
+          "text": "Think of a partition as an empty room. The file system organizes the room so you can place and find things inside it."
+        },
+        {
+          "level": 0,
+          "text": "Create an XFS file system"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkfs.xfs /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "mkfs means make a file system."
+        },
+        {
+          "level": 0,
+          "text": "xfs is the file system type."
+        },
+        {
+          "level": 0,
+          "text": "/dev/vdb1 is the partition."
+        },
+        {
+          "level": 0,
+          "text": "Warning: Formatting can destroy existing data on the target partition. Check the device carefully before running this command."
+        },
+        {
+          "level": 0,
+          "text": "Verify the file system"
+        },
+        {
+          "level": 0,
+          "text": "lsblk --fs"
+        },
+        {
+          "level": 0,
+          "text": "Look for xfs in the FSTYPE column."
+        },
+        {
+          "level": 0,
+          "text": "Other useful commands include:"
+        },
+        {
+          "level": 0,
+          "text": "sudo blkid /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "This displays identifying information such as the file system type and UUID."
+        }
+      ],
+      "words": 111
+    },
+    {
+      "title": "6. Mount a file system",
+      "content": [
+        {
+          "level": 0,
+          "text": "Creating a file system does not automatically make its files accessible through a normal directory. You must mount it."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Create a mount point"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkdir /data"
+        },
+        {
+          "level": 0,
+          "text": "This creates /data, the directory through which you will access the new storage."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Mount the partition"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount /dev/vdb1 /data"
+        },
+        {
+          "level": 0,
+          "text": "This attaches the file system on /dev/vdb1 to /data."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Verify the mount"
+        },
+        {
+          "level": 0,
+          "text": "findmnt /data"
+        },
+        {
+          "level": 0,
+          "text": "Or:"
+        },
+        {
+          "level": 0,
+          "text": "df -h /data"
+        },
+        {
+          "level": 0,
+          "text": "df -h displays available and used file-system space in readable units such as GB."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Test it"
+        },
+        {
+          "level": 0,
+          "text": "sudo touch /data/testfile"
+        },
+        {
+          "level": 0,
+          "text": "ls -l /data"
+        },
+        {
+          "level": 0,
+          "text": "The first command creates an empty file called testfile. The second lists the directory contents."
+        },
+        {
+          "level": 0,
+          "text": "Unmount the file system"
+        },
+        {
+          "level": 0,
+          "text": "sudo umount /data"
+        },
+        {
+          "level": 0,
+          "text": "The command is umount, not unmount."
+        },
+        {
+          "level": 0,
+          "text": "Unmounting detaches the file system from /data. It does not mean you should delete the directory."
+        },
+        {
+          "level": 0,
+          "text": "Before unmounting, leave the directory and ensure no process is using it. Otherwise, Linux may report that the target is busy."
+        }
+      ],
+      "words": 159
+    },
+    {
+      "title": "7. Make the mount permanent with /etc/fstab",
+      "content": [
+        {
+          "level": 0,
+          "text": "A manually mounted file system may not be mounted automatically after a reboot."
+        },
+        {
+          "level": 0,
+          "text": "The /etc/fstab file stores information about file systems that should be mounted automatically."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Find the UUID"
+        },
+        {
+          "level": 0,
+          "text": "sudo blkid /dev/vdb1"
+        },
+        {
+          "level": 0,
+          "text": "Example output:"
+        },
+        {
+          "level": 0,
+          "text": "/dev/vdb1: UUID=\"1234-abcd\" TYPE=\"xfs\""
+        },
+        {
+          "level": 0,
+          "text": "This UUID is only an example. Use the actual UUID from your system."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Edit /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Add a new line using this structure:"
+        },
+        {
+          "level": 0,
+          "text": "UUID=1234-abcd  /data  xfs  defaults  0  0"
+        },
+        {
+          "level": 0,
+          "text": "Each field means:"
+        },
+        {
+          "level": 0,
+          "text": "Field"
         },
         {
           "level": 0,
@@ -739,64 +649,512 @@
         },
         {
           "level": 0,
-          "text": "-l"
+          "text": "UUID=1234-abcd"
         },
         {
           "level": 0,
-          "text": "List current port label assignments"
+          "text": "Identifies the file system"
         },
         {
           "level": 0,
-          "text": "-a"
+          "text": "/data"
         },
         {
           "level": 0,
-          "text": "Add a new port to a label"
+          "text": "Mount point"
         },
         {
           "level": 0,
-          "text": "-d"
+          "text": "xfs"
         },
         {
           "level": 0,
-          "text": "Delete a port from a label (same syntax as -a)"
+          "text": "File system type"
         },
         {
           "level": 0,
-          "text": "-t"
+          "text": "defaults"
         },
         {
           "level": 0,
-          "text": "The SELinux port type/label"
+          "text": "Standard mount options"
         },
         {
           "level": 0,
-          "text": "-p"
+          "text": "0"
         },
         {
           "level": 0,
-          "text": "Protocol — tcp or udp"
+          "text": "Legacy dump backup setting"
         },
         {
           "level": 0,
-          "text": "-C"
+          "text": "0"
         },
         {
           "level": 0,
-          "text": "Show only local customizations, not the full default policy"
+          "text": "Do not use the traditional boot-time fsck check for this XFS entry"
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL If a service returns 'permission denied' on a nonstandard port even though the firewall is open and file permissions are fine, semanage port -l | grep TYPE is your next move — check whether the port already carries the right label before assuming you need to add one."
+          "text": "Use your real UUID, not the example."
         },
         {
           "level": 0,
-          "text": "⚠ WARNING semanage port only works for ports NOT already claimed by another service's official SELinux policy module — you cannot use it to reassign a port that belongs to a different, already-labeled service; that requires actually replacing the policy module, which is out of scope here."
+          "text": "Step 3: Test the configuration"
         },
         {
-          "level": 3,
-          "text": "Command Reference — Boot + Network Security"
+          "level": 0,
+          "text": "After saving the file, run:"
         },
+        {
+          "level": 0,
+          "text": "sudo findmnt --verify --verbose"
+        },
+        {
+          "level": 0,
+          "text": "This checks /etc/fstab for configuration issues. Read any warnings carefully."
+        },
+        {
+          "level": 0,
+          "text": "You can then test mounting the configured file systems:"
+        },
+        {
+          "level": 0,
+          "text": "sudo mount -a"
+        },
+        {
+          "level": 0,
+          "text": "This attempts to mount file systems configured in /etc/fstab that are not already mounted."
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "findmnt /data"
+        },
+        {
+          "level": 0,
+          "text": "Important: A mistake in /etc/fstab can cause boot problems. Test changes before rebooting."
+        }
+      ],
+      "words": 184
+    },
+    {
+      "title": "8. Understand swap space",
+      "content": [
+        {
+          "level": 0,
+          "text": "Swap space is disk space Linux can use to hold some inactive memory data when RAM is under pressure."
+        },
+        {
+          "level": 0,
+          "text": "Imagine your desk is RAM and a storage cabinet is the disk. When the desk becomes crowded, you move items you are not currently using into the cabinet. You can retrieve them later, but it takes longer than keeping them on the desk."
+        },
+        {
+          "level": 0,
+          "text": "That is similar to how swap works."
+        },
+        {
+          "level": 0,
+          "text": "Important points:"
+        },
+        {
+          "level": 0,
+          "text": "RAM is much faster than disk-based swap."
+        },
+        {
+          "level": 0,
+          "text": "Swap can help when memory is under pressure."
+        },
+        {
+          "level": 0,
+          "text": "Swap is not a replacement for having enough RAM."
+        },
+        {
+          "level": 0,
+          "text": "Swap can be configured using a disk partition or a swap file."
+        },
+        {
+          "level": 0,
+          "text": "Check the current swap spaces"
+        },
+        {
+          "level": 0,
+          "text": "swapon --show"
+        },
+        {
+          "level": 0,
+          "text": "This displays active swap areas, their sizes, and how much is being used."
+        },
+        {
+          "level": 0,
+          "text": "You can also run:"
+        },
+        {
+          "level": 0,
+          "text": "free -h"
+        },
+        {
+          "level": 0,
+          "text": "This displays RAM and swap usage."
+        }
+      ],
+      "words": 139
+    },
+    {
+      "title": "9. Create a swap partition",
+      "content": [
+        {
+          "level": 0,
+          "text": "The RH134 chapter teaches how to create a swap partition and activate it persistently."
+        },
+        {
+          "level": 0,
+          "text": "The example below follows the book's approach. Use a disposable test disk, not your operating system disk."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Create the partition"
+        },
+        {
+          "level": 0,
+          "text": "First, inspect the disk:"
+        },
+        {
+          "level": 0,
+          "text": "sudo parted /dev/vdb print"
+        },
+        {
+          "level": 0,
+          "text": "Suppose /dev/vdb already has a partition ending at 1001 MB and sufficient free space follows it. The book demonstrates creating a 500 MB partition:"
+        },
+        {
+          "level": 0,
+          "text": "sudo parted /dev/vdb mkpart myswap linux-swap 1001MB 1501MB"
+        },
+        {
+          "level": 0,
+          "text": "This creates a partition named myswap, intended for swap use."
+        },
+        {
+          "level": 0,
+          "text": "The exact start and end positions must match your disk's actual layout. Never copy these positions blindly."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Find the new partition"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "Suppose the new partition is /dev/vdb2."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Initialize it as swap"
+        },
+        {
+          "level": 0,
+          "text": "sudo mkswap /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "mkswap prepares the partition for use as swap space. It writes the required swap information to the device."
+        },
+        {
+          "level": 0,
+          "text": "Do not run this on a partition containing data you need."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Activate swap immediately"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapon /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "This activates the swap partition without waiting for a reboot."
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "swapon --show"
+        },
+        {
+          "level": 0,
+          "text": "Step 5: Make swap permanent"
+        },
+        {
+          "level": 0,
+          "text": "Find its UUID:"
+        },
+        {
+          "level": 0,
+          "text": "lsblk --fs /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "Edit the configuration file:"
+        },
+        {
+          "level": 0,
+          "text": "sudo vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Add an entry like this, replacing the example UUID:"
+        },
+        {
+          "level": 0,
+          "text": "UUID=your-actual-uuid  swap  swap  defaults  0  0"
+        },
+        {
+          "level": 0,
+          "text": "Save the file, then test the configuration. You can use:"
+        },
+        {
+          "level": 0,
+          "text": "sudo findmnt --verify --verbose"
+        },
+        {
+          "level": 0,
+          "text": "Reload systemd's configuration manager if needed:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "Activate any configured swap spaces that are not already active:"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapon -a"
+        },
+        {
+          "level": 0,
+          "text": "Finally:"
+        },
+        {
+          "level": 0,
+          "text": "swapon --show"
+        },
+        {
+          "level": 0,
+          "text": "The swap space should appear in the output."
+        }
+      ],
+      "words": 255
+    },
+    {
+      "title": "10. Disable and remove swap",
+      "content": [
+        {
+          "level": 0,
+          "text": "Sometimes an administrator needs to disable a swap area before maintenance."
+        },
+        {
+          "level": 0,
+          "text": "Disable a specific swap partition"
+        },
+        {
+          "level": 0,
+          "text": "sudo swapoff /dev/vdb2"
+        },
+        {
+          "level": 0,
+          "text": "This disables the selected swap space. Linux may need to move its contents back into RAM, so the operation can fail if there is insufficient available memory."
+        },
+        {
+          "level": 0,
+          "text": "Verify:"
+        },
+        {
+          "level": 0,
+          "text": "swapon --show"
+        },
+        {
+          "level": 0,
+          "text": "If you want to stop swap from activating after reboot, also remove or comment out its entry in /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "Remember the difference:"
+        },
+        {
+          "level": 0,
+          "text": "swapoff — disables swap."
+        },
+        {
+          "level": 0,
+          "text": "swapon — enables swap."
+        },
+        {
+          "level": 0,
+          "text": "mkswap — prepares a device for swap use."
+        }
+      ],
+      "words": 87
+    },
+    {
+      "title": "11. Chapter 6 practical workflow",
+      "content": [
+        {
+          "level": 0,
+          "text": "Here is the complete process you should understand for the storage lab."
+        },
+        {
+          "level": 0,
+          "text": "1. Inspect the disk"
+        },
+        {
+          "level": 0,
+          "text": "lsblk"
+        },
+        {
+          "level": 0,
+          "text": "sudo parted /dev/vdb print"
+        },
+        {
+          "level": 0,
+          "text": "Identify the correct disk and its existing partitions."
+        },
+        {
+          "level": 0,
+          "text": "2. Create a partition"
+        },
+        {
+          "level": 0,
+          "text": "Use parted to create the partition on the correct disk."
+        },
+        {
+          "level": 0,
+          "text": "3. Prepare the storage"
+        },
+        {
+          "level": 0,
+          "text": "For a normal file system, use mkfs.xfs. For swap, use mkswap."
+        },
+        {
+          "level": 0,
+          "text": "4. Make it usable"
+        },
+        {
+          "level": 0,
+          "text": "For a normal file system, create a mount point and use mount."
+        },
+        {
+          "level": 0,
+          "text": "5. Make it persistent"
+        },
+        {
+          "level": 0,
+          "text": "Add the correct UUID entry to /etc/fstab, test it, and verify the result."
+        }
+      ],
+      "words": 91
+    },
+    {
+      "title": "12. Common problems and how to troubleshoot them",
+      "content": [
+        {
+          "level": 0,
+          "text": "Problem 1: The mount command fails"
+        },
+        {
+          "level": 0,
+          "text": "Check:"
+        },
+        {
+          "level": 0,
+          "text": "lsblk --fs"
+        },
+        {
+          "level": 0,
+          "text": "findmnt"
+        },
+        {
+          "level": 0,
+          "text": "Possible causes include an incorrect device name, a missing file system, or an invalid mount point."
+        },
+        {
+          "level": 0,
+          "text": "Problem 2: The mount disappears after reboot"
+        },
+        {
+          "level": 0,
+          "text": "Check:"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "sudo findmnt --verify --verbose"
+        },
+        {
+          "level": 0,
+          "text": "The entry may be missing, or its UUID, file system type, or mount point may be incorrect."
+        },
+        {
+          "level": 0,
+          "text": "Problem 3: Swap does not activate"
+        },
+        {
+          "level": 0,
+          "text": "Check:"
+        },
+        {
+          "level": 0,
+          "text": "lsblk --fs"
+        },
+        {
+          "level": 0,
+          "text": "sudo blkid"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "swapon --show"
+        },
+        {
+          "level": 0,
+          "text": "Confirm that the device was initialized with mkswap, the UUID is correct, and the entry is valid."
+        },
+        {
+          "level": 0,
+          "text": "Problem 4: The device is busy when unmounting"
+        },
+        {
+          "level": 0,
+          "text": "sudo fuser -vm /data"
+        },
+        {
+          "level": 0,
+          "text": "This helps identify processes using /data. Close or stop the relevant processes before trying to unmount again."
+        }
+      ],
+      "words": 118
+    },
+    {
+      "title": "13. Important commands to remember",
+      "content": [
         {
           "level": 0,
           "text": "Command"
@@ -807,399 +1165,285 @@
         },
         {
           "level": 0,
-          "text": "systemctl isolate TARGET / get-default / set-default"
+          "text": "lsblk"
         },
         {
           "level": 0,
-          "text": "Switch / view / persistently set the boot target"
+          "text": "List disks and partitions"
         },
         {
           "level": 0,
-          "text": "rd.break (GRUB kernel line)"
+          "text": "lsblk --fs"
         },
         {
           "level": 0,
-          "text": "Break into initramfs shell for root password reset"
+          "text": "Display file systems and UUIDs"
         },
         {
           "level": 0,
-          "text": "systemd.unit=emergency.target (GRUB kernel line)"
+          "text": "parted"
         },
         {
           "level": 0,
-          "text": "Boot straight to emergency shell for fstab repair"
+          "text": "Manage disk partitions"
         },
         {
           "level": 0,
-          "text": "touch /.autorelabel"
+          "text": "mkfs.xfs"
         },
         {
           "level": 0,
-          "text": "Force full SELinux relabel on next boot"
+          "text": "Create an XFS file system"
         },
         {
           "level": 0,
-          "text": "systemctl list-jobs"
+          "text": "blkid"
         },
         {
           "level": 0,
-          "text": "Find startup jobs stuck and blocking boot"
+          "text": "Display device identification information"
         },
         {
           "level": 0,
-          "text": "firewall-cmd --add-service/--add-port [--permanent]"
+          "text": "mkdir"
         },
         {
           "level": 0,
-          "text": "Allow traffic; add --permanent for persistence, --reload to apply it now"
+          "text": "Create a directory"
         },
         {
           "level": 0,
-          "text": "firewall-cmd --list-all --zone=Z"
+          "text": "mount"
         },
         {
           "level": 0,
-          "text": "Show everything configured for a zone"
+          "text": "Attach a file system to a directory"
         },
         {
           "level": 0,
-          "text": "semanage port -a -t TYPE -p tcp|udp PORT"
+          "text": "umount"
         },
         {
           "level": 0,
-          "text": "Label a port for SELinux to allow a service to bind it"
+          "text": "Detach a mounted file system"
+        },
+        {
+          "level": 0,
+          "text": "findmnt"
+        },
+        {
+          "level": 0,
+          "text": "Display mounted file systems"
+        },
+        {
+          "level": 0,
+          "text": "df -h"
+        },
+        {
+          "level": 0,
+          "text": "Display file-system space usage"
+        },
+        {
+          "level": 0,
+          "text": "mkswap"
+        },
+        {
+          "level": 0,
+          "text": "Initialize swap space"
+        },
+        {
+          "level": 0,
+          "text": "swapon"
+        },
+        {
+          "level": 0,
+          "text": "Activate swap"
+        },
+        {
+          "level": 0,
+          "text": "swapoff"
+        },
+        {
+          "level": 0,
+          "text": "Deactivate swap"
+        },
+        {
+          "level": 0,
+          "text": "free -h"
+        },
+        {
+          "level": 0,
+          "text": "Display RAM and swap usage"
+        },
+        {
+          "level": 0,
+          "text": "cat /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Display persistent mount configuration"
+        },
+        {
+          "level": 0,
+          "text": "These commands and workflows follow the main topics in your RH134 Chapter 6."
+        },
+        {
+          "level": 0,
+          "text": "RH134 course material"
         }
       ],
-      "words": 456
-    }
-  ],
-  "labs": [
+      "words": 97
+    },
     {
-      "title": "Lab: Boot Recovery + Firewall/SELinux Port",
-      "content": [
-        {
-          "level": 3,
-          "text": "Objective"
-        },
-        {
-          "level": 0,
-          "text": "Recover from a lost root password, repair a broken fstab entry from emergency mode, and get a web server working on a nonstandard port past both the firewall and SELinux."
-        },
-        {
-          "level": 3,
-          "text": "Scenario"
-        },
-        {
-          "level": 0,
-          "text": "A departing colleague never shared the root password, and someone else added a bad NFS entry to /etc/fstab that's now stopping the system from booting normally. Separately, your team wants httpd listening on port 8088 instead of 80, and right now that fails silently even though the process starts."
-        },
-        {
-          "level": 3,
-          "text": "Environment"
-        },
-        {
-          "level": 0,
-          "text": "One RHEL 8 VM with sudo access to a non-root account for setup/verification (but pretend root is inaccessible for Part A)"
-        },
-        {
-          "level": 0,
-          "text": "httpd installed, SELinux enforcing, firewalld running"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part A (root password reset)"
-        },
-        {
-          "level": 0,
-          "text": "1. Reboot and use rd.break to reach the initramfs shell"
-        },
-        {
-          "level": 0,
-          "text": "2. Remount /sysroot read-write, chroot into it, and set a new root password"
-        },
-        {
-          "level": 0,
-          "text": "3. Force a relabel on next boot, exit cleanly, and let the system finish booting"
-        },
-        {
-          "level": 0,
-          "text": "4. Confirm you can log in as root with the new password after the relabel completes"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part B (fstab repair)"
-        },
-        {
-          "level": 0,
-          "text": "1. Add a deliberately broken line to /etc/fstab (e.g. a nonexistent UUID) and reboot to confirm it drops to emergency mode"
-        },
-        {
-          "level": 0,
-          "text": "2. From the emergency shell, remount / read-write, fix or remove the bad line, and reload systemd"
-        },
-        {
-          "level": 0,
-          "text": "3. Reboot again and confirm the system now boots normally"
-        },
-        {
-          "level": 3,
-          "text": "Task — Part C (firewall + SELinux port)"
-        },
-        {
-          "level": 0,
-          "text": "1. Configure httpd to listen on port 8088 (assume the config change is already made)"
-        },
-        {
-          "level": 0,
-          "text": "2. Open port 8088/tcp on the active firewall zone, permanently, and apply it"
-        },
-        {
-          "level": 0,
-          "text": "3. Check whether SELinux already allows httpd to bind 8088; if not, label it correctly"
-        },
-        {
-          "level": 0,
-          "text": "4. Confirm with curl that the service is reachable on the new port"
-        },
-        {
-          "level": 3,
-          "text": "Hint"
-        },
-        {
-          "level": 0,
-          "text": "Part A: don't forget the autorelabel — without it the new password may not authenticate correctly even though it's set. Part C: check semanage port -l | grep http BEFORE adding a new label — 8008 and 8009 already carry http_port_t in the default policy, so verify 8088 actually needs a new entry rather than assuming it does."
-        },
-        {
-          "level": 3,
-          "text": "Checkpoint"
-        },
-        {
-          "level": 0,
-          "text": "Before checking the solution: for Part C, did you remember BOTH --permanent and --reload on the firewall-cmd command? A rule added without --permanent disappears on the next reload or reboot — and a --permanent rule without --reload doesn't apply until then either."
-        },
-        {
-          "level": 3,
-          "text": "Solution"
-        },
-        {
-          "level": 0,
-          "text": "# Part A (from the rd.break initramfs shell)"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# mount -o remount,rw /sysroot"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# chroot /sysroot"
-        },
-        {
-          "level": 0,
-          "text": "sh-4.4# passwd root"
-        },
-        {
-          "level": 0,
-          "text": "sh-4.4# touch /.autorelabel"
-        },
-        {
-          "level": 0,
-          "text": "sh-4.4# exit"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# exit"
-        },
-        {
-          "level": 0,
-          "text": "# Part B (from the emergency shell after reboot)"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# mount -o remount,rw /"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# vim /etc/fstab # remove or fix the bad line"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# systemctl daemon-reload"
-        },
-        {
-          "level": 0,
-          "text": "switch_root:/# exit"
-        },
-        {
-          "level": 0,
-          "text": "# Part C"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --permanent --add-port=8088/tcp"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# firewall-cmd --reload"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# semanage port -l | grep 8088"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# semanage port -a -t http_port_t -p tcp 8088 # only if not already listed"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# systemctl restart httpd"
-        },
-        {
-          "level": 0,
-          "text": "[root@host ~]# curl http://localhost:8088"
-        },
-        {
-          "level": 3,
-          "text": "Explanation"
-        },
-        {
-          "level": 0,
-          "text": "The autorelabel in Part A exists specifically because passwd, run before SELinux is active, leaves /etc/shadow without a valid context — skip it and authentication can fail mysteriously even with the right password."
-        },
-        {
-          "level": 0,
-          "text": "Part B's daemon-reload matters because systemd may have already parsed the broken fstab into memory; editing the file on disk alone doesn't force it to re-read that in-memory state."
-        },
-        {
-          "level": 0,
-          "text": "Part C runs both the firewall fix and the SELinux fix because they are two INDEPENDENT gatekeepers — fixing only one still leaves the service unreachable."
-        },
-        {
-          "level": 3,
-          "text": "Verification"
-        },
-        {
-          "level": 0,
-          "text": "Part A/B: a full clean reboot with normal login proves both fixes stuck. Part C: curl http://localhost:8088 returning actual page content (not a timeout or connection refused) proves both the firewall and SELinux are correctly configured."
-        },
-        {
-          "level": 3,
-          "text": "Real-world note"
-        },
-        {
-          "level": 0,
-          "text": "Root password recovery and fstab emergency repair are exactly the kind of skill you hope to never need but absolutely must have cold when a production box won't boot at 3am. The firewall+SELinux port pairing in Part C is one of the most common 'why won't my service work on this port' tickets in real RHEL environments — always check both layers, never assume it's just one."
-        }
-      ]
-    }
-  ],
-  "quizzes": [
-    {
-      "title": "Quiz: Part 6 Checkpoint",
+      "title": "14. Test your understanding",
       "content": [
         {
           "level": 0,
-          "text": "Q1. What is the correct order of stages: firmware, kernel, boot loader, initramfs?"
+          "text": "Answer these questions without looking at the lesson. Select an answer to check your understanding."
         },
         {
           "level": 0,
-          "text": "Answer: Firmware → boot loader (GRUB2) → kernel + initramfs load → kernel executes /sbin/init from initramfs → pivot to real root."
+          "text": "1. Which command lists disks and partitions?"
         },
         {
           "level": 0,
-          "text": "Q2. What's the difference between systemctl halt and systemctl poweroff?"
+          "text": "mkfs.xfs"
         },
         {
           "level": 0,
-          "text": "Answer: halt brings the system to a safe-to-power-off state but does NOT power off automatically; poweroff does both."
+          "text": "lsblk"
         },
         {
           "level": 0,
-          "text": "Q3. How do you boot into rescue.target for a SINGLE boot only, without changing the persistent default?"
+          "text": "swapon"
         },
         {
           "level": 0,
-          "text": "Answer: Interrupt GRUB, press e, append systemd.unit=rescue.target to the linux line, press Ctrl+x."
+          "text": "2. What does `mkfs.xfs` do?"
         },
         {
           "level": 0,
-          "text": "Q4. What kernel argument drops you into an initramfs shell for resetting a lost root password?"
+          "text": "Creates an XFS file system"
         },
         {
           "level": 0,
-          "text": "Answer: rd.break"
+          "text": "Mounts a disk"
         },
         {
           "level": 0,
-          "text": "Q5. Why is touch /.autorelabel necessary after resetting the root password with rd.break?"
+          "text": "Activates swap"
         },
         {
           "level": 0,
-          "text": "Answer: SELinux isn't active yet at that point, so passwd's rewrite of /etc/shadow leaves it without a valid SELinux context; autorelabel forces a full relabel on next boot to fix that."
+          "text": "3. Which file stores persistent mount settings?"
         },
         {
           "level": 0,
-          "text": "Q6. What's the key difference between rescue.target and emergency.target?"
+          "text": "/etc/hosts"
         },
         {
           "level": 0,
-          "text": "Answer: rescue.target waits for sysinit.target first (more of the system is initialized); emergency.target spawns immediately with root mounted read-only and almost nothing else started."
+          "text": "/etc/fstab"
         },
         {
           "level": 0,
-          "text": "Q7. What must you run after fixing a bad /etc/fstab entry from the emergency shell, before exiting?"
+          "text": "/etc/passwd"
         },
         {
           "level": 0,
-          "text": "Answer: systemctl daemon-reload — otherwise systemd may keep using the old broken configuration already parsed into memory."
+          "text": "4. Which command initializes a device for swap?"
         },
         {
           "level": 0,
-          "text": "Q8. What's the difference between a firewall-cmd command with --permanent and one without it?"
+          "text": "mkswap"
         },
         {
           "level": 0,
-          "text": "Answer: Without --permanent, the change is immediate but lost on reboot/reload; with --permanent, it's saved persistently but doesn't take effect until --reload (or a reboot)."
+          "text": "mount"
         },
         {
           "level": 0,
-          "text": "Q9. A web server on port 8088 fails even though the firewall port is open and file permissions are correct. What's the next thing to check?"
+          "text": "blkid"
         },
         {
           "level": 0,
-          "text": "Answer: SELinux port labeling — semanage port -l | grep 8088 (or the relevant type) — the port may not be labeled for the httpd domain to bind."
+          "text": "5. Why use a UUID in `/etc/fstab`?"
         },
         {
           "level": 0,
-          "text": "Q10. Can semanage port be used to take a port label away from another already-labeled official service and reassign it?"
+          "text": "To format the disk"
         },
         {
           "level": 0,
-          "text": "Answer: No — semanage port only manages ports not already claimed by another service's official SELinux policy module; reassigning those requires replacing the policy module itself."
+          "text": "To identify the file system reliably"
         },
         {
           "level": 0,
-          "text": "RH134 — RED HAT SYSTEM ADMINISTRATION II"
+          "text": "To increase RAM"
         },
         {
           "level": 0,
-          "text": "PART 7: INSTALLING RHEL, KICKSTART, AND VIRTUAL MACHINES"
+          "text": "6. What does `umount /data` do?"
         },
         {
           "level": 0,
-          "text": "This Part covers RH134 Chapter 12 — everything from a manual graphical install with Anaconda, through fully automating that install with Kickstart, to configuring a RHEL host to run its own virtual machines with KVM."
+          "text": "Deletes /data"
         },
         {
           "level": 0,
-          "text": "💡 WHY THIS MATTERS Every lab you've done in Parts 1-6 assumed a RHEL system already existed. This chapter is about how that system gets there in the first place — and, more importantly, how to stop doing it by hand every time. Kickstart is the direct ancestor of the 'automate everything' mindset RH294 builds on next."
+          "text": "Formats the partition"
+        },
+        {
+          "level": 0,
+          "text": "Detaches the file system from /data"
+        },
+        {
+          "level": 0,
+          "text": "Score: 0 / 6"
+        },
+        {
+          "level": 0,
+          "text": "Try again"
         }
-      ]
-    }
-  ],
-  "services": [
+      ],
+      "words": 104
+    },
     {
-      "id": "rhel-service-firewalld",
-      "why": "Boot Recovery + Firewall/SELinux Port"
+      "title": "15. Final recap",
+      "content": [
+        {
+          "level": 0,
+          "text": "Remember the main difference between these five steps:"
+        },
+        {
+          "level": 0,
+          "text": "Partition — divide the disk."
+        },
+        {
+          "level": 0,
+          "text": "Format — create the file system."
+        },
+        {
+          "level": 0,
+          "text": "Mount — make the file system accessible through a directory."
+        },
+        {
+          "level": 0,
+          "text": "Persist — configure automatic mounting in /etc/fstab."
+        },
+        {
+          "level": 0,
+          "text": "Swap — prepare and activate disk space for memory management."
+        },
+        {
+          "level": 0,
+          "text": "For your RHCSA preparation, practise the complete workflow on an additional virtual disk in your RHEL lab. Never experiment with partitioning or formatting on your real system disk."
+        }
+      ],
+      "words": 74
     }
   ],
-  "currency": []
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
 }

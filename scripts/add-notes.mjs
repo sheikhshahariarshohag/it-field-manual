@@ -27,7 +27,7 @@ const FILE = join(ROOT, "docs", "data", "simple-notes.json");
 const DRY = process.argv.includes("--dry-run");
 
 const files = readdirSync(SCRIPTS)
-  .filter((f) => f === "rh134-notes-data.mjs" || /^notes-data-rh(124|294).*\.mjs$/.test(f))
+  .filter((f) => /^notes-data-rh(124|134|294).*\.mjs$/.test(f))
   .sort();
 
 const modules = [];
@@ -42,6 +42,7 @@ const doc = JSON.parse(readFileSync(FILE, "utf8"));
 const byId = new Map(doc.chapters.map((c) => [c.id, c]));
 let added = 0;
 let replaced = 0;
+const authored = new Set();
 
 for (const { file, chapters } of modules) {
   let a = 0;
@@ -49,6 +50,7 @@ for (const { file, chapters } of modules) {
   for (const c of chapters) {
     // JSON round-trip strips undefined so it never emits null placeholders.
     const clean = JSON.parse(JSON.stringify(c));
+    authored.add(c.id);
     if (byId.has(c.id)) r++; else a++;
     byId.set(c.id, clean);
   }
@@ -59,6 +61,31 @@ for (const { file, chapters } of modules) {
 
 doc.chapters = [...byId.values()].sort(
   (a, b) => String(a.book).localeCompare(String(b.book)) || a.n - b.n);
+
+// Prune orphans.
+//
+// The merge above only ever replaces by id, so a chapter that used to exist
+// but is no longer authored survives forever. Replacing RH134 with the
+// supplied document left the old "Part 2 - Scheduling" chapter behind, and
+// nothing complained: the merge reported success and the index quietly showed
+// 13 chapters for a 12-chapter book.
+//
+// The data modules are the source of truth. Anything they no longer author is
+// removed, so a deliberate deletion takes effect and a mistaken one shows up
+// in the merge output rather than surviving as invisible cruft.
+const managedBooks = new Set(
+  [...byId.values()].filter((c) => authored.has(c.id)).map((c) => c.book));
+const pruned = [];
+for (const c of [...byId.values()]) {
+  if (authored.has(c.id) || !managedBooks.has(c.book)) continue;
+  byId.delete(c.id);
+  pruned.push(c.id);
+}
+if (pruned.length) {
+  doc.chapters = [...byId.values()].sort(
+    (a, b) => String(a.book).localeCompare(String(b.book)) || a.n - b.n);
+  console.log(`  pruned orphans          ${pruned.join(", ")}`);
+}
 
 const concepts = doc.chapters.reduce(
   (a, c) => a + c.sections.reduce((x, s) => x + s.concepts.length, 0), 0);

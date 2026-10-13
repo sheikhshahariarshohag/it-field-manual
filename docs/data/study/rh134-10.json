@@ -1,0 +1,1173 @@
+{
+  "id": "rh134-10",
+  "n": 10,
+  "sourceNumber": 10,
+  "kind": "chapter",
+  "title": "Chapter 10 — Controlling the Boot Process",
+  "display": "Chapter 10 — Controlling the Boot Process",
+  "exam": "RHCSA (EX200)",
+  "words": 1992,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "RH134 · Red Hat Enterprise Linux 8 · Beginner-friendly lesson"
+        },
+        {
+          "level": 0,
+          "text": "This chapter teaches you how to control what happens when Linux starts, recover access when the root password is lost, and repair file-system problems that stop the system from booting."
+        }
+      ],
+      "words": 40
+    },
+    {
+      "title": "1. What happens when Linux starts?",
+      "content": [
+        {
+          "level": 0,
+          "text": "When you press the power button, Linux does not become ready instantly. Several steps happen in order."
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "BIOS / UEFI"
+        },
+        {
+          "level": 0,
+          "text": "Checks hardware and finds a bootable device."
+        },
+        {
+          "level": 0,
+          "text": "2"
+        },
+        {
+          "level": 0,
+          "text": "GRUB2"
+        },
+        {
+          "level": 0,
+          "text": "Shows the boot menu and selects a Linux kernel."
+        },
+        {
+          "level": 0,
+          "text": "3"
+        },
+        {
+          "level": 0,
+          "text": "Kernel + initramfs"
+        },
+        {
+          "level": 0,
+          "text": "Starts the Linux core and prepares the system to access its root file system."
+        },
+        {
+          "level": 0,
+          "text": "4"
+        },
+        {
+          "level": 0,
+          "text": "systemd"
+        },
+        {
+          "level": 0,
+          "text": "Starts system services and brings the system to its target."
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "Login screen or prompt"
+        },
+        {
+          "level": 0,
+          "text": "The system is ready for users."
+        },
+        {
+          "level": 0,
+          "text": "Let's understand each part."
+        },
+        {
+          "level": 0,
+          "text": "BIOS or UEFI"
+        },
+        {
+          "level": 0,
+          "text": "This is firmware built into the computer. It starts when you power on the machine, checks basic hardware, and looks for a bootable device."
+        },
+        {
+          "level": 0,
+          "text": "GRUB2"
+        },
+        {
+          "level": 0,
+          "text": "GRUB2 is the boot loader. It lets you choose a Linux kernel to start."
+        },
+        {
+          "level": 0,
+          "text": "Think of it as the first menu you see before Linux fully starts."
+        },
+        {
+          "level": 0,
+          "text": "Its configuration is generated from files such as /etc/default/grub and scripts in /etc/grub.d/. The generated configuration is commonly stored at /boot/grub2/grub.cfg on RHEL 8 BIOS-based systems; UEFI systems can use a different configuration path."
+        },
+        {
+          "level": 0,
+          "text": "Kernel"
+        },
+        {
+          "level": 0,
+          "text": "The kernel is the central part of Linux. It manages memory, processes, hardware, and other essential resources."
+        },
+        {
+          "level": 0,
+          "text": "initramfs"
+        },
+        {
+          "level": 0,
+          "text": "This is a temporary early-boot environment. It contains tools and drivers Linux may need before it can access the real root file system."
+        },
+        {
+          "level": 0,
+          "text": "systemd"
+        },
+        {
+          "level": 0,
+          "text": "systemd is the system manager that starts services and moves Linux into its intended operating state."
+        },
+        {
+          "level": 0,
+          "text": "For example, it can start networking, logging, and login services."
+        }
+      ],
+      "words": 242
+    },
+    {
+      "title": "2. What is a systemd target?",
+      "content": [
+        {
+          "level": 0,
+          "text": "A target is a named operating state that groups together the services and other units required for a particular purpose."
+        },
+        {
+          "level": 0,
+          "text": "Think of targets as different modes for the server."
+        },
+        {
+          "level": 0,
+          "text": "The most important targets in this chapter are:"
+        },
+        {
+          "level": 0,
+          "text": "Target"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "graphical.target"
+        },
+        {
+          "level": 0,
+          "text": "Multi-user system with a graphical login interface"
+        },
+        {
+          "level": 0,
+          "text": "multi-user.target"
+        },
+        {
+          "level": 0,
+          "text": "Multi-user system with text-based login"
+        },
+        {
+          "level": 0,
+          "text": "rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "Basic recovery environment for troubleshooting"
+        },
+        {
+          "level": 0,
+          "text": "emergency.target"
+        },
+        {
+          "level": 0,
+          "text": "Minimal emergency environment for serious problems"
+        },
+        {
+          "level": 0,
+          "text": "A graphical target includes the multi-user target, along with the additional requirements for graphical operation."
+        },
+        {
+          "level": 0,
+          "text": "Check your current default target"
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl get-default"
+        },
+        {
+          "level": 0,
+          "text": "Example output:"
+        },
+        {
+          "level": 0,
+          "text": "multi-user.target"
+        },
+        {
+          "level": 0,
+          "text": "This means Linux is configured to boot to the multi-user target by default."
+        },
+        {
+          "level": 0,
+          "text": "List available targets"
+        },
+        {
+          "level": 0,
+          "text": "systemctl list-units --type=target --all"
+        },
+        {
+          "level": 0,
+          "text": "This displays loaded targets, including active and inactive ones."
+        },
+        {
+          "level": 0,
+          "text": "Change the default target"
+        },
+        {
+          "level": 0,
+          "text": "To make the system boot into text-based multi-user mode by default:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl set-default multi-user.target"
+        },
+        {
+          "level": 0,
+          "text": "To make it boot into graphical mode instead:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl set-default graphical.target"
+        },
+        {
+          "level": 0,
+          "text": "Verify your setting:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl get-default"
+        },
+        {
+          "level": 0,
+          "text": "Important: Setting graphical.target does not install a graphical desktop. The required desktop packages must already be installed."
+        },
+        {
+          "level": 0,
+          "text": "Switch targets without rebooting"
+        },
+        {
+          "level": 0,
+          "text": "You can switch the system's operating state while Linux is running:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl isolate multi-user.target"
+        },
+        {
+          "level": 0,
+          "text": "This changes to the multi-user target and stops units that are no longer required by that target. If you are connected remotely, changing targets may affect your session or services, so use care on production systems."
+        },
+        {
+          "level": 0,
+          "text": "To switch back:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl isolate graphical.target"
+        },
+        {
+          "level": 0,
+          "text": "Only targets that allow isolation can be used with isolate."
+        },
+        {
+          "level": 0,
+          "text": "Reboot or shut down"
+        },
+        {
+          "level": 0,
+          "text": "Reboot the system:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "Power off the system:"
+        },
+        {
+          "level": 0,
+          "text": "sudo systemctl poweroff"
+        },
+        {
+          "level": 0,
+          "text": "Use these commands only when it is safe to interrupt the running services."
+        }
+      ],
+      "words": 276
+    },
+    {
+      "title": "3. Boot into a different target for one time",
+      "content": [
+        {
+          "level": 0,
+          "text": "Sometimes Linux cannot start normally because a service or configuration is broken. You may want to start in rescue or emergency mode instead."
+        },
+        {
+          "level": 0,
+          "text": "You can change the target for a single boot from the GRUB2 menu."
+        },
+        {
+          "level": 0,
+          "text": "Steps"
+        },
+        {
+          "level": 0,
+          "text": "Reboot the computer."
+        },
+        {
+          "level": 0,
+          "text": "When the GRUB2 menu appears, select the normal Linux entry."
+        },
+        {
+          "level": 0,
+          "text": "Press e to edit the entry."
+        },
+        {
+          "level": 0,
+          "text": "Find the line that starts with linux."
+        },
+        {
+          "level": 0,
+          "text": "Go to the end of that line and append:"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit=rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "6. Press Ctrl+x to boot with the change."
+        },
+        {
+          "level": 0,
+          "text": "This change applies to that boot only. It does not permanently change the default target."
+        },
+        {
+          "level": 0,
+          "text": "Rescue vs. emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "Rescue mode: Starts more of the system, including basic initialization. It is useful for repairing configuration problems."
+        },
+        {
+          "level": 0,
+          "text": "Emergency mode: Starts a more minimal environment. The root file system is normally mounted read-only."
+        },
+        {
+          "level": 0,
+          "text": "If you need to repair /etc/fstab in emergency mode, you may first need to remount the root file system as read/write. We will cover that below."
+        }
+      ],
+      "words": 158
+    },
+    {
+      "title": "4. Reset a lost root password",
+      "content": [
+        {
+          "level": 0,
+          "text": "The root account is the Linux administrator account with extensive control over the system."
+        },
+        {
+          "level": 0,
+          "text": "If you lose its password and cannot log in through another administrator account, RHEL 8 provides a recovery method using the boot loader."
+        },
+        {
+          "level": 0,
+          "text": "Practice this only on your own lab VM or an authorized machine. It requires console access and should not be attempted on a computer you do not administer."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Open the GRUB2 editor"
+        },
+        {
+          "level": 0,
+          "text": "Reboot the machine."
+        },
+        {
+          "level": 0,
+          "text": "Interrupt the GRUB2 countdown."
+        },
+        {
+          "level": 0,
+          "text": "Select the normal Linux entry."
+        },
+        {
+          "level": 0,
+          "text": "Press e."
+        },
+        {
+          "level": 0,
+          "text": "Find the line beginning with linux."
+        },
+        {
+          "level": 0,
+          "text": "Append this option:"
+        },
+        {
+          "level": 0,
+          "text": "rd.break"
+        },
+        {
+          "level": 0,
+          "text": "7. Press Ctrl+x to boot."
+        },
+        {
+          "level": 0,
+          "text": "The system pauses in an early boot environment and gives you a root shell."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Make the real root file system writable"
+        },
+        {
+          "level": 0,
+          "text": "At the switch_root prompt, run:"
+        },
+        {
+          "level": 0,
+          "text": "mount -o remount,rw /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "What this means:"
+        },
+        {
+          "level": 0,
+          "text": "mount works with mounted file systems."
+        },
+        {
+          "level": 0,
+          "text": "-o specifies options."
+        },
+        {
+          "level": 0,
+          "text": "remount changes the options of a file system that is already mounted."
+        },
+        {
+          "level": 0,
+          "text": "rw means read and write."
+        },
+        {
+          "level": 0,
+          "text": "/sysroot is where the real system's root file system is mounted during this recovery stage."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Enter the real system"
+        },
+        {
+          "level": 0,
+          "text": "chroot /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "chroot makes /sysroot act as the root directory for the commands you run inside it. This lets you change the password belonging to the installed system rather than the temporary recovery environment."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Set a new root password"
+        },
+        {
+          "level": 0,
+          "text": "passwd root"
+        },
+        {
+          "level": 0,
+          "text": "Follow the prompts to enter and confirm the new password."
+        },
+        {
+          "level": 0,
+          "text": "Step 5: Request an SELinux relabel"
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "touch creates an empty file if it does not exist. In this procedure, the file tells RHEL to relabel file security contexts during the next boot. This is important because the password-reset process may create a file without the correct SELinux label."
+        },
+        {
+          "level": 0,
+          "text": "Step 6: Continue booting"
+        },
+        {
+          "level": 0,
+          "text": "Run:"
+        },
+        {
+          "level": 0,
+          "text": "exit"
+        },
+        {
+          "level": 0,
+          "text": "exit"
+        },
+        {
+          "level": 0,
+          "text": "The first exit leaves the chroot environment. The second leaves the early boot shell."
+        },
+        {
+          "level": 0,
+          "text": "The system continues booting, performs the SELinux relabel, and may reboot again automatically."
+        },
+        {
+          "level": 0,
+          "text": "Remember the order:"
+        },
+        {
+          "level": 0,
+          "text": "rd.break"
+        },
+        {
+          "level": 0,
+          "text": "↓"
+        },
+        {
+          "level": 0,
+          "text": "mount -o remount,rw /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "↓"
+        },
+        {
+          "level": 0,
+          "text": "chroot /sysroot"
+        },
+        {
+          "level": 0,
+          "text": "↓"
+        },
+        {
+          "level": 0,
+          "text": "passwd root"
+        },
+        {
+          "level": 0,
+          "text": "↓"
+        },
+        {
+          "level": 0,
+          "text": "touch /.autorelabel"
+        },
+        {
+          "level": 0,
+          "text": "↓"
+        },
+        {
+          "level": 0,
+          "text": "exit"
+        },
+        {
+          "level": 0,
+          "text": "exit"
+        },
+        {
+          "level": 0,
+          "text": "Do not try these commands on your normal working installation just for practice; use a disposable VM and take a snapshot first."
+        }
+      ],
+      "words": 363
+    },
+    {
+      "title": "5. Read logs from a previous boot",
+      "content": [
+        {
+          "level": 0,
+          "text": "Sometimes Linux fails during startup and then reboots. Logs can help you find the reason."
+        },
+        {
+          "level": 0,
+          "text": "View the current boot's logs"
+        },
+        {
+          "level": 0,
+          "text": "journalctl -b"
+        },
+        {
+          "level": 0,
+          "text": "journalctl displays system logs. The -b option limits the output to the current boot."
+        },
+        {
+          "level": 0,
+          "text": "View logs from the previous boot"
+        },
+        {
+          "level": 0,
+          "text": "journalctl -b -1"
+        },
+        {
+          "level": 0,
+          "text": "The -1 means the boot before the current one."
+        },
+        {
+          "level": 0,
+          "text": "To display only errors from that previous boot:"
+        },
+        {
+          "level": 0,
+          "text": "journalctl -b -1 -p err"
+        },
+        {
+          "level": 0,
+          "text": "Here, -p err filters the output to errors and more severe messages."
+        },
+        {
+          "level": 0,
+          "text": "Important: Previous-boot logs are available only if the system retained them. By default, logs may be stored under /run/log/journal, which is cleared after reboot. Persistent logging can be configured using /etc/systemd/journald.conf."
+        },
+        {
+          "level": 0,
+          "text": "Check jobs that are stuck during startup"
+        },
+        {
+          "level": 0,
+          "text": "systemctl list-jobs"
+        },
+        {
+          "level": 0,
+          "text": "This shows systemd jobs that are running or waiting. A job that cannot complete may delay other jobs."
+        }
+      ],
+      "words": 137
+    },
+    {
+      "title": "6. Repair file-system problems that prevent booting",
+      "content": [
+        {
+          "level": 0,
+          "text": "This is one of the most practical sections for a Linux administrator."
+        },
+        {
+          "level": 0,
+          "text": "Linux reads /etc/fstab to learn which file systems should be mounted. If this file contains a mistake, the system may fail to boot normally."
+        },
+        {
+          "level": 0,
+          "text": "What kinds of mistakes cause problems?"
+        },
+        {
+          "level": 0,
+          "text": "Problem"
+        },
+        {
+          "level": 0,
+          "text": "Possible result"
+        },
+        {
+          "level": 0,
+          "text": "Incorrect UUID"
+        },
+        {
+          "level": 0,
+          "text": "Linux waits for a device that cannot be found"
+        },
+        {
+          "level": 0,
+          "text": "Missing mount-point directory"
+        },
+        {
+          "level": 0,
+          "text": "Mounting fails"
+        },
+        {
+          "level": 0,
+          "text": "Invalid mount option"
+        },
+        {
+          "level": 0,
+          "text": "Mounting fails"
+        },
+        {
+          "level": 0,
+          "text": "Corrupt file system"
+        },
+        {
+          "level": 0,
+          "text": "Automatic repair may fail, leading to emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "A UUID is a unique identifier used to identify a storage device or file system."
+        },
+        {
+          "level": 0,
+          "text": "Step 1: Enter emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "From the GRUB2 menu, edit the Linux boot line and append:"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit=emergency.target"
+        },
+        {
+          "level": 0,
+          "text": "Press Ctrl+x to boot. Enter the root password when prompted."
+        },
+        {
+          "level": 0,
+          "text": "Step 2: Check the mounted file systems"
+        },
+        {
+          "level": 0,
+          "text": "mount"
+        },
+        {
+          "level": 0,
+          "text": "Look for the entry mounted on /. In emergency mode, the root file system is commonly read-only."
+        },
+        {
+          "level": 0,
+          "text": "Step 3: Remount the root file system as writable"
+        },
+        {
+          "level": 0,
+          "text": "mount -o remount,rw /"
+        },
+        {
+          "level": 0,
+          "text": "The / symbol represents the root of the Linux file-system tree."
+        },
+        {
+          "level": 0,
+          "text": "Step 4: Test the entries in /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "mount -a"
+        },
+        {
+          "level": 0,
+          "text": "This attempts to mount the applicable file systems listed in /etc/fstab that are not already mounted."
+        },
+        {
+          "level": 0,
+          "text": "If an entry is incorrect, the command may display an error that helps you identify the problem."
+        },
+        {
+          "level": 0,
+          "text": "Step 5: Edit /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "vim /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Suppose you find this incorrect entry:"
+        },
+        {
+          "level": 0,
+          "text": "/dev/sdz1  /RemoveMe  xfs  defaults  0 0"
+        },
+        {
+          "level": 0,
+          "text": "If the device or mount point does not exist and the entry is not required, remove it or comment it out by placing # at the beginning:"
+        },
+        {
+          "level": 0,
+          "text": "#/dev/sdz1  /RemoveMe  xfs  defaults  0 0"
+        },
+        {
+          "level": 0,
+          "text": "Do not delete an entry simply because it looks unfamiliar. First confirm which device and mount point it is supposed to reference."
+        },
+        {
+          "level": 0,
+          "text": "Step 6: Reload systemd and test again"
+        },
+        {
+          "level": 0,
+          "text": "After editing /etc/fstab, run:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "This tells systemd to reload its configuration information."
+        },
+        {
+          "level": 0,
+          "text": "Then run:"
+        },
+        {
+          "level": 0,
+          "text": "mount -a"
+        },
+        {
+          "level": 0,
+          "text": "If there are no errors, reboot:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "The system should now boot normally if the corrected entry was the cause of the problem."
+        },
+        {
+          "level": 0,
+          "text": "What does nofail do?"
+        },
+        {
+          "level": 0,
+          "text": "The nofail option in /etc/fstab allows booting to continue when a particular file system fails to mount."
+        },
+        {
+          "level": 0,
+          "text": "It can be appropriate for optional storage, such as a nonessential external disk. But using it for required storage may allow applications to start without the files they need."
+        }
+      ],
+      "words": 382
+    },
+    {
+      "title": "7. Emergency mode vs. rescue mode",
+      "content": [
+        {
+          "level": 0,
+          "text": "Rescue mode"
+        },
+        {
+          "level": 0,
+          "text": "rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "Starts basic system initialization and is useful for repairing system configuration or services."
+        },
+        {
+          "level": 0,
+          "text": "Emergency mode"
+        },
+        {
+          "level": 0,
+          "text": "emergency.target"
+        },
+        {
+          "level": 0,
+          "text": "Starts a more minimal environment. The root file system is typically read-only, so you may need to remount it before making changes."
+        },
+        {
+          "level": 0,
+          "text": "Early boot break"
+        },
+        {
+          "level": 0,
+          "text": "rd.break"
+        },
+        {
+          "level": 0,
+          "text": "Pauses the boot process in the initramfs, before the real system takes over. This is the method used in the textbook's root-password reset procedure."
+        },
+        {
+          "level": 0,
+          "text": "A useful rule:"
+        },
+        {
+          "level": 0,
+          "text": "Need a basic maintenance environment? Consider rescue mode."
+        },
+        {
+          "level": 0,
+          "text": "Need to investigate a serious early boot or file-system issue? Consider emergency mode."
+        },
+        {
+          "level": 0,
+          "text": "Lost the root password? Use the authorized boot-loader recovery procedure with rd.break."
+        }
+      ],
+      "words": 105
+    },
+    {
+      "title": "8. Chapter 10 practical checklist",
+      "content": [
+        {
+          "level": 0,
+          "text": "Practice these tasks on a disposable RHEL 8 VM. Do not intentionally break the boot configuration of your main RHEL installation."
+        },
+        {
+          "level": 0,
+          "text": "Your practice progress"
+        },
+        {
+          "level": 0,
+          "text": "0/10"
+        },
+        {
+          "level": 0,
+          "text": "Check the default target using systemctl get-default."
+        },
+        {
+          "level": 0,
+          "text": "List available targets using systemctl list-units --type=target --all."
+        },
+        {
+          "level": 0,
+          "text": "Change the default target to multi-user.target and verify it."
+        },
+        {
+          "level": 0,
+          "text": "Practice booting once into rescue.target from GRUB2."
+        },
+        {
+          "level": 0,
+          "text": "Explain the purpose of rd.break."
+        },
+        {
+          "level": 0,
+          "text": "Practice resetting the root password in a disposable VM."
+        },
+        {
+          "level": 0,
+          "text": "Read previous-boot errors using journalctl -b -1 -p err."
+        },
+        {
+          "level": 0,
+          "text": "Repair a deliberately incorrect /etc/fstab entry in a disposable VM."
+        },
+        {
+          "level": 0,
+          "text": "Run mount -a to verify the corrected file."
+        },
+        {
+          "level": 0,
+          "text": "Explain the difference between rescue and emergency modes."
+        }
+      ],
+      "words": 105
+    },
+    {
+      "title": "9. Quick quiz",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. What is GRUB2?"
+        },
+        {
+          "level": 0,
+          "text": "A file system"
+        },
+        {
+          "level": 0,
+          "text": "A boot loader"
+        },
+        {
+          "level": 0,
+          "text": "A network service"
+        },
+        {
+          "level": 0,
+          "text": "2. Which command changes the default systemd target?"
+        },
+        {
+          "level": 0,
+          "text": "systemctl set-default"
+        },
+        {
+          "level": 0,
+          "text": "systemctl isolate"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "3. Which kernel option is used in the book to reset a lost root password?"
+        },
+        {
+          "level": 0,
+          "text": "systemd.unit=rescue.target"
+        },
+        {
+          "level": 0,
+          "text": "rd.break"
+        },
+        {
+          "level": 0,
+          "text": "nofail"
+        },
+        {
+          "level": 0,
+          "text": "4. What does mount -a do?"
+        },
+        {
+          "level": 0,
+          "text": "Reboots Linux"
+        },
+        {
+          "level": 0,
+          "text": "Attempts to mount applicable entries in /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Changes the root password"
+        },
+        {
+          "level": 0,
+          "text": "5. Which command displays errors from the previous boot?"
+        },
+        {
+          "level": 0,
+          "text": "journalctl -b -1 -p err"
+        },
+        {
+          "level": 0,
+          "text": "systemctl get-default"
+        },
+        {
+          "level": 0,
+          "text": "passwd root"
+        },
+        {
+          "level": 0,
+          "text": "Check answers"
+        }
+      ],
+      "words": 84
+    },
+    {
+      "title": "10. Final recap",
+      "content": [
+        {
+          "level": 0,
+          "text": "The most important commands and options from Chapter 10 are:"
+        },
+        {
+          "level": 0,
+          "text": "Command or option"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "systemctl get-default"
+        },
+        {
+          "level": 0,
+          "text": "Check the default target"
+        },
+        {
+          "level": 0,
+          "text": "systemctl set-default TARGET"
+        },
+        {
+          "level": 0,
+          "text": "Change the default target"
+        },
+        {
+          "level": 0,
+          "text": "systemctl isolate TARGET"
+        },
+        {
+          "level": 0,
+          "text": "Switch targets while running"
+        },
+        {
+          "level": 0,
+          "text": "systemctl reboot"
+        },
+        {
+          "level": 0,
+          "text": "Restart Linux"
+        },
+        {
+          "level": 0,
+          "text": "journalctl -b -1 -p err"
+        },
+        {
+          "level": 0,
+          "text": "Review previous-boot errors"
+        },
+        {
+          "level": 0,
+          "text": "systemctl list-jobs"
+        },
+        {
+          "level": 0,
+          "text": "Inspect pending systemd jobs"
+        },
+        {
+          "level": 0,
+          "text": "rd.break"
+        },
+        {
+          "level": 0,
+          "text": "Enter an early boot recovery shell"
+        },
+        {
+          "level": 0,
+          "text": "mount -a"
+        },
+        {
+          "level": 0,
+          "text": "Test applicable /etc/fstab entries"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "Reload systemd configuration information"
+        },
+        {
+          "level": 0,
+          "text": "Your main goal is to understand how Linux boots, how to choose a boot target, how to recover a lost root password, and how to repair file-system configuration errors."
+        }
+      ],
+      "words": 100
+    }
+  ],
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
+}

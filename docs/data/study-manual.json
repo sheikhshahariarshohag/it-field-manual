@@ -23,7 +23,21 @@
           "quizzes": 0,
           "words": 2035,
           "services": 0,
-          "hasCurrency": true
+          "hasCurrency": true,
+          "sectionTitles": [
+            "Overview",
+            "0.1 The network plan",
+            "0.2 Get Red Hat Enterprise Linux 8 — free",
+            "0.3 Build the two virtual networks in VMware Workstation",
+            "0.4 Install the \"gold\" VM",
+            "0.5 Register the gold VM with Red Hat",
+            "0.6 Shut down and clone the gold VM, four times",
+            "0.7 Configure workstation, servera, and serverb",
+            "0.8 Configure bastion (the router)",
+            "0.9 Validate the whole topology",
+            "0.10 Snapshot your baseline",
+            "0.11 The one thing this lab can't reproduce"
+          ]
         },
         {
           "id": "rh124-02",
@@ -37,7 +51,18 @@
           "quizzes": 0,
           "words": 1324,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "1.1 Why bother learning Linux",
+            "1.2 What actually makes Linux different",
+            "1.3 Open source licensing, in the amount you need to know",
+            "1.4 From kernel to distribution to RHEL",
+            "1.5 RHEL vs. community rebuilds (CentOS Stream, Rocky, Alma)",
+            "1.6 How to actually get RHEL, free",
+            "Review — check your understanding",
+            "Chapter 1 summary"
+          ]
         },
         {
           "id": "rh124-03",
@@ -51,7 +76,16 @@
           "quizzes": 0,
           "words": 1291,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "2.1 The shell, the prompt, and logging in",
+            "2.2 The GNOME desktop, briefly",
+            "2.3 Running commands efficiently in Bash",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 2 summary"
+          ]
         },
         {
           "id": "rh124-04",
@@ -65,7 +99,18 @@
           "quizzes": 0,
           "words": 1880,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "3.1 The file-system hierarchy",
+            "3.2 Absolute vs. relative paths, and moving around",
+            "3.3 Creating, copying, moving, and removing",
+            "3.4 Hard links and soft (symbolic) links",
+            "3.5 Shell expansions — pattern matching, brace expansion, quoting",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 3 summary"
+          ]
         },
         {
           "id": "rh124-05",
@@ -79,7 +124,15 @@
           "quizzes": 0,
           "words": 933,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "4.1 Reading man pages",
+            "4.2 GNU Info documentation",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 4 summary"
+          ]
         },
         {
           "id": "rh124-06",
@@ -93,7 +146,17 @@
           "quizzes": 0,
           "words": 1758,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "5.1 Standard input, output, and error",
+            "5.2 Pipelines and tee",
+            "5.3 Editing files with Vim",
+            "5.4 Shell variables and environment variables",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 5 summary"
+          ]
         },
         {
           "id": "rh124-07",
@@ -107,7 +170,18 @@
           "quizzes": 0,
           "words": 2069,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "6.1 Users and groups — the concepts",
+            "6.2 Gaining superuser access",
+            "6.3 Managing user accounts",
+            "6.4 Managing groups",
+            "6.5 Password policy and account restriction",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 6 summary"
+          ]
         },
         {
           "id": "rh124-08",
@@ -121,7 +195,17 @@
           "quizzes": 0,
           "words": 1941,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "7.1 The permission model",
+            "7.2 Changing permissions and ownership",
+            "7.3 Special permissions — setuid, setgid, sticky bit",
+            "7.4 Default permissions and umask",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 7 summary"
+          ]
         },
         {
           "id": "rh124-09",
@@ -135,7 +219,17 @@
           "quizzes": 0,
           "words": 2078,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "8.1 What a process is",
+            "8.2 Job control — running several things from one shell",
+            "8.3 Signals — the real language of process control",
+            "8.4 Load average and real-time monitoring",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 8 summary"
+          ]
         },
         {
           "id": "rh124-10",
@@ -149,7 +243,16 @@
           "quizzes": 0,
           "words": 1674,
           "services": 2,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "9.1 systemd, units, and daemons",
+            "9.2 Viewing service state",
+            "9.3 Starting, stopping, restarting, reloading",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 9 summary"
+          ]
         },
         {
           "id": "rh124-11",
@@ -163,7 +266,16 @@
           "quizzes": 0,
           "words": 1540,
           "services": 1,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "10.1 SSH basics and host keys",
+            "10.2 Key-based authentication",
+            "10.3 Hardening sshd itself",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 10 summary"
+          ]
         },
         {
           "id": "rh124-12",
@@ -177,7 +289,17 @@
           "quizzes": 0,
           "words": 1955,
           "services": 2,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "11.1 The logging architecture — two services, two jobs",
+            "11.2 journalctl — querying the journal directly",
+            "11.3 Making the journal survive a reboot",
+            "11.4 Time, time zones, and NTP",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 11 summary"
+          ]
         },
         {
           "id": "rh124-13",
@@ -191,7 +313,19 @@
           "quizzes": 0,
           "words": 2078,
           "services": 2,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "12.1 The TCP/IP model, briefly",
+            "12.2 IPv4 addressing",
+            "12.3 IPv6, briefly",
+            "12.4 Inspecting and testing the network",
+            "12.5 NetworkManager and nmcli",
+            "12.6 Hostname and name resolution",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 12 summary"
+          ]
         },
         {
           "id": "rh124-14",
@@ -205,7 +339,16 @@
           "quizzes": 0,
           "words": 1577,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "13.1 tar — bundling files into one archive",
+            "13.2 scp and sftp — secure copy over SSH",
+            "13.3 rsync — efficient synchronization",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 13 summary"
+          ]
         },
         {
           "id": "rh124-15",
@@ -219,7 +362,18 @@
           "quizzes": 0,
           "words": 2159,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "14.1 Red Hat Subscription Management — a recap",
+            "14.2 RPM — the package format underneath it all",
+            "14.3 dnf (yum) — the tool you'll actually use daily",
+            "14.4 Managing repositories",
+            "14.5 Application Streams and modules",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 14 summary"
+          ]
         },
         {
           "id": "rh124-16",
@@ -233,7 +387,16 @@
           "quizzes": 0,
           "words": 2208,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "15.1 Block devices and the file-system hierarchy",
+            "15.2 Mounting and unmounting",
+            "15.3 Finding files — locate vs. find",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 15 summary"
+          ]
         },
         {
           "id": "rh124-17",
@@ -247,7 +410,16 @@
           "quizzes": 0,
           "words": 1289,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "16.1 Web Console (Cockpit) — a browser-based admin interface",
+            "16.2 Red Hat Customer Portal",
+            "16.3 Red Hat Insights — proactive, automated system analysis",
+            "Hands-on: practice these on your own lab",
+            "Review — check your understanding",
+            "Chapter 16 summary"
+          ]
         },
         {
           "id": "rh124-18",
@@ -261,7 +433,15 @@
           "quizzes": 0,
           "words": 1194,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "Overview",
+            "17.1 Exam objectives map",
+            "17.2 The highest-yield command reference",
+            "17.3 Integrated practice scenario",
+            "17.4 Exam-day checklist",
+            "Closing note"
+          ]
         }
       ],
       "currency": [
@@ -289,55 +469,97 @@
           "id": "rh134-01",
           "n": 1,
           "sourceNumber": 1,
-          "kind": "part",
-          "title": "Part 1 — Writing Simple Bash Scripts; Running Commands More Efficien…",
-          "display": "Part 1 — Writing Simple Bash Scripts; Running Commands More Efficien…",
-          "sections": 3,
-          "labs": 1,
-          "quizzes": 1,
-          "words": 2743,
-          "services": 0,
-          "hasCurrency": true
-        },
-        {
-          "id": "rh134-02",
-          "n": 2,
-          "sourceNumber": 2,
-          "kind": "part",
-          "title": "Part 2 — Scheduling a Deferred One-Time Job — at; Scheduling Recurri…",
-          "display": "Part 2 — Scheduling a Deferred One-Time Job — at; Scheduling Recurri…",
-          "sections": 4,
+          "kind": "chapter",
+          "title": "Chapter 1 — Improving Command-Line Productivity",
+          "display": "Chapter 1 — Improving Command-Line Productivity",
+          "sections": 34,
+          "sectionTitles": [
+            "Overview",
+            "1.1 Creating and executing Bash shell scripts",
+            "1.2 Specifying the command interpreter",
+            "1.3 Executing a Bash shell script",
+            "1.4 Quoting special characters",
+            "1.5 Providing output from a shell script",
+            "2.1 Using loops to repeat commands",
+            "2.2 Providing lists to a loop",
+            "2.3 Using loops to check multiple servers",
+            "2.4 Understanding exit codes",
+            "2.5 Testing conditions with operators",
+            "2.6 Conditional structures: if and then",
+            "2.7 Using if/then/else",
+            "2.8 Using if/then/elif/then/else",
+            "3.1 Writing regular expressions",
+            "3.2 Matching the start and end of a line",
+            "3.3 Matching individual characters",
+            "3.4 Matching repeated characters",
+            "3.5 Understanding character classes",
+            "3.6 Matching regular expressions with grep",
+            "3.7 Useful grep options",
+            "3.8 Searching command output and configuration files",
+            "The big picture",
+            "Check your understanding",
+            "Part 1 — Scheduling one-time jobs with at",
+            "Part 2 — Scheduling recurring user jobs with cron",
+            "0",
+            "9",
+            "*",
+            "*",
+            "1-5",
+            "Part 3 — Scheduling recurring system jobs",
+            "Part 4 — Managing temporary files",
+            "Final revision — Commands and concepts to remember"
+          ],
           "labs": 0,
           "quizzes": 0,
-          "words": 1116,
-          "services": 1,
+          "words": 6163,
+          "services": 0,
           "hasCurrency": false
         },
         {
           "id": "rh134-03",
           "n": 3,
           "sourceNumber": 3,
-          "kind": "part",
-          "title": "Part 3 — Adjusting Tuning Profiles — tuned; Influencing Process Sche…",
-          "display": "Part 3 — Adjusting Tuning Profiles — tuned; Influencing Process Sche…",
-          "sections": 8,
-          "labs": 2,
-          "quizzes": 2,
-          "words": 4515,
-          "services": 2,
+          "kind": "chapter",
+          "title": "Chapter 3: Tuning System Performance",
+          "display": "Chapter 3: Tuning System Performance",
+          "sections": 7,
+          "sectionTitles": [
+            "Overview",
+            "What will you learn?",
+            "Topic 1: Adjusting tuning profiles",
+            "Topic 2: Influencing process scheduling",
+            "Topic 3: The chapter lab",
+            "Connect the entire chapter",
+            "Quick knowledge check"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 1512,
+          "services": 0,
           "hasCurrency": false
         },
         {
           "id": "rh134-04",
           "n": 4,
           "sourceNumber": 4,
-          "kind": "part",
-          "title": "Part 4 — Partitioning a Disk; Creating Filesystems and Persistent Mo…",
-          "display": "Part 4 — Partitioning a Disk; Creating Filesystems and Persistent Mo…",
-          "sections": 5,
-          "labs": 1,
-          "quizzes": 1,
-          "words": 2610,
+          "kind": "chapter",
+          "title": "Chapter 4 — Controlling Access to Files with ACLs",
+          "display": "Chapter 4 — Controlling Access to Files with ACLs",
+          "sections": 9,
+          "sectionTitles": [
+            "Overview",
+            "What will you learn?",
+            "Part 1 — Understanding ACLs",
+            "Part 2 — Managing ACL permissions",
+            "Part 3 — Default ACLs",
+            "Part 4 — Practical administration exercise",
+            "Part 5 — ACL command reference",
+            "Part 6 — Check your understanding",
+            "Final recap"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 2697,
           "services": 0,
           "hasCurrency": false
         },
@@ -345,70 +567,424 @@
           "id": "rh134-05",
           "n": 5,
           "sourceNumber": 5,
-          "kind": "part",
-          "title": "Part 5 — Managing Layered Storage with Stratis; Compressing and Dedu…",
-          "display": "Part 5 — Managing Layered Storage with Stratis; Compressing and Dedu…",
-          "sections": 4,
-          "labs": 1,
-          "quizzes": 1,
-          "words": 2371,
-          "services": 3,
+          "kind": "chapter",
+          "title": "Chapter 5 — Managing SELinux Security",
+          "display": "Chapter 5 — Managing SELinux Security",
+          "sections": 46,
+          "sectionTitles": [
+            "Overview",
+            "Chapter goal",
+            "1.1 What is SELinux?",
+            "1.2 Why are normal Linux permissions not enough?",
+            "1.3 DAC and MAC: what is the difference?",
+            "1.4 Understand the three SELinux modes",
+            "1.5 Check the current SELinux mode",
+            "1.6 Change the current mode with setenforce",
+            "1.7 Set the default mode in /etc/selinux/config",
+            "1.8 Understand the SELINUXTYPE setting",
+            "1.9 Kernel parameters and boot-time settings",
+            "1.10 Guided exercise — Changing the SELinux Enforcement Mode",
+            "2.1 What is an SELinux context?",
+            "2.2 Understand the four context fields",
+            "2.3 Display contexts for files and processes",
+            "2.4 How files receive their initial contexts",
+            "2.5 Why moving and copying files can cause problems",
+            "2.6 The three commands used to change contexts",
+            "2.7 Why chcon is not the preferred permanent fix",
+            "2.8 Understand semanage fcontext rules",
+            "2.9 Understand the (/.*)? pattern",
+            "2.10 Configure a persistent context for a website directory",
+            "2.11 Guided exercise — Controlling SELinux File Contexts",
+            "3.1 What is an SELinux Boolean?",
+            "3.2 List and inspect Booleans",
+            "3.3 Change a Boolean temporarily",
+            "3.4 Make a Boolean change persistent",
+            "3.5 Find information about a Boolean",
+            "3.6 Guided exercise — Allow Apache to publish home-directory content",
+            "4.1 Why can SELinux block access?",
+            "4.2 Follow a safe troubleshooting order",
+            "4.3 Understand SELinux denial messages",
+            "4.4 Understand the source context and target context",
+            "4.5 Read SELinux messages in /var/log/messages",
+            "4.6 Use sealert to inspect a denial",
+            "4.7 Understand the ausearch command",
+            "4.8 Correct an incorrect file context",
+            "4.9 Should you generate a custom SELinux policy?",
+            "4.10 Troubleshoot SELinux using the Web Console",
+            "4.11 Guided exercise — Investigating and Resolving SELinux Issues",
+            "5.1 What is the purpose of the final lab?",
+            "5.2 A practical troubleshooting checklist",
+            "6.1 The four main ideas",
+            "6.2 Important commands at a glance",
+            "6.3 Symbols and options to remember",
+            "Final memory rule"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 6980,
+          "services": 0,
           "hasCurrency": false
         },
         {
           "id": "rh134-06",
           "n": 6,
           "sourceNumber": 6,
-          "kind": "part",
-          "title": "Part 6 — The Boot Process, Step by Step; Selecting the Boot Target; …",
-          "display": "Part 6 — The Boot Process, Step by Step; Selecting the Boot Target; …",
-          "sections": 6,
-          "labs": 1,
-          "quizzes": 1,
-          "words": 3207,
-          "services": 1,
+          "kind": "chapter",
+          "title": "Chapter 6 — Managing Basic Storage",
+          "display": "Chapter 6 — Managing Basic Storage",
+          "sections": 17,
+          "sectionTitles": [
+            "Overview",
+            "What will you learn?",
+            "1. Understand the basic storage concepts",
+            "2. What is disk partitioning?",
+            "3. Find and inspect disks",
+            "4. Create a partition using parted",
+            "5. Create a file system",
+            "6. Mount a file system",
+            "7. Make the mount permanent with /etc/fstab",
+            "8. Understand swap space",
+            "9. Create a swap partition",
+            "10. Disable and remove swap",
+            "11. Chapter 6 practical workflow",
+            "12. Common problems and how to troubleshoot them",
+            "13. Important commands to remember",
+            "14. Test your understanding",
+            "15. Final recap"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 2147,
+          "services": 0,
           "hasCurrency": false
         },
         {
           "id": "rh134-07",
           "n": 7,
           "sourceNumber": 7,
-          "kind": "part",
-          "title": "Part 7 — Selecting Installation Media and Installing Manually; Autom…",
-          "display": "Part 7 — Selecting Installation Media and Installing Manually; Autom…",
-          "sections": 3,
-          "labs": 1,
-          "quizzes": 1,
-          "words": 2014,
-          "services": 1,
+          "kind": "chapter",
+          "title": "Chapter 7 — Managing Logical Volumes",
+          "display": "Chapter 7 — Managing Logical Volumes",
+          "sections": 15,
+          "sectionTitles": [
+            "Overview",
+            "What will you learn?",
+            "1. Why do we need LVM?",
+            "2. Understand the four main LVM concepts",
+            "3. What are physical extents and logical extents?",
+            "4. Create a logical volume step by step",
+            "5. Display LVM information",
+            "6. Extend a logical volume",
+            "7. Extend a volume group with another disk",
+            "8. Remove a physical volume from a volume group",
+            "9. Managing logical volumes used as swap",
+            "10. Common mistakes and troubleshooting",
+            "11. Quick command reference",
+            "12. Test your understanding",
+            "13. Final recap"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 2080,
+          "services": 0,
           "hasCurrency": false
         },
         {
           "id": "rh134-08",
           "n": 8,
           "sourceNumber": 8,
-          "kind": "part",
-          "title": "Part 8 — Condensed Chapter-by-Chapter Review; Integrated Lab: The Br…",
-          "display": "Part 8 — Condensed Chapter-by-Chapter Review; Integrated Lab: The Br…",
-          "sections": 5,
+          "kind": "chapter",
+          "title": "Chapter 8 — Implementing Advanced Storage Features",
+          "display": "Chapter 8 — Implementing Advanced Storage Features",
+          "sections": 15,
+          "sectionTitles": [
+            "Overview",
+            "1. Understanding Stratis",
+            "2. Install and start Stratis",
+            "3. Create a Stratis storage pool",
+            "4. Create a Stratis file system",
+            "5. Understand thin provisioning",
+            "6. Create a Stratis snapshot",
+            "7. Understanding VDO",
+            "8. Create a VDO volume",
+            "9. Format and mount the VDO volume",
+            "10. Check VDO space savings",
+            "11. Stratis vs. VDO",
+            "12. Common mistakes",
+            "13. Practice quiz",
+            "Final recap"
+          ],
           "labs": 0,
           "quizzes": 0,
-          "words": 1666,
+          "words": 1312,
+          "services": 0,
+          "hasCurrency": false
+        },
+        {
+          "id": "rh134-09",
+          "n": 9,
+          "sourceNumber": 9,
+          "kind": "chapter",
+          "title": "Chapter 9 — Accessing Network-Attached Storage",
+          "display": "Chapter 9 — Accessing Network-Attached Storage",
+          "sections": 57,
+          "sectionTitles": [
+            "Overview",
+            "Chapter goal",
+            "1.1 What is network-attached storage?",
+            "1.2 Understand how NFS works",
+            "1.3 Understand NFS versions",
+            "1.4 Three ways to mount an NFS share",
+            "1.5 Identify available NFS shares",
+            "1.6 Create a mount point",
+            "1.7 Mount an NFS share temporarily",
+            "1.8 Understand read/write and synchronization options",
+            "1.9 Unmount an NFS share",
+            "1.10 Make an NFS mount persistent with /etc/fstab",
+            "1.11 Important difference: unmounting versus removing /etc/fstab",
+            "1.12 Understand the NFS configuration tool: nfsconf",
+            "1.13 Read NFS configuration values",
+            "1.14 Set an NFS configuration value",
+            "1.15 Remove an explicit NFS configuration value",
+            "1.16 Configure an NFSv4-only client",
+            "2.1 What is the purpose of the exercise?",
+            "2.2 Configure the client for NFSv4",
+            "2.3 Test the NFS share manually",
+            "2.4 Inspect the mount options",
+            "2.5 Unmount and configure the persistent entry",
+            "2.6 Verify the persistent mount after reboot",
+            "3.1 What is an automounter?",
+            "3.2 Benefits of the automounter",
+            "3.3 Install the autofs package",
+            "3.4 Understand the master map and mapping file",
+            "3.5 Create an indirect map",
+            "3.6 Start and enable the automounter service",
+            "3.7 Understand a direct map",
+            "3.8 Compare direct and indirect maps",
+            "3.9 Use a wildcard in an indirect map",
+            "3.10 Understand automounter-specific options",
+            "3.11 Understand server permissions and client permissions",
+            "4.1 What is the purpose of this exercise?",
+            "4.2 Install the package and test the server shares",
+            "4.3 Configure the direct map",
+            "4.4 Configure the indirect map",
+            "4.5 Start and enable autofs",
+            "4.6 Test the direct map",
+            "4.7 Test the indirect map",
+            "4.8 Why one user can access a share while another cannot",
+            "5.1 What the final lab requires",
+            "5.2 Configure NFSv4 on the client",
+            "5.3 Install the automounter",
+            "5.4 Create the indirect-map configuration",
+            "5.5 Enable the automounter and test the shares",
+            "6.1 The share will not mount",
+            "6.2 The NFS share works until reboot",
+            "6.3 The automounter is not mounting a share",
+            "6.4 The share mounts, but a user gets permission denied",
+            "6.5 The share is mounted read-only",
+            "7.1 The main ideas",
+            "7.2 Important commands",
+            "7.3 Symbols and options to remember",
+            "Final memory rule"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 6793,
+          "services": 0,
+          "hasCurrency": false
+        },
+        {
+          "id": "rh134-10",
+          "n": 10,
+          "sourceNumber": 10,
+          "kind": "chapter",
+          "title": "Chapter 10 — Controlling the Boot Process",
+          "display": "Chapter 10 — Controlling the Boot Process",
+          "sections": 11,
+          "sectionTitles": [
+            "Overview",
+            "1. What happens when Linux starts?",
+            "2. What is a systemd target?",
+            "3. Boot into a different target for one time",
+            "4. Reset a lost root password",
+            "5. Read logs from a previous boot",
+            "6. Repair file-system problems that prevent booting",
+            "7. Emergency mode vs. rescue mode",
+            "8. Chapter 10 practical checklist",
+            "9. Quick quiz",
+            "10. Final recap"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 1992,
+          "services": 0,
+          "hasCurrency": false
+        },
+        {
+          "id": "rh134-11",
+          "n": 11,
+          "sourceNumber": 11,
+          "kind": "chapter",
+          "title": "Chapter 11 — Managing Network Security",
+          "display": "Chapter 11 — Managing Network Security",
+          "sections": 39,
+          "sectionTitles": [
+            "Overview",
+            "1. What is a firewall?",
+            "2. How Linux processes network traffic",
+            "3. Why use firewalld instead of older tools?",
+            "4. Understanding firewall zones",
+            "5. What is the default zone?",
+            "6. Understanding predefined firewall services",
+            "7. Allow a service through the firewall",
+            "8. Allow a port directly",
+            "9. Remove a service or port",
+            "10. Runtime and permanent configuration",
+            "11. List zones and inspect their rules",
+            "12. Assign a network interface to a zone",
+            "13. Assign a source network to a zone",
+            "14. Set the default zone and reload the firewall",
+            "15. Understand the purpose of the exercise",
+            "16. Start the firewall lab",
+            "17. Install and start the web server",
+            "18. Test HTTP and HTTPS",
+            "19. Allow HTTPS through the Web Console",
+            "20. What is SELinux?",
+            "21. What is an SELinux port label?",
+            "22. What is semanage?",
+            "23. Add an SELinux port label",
+            "24. Modify or remove a port label",
+            "25. Find SELinux documentation",
+            "26. Start the SELinux port lab",
+            "27. Investigate why Apache fails",
+            "28. Fix the SELinux port label",
+            "29. Open port 82 in the firewall",
+            "30. Understand the final task",
+            "31. Check and start Apache",
+            "32. Allow Apache to use port 1001",
+            "33. Open port 1001 permanently",
+            "34. Verify the final lab",
+            "35. What if the website still does not work?",
+            "36. Important RHEL 8 and RHEL 10 differences",
+            "37. Quick revision quiz",
+            "38. Chapter 11 — Final recap"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 4954,
+          "services": 0,
+          "hasCurrency": false
+        },
+        {
+          "id": "rh134-12",
+          "n": 12,
+          "sourceNumber": 12,
+          "kind": "chapter",
+          "title": "Chapter 12 — Installing Red Hat Enterprise Linux",
+          "display": "Chapter 12 — Installing Red Hat Enterprise Linux",
+          "sections": 48,
+          "sectionTitles": [
+            "Overview",
+            "1. What does installing an operating system mean?",
+            "2. Choosing installation media",
+            "3. Understanding Anaconda",
+            "4. Understanding the Installation Summary screen",
+            "5. Choosing the software environment",
+            "6. Choosing the installation disk",
+            "7. Configuring the network and host name",
+            "8. Kdump, security policy, and system purpose",
+            "9. Setting the root password and creating a user",
+            "10. Troubleshooting the installation",
+            "11. Prepare and start the installation lab",
+            "12. Configure the disk and network",
+            "13. Select the installation source and software",
+            "14. Complete the installation and log in",
+            "15. What is Kickstart?",
+            "16. Understand Kickstart file structure",
+            "17. Understand %pre and %post",
+            "18. Choose packages in Kickstart",
+            "19. Configure the installation source and repositories",
+            "20. Configure disk partitioning in Kickstart",
+            "21. Configure networking and the firewall in Kickstart",
+            "22. Configure language, time, accounts, and security",
+            "23. Configure logging and the final installation action",
+            "24. Understand the example Kickstart file",
+            "25. Create a Kickstart file",
+            "26. Validate Kickstart syntax with ksvalidator",
+            "27. Publish the Kickstart file",
+            "28. Tell Anaconda where the Kickstart file is",
+            "29. Start the Kickstart exercise",
+            "30. Edit the installation settings",
+            "31. Edit the post-installation script and package list",
+            "32. Validate and publish the file",
+            "33. What is virtualization?",
+            "34. What is KVM?",
+            "35. Prepare a RHEL system as a virtualization host",
+            "36. Verify hardware support for virtualization",
+            "37. Install Cockpit's Virtual Machines tool",
+            "38. Create a virtual machine in Cockpit",
+            "39. Install the guest operating system",
+            "40. Understand the book's virtualization quiz",
+            "41. Understand the final lab",
+            "42. Create the Kickstart file on serverb",
+            "43. Validate and publish the final Kickstart file",
+            "44. Grade and perform the automated installation",
+            "45. The essential commands and concepts",
+            "46. Final understanding check",
+            "Chapter 12 summary"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 6650,
+          "services": 0,
+          "hasCurrency": false
+        },
+        {
+          "id": "rh134-13",
+          "n": 13,
+          "sourceNumber": 13,
+          "kind": "chapter",
+          "title": "Chapter 13 — Comprehensive Review",
+          "display": "Chapter 13 — Comprehensive Review",
+          "sections": 25,
+          "sectionTitles": [
+            "Overview",
+            "1. Improving command-line productivity",
+            "2. Scheduling future tasks",
+            "3. Tuning system performance",
+            "4. Access Control Lists (ACLs)",
+            "5. Managing SELinux security",
+            "6. Managing storage",
+            "7. Logical volumes, Stratis, and VDO",
+            "8. Network-attached storage",
+            "9. Controlling the boot process",
+            "10. Network security and installation",
+            "11. Understand the lab",
+            "12. Repair a boot failure",
+            "13. Remount the root file system as writable",
+            "14. Fix the incorrect /etc/fstab entry",
+            "15. Change the default target to multi-user",
+            "16. Schedule a recurring backup",
+            "17. Understand the storage tasks",
+            "18. Create a partition and LVM logical volume",
+            "19. Format and mount the logical volume persistently",
+            "20. Mount an NFS share persistently",
+            "21. Create swap space that activates at boot",
+            "22. Create the production group and users",
+            "23. Configure temporary-file cleanup",
+            "24. Set directory permissions with ACLs"
+          ],
+          "labs": 0,
+          "quizzes": 0,
+          "words": 2565,
           "services": 0,
           "hasCurrency": false
         }
       ],
       "currency": [
-        {
-          "id": "stratis-vdo",
-          "severity": "medium",
-          "title": "Stratis and VDO are still taught, but they are not on the RHCSA exam",
-          "found": "Part 5 covers Stratis layered storage and VDO compression/deduplication in depth.",
-          "current": "Stratis remains available in RHEL and is a reasonable way to manage layered storage, but the EX200 objective wording is about local storage, LVM, and mounting by UUID or label. VDO is niche and largely absent from enterprise datacentres today.",
-          "action": "Learn these for understanding, but prioritise the LVM objectives — pvcreate, vgcreate, lvcreate, and mounting by UUID — which are directly examined.",
-          "verified": "2026-10-12",
-          "source": "EX200 objectives, read 2026-10-10"
-        }
+        "This book is the supplied RHEL Administrator Part 2 document, not the earlier eight-part extraction.",
+        "It uses the book's own chapter numbering, and it has no Chapter 2 — chapters run 1, then 3 to 13.",
+        "That gap is present in the source document and has been left visible rather than renumbered away."
       ]
     },
     {
@@ -431,7 +1007,14 @@
           "quizzes": 1,
           "words": 2523,
           "services": 0,
-          "hasCurrency": true
+          "hasCurrency": true,
+          "sectionTitles": [
+            "1. Why Automate, and What Ansible Actually Is",
+            "2. Installing Ansible",
+            "3. Building a Static Inventory",
+            "4. Managing Ansible Configuration Files",
+            "5. Running Ad Hoc Commands"
+          ]
         },
         {
           "id": "rh294-02",
@@ -445,7 +1028,14 @@
           "quizzes": 1,
           "words": 3037,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Writing and Running Playbooks",
+            "2. Multiple Plays, Per-Play Privilege, and YAML Variations",
+            "3. Managing Variables",
+            "4. Managing Secrets with Ansible Vault",
+            "5. Managing Facts"
+          ]
         },
         {
           "id": "rh294-03",
@@ -459,7 +1049,13 @@
           "quizzes": 1,
           "words": 2694,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Task Iteration with Loops",
+            "2. Running Tasks Conditionally",
+            "3. Implementing Handlers",
+            "4. Handling Task Failure"
+          ]
         },
         {
           "id": "rh294-04",
@@ -473,7 +1069,13 @@
           "quizzes": 1,
           "words": 2341,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Managing Files with the Files Modules",
+            "2. Introduction to Jinja2 Templates",
+            "3. Control Structures Inside Templates",
+            "4. Variable Filters and Tests"
+          ]
         },
         {
           "id": "rh294-05",
@@ -487,7 +1089,13 @@
           "quizzes": 1,
           "words": 2703,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Selecting Hosts with Host Patterns",
+            "2. Managing Dynamic Inventories",
+            "3. Configuring Parallelism",
+            "4. Including and Importing Files"
+          ]
         },
         {
           "id": "rh294-06",
@@ -501,7 +1109,13 @@
           "quizzes": 1,
           "words": 2374,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Describing Role Structure",
+            "2. Reusing Content with RHEL System Roles",
+            "3. Creating Your Own Roles",
+            "4. Deploying Roles with Ansible Galaxy"
+          ]
         },
         {
           "id": "rh294-07",
@@ -515,7 +1129,11 @@
           "quizzes": 1,
           "words": 2481,
           "services": 0,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Troubleshooting Playbooks",
+            "2. Troubleshooting Ansible Managed Hosts"
+          ]
         },
         {
           "id": "rh294-08",
@@ -529,7 +1147,14 @@
           "quizzes": 1,
           "words": 2929,
           "services": 3,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Managing Software and Subscriptions",
+            "2. Managing Users and Authentication",
+            "3. Managing the Boot Process and Scheduled Processes",
+            "4. Managing Storage",
+            "5. Managing Network Configuration"
+          ]
         },
         {
           "id": "rh294-09",
@@ -543,7 +1168,14 @@
           "quizzes": 0,
           "words": 1340,
           "services": 1,
-          "hasCurrency": false
+          "hasCurrency": false,
+          "sectionTitles": [
+            "1. Condensed Chapter-by-Chapter Review",
+            "2. Capstone: Automated Secure Web Tier",
+            "3. Automation Skill Checklist",
+            "4. Final Mixed Quiz — All RH294 Chapters",
+            "5. RH294 Complete — What This Curriculum Covered"
+          ]
         }
       ],
       "currency": [
