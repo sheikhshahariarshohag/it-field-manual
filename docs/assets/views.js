@@ -11,6 +11,7 @@ import * as db from "./db.js";
 import { href } from "./router.js";
 import * as prose from "./prose.js";
 import { chapterReader } from "./reader.js";
+import { chapterTitle } from "./titles.js";
 
 export const TECH = {
   aplus:    { label: "CompTIA A+",     varName: "--tech-aplus" },
@@ -1799,7 +1800,7 @@ export async function studyManualView() {
         h("a.session__link", { href: href(`study/${u.id}`) },
           h("span.session__n", String(u.n)),
           h("span.session__body",
-            h("span.session__title", u.display),
+            h("span.session__title", chapterTitle(u.display)),
             h("span.session__sum",
               `${u.sections} topics · ${u.words.toLocaleString()} words` +
               (u.labs ? ` · ${u.labs} lab${u.labs === 1 ? "" : "s"}` : "") +
@@ -1858,18 +1859,24 @@ export async function studyUnitView(params, query) {
   }
   if (!unit) return notFound("Study unit", params.id);
 
+  // The header carries the title and a way back, and nothing else.
+  //
+  // It used to carry a row of capsules - RH124, RHCSA (EX200), 9 topics,
+  // 6,793 words, 1 lab - plus the book's one-line blurb. None of those were
+  // clickable, all of them repeated what the chapter body already says, and
+  // together they pushed the actual first heading off the screen. The exam
+  // code in particular is on every chapter in the same course, so it is a
+  // constant pretending to be information.
+  //
+  // The breadcrumb stays: that one is navigation, and taking it away would be a
+  // regression rather than a cleanup.
   wrap.appendChild(h("header.page-head",
-    h("h1", unit.display),
-    h("div.card__meta",
-      h("span.badge", book.code),
-      unit.exam || book.exam ? h("span.badge", unit.exam || book.exam) : null,
-      h("span.badge", `${unit.sections} topics`),
-      h("span.badge", `${unit.words.toLocaleString()} words`),
-      unit.labs ? h("span.badge", `${unit.labs} lab${unit.labs === 1 ? "" : "s"}`) : null,
-      unit.quizzes ? h("span.badge", `${unit.quizzes} quiz${unit.quizzes === 1 ? "" : "zes"}`) : null,
-      h("a.badge", { href: href(`subjects/${subjectForBook(book)}/study`) }, "All RHEL chapters"),
+    h("nav.rd-crumb", { "aria-label": "Breadcrumb" },
+      h("a", { href: href("subjects") }, "Subjects"),
+      h("span.rd-crumb__sep", { "aria-hidden": "true" }, "/"),
+      h("a", { href: href(`subjects/${subjectForBook(book)}/study`) }, "Study Manual"),
     ),
-    h("p", book.blurb),
+    h("h1", chapterTitle(unit.display)),
   ));
 
   const data = await loadStudyUnit(unit.id);
@@ -1910,7 +1917,7 @@ export async function studyUnitView(params, query) {
   for (const s of data.sections || []) {
     sections.push({
       title: s.title,
-      build: () => prose.renderBlocks(s.content),
+      build: () => prose.renderBlocks(s.content, { selfCheckKey: `${unit.id}:${s.title}` }),
     });
   }
   // Labs and quizzes are chapters in their own right. They get their own
@@ -1921,7 +1928,7 @@ export async function studyUnitView(params, query) {
       sections.push({
         title: l.title,
         kicker,
-        build: () => prose.renderBlocks(l.content),
+        build: () => prose.renderBlocks(l.content, { selfCheckKey: `${unit.id}:${l.title}` }),
       });
     }
   }
@@ -1951,9 +1958,9 @@ export async function studyUnitView(params, query) {
   const flat = m.books.flatMap((b) => b.units.map((u) => ({ b, u })));
   const i = flat.findIndex((x) => x.u.id === unit.id);
   const after = h("div.btnrow",
-    i > 0 ? h("a.btn", { href: href(`study/${flat[i - 1].u.id}`) }, "← " + flat[i - 1].u.display) : null,
-    h("a.btn", { href: href(`study`) }, "All units"),
-    i < flat.length - 1 ? h("a.btn", { href: href(`study/${flat[i + 1].u.id}`) }, flat[i + 1].u.display + " →") : null,
+    i > 0 ? h("a.btn", { href: href(`study/${flat[i - 1].u.id}`) }, "\u2190 " + chapterTitle(flat[i - 1].u.display)) : null,
+    h("a.btn", { href: href("study") }, "All units"),
+    i < flat.length - 1 ? h("a.btn", { href: href(`study/${flat[i + 1].u.id}`) }, chapterTitle(flat[i + 1].u.display) + " \u2192") : null,
   );
 
   wrap.appendChild(chapterReader({

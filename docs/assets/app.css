@@ -1735,3 +1735,221 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   .pl-out { font-size: .8rem; overflow-x: auto; }
 }
 
+
+/* --- the always-available control bar ------------------------------------
+   Sits at the top of the reading column, left-aligned with the text, and
+   sticks below the header. It lives here rather than inside the contents
+   drawer so it stays reachable at every scroll position. */
+
+.rd-bar {
+  position: sticky; top: calc(var(--topbar-h) + 8px); z-index: 6;
+  display: flex; align-items: center; gap: 8px;
+  margin: 0 0 18px; padding: 6px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); box-shadow: var(--shadow-1);
+}
+.rd-bar__collapse {
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 0; border-radius: 999px;
+  background: transparent; color: var(--text-faint);
+  font-family: var(--font); font-size: .8rem; font-weight: 600;
+  cursor: pointer;
+}
+.rd-bar__collapse:hover { color: var(--accent); background: var(--surface-2); }
+.rd-bar__collapse:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+/* Only useful when there is a sidebar to hide. */
+.rd.is-collapsed .rd-bar__collapse { display: none; }
+
+/* --- per-section folding ------------------------------------------------ */
+
+.rd-s__headrow { position: relative; }
+.rd-s__fold {
+  position: absolute; top: 26px; right: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px;
+  border: 1px solid var(--line); border-radius: 50%;
+  background: var(--surface); color: var(--text-faint);
+  cursor: pointer;
+}
+.rd-s__fold:hover { border-color: var(--accent); color: var(--accent); }
+.rd-s__fold:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rd-s__chev { display: block; transition: transform .14s ease; font-size: .7rem; line-height: 1; }
+.rd-s.is-folded .rd-s__chev { transform: rotate(-90deg); }
+.rd-s.is-folded > .rd-s__headrow > .rd-h { color: var(--text-dim); }
+.rd-s.is-folded { margin-bottom: 4px; }
+.rd-s.is-folded > .rd-s__headrow > .rd-h--2 { padding-top: 18px; margin-top: 18px; }
+
+/* --- contents list: real separation between sections ---------------------
+   The previous list used 5px padding with no rule or gap between entries, so
+   on a long chapter the sidebar read as one undifferentiated grey column.
+   Entries are now separated by a hairline, carry their own hover and active
+   treatment, and the active one is marked by a rule, a background AND a
+   marker - never colour alone. */
+
+.rd-toc__list { counter-reset: toc; }
+.rd-toc__item {
+  margin: 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.rd-toc__list > .rd-toc__item:last-child { border-bottom: 0; }
+
+.rd-toc__link {
+  display: block;
+  padding: 7px 10px 7px 12px;
+  margin-left: -12px;
+  border-left: 3px solid transparent;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  font-size: .87rem; line-height: 1.42;
+  color: var(--text-dim);
+  text-decoration: none;
+}
+.rd-toc__link:hover { color: var(--text); background: var(--surface-2); }
+
+/* Numbered, so a long chapter can be navigated by position as well as by
+   name - and because "section 34" is easier to find than "34th row". */
+.rd-toc__list > .rd-toc__item { counter-increment: toc; }
+.rd-toc__list > .rd-toc__item > .rd-toc__link::before {
+  content: counter(toc);
+  display: inline-block;
+  min-width: 1.6em; margin-right: 6px;
+  color: var(--text-faint);
+  font-size: .74rem; font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.rd-toc__item[data-level="3"] > .rd-toc__link { font-size: .79rem; padding: 5px 10px 5px 8px; margin-left: -12px; }
+.rd-toc__item[data-level="4"] > .rd-toc__link { font-size: .75rem; color: var(--text-faint); padding: 4px 10px 4px 8px; margin-left: -12px; }
+
+.rd-toc__item.is-active > .rd-toc__link {
+  color: var(--accent);
+  font-weight: 650;
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+.rd-toc__item.is-active > .rd-toc__link::before { color: var(--accent); }
+
+/* A folded section is dimmed in the list, and reopening it from the list
+   works - see onTocClick. */
+.rd-toc__item.is-folded > .rd-toc__link { opacity: .58; }
+.rd-toc__item.is-folded > .rd-toc__link::after {
+  content: " ▸"; color: var(--text-faint); font-size: .8em;
+}
+
+.rd-toc__sub { border-bottom: 0; }
+.rd-toc__sub .rd-toc__item:last-child { border-bottom: 0; }
+
+/* The bar replaces the old drawer-embedded button. */
+.rd-tocbtn { display: none; }
+
+/* --- button visibility, corrected ----------------------------------------
+   The rules above are appended after the reader's original media query, so
+   they would otherwise have overridden it. The intent:
+
+     wide screen   the contents list is a permanent sidebar, so the useful
+                   control is "Hide contents" - the drawer button is noise
+     narrow screen the contents list is a drawer, so the useful control is
+                   "Contents" - there is no sidebar to collapse
+     collapsed     "Show contents" must stay reachable, or folding the sidebar
+                   on a wide screen is a one-way trip with no way back */
+
+.rd-bar > .rd-tocbtn {
+  position: static; margin: 0; box-shadow: none;
+  border: 0; background: transparent; color: var(--text);
+  padding: 6px 12px; font-size: .88rem;
+}
+.rd-bar > .rd-tocbtn:hover { background: var(--surface-2); border-color: transparent; }
+.rd-tocbtn { display: none; }
+.rd.is-collapsed > .rd-main > .rd-bar > .rd-tocbtn { display: inline-flex; }
+
+@media (max-width: 1000px) {
+  .rd-bar > .rd-tocbtn { display: inline-flex; }
+  .rd-bar__collapse { display: none; }
+  .rd-bar { position: sticky; top: calc(var(--topbar-h) + 8px); }
+  /* No room for the collapse affordance next to the text on a phone. */
+  .rd-s__fold { top: 20px; width: 24px; height: 24px; }
+}
+
+/* --- self-check marks ---------------------------------------------------
+   The questions are written questions, not multiple choice, so the honest
+   response is a self-mark rather than a tick box pretending to be a quiz. */
+
+.kc__how {
+  margin: 0; padding: 9px 15px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface);
+  color: var(--text-dim); font-size: .86rem; line-height: 1.5;
+}
+
+.kc__marks { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.kc__mark {
+  padding: 4px 11px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--text-dim);
+  font-family: var(--font); font-size: .78rem; font-weight: 600;
+  cursor: pointer;
+}
+.kc__mark:hover { border-color: var(--text-faint); color: var(--text); }
+.kc__mark:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Marked state carries a tick as well as a colour, so it does not rely on
+   colour alone. */
+.kc__mark[aria-pressed="true"]::before { content: "\2713\00a0"; }
+.kc__mark[data-mark="yes"][aria-pressed="true"]  { background: var(--ok-dim);     border-color: var(--ok);     color: var(--ok); }
+.kc__mark[data-mark="part"][aria-pressed="true"] { background: var(--warn-dim);   border-color: var(--warn);   color: var(--warn); }
+.kc__mark[data-mark="no"][aria-pressed="true"]   { background: var(--danger-dim); border-color: var(--danger); color: var(--danger); }
+
+/* The question itself tints, so a scan of the list shows what is unresolved. */
+.kc__item[data-mark="yes"]  .kc__q { color: var(--text); }
+.kc__item[data-mark="part"] { box-shadow: inset 3px 0 0 var(--warn); }
+.kc__item[data-mark="no"]   { box-shadow: inset 3px 0 0 var(--danger); }
+.kc__item[data-mark="yes"]  { box-shadow: inset 3px 0 0 var(--ok); }
+.kc__item[data-mark] { padding-left: 14px; }
+
+.kc__foot {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 15px;
+  border-top: 1px solid var(--line-soft);
+  background: var(--surface-2);
+  font-size: .84rem; color: var(--text-dim);
+}
+.kc__summary { margin: 0; flex: 1 1 auto; }
+.kc__clear {
+  padding: 4px 10px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--text-faint);
+  font-family: var(--font); font-size: .76rem; font-weight: 600; cursor: pointer;
+}
+.kc__clear:hover { color: var(--danger); border-color: var(--danger); }
+.kc__clear[hidden] { display: none; }
+
+/* --- a label with nothing to put in a box ------------------------------- */
+
+.pl-lead {
+  margin: 16px 0 4px;
+  font-weight: 650; line-height: 1.4; color: var(--text);
+}
+.pl-lead__k {
+  display: block;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+/* --- breadcrumb ---------------------------------------------------------
+   Replaces the capsule row the chapter header used to carry. Navigation, not
+   metadata, so it is a plain quiet link rather than a badge. */
+
+.rd-crumb {
+  display: flex; align-items: center; gap: 7px;
+  margin: 0 0 8px;
+  font-size: .84rem; color: var(--text-faint);
+}
+.rd-crumb a { color: var(--text-dim); text-decoration: none; }
+.rd-crumb a:hover { color: var(--accent); text-decoration: underline; }
+.rd-crumb a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+.rd-crumb__sep { color: var(--line); }
+
+/* The chapter title is the one thing on the page that should be loudest. */
+.page-head h1 { margin-top: 0; }

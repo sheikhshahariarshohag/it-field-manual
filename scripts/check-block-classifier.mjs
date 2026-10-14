@@ -17,7 +17,9 @@ const ROOT = new URL("..", import.meta.url);
 const src = readFileSync(new URL("docs/assets/prose.js", ROOT), "utf8")
   // Stub the browser dependencies. `h` returns a chainable stub so the module
   // body evaluates; only classifyBlock/classify are called below.
-  .replace(/^import .*$/m, "const h = () => ({}); const copyText = async () => true;")
+  .replace(/^import \{[^}]*\} from ".*";$/gm, "")
+    .replace(/^import \* as \w+ from ".*";$/gm, "")
+    .replace(/^import \{ h[^}]*\} from ".*";$/gm, "const h=()=>({}); const copyText=async()=>true; const db={put:async()=>{},get:async()=>null,remove:async()=>{}};")
   .replace(/export /g, "");
 
 const api = new Function(`${src}\nreturn { classifyBlock, classify };`)();

@@ -1,6 +1,7 @@
 /**
- * prose.js — one renderer for explanatory text.
- *
+
+}
+  renderSummary();
  * THE PROBLEM THIS SOLVES
  * Two places in the app render large bodies of mixed text: the Study Manual
  * sections and the Library book chunks. Both dumped it verbatim — study blocks
@@ -25,6 +26,7 @@
  * showing a real command as prose is the failure the learner actually hits.
  */
 import { h, copyText } from "./ui.js";
+import * as db from "./db.js";
 
 /* ------------------------------------------------------------ classify */
 
@@ -426,6 +428,34 @@ export function classifyBlock(block) {
   return { type: classify(t), level, text: t };
 }
 
+/* ------------------------------------------------------- note shape rules */
+
+/**
+ * Block kinds a label-style note will swallow as its own body.
+ *
+ * "prose" is the ordinary case. "output" and "table" are here because a note
+ * that introduces a command block reads as a lead-in to that command, and
+ * leaving the command outside the box is the same broken split the absorption
+ * exists to fix. Commands themselves are NOT absorbed: a note followed by a
+ * command to run is a note plus a separate instruction, and merging them
+ * would imply the command is part of the warning.
+ */
+const ABSORBABLE = new Set(["prose", "output", "table"]);
+
+/**
+ * Is this callout a label rather than a message?
+ *
+ * Short, no terminal punctuation, so it reads as a heading: "Where this fits
+ * on the exam", "Lost? Press Esc", "Not like Windows NTFS". A genuine note has
+ * a full sentence inside it.
+ */
+export function isLabelStyle(b) {
+  const body = String((b && b.body) || "").trim();
+  if (!body) return false;
+  if (body.length > 60) return false;
+  return !/[.!?]$/.test(body);
+}
+
 /* ------------------------------------------------------------- components */
 
 /** A copy button for any code-ish block. Uses the shared clipboard helper. */
@@ -487,35 +517,89 @@ function stepRun(steps) {
 }
 
 /**
- * Knowledge check: the questions, with the answers folded away.
+ * Knowledge check: answer from memory, then compare against the model answer.
  *
- * Answers are paired by their own Q number, so a question is never shown with
- * somebody else's answer and an answer with no question is still shown rather
- * than silently dropped. <details> is used because it is keyboard operable,
- * screen-reader labelled, and works with zero script.
+ * WHAT THIS IS NOT
+ * These are not multiple-choice questions and they never were. They are
+ * written questions from the guides, each with a written model answer, and
+ * there are no options in the source to offer. Inventing distractors to make
+ * the UI look like a quiz would mean writing content that does not exist.
+ *
+ * So instead of a quiz-shaped control that cannot be answered, each question
+ * gets what it actually needs:
+ *
+ *   - the question, in full, never truncated;
+ *   - the model answer folded away, so it cannot be read by accident before
+ *     an attempt has been made;
+ *   - a self-mark - Got it / Partly / Not yet - which is the honest response to
+ *     a written question, and which drives a running summary and points at the
+ *     ones worth coming back to.
+ *
+ * The marks are stored in the existing IndexedDB `notes` store, so they travel
+ * with the user's export and import like everything else the learner has.
  */
-function knowledgeCheck(questions, answers) {
+function knowledgeCheck(questions, answers, opts = {}) {
   const box = h("div.kc");
+  const storeKey = opts.selfCheckKey || "kc";
+
+  const MARK = [
+    { key: "yes",  label: "Got it" },
+    { key: "part", label: "Partly" },
+    { key: "no",   label: "Not yet" },
+  ];
+
+  const summaryLine = h("span.kc__summary-t");
+  const summary = h("p.kc__summary", { role: "status" }, summaryLine);
+  const clearBtn = h("button.kc__clear", { type: "button" }, "Clear marks");
+  clearBtn.addEventListener("click", () => {
+    for (const li of list.querySelectorAll(".kc__item")) {
+      li.dataset.mark = "";
+      for (const b of li.querySelectorAll(".kc__mark")) b.setAttribute("aria-pressed", "false");
+    }
+    persist({});
+  });
+
   box.appendChild(h("div.kc__hd",
-    h("span.kc__tag", "knowledge check"),
+    h("span.kc__tag", "Self-check"),
     h("span.kc__n", `${questions.length} question${questions.length === 1 ? "" : "s"}`)));
+  box.appendChild(h("p.kc__how",
+    "These are written questions, not multiple choice — answer from memory, " +
+    "mark how it went, then compare with the model answer."));
 
   const byNum = new Map();
   for (const a of answers || []) if (!byNum.has(a.num)) byNum.set(a.num, a);
 
+  const marks = {};
   const list = h("ol.kc__list");
+
   for (const q of questions) {
-    const li = h("li.kc__item");
+    const li = h("li.kc__item", { "data-mark": "" });
     li.appendChild(h("p.kc__q", ...marked(q.body)));
+
+    const markRow = h("div.kc__marks", { role: "group" });
+    markRow.setAttribute("aria-label", "How well did you answer this?");
+    for (const m of MARK) {
+      const b = h("button.kc__mark", { type: "button", "aria-pressed": "false", "data-mark": m.key }, m.label);
+      b.addEventListener("click", () => {
+        const on = li.dataset.mark === m.key;
+        li.dataset.mark = on ? "" : m.key;
+        for (const x of markRow.querySelectorAll(".kc__mark")) x.setAttribute("aria-pressed", "false");
+        if (!on) b.setAttribute("aria-pressed", "true");
+        persist(read());
+      });
+      markRow.appendChild(b);
+    }
+    li.appendChild(markRow);
+
     const a = byNum.get(q.num);
     if (a) {
       const det = h("details.kc__ans");
-      det.appendChild(h("summary.kc__sum", "Show answer"));
+      det.appendChild(h("summary.kc__sum", "Show the model answer"));
       det.appendChild(h("p.kc__abody", ...marked(a.body)));
       li.appendChild(det);
     } else {
       // No answer in the content. Say so rather than implying the renderer lost it.
-      li.appendChild(h("p.kc__noans", "No answer is given for this question in the source material."));
+      li.appendChild(h("p.kc__noans", "No model answer is given for this question in the source material."));
     }
     list.appendChild(li);
   }
@@ -528,6 +612,59 @@ function knowledgeCheck(questions, answers) {
     for (const a of orphans) det.appendChild(h("p.kc__abody", ...marked(a.body)));
     box.appendChild(det);
   }
+
+  box.appendChild(h("div.kc__foot", summary, clearBtn));
+
+  function read() {
+    const out = {};
+    list.querySelectorAll(".kc__item").forEach((li, i) => {
+      if (li.dataset.mark) out[i] = li.dataset.mark;
+    });
+    return out;
+  }
+
+  function persist(obj) {
+    marksNow = obj;
+    renderSummary();
+    try {
+      if (Object.keys(obj).length) db.put("notes", `kc:${storeKey}`, { key: `kc:${storeKey}`, value: obj, at: Date.now() });
+      else db.remove("notes", `kc:${storeKey}`).catch(() => {});
+    } catch (_) { /* private mode: the marks still work for this visit */ }
+  }
+
+  let marksNow = {};
+
+  function renderSummary() {
+    const total = questions.length;
+    const yes = Object.values(marksNow).filter((v) => v === "yes").length;
+    const part = Object.values(marksNow).filter((v) => v === "part").length;
+    const no = Object.values(marksNow).filter((v) => v === "no").length;
+    const marked = yes + part + no;
+    summaryLine.textContent = marked
+      ? `${yes} got it · ${part} partly · ${no} not yet — ${total - marked} unmarked`
+      : `None marked yet. Mark each one as you go.`;
+    clearBtn.hidden = marked === 0;
+  }
+
+  renderSummary();
+
+  // Hydrate any saved marks once the store answers.
+  db.get("notes", `kc:${storeKey}`)
+    .then((rec) => {
+      const saved = rec && rec.value;
+      if (!saved || typeof saved !== "object") return;
+      list.querySelectorAll(".kc__item").forEach((li, i) => {
+        const v = saved[i];
+        if (!v) return;
+        li.dataset.mark = v;
+        const b = li.querySelector(`.kc__mark[data-mark="${v}"]`);
+        if (b) b.setAttribute("aria-pressed", "true");
+      });
+      marksNow = read();
+      renderSummary();
+    })
+    .catch(() => { /* no database: marks simply do not persist */ });
+
   return box;
 }
 
@@ -556,12 +693,72 @@ export function renderBlocks(items, opts = {}) {
         i++;
         continue;
 
-      case "callout":
+      case "callout": {
+        /*
+         * A marker with nothing after it at all - the corpus has 16 lines that
+         * are literally just "NOTE -".
+         *
+         * Rendered as a bordered box, those produce a box whose entire content
+         * is the word "Note". It looks broken and it tells the reader nothing:
+         * the marker word carried the whole line and there was no message. So
+         * it renders as nothing. Nothing is lost, because there was nothing
+         * there but a marker.
+         */
+        if (!String(b.body || "").trim()) { i++; continue; }
+
+        /*
+         * A note whose body is a short label rather than a sentence, and which
+         * is followed by ordinary prose, is the source using a NOTE marker as
+         * a heading. The corpus does this 26 times - "NOTE - Where this fits
+         * on the exam", "NOTE - Not like Windows NTFS" - and each one rendered
+         * as a bordered box containing a five-word fragment, with the actual
+         * explanation sitting outside the box underneath it. That is what was
+         * pointed out as making no sense: the box says a title and nothing
+         * else, then repeats itself.
+         *
+         * So the following prose is absorbed into the box. The marker stays as
+         * the heading and nothing is dropped; the box simply stops being empty
+         * of anything the reader actually wanted.
+         */
+        const lead = isLabelStyle(b);
+        if (lead) {
+          const extra = [];
+          // The bound is `i + 1 + extra.length < length`, not
+          // `i + extra.length < length`. The second form reads one past the end
+          // on the final iteration and throws "cannot read properties of
+          // undefined (reading 'type')", which the reader catches and reports
+          // as "this section could not be rendered" - so chapters silently
+          // lost a section each.
+          while (i + 1 + extra.length < arr.length && extra.length < 4) {
+            const nx = arr[i + 1 + extra.length];
+            if (!nx || !ABSORBABLE.has(nx.type) || !String(nx.text || "").trim()) break;
+            extra.push(nx);
+          }
+          // Nothing followed it, so there is no message to put in a box. An
+          // empty bordered box reads as broken; a caption line does not.
+          if (!extra.length) {
+            frag.appendChild(h("p.pl-lead", h("span.pl-lead__k", b.label),
+              h("span", ...marked(b.body))));
+            i++;
+            continue;
+          }
+          const box = h("div", { class: `note ${b.cls || "note"}` },
+            h("strong.note__k", b.label));
+          const span = h("span");
+          span.appendChild(...marked(b.body));
+          for (const x of extra) span.appendChild(h("p.pl-p", ...marked(String(x.text))));
+          box.appendChild(span);
+          frag.appendChild(box);
+          i += 1 + extra.length;
+          continue;
+        }
+
         frag.appendChild(h("div", { class: `note ${b.cls || "note"}` },
           h("strong.note__k", b.label),
           h("span", ...marked(b.body))));
         i++;
         continue;
+      }
 
       case "answersHeader":
         i++;
@@ -573,7 +770,10 @@ export function renderBlocks(items, opts = {}) {
         const answers = [];
         if (i < arr.length && arr[i].type === "answersHeader") i++;
         while (i < arr.length && arr[i].type === "answer") answers.push(arr[i++]);
-        frag.appendChild(knowledgeCheck(questions, answers));
+        // `opts` has to be handed on. Without it every chapter's self-check
+        // wrote to the same "kc" key, so marking question 1 in one chapter
+        // showed up as a mark on question 1 of every other chapter.
+        frag.appendChild(knowledgeCheck(questions, answers, opts));
         continue;
       }
 
