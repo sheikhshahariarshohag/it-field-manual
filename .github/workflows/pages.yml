@@ -63,13 +63,17 @@ jobs:
       #   check-prose-contrast     every text/background pair meets WCAG AA in
       #                            BOTH themes, including the reader's new
       #                            components
+      #   check-chapter-titles     every study unit is labelled "Chapter N:
+      #                            Title" or "Part N: Title", with no raw
+      #                            "Ch N - SHOUTING" form and no truncated
+      #                            ellipsis surviving from the source
       - name: Validate content and privacy
         run: |
           node scripts/validate.mjs
           node scripts/check-secrets.mjs
           node scripts/check-block-classifier.mjs
           node scripts/check-content-preserved.mjs
-  node scripts/check-chapter-titles.mjs
+          node scripts/check-chapter-titles.mjs
           node scripts/check-prose-contrast.mjs
 
   deploy:
