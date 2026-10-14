@@ -85,6 +85,22 @@ export function chapterTitle(raw) {
   let t = String(raw == null ? "" : raw).trim();
   if (!t) return "";
 
+  /*
+   * "Part 0" is not a part.
+   *
+   * The stored title is "Part 0 - BUILDING YOUR PRACTICE LAB". It is the
+   * chapter that builds the four-machine classroom every other chapter in
+   * RHEL I assumes is already running - create the VMs, the networks and the
+   * gold image before any practice can happen. Labelling it "Part 0" tells the
+   * reader nothing and implies a numbering that does not exist: the book then
+   * counts its first real chapter as Chapter 1, which is correct.
+   *
+   * So it is named for what it does. Keyed on the "Part 0" prefix rather than
+   * the whole stored string, so a change to the source wording does not
+   * silently break the override.
+   */
+  if (/^part\s+0\b/i.test(t)) return "How to Build the Lab";
+
   // Drop a trailing ellipsis and everything it truncated. A heading that stops
   // mid-word ("Installing Ansi...") is worse than a heading that stops at a real
   // boundary, and the dropped topics are still listed in the contents.

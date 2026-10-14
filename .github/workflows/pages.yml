@@ -69,6 +69,7 @@ jobs:
           node scripts/check-secrets.mjs
           node scripts/check-block-classifier.mjs
           node scripts/check-content-preserved.mjs
+  node scripts/check-chapter-titles.mjs
           node scripts/check-prose-contrast.mjs
 
   deploy:

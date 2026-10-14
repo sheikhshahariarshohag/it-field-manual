@@ -10,6 +10,7 @@ import * as search from "./search.js";
 import * as db from "./db.js";
 import { href } from "./router.js";
 import * as S from "./subjects.js";
+import { chapterTitle } from "./titles.js";
 
 /* ------------------------------------------------------------------ home */
 
@@ -335,8 +336,13 @@ export function subjectSectionView(params) {
         const units = r.studyUnits.filter((u) => u.book === book);
         if (!units.length) continue;
         wrap.appendChild(h("h2", units[0].bookTitle || book));
+        // chapterTitle(), not u.display. This page was showing the raw stored
+        // title - "Part 0 - BUILDING YOUR PRACTICE LAB", "Ch 1 - GETTING
+        // STARTED WITH RED HAT ENTERPRISE LINUX" - while the central Study
+        // Manual page showed the normalised one. Same data, two different
+        // headings on two different pages.
         put(units, (u) => h("a.res-row", { href: href(`study/${u.id}`) },
-          h("span.res-row__t", u.display || u.title),
+          h("span.res-row__t", chapterTitle(u.display || u.title)),
           h("span.res-row__m", `${u.sections} sections`)));
       }
       break;
