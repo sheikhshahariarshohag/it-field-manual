@@ -1,0 +1,1599 @@
+{
+  "id": "rh134-02",
+  "n": 2,
+  "sourceNumber": 2,
+  "kind": "chapter",
+  "title": "Chapter 2: Scheduling Future Tasks",
+  "display": "Chapter 2: Scheduling Future Tasks",
+  "exam": "RHCSA (EX200)",
+  "words": 2777,
+  "sections": [
+    {
+      "title": "Overview",
+      "content": [
+        {
+          "level": 0,
+          "text": "Based on your RH134 RHEL 8 chapter, explained in simple English with practical commands, examples, and the important details you need to understand."
+        }
+      ],
+      "words": 23
+    },
+    {
+      "title": "Part 1 — Scheduling one-time jobs with at",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. What are deferred jobs?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A deferred job is a command that you schedule to run once at a future time."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine setting an alarm to remind you to do something later. Instead of waiting to run a Linux command yourself, you schedule it in advance."
+        },
+        {
+          "level": 0,
+          "text": "RHEL provides the at tool for this purpose."
+        },
+        {
+          "level": 0,
+          "text": "at schedules a job."
+        },
+        {
+          "level": 0,
+          "text": "atd is the background service that runs scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "atq lists jobs waiting to run."
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "at now +5min"
+        },
+        {
+          "level": 0,
+          "text": "Then enter:"
+        },
+        {
+          "level": 0,
+          "text": "touch /tmp/testfile"
+        },
+        {
+          "level": 0,
+          "text": "Press Ctrl+D to submit the job."
+        },
+        {
+          "level": 0,
+          "text": "What each part means:"
+        },
+        {
+          "level": 0,
+          "text": "at — schedule a job."
+        },
+        {
+          "level": 0,
+          "text": "now +5min — run it five minutes from now."
+        },
+        {
+          "level": 0,
+          "text": "touch — create an empty file if it does not exist."
+        },
+        {
+          "level": 0,
+          "text": "/tmp/testfile — the file to create."
+        },
+        {
+          "level": 0,
+          "text": "Ctrl+D — finish entering the job."
+        },
+        {
+          "level": 0,
+          "text": "Remember: at is for one-time future jobs."
+        },
+        {
+          "level": 0,
+          "text": "2. Scheduling jobs using different times"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The time specification tells Linux when the job should run."
+        },
+        {
+          "level": 0,
+          "text": "Examples:"
+        },
+        {
+          "level": 0,
+          "text": "at now +5min"
+        },
+        {
+          "level": 0,
+          "text": "at noon +4 days"
+        },
+        {
+          "level": 0,
+          "text": "at teatime tomorrow"
+        },
+        {
+          "level": 0,
+          "text": "at 15:59"
+        },
+        {
+          "level": 0,
+          "text": "now +5min — five minutes from now."
+        },
+        {
+          "level": 0,
+          "text": "noon +4 days — noon, four days from now."
+        },
+        {
+          "level": 0,
+          "text": "teatime tomorrow — tomorrow at 4:00 PM."
+        },
+        {
+          "level": 0,
+          "text": "15:59 — 3:59 PM today if that time has not passed."
+        },
+        {
+          "level": 0,
+          "text": "You can also provide commands through a file:"
+        },
+        {
+          "level": 0,
+          "text": "at now +5min < myscript"
+        },
+        {
+          "level": 0,
+          "text": "Here, < means read input from a file rather than from the keyboard. The file must contain the commands you want to schedule."
+        },
+        {
+          "level": 0,
+          "text": "Remember: TIMESPEC is the time and date description used by at."
+        },
+        {
+          "level": 0,
+          "text": "3. Listing and inspecting deferred jobs"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: You can check which jobs are waiting and inspect the commands they will execute."
+        },
+        {
+          "level": 0,
+          "text": "List pending jobs:"
+        },
+        {
+          "level": 0,
+          "text": "atq"
+        },
+        {
+          "level": 0,
+          "text": "Or:"
+        },
+        {
+          "level": 0,
+          "text": "at -l"
+        },
+        {
+          "level": 0,
+          "text": "Example output:"
+        },
+        {
+          "level": 0,
+          "text": "28  Mon Feb  2 05:13:00 2015 a user"
+        },
+        {
+          "level": 0,
+          "text": "28 — unique job number."
+        },
+        {
+          "level": 0,
+          "text": "Mon Feb 2 05:13:00 2015 — scheduled execution date and time."
+        },
+        {
+          "level": 0,
+          "text": "a — queue name; a is the default queue."
+        },
+        {
+          "level": 0,
+          "text": "user — the account that owns and runs the job."
+        },
+        {
+          "level": 0,
+          "text": "To inspect job 28:"
+        },
+        {
+          "level": 0,
+          "text": "at -c 28"
+        },
+        {
+          "level": 0,
+          "text": "The output shows the saved environment settings followed by the commands that will run."
+        },
+        {
+          "level": 0,
+          "text": "Permissions: Normal users can manage their own jobs. The root user can manage jobs belonging to all users."
+        },
+        {
+          "level": 0,
+          "text": "Remember: atq lists pending jobs; at -c JOBNUMBER shows the saved job details."
+        }
+      ],
+      "words": 377
+    },
+    {
+      "title": "Part 2 — Scheduling recurring user jobs with cron",
+      "content": [
+        {
+          "level": 0,
+          "text": "4. What are recurring jobs?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A recurring job runs repeatedly according to a schedule."
+        },
+        {
+          "level": 0,
+          "text": "Simple explanation:"
+        },
+        {
+          "level": 0,
+          "text": "Imagine an alarm that rings every morning instead of only once. Linux uses cron to schedule repeated tasks such as backups, reports, and maintenance."
+        },
+        {
+          "level": 0,
+          "text": "crond — the background service that runs scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "cronie — the software package that provides cron functionality."
+        },
+        {
+          "level": 0,
+          "text": "crontab — the command used to manage scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "On a typical RHEL installation, the cron service is enabled and running by default."
+        },
+        {
+          "level": 0,
+          "text": "Remember: at schedules a one-time job; cron schedules repeating jobs."
+        },
+        {
+          "level": 0,
+          "text": "5. Managing your personal crontab"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The crontab command lets you view, edit, and remove your own scheduled jobs."
+        },
+        {
+          "level": 0,
+          "text": "Command"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "crontab -l"
+        },
+        {
+          "level": 0,
+          "text": "List your jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e"
+        },
+        {
+          "level": 0,
+          "text": "Edit your jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -r"
+        },
+        {
+          "level": 0,
+          "text": "Remove all your jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab filename"
+        },
+        {
+          "level": 0,
+          "text": "Replace your jobs with the entries in a file"
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e"
+        },
+        {
+          "level": 0,
+          "text": "This opens your scheduled-job file in an editor, usually Vim unless another editor is configured."
+        },
+        {
+          "level": 0,
+          "text": "Enter one job per line and save the file."
+        },
+        {
+          "level": 0,
+          "text": "Important: crontab -r removes all jobs for the current user. Check them with crontab -l first."
+        },
+        {
+          "level": 0,
+          "text": "The root user can manage another user's crontab with the -u option, for example:"
+        },
+        {
+          "level": 0,
+          "text": "crontab -u student -l"
+        },
+        {
+          "level": 0,
+          "text": "This lists the jobs belonging to student."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Use crontab for user jobs, not for system-wide jobs."
+        },
+        {
+          "level": 0,
+          "text": "6. Understanding the five cron time fields"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The first five fields specify when the command should run; everything after them is the command itself."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "0 9 * * 1-5 /usr/local/bin/daily_report"
+        },
+        {
+          "level": 0,
+          "text": "Read the fields from left to right:"
+        },
+        {
+          "level": 0,
+          "text": "Minute"
+        },
+        {
+          "level": 0,
+          "text": "Hour"
+        },
+        {
+          "level": 0,
+          "text": "Day of month"
+        },
+        {
+          "level": 0,
+          "text": "Month"
+        },
+        {
+          "level": 0,
+          "text": "Weekday"
+        },
+        {
+          "level": 0,
+          "text": "Command: /usr/local/bin/daily_report"
+        },
+        {
+          "level": 0,
+          "text": "0 — at minute zero."
+        },
+        {
+          "level": 0,
+          "text": "9 — at 9 AM."
+        },
+        {
+          "level": 0,
+          "text": "First * — every day of the month."
+        },
+        {
+          "level": 0,
+          "text": "Second * — every month."
+        },
+        {
+          "level": 0,
+          "text": "1-5 — Monday through Friday."
+        },
+        {
+          "level": 0,
+          "text": "Result: The report runs at 9:00 AM every weekday."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Cron's five fields are minute, hour, day of month, month, and day of week."
+        },
+        {
+          "level": 0,
+          "text": "7. Understanding cron symbols"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Symbols let you describe repeating times without writing a separate job for every time."
+        },
+        {
+          "level": 0,
+          "text": "Symbol"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "Example"
+        },
+        {
+          "level": 0,
+          "text": "*"
+        },
+        {
+          "level": 0,
+          "text": "Every value"
+        },
+        {
+          "level": 0,
+          "text": "* in the hour field means every hour"
+        },
+        {
+          "level": 0,
+          "text": "-"
+        },
+        {
+          "level": 0,
+          "text": "A range, including both ends"
+        },
+        {
+          "level": 0,
+          "text": "9-16 means hours 9 through 16"
+        },
+        {
+          "level": 0,
+          "text": ","
+        },
+        {
+          "level": 0,
+          "text": "Selected values"
+        },
+        {
+          "level": 0,
+          "text": "1,3,5 selects three values"
+        },
+        {
+          "level": 0,
+          "text": "*/x"
+        },
+        {
+          "level": 0,
+          "text": "Every x units"
+        },
+        {
+          "level": 0,
+          "text": "*/5 in minutes means every five minutes"
+        },
+        {
+          "level": 0,
+          "text": "Weekday numbers are:"
+        },
+        {
+          "level": 0,
+          "text": "0 or 7 = Sunday"
+        },
+        {
+          "level": 0,
+          "text": "1 = Monday"
+        },
+        {
+          "level": 0,
+          "text": "2 = Tuesday"
+        },
+        {
+          "level": 0,
+          "text": "3 = Wednesday"
+        },
+        {
+          "level": 0,
+          "text": "4 = Thursday"
+        },
+        {
+          "level": 0,
+          "text": "5 = Friday"
+        },
+        {
+          "level": 0,
+          "text": "6 = Saturday"
+        },
+        {
+          "level": 0,
+          "text": "You can also use abbreviations such as Mon, Fri, and Jan."
+        },
+        {
+          "level": 0,
+          "text": "Examples"
+        },
+        {
+          "level": 0,
+          "text": "*/5 * * * * command"
+        },
+        {
+          "level": 0,
+          "text": "Runs every five minutes."
+        },
+        {
+          "level": 0,
+          "text": "0 9 * * 1-5 command"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 9 AM, Monday through Friday."
+        },
+        {
+          "level": 0,
+          "text": "0 8 1,15 * * command"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 8 AM on the first and fifteenth of every month."
+        },
+        {
+          "level": 0,
+          "text": "Remember: * means every value, - means a range, , means selected values, and */x means an interval."
+        },
+        {
+          "level": 0,
+          "text": "8. An important rule: day of month versus day of week"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: When both fields contain specific restrictions, cron runs the job when either field matches."
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "15 12 15 * Fri command"
+        },
+        {
+          "level": 0,
+          "text": "This runs at 12:15 PM on:"
+        },
+        {
+          "level": 0,
+          "text": "The 15th day of every month, or"
+        },
+        {
+          "level": 0,
+          "text": "Every Friday."
+        },
+        {
+          "level": 0,
+          "text": "It does not require both conditions to be true simultaneously."
+        },
+        {
+          "level": 0,
+          "text": "Remember: When both day fields are restricted, cron uses OR logic between them."
+        },
+        {
+          "level": 0,
+          "text": "9. Practical recurring-job examples"
+        },
+        {
+          "level": 0,
+          "text": "Example A — Yearly backup"
+        },
+        {
+          "level": 0,
+          "text": "0 9 2 2 * /usr/local/bin/yearly_backup"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 9 AM every February 2."
+        },
+        {
+          "level": 0,
+          "text": "Example B — Every five minutes during Friday working hours in July"
+        },
+        {
+          "level": 0,
+          "text": "*/5 9-16 * Jul 5 echo \"Chime\""
+        },
+        {
+          "level": 0,
+          "text": "Runs every five minutes from 9:00 AM through 4:55 PM on Fridays in July."
+        },
+        {
+          "level": 0,
+          "text": "echo \"Chime\" prints the word Chime. Because cron may email command output, this message may be emailed to the job owner if mail is configured."
+        },
+        {
+          "level": 0,
+          "text": "Example C — Daily report before midnight on weekdays"
+        },
+        {
+          "level": 0,
+          "text": "58 23 * * 1-5 /usr/local/bin/daily_report"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 11:58 PM, Monday through Friday."
+        },
+        {
+          "level": 0,
+          "text": "Example D — Send an email using mutt"
+        },
+        {
+          "level": 0,
+          "text": "0 9 * * 1-5 mutt -s \"Checking in\" boss@example.com %Hi there boss"
+        },
+        {
+          "level": 0,
+          "text": "Runs at 9 AM on weekdays. The % introduces input for the command, allowing the message body to be supplied through standard input. In a crontab, an unescaped % is treated as a newline."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Read each field from left to right before deciding when a job will run."
+        },
+        {
+          "level": 0,
+          "text": "10. Cron environment and output"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Cron needs to know which shell to use and where to send command output."
+        },
+        {
+          "level": 0,
+          "text": "A crontab can contain comments and environment settings:"
+        },
+        {
+          "level": 0,
+          "text": "# Daily maintenance"
+        },
+        {
+          "level": 0,
+          "text": "SHELL=/bin/bash"
+        },
+        {
+          "level": 0,
+          "text": "MAILTO=root"
+        },
+        {
+          "level": 0,
+          "text": "0 2 * * * /usr/local/bin/cleanup"
+        },
+        {
+          "level": 0,
+          "text": "# — begins a comment."
+        },
+        {
+          "level": 0,
+          "text": "SHELL=/bin/bash — selects Bash for interpreting commands."
+        },
+        {
+          "level": 0,
+          "text": "MAILTO=root — directs emailed job output to root, provided the mail system is configured."
+        },
+        {
+          "level": 0,
+          "text": "0 2 * * * — runs at 2 AM every day."
+        },
+        {
+          "level": 0,
+          "text": "If a command produces output or errors that are not redirected, cron may attempt to email them."
+        },
+        {
+          "level": 0,
+          "text": "Email delivery depends on the system's mail configuration."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Cron commands run in a scheduled environment, not necessarily the same environment as your interactive terminal."
+        }
+      ],
+      "words": 846
+    },
+    {
+      "title": "Part 3 — Scheduling recurring system jobs",
+      "content": [
+        {
+          "level": 0,
+          "text": "11. What are system-wide cron jobs?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: System jobs are recurring tasks configured by administrators to run under a chosen system account."
+        },
+        {
+          "level": 0,
+          "text": "A personal crontab belongs to one user. A system-wide cron entry includes an additional field that specifies which user runs the command."
+        },
+        {
+          "level": 0,
+          "text": "Example file: /etc/cron.d/mybackup"
+        },
+        {
+          "level": 0,
+          "text": "0 2 * * * root /usr/local/bin/backup"
+        },
+        {
+          "level": 0,
+          "text": "This runs the backup command at 2 AM every day as root."
+        },
+        {
+          "level": 0,
+          "text": "The extra root field is important: it appears before the command in system-wide cron files, but not in a user's personal crontab."
+        },
+        {
+          "level": 0,
+          "text": "Where should custom system jobs go?"
+        },
+        {
+          "level": 0,
+          "text": "/etc/crontab — the main system-wide cron file."
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.d/ — separate system-wide cron files, including custom jobs."
+        },
+        {
+          "level": 0,
+          "text": "Prefer placing your own jobs in /etc/cron.d/ rather than modifying /etc/crontab. Package updates may replace the main file, while separate administrator-managed files are easier to maintain."
+        },
+        {
+          "level": 0,
+          "text": "Remember: System-wide cron entries have six parts: five time fields, a username, and a command."
+        },
+        {
+          "level": 0,
+          "text": "12. Hourly, daily, weekly, and monthly scripts"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: RHEL provides special directories for scripts that should run at regular intervals."
+        },
+        {
+          "level": 0,
+          "text": "Directory"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.hourly/"
+        },
+        {
+          "level": 0,
+          "text": "Hourly scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.daily/"
+        },
+        {
+          "level": 0,
+          "text": "Daily scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.weekly/"
+        },
+        {
+          "level": 0,
+          "text": "Weekly scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.monthly/"
+        },
+        {
+          "level": 0,
+          "text": "Monthly scripts"
+        },
+        {
+          "level": 0,
+          "text": "These directories contain executable scripts, not ordinary crontab entries."
+        },
+        {
+          "level": 0,
+          "text": "Make a script executable:"
+        },
+        {
+          "level": 0,
+          "text": "chmod +x myscript"
+        },
+        {
+          "level": 0,
+          "text": "chmod changes permissions."
+        },
+        {
+          "level": 0,
+          "text": "+x adds execute permission."
+        },
+        {
+          "level": 0,
+          "text": "myscript is the script file."
+        },
+        {
+          "level": 0,
+          "text": "The run-parts command runs scripts from these directories. The hourly directory is commonly handled through /etc/cron.d/0hourly; daily, weekly, and monthly jobs are commonly handled through /etc/anacrontab."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Put a script in the correct interval directory and make sure it is executable."
+        },
+        {
+          "level": 0,
+          "text": "13. What is Anacron?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Anacron helps periodic system jobs run even if the computer was off when they were due."
+        },
+        {
+          "level": 0,
+          "text": "Imagine a computer that is shut down overnight. A daily maintenance job might miss its normal schedule. Anacron helps the system catch up after it becomes available again."
+        },
+        {
+          "level": 0,
+          "text": "In RHEL 7 and later, the regular crond service also processes /etc/anacrontab; a separate Anacron service is not required for this role."
+        },
+        {
+          "level": 0,
+          "text": "Example entry:"
+        },
+        {
+          "level": 0,
+          "text": "1 5 daily-task /usr/local/bin/cleanup"
+        },
+        {
+          "level": 0,
+          "text": "Field"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "1"
+        },
+        {
+          "level": 0,
+          "text": "Run every one day"
+        },
+        {
+          "level": 0,
+          "text": "5"
+        },
+        {
+          "level": 0,
+          "text": "Wait five minutes before starting"
+        },
+        {
+          "level": 0,
+          "text": "daily-task"
+        },
+        {
+          "level": 0,
+          "text": "Job identifier"
+        },
+        {
+          "level": 0,
+          "text": "/usr/local/bin/cleanup"
+        },
+        {
+          "level": 0,
+          "text": "Command to run"
+        },
+        {
+          "level": 0,
+          "text": "The @daily macro is equivalent to a one-day interval, and @weekly is equivalent to seven days."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Anacron helps recover missed periodic jobs, rather than relying only on an exact clock time."
+        },
+        {
+          "level": 0,
+          "text": "14. Anacron time limits and tracking"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Anacron uses time windows and timestamps to decide when a job can run and whether it is due."
+        },
+        {
+          "level": 0,
+          "text": "The START_HOURS_RANGE setting in /etc/anacrontab specifies the hours when jobs are allowed to start. If a job cannot start within that window, it waits until the next day."
+        },
+        {
+          "level": 0,
+          "text": "Files under /var/spool/anacron/ track when daily, weekly, and monthly jobs last ran."
+        },
+        {
+          "level": 0,
+          "text": "Think of these files as a checklist showing when each periodic task was last completed."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Anacron uses its schedule, allowed start window, and recorded timestamps to decide when to run jobs."
+        },
+        {
+          "level": 0,
+          "text": "15. What are systemd timers?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A systemd timer schedules another systemd unit, often a service, to start at a specified time or interval."
+        },
+        {
+          "level": 0,
+          "text": "For example, the sysstat package provides a timer that collects system activity information every ten minutes."
+        },
+        {
+          "level": 0,
+          "text": "Example timer setting:"
+        },
+        {
+          "level": 0,
+          "text": "[Timer]"
+        },
+        {
+          "level": 0,
+          "text": "OnCalendar=*:00/10"
+        },
+        {
+          "level": 0,
+          "text": "[Timer] — the timer configuration section."
+        },
+        {
+          "level": 0,
+          "text": "OnCalendar=*:00/10 — schedule activation every ten minutes."
+        },
+        {
+          "level": 0,
+          "text": "The matching service unit performs the actual work."
+        },
+        {
+          "level": 0,
+          "text": "Another option is:"
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec=15min"
+        },
+        {
+          "level": 0,
+          "text": "This schedules the associated unit for activation 15 minutes after its previous activation."
+        },
+        {
+          "level": 0,
+          "text": "A timer is like an alarm clock, while the service is the worker that performs the task."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The timer decides when to activate the service; the service defines what work gets done."
+        },
+        {
+          "level": 0,
+          "text": "16. Safely changing systemd timer configuration"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Store administrator changes under /etc/systemd/system/ so package updates do not overwrite the original vendor configuration."
+        },
+        {
+          "level": 0,
+          "text": "Vendor-provided unit files are commonly stored under:"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/systemd/system/"
+        },
+        {
+          "level": 0,
+          "text": "Do not edit those files directly. Instead, create an appropriate administrator-managed copy or override under /etc/systemd/system/."
+        },
+        {
+          "level": 0,
+          "text": "After making the change:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now mytask.timer"
+        },
+        {
+          "level": 0,
+          "text": "daemon-reload — tells systemd to reread unit configuration."
+        },
+        {
+          "level": 0,
+          "text": "enable — configures automatic startup at boot."
+        },
+        {
+          "level": 0,
+          "text": "--now — starts the timer immediately."
+        },
+        {
+          "level": 0,
+          "text": "mytask.timer — the timer unit to activate."
+        },
+        {
+          "level": 0,
+          "text": "If files with the same name exist in both locations, the administrator configuration under /etc/systemd/system/ takes precedence."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Customize under /etc, reload systemd, then enable and start the timer."
+        }
+      ],
+      "words": 715
+    },
+    {
+      "title": "Part 4 — Managing temporary files",
+      "content": [
+        {
+          "level": 0,
+          "text": "17. What are temporary files?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Temporary files hold data that applications or services need for a short time."
+        },
+        {
+          "level": 0,
+          "text": "Examples include:"
+        },
+        {
+          "level": 0,
+          "text": "/tmp — temporary data used by applications and users."
+        },
+        {
+          "level": 0,
+          "text": "/run — runtime information used by services and other processes."
+        },
+        {
+          "level": 0,
+          "text": "Much of /run is stored in memory. This is called volatile storage, meaning its contents are lost when the system reboots or loses power."
+        },
+        {
+          "level": 0,
+          "text": "Linux must create required temporary directories when needed and remove old files so they do not waste storage or leave outdated information behind."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Temporary data helps applications work, but old data may need cleaning."
+        },
+        {
+          "level": 0,
+          "text": "18. What is systemd-tmpfiles?"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: systemd-tmpfiles creates, removes, and manages temporary files and directories according to configuration rules."
+        },
+        {
+          "level": 0,
+          "text": "When RHEL starts, an early service runs:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --create --remove"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles — the management tool."
+        },
+        {
+          "level": 0,
+          "text": "--create — creates configured files and directories when needed."
+        },
+        {
+          "level": 0,
+          "text": "--remove — removes items marked for removal in the configuration."
+        },
+        {
+          "level": 0,
+          "text": "It reads configuration files from:"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Think of it as a maintenance worker following a written checklist."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The configuration defines what should be created, removed, or have its permissions corrected."
+        },
+        {
+          "level": 0,
+          "text": "19. Automatically cleaning temporary files"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: A systemd timer regularly triggers a service that removes temporary files that have exceeded their configured age."
+        },
+        {
+          "level": 0,
+          "text": "The timer is:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles-clean.timer"
+        },
+        {
+          "level": 0,
+          "text": "It activates:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles-clean.service"
+        },
+        {
+          "level": 0,
+          "text": "That service runs:"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "To inspect the timer configuration:"
+        },
+        {
+          "level": 0,
+          "text": "systemctl cat systemd-tmpfiles-clean.timer"
+        },
+        {
+          "level": 0,
+          "text": "Two important timer settings are:"
+        },
+        {
+          "level": 0,
+          "text": "OnBootSec=15min"
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec=1d"
+        },
+        {
+          "level": 0,
+          "text": "OnBootSec=15min — schedule the first activation 15 minutes after boot."
+        },
+        {
+          "level": 0,
+          "text": "OnUnitActiveSec=1d — schedule another activation one day after the associated unit was last activated."
+        },
+        {
+          "level": 0,
+          "text": "Changing the interval to 30min makes subsequent activations occur every 30 minutes after the timer configuration is applied, subject to timer and service behavior."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The timer schedules cleanup; the service performs it."
+        },
+        {
+          "level": 0,
+          "text": "20. Cleaning temporary files manually"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: You can run the cleanup command yourself instead of waiting for the timer."
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "The tool checks the configured age limits and removes eligible files. It does not automatically delete every temporary file."
+        },
+        {
+          "level": 0,
+          "text": "For example, a configuration can specify that files older than one day should be removed during cleanup."
+        },
+        {
+          "level": 0,
+          "text": "Remember: --clean applies the cleanup rules already defined in the configuration files."
+        },
+        {
+          "level": 0,
+          "text": "21. Understanding the seven tmpfiles fields"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: Each tmpfiles rule describes the action, path, permissions, ownership, age, and optional extra information."
+        },
+        {
+          "level": 0,
+          "text": "The general format is:"
+        },
+        {
+          "level": 0,
+          "text": "Type Path Mode UID GID Age Argument"
+        },
+        {
+          "level": 0,
+          "text": "Example:"
+        },
+        {
+          "level": 0,
+          "text": "d /run/systemd/seats 0755 root root -"
+        },
+        {
+          "level": 0,
+          "text": "Field"
+        },
+        {
+          "level": 0,
+          "text": "Meaning"
+        },
+        {
+          "level": 0,
+          "text": "d"
+        },
+        {
+          "level": 0,
+          "text": "Create the directory if it does not exist"
+        },
+        {
+          "level": 0,
+          "text": "/run/systemd/seats"
+        },
+        {
+          "level": 0,
+          "text": "Directory path"
+        },
+        {
+          "level": 0,
+          "text": "0755"
+        },
+        {
+          "level": 0,
+          "text": "Permissions"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "Owner"
+        },
+        {
+          "level": 0,
+          "text": "root"
+        },
+        {
+          "level": 0,
+          "text": "Group"
+        },
+        {
+          "level": 0,
+          "text": "-"
+        },
+        {
+          "level": 0,
+          "text": "No age limit specified"
+        },
+        {
+          "level": 0,
+          "text": "No value"
+        },
+        {
+          "level": 0,
+          "text": "No additional argument"
+        },
+        {
+          "level": 0,
+          "text": "0755 means the owner can read, write, and enter the directory, while group members and others can read and enter it."
+        },
+        {
+          "level": 0,
+          "text": "22. Important tmpfiles rule types"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: The type letter tells systemd-tmpfiles what action to perform."
+        },
+        {
+          "level": 0,
+          "text": "Example A — Create a directory"
+        },
+        {
+          "level": 0,
+          "text": "d /run/systemd/seats 0755 root root -"
+        },
+        {
+          "level": 0,
+          "text": "Creates the directory if necessary, with the specified ownership and permissions. This rule does not set an age-based cleanup limit."
+        },
+        {
+          "level": 0,
+          "text": "Example B — Create and clean a directory"
+        },
+        {
+          "level": 0,
+          "text": "D /home/student 0700 student student 1d"
+        },
+        {
+          "level": 0,
+          "text": "Creates the directory if needed and allows its contents to be cleaned according to the one-day age rule."
+        },
+        {
+          "level": 0,
+          "text": "Example C — Create a symbolic link"
+        },
+        {
+          "level": 0,
+          "text": "L /run/fstablink - root root - /etc/fstab"
+        },
+        {
+          "level": 0,
+          "text": "Creates /run/fstablink pointing to /etc/fstab. A symbolic link is like a shortcut to another file."
+        },
+        {
+          "level": 0,
+          "text": "Example D — Restore security settings"
+        },
+        {
+          "level": 0,
+          "text": "The type Z recursively restores SELinux contexts, file permissions, and ownership according to the rule."
+        },
+        {
+          "level": 0,
+          "text": "Remember: The type determines the action; the remaining fields tell the tool where and how to apply it."
+        },
+        {
+          "level": 0,
+          "text": "23. Configuration file precedence"
+        },
+        {
+          "level": 0,
+          "text": "Main idea: If configuration files have the same name, the file in the higher-priority location takes precedence."
+        },
+        {
+          "level": 0,
+          "text": "Location"
+        },
+        {
+          "level": 0,
+          "text": "Purpose"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Administrator settings"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Temporary runtime settings"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "Package-provided defaults"
+        },
+        {
+          "level": 0,
+          "text": "The priority is:"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/ — highest"
+        },
+        {
+          "level": 0,
+          "text": "/run/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "/usr/lib/tmpfiles.d/ — lowest"
+        },
+        {
+          "level": 0,
+          "text": "For example, if a package provides a configuration file under /usr/lib/tmpfiles.d/, an administrator can create a file with the same name under /etc/tmpfiles.d/ to override it."
+        },
+        {
+          "level": 0,
+          "text": "Avoid editing package-provided files directly because package updates may replace them."
+        },
+        {
+          "level": 0,
+          "text": "Remember: Put your custom tmpfiles rules under /etc/tmpfiles.d/."
+        }
+      ],
+      "words": 691
+    },
+    {
+      "title": "Final revision — Commands and concepts to remember",
+      "content": [
+        {
+          "level": 0,
+          "text": "Task"
+        },
+        {
+          "level": 0,
+          "text": "Command or location"
+        },
+        {
+          "level": 0,
+          "text": "Schedule a one-time job"
+        },
+        {
+          "level": 0,
+          "text": "at"
+        },
+        {
+          "level": 0,
+          "text": "List pending one-time jobs"
+        },
+        {
+          "level": 0,
+          "text": "atq"
+        },
+        {
+          "level": 0,
+          "text": "Inspect a scheduled job"
+        },
+        {
+          "level": 0,
+          "text": "at -c JOBNUMBER"
+        },
+        {
+          "level": 0,
+          "text": "List personal cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -l"
+        },
+        {
+          "level": 0,
+          "text": "Edit personal cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -e"
+        },
+        {
+          "level": 0,
+          "text": "Remove personal cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "crontab -r"
+        },
+        {
+          "level": 0,
+          "text": "Configure system cron jobs"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.d/"
+        },
+        {
+          "level": 0,
+          "text": "Run interval-based scripts"
+        },
+        {
+          "level": 0,
+          "text": "/etc/cron.hourly/, /etc/cron.daily/, etc."
+        },
+        {
+          "level": 0,
+          "text": "Configure periodic catch-up jobs"
+        },
+        {
+          "level": 0,
+          "text": "/etc/anacrontab"
+        },
+        {
+          "level": 0,
+          "text": "Reload systemd configuration"
+        },
+        {
+          "level": 0,
+          "text": "systemctl daemon-reload"
+        },
+        {
+          "level": 0,
+          "text": "Enable and start a timer"
+        },
+        {
+          "level": 0,
+          "text": "systemctl enable --now NAME.timer"
+        },
+        {
+          "level": 0,
+          "text": "Create or remove configured temporary files"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --create --remove"
+        },
+        {
+          "level": 0,
+          "text": "Clean eligible temporary files"
+        },
+        {
+          "level": 0,
+          "text": "systemd-tmpfiles --clean"
+        },
+        {
+          "level": 0,
+          "text": "Configure temporary-file rules"
+        },
+        {
+          "level": 0,
+          "text": "/etc/tmpfiles.d/"
+        },
+        {
+          "level": 0,
+          "text": "The whole chapter in one sentence"
+        },
+        {
+          "level": 0,
+          "text": "Use at for one-time future tasks, cron for recurring schedules, Anacron to help periodic jobs catch up after downtime, systemd timers to activate systemd units, and systemd-tmpfiles to manage temporary files."
+        }
+      ],
+      "words": 125
+    }
+  ],
+  "labs": 0,
+  "quizzes": 0,
+  "services": 0
+}

@@ -98,7 +98,6 @@ const MARKERS = [
   /^\s*(?:Step\s+\d+|First|Second|Third|Next|Then|Finally|Lastly)\s*[,.:\u2014\u2013-]\s*(?=[A-Z0-9])/i,
   /^\s*[-\u2022]\s+(?=\S)/,
   /^\s*\d+[.)]\s+(?=\S)/,
-  /^\s*#{1,6}\s+(?=\S)/,
 ];
 
 /**

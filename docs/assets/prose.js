@@ -425,6 +425,24 @@ export function classifyBlock(block) {
   if (level === 2 || level === 3) return { type: "subheading", level, text: t };
   if (level === 4) return { type: "minorheading", level, text: t };
 
+  /*
+   * A level-0 block that opens with "# " is a shell or config comment, not a
+   * Markdown heading.
+   *
+   * The line classifier treats "# title" as a heading because that is how
+   * Markdown writes one, and the library book chunks need that. In the study
+   * blocks it is wrong every time: all 47 such blocks in the corpus are
+   * comments - "# in /etc/ssh/sshd_config:", "# internal leg - static, matches
+   * the lab network", "# The authenticity of host 'servera' can't be
+   * established". They were being rendered as <h3> and, because the reader
+   * builds its contents list from the headings it finds, chapter 2's contents
+   * offered "Daily maintenance" and "- begins a comment." as sections.
+   *
+   * Structured blocks carry their own `level`, so a real heading in this corpus
+   * arrives with level 2, 3 or 4 and never needs this guess.
+   */
+  if (level === 0 && /^#\s+\S/.test(t)) return { type: "config", level, text: t };
+
   return { type: classify(t), level, text: t };
 }
 

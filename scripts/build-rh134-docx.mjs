@@ -79,6 +79,29 @@ const flush = () => {
   }
 };
 
+/**
+ * A chapter title that the source wrote as a paragraph instead of a heading.
+ *
+ * The extract contains, as ordinary body text with no [H1] marker:
+ *
+ *     Chapter 2: Scheduling Future Tasks - Complete Simple Notes
+ *
+ * Everything after it is [H2] "Part 1 - Scheduling one-time jobs with at",
+ * "Part 2 - Scheduling recurring user jobs with cron", and so on. Because the
+ * title carried no heading marker, chapter detection - which only looks at
+ * level 1 blocks - never fired for it, so all four scheduling sections were
+ * appended to the end of Chapter 1, after Chapter 1's own review. The shipped
+ * units therefore ran 1, 3, 4 ... 13 with no Chapter 2 anywhere, and crontab
+ * sat under "Improving Command-Line Productivity".
+ *
+ * The text is unambiguously a chapter title: it opens with "Chapter N:", it
+ * stands alone as its own paragraph, and it is followed by chapter-level
+ * divisions. Promoting it is recovering the source's own structure, not
+ * inventing one. It is only promoted when no paragraph is currently open, so a
+ * sentence that happens to begin "Chapter 3:" mid-paragraph is untouched.
+ */
+const CHAPTER_TITLE_PARA = /^(?:RH134\s+)?Chapter\s+(\d+)\s*[:\u2014\u2013-]/i;
+
 for (const line of raw) {
   const h = line.match(/^\s*\[H(\d)\]\s*(.*)$/);
   if (h) {
@@ -86,6 +109,9 @@ for (const line of raw) {
     blocks.push({ level: Number(h[1]), text: sanitise(h[2].trim()) });
   } else if (!line.trim()) {
     flush();
+  } else if (!para.length && CHAPTER_TITLE_PARA.test(line.trim())) {
+    flush();
+    blocks.push({ level: 1, text: sanitise(line.trim()) });
   } else {
     para.push(line.trim());
   }
@@ -164,10 +190,68 @@ function sectionsOf(ch) {
       words: words({ content: lead.map((t) => ({ level: 0, text: t })) }),
     });
   }
+  return mergeTableFragments(out);
+}
+
+/**
+ * Fold table fragments back into the section they belong to.
+ *
+ * A table in the source is extracted as a run of paragraphs, and a line that
+ * looks like a table row can be picked up as a heading. The crontab field
+ * table did exactly that, producing sections literally titled
+ *
+ *     "0"   "9"   "*"   "*"   "1-5"
+ *
+ * and dumping 580 words - the whole explanation of the five time fields -
+ * under a section called "1-5". Those rows are table data, not structure, and
+ * leaving them as sections put five junk entries in the chapter's contents
+ * list and five junk headings in the reader's.
+ *
+ * The test is deliberately narrow: a title made only of digits and table
+ * punctuation, with no letters at all. A real heading has words in it, so
+ * nothing legitimate is caught.
+ */
+const TABLE_FRAGMENT_TITLE = /^[\d*\-,.:/ ]*$/;
+
+/** Word count for a section's blocks. The `words` helper is local to sectionsOf. */
+const countWords = (content) =>
+  content.reduce((a, c) => a + String(c.text || "").split(/\s+/).filter(Boolean).length, 0);
+
+function mergeTableFragments(list) {
+  const out = [];
+  for (const s of list) {
+    const prev = out[out.length - 1];
+    const isFragment =
+      TABLE_FRAGMENT_TITLE.test(s.title) &&
+      s.title.trim() !== "" &&
+      s.title.length <= 12 &&
+      prev !== undefined;
+    if (isFragment) {
+      prev.content = prev.content.concat(s.content);
+      prev.words = countWords(prev.content);
+      continue;
+    }
+    out.push(s);
+  }
   return out;
 }
 
 /* ------------------------------------------------------------ write units */
+
+/**
+ * Normalise a chapter title: drop the course code, drop a trailing
+ * "- Complete Simple Notes" style suffix, and settle the separator.
+ *
+ * The suffix is document furniture: "Chapter 2: Scheduling Future Tasks -
+ * Complete Simple Notes" is the same title as "Chapter 2: Scheduling Future
+ * Tasks", and the app already renders the title in its own normal form.
+ */
+function cleanTitle(t) {
+  return String(t)
+    .replace(/^RH134\s+[-\u2014\u2013]?\s*/i, "")
+    .replace(/\s*[-–—]\s*Complete Simple Notes\s*$/i, "")
+    .trim();
+}
 
 const units = [];
 for (const ch of chapters) {
@@ -180,8 +264,8 @@ for (const ch of chapters) {
     n: ch.n,
     sourceNumber: ch.n,
     kind: "chapter",
-    title: ch.title.replace(/^RH134\s+[-–—]?\s*/i, "").trim(),
-    display: ch.title.replace(/^RH134\s+[-–—]?\s*/i, "").trim(),
+    title: cleanTitle(ch.title),
+    display: cleanTitle(ch.title),
     exam: "RHCSA (EX200)",
     words,
     sections,
