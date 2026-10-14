@@ -66,6 +66,16 @@ const ICON_PATHS = {
     // icon() falls back to the book glyph for an unknown name, so without
     // this the button would have shown a book and meant nothing.
     up: ["M12 19V5", "M5 12l7-7 7 7"],
+  // Added for the sidebar redesign. The set had no house, no progress chart
+  // and no bookmark, and icon() silently falls back to the book glyph for an
+  // unknown name - so a sidebar of "icons" would have been six identical books,
+  // which looks worse than no icons at all.
+  home: ["M3 10.5 12 3l9 7.5", "M5 9.5V20h5v-6h4v6h5V9.5"],
+  progress: ["M4 19h16", "M7 16V9", "M12 16V5", "M17 16v-4"],
+  quiz: ["M9 4h6v3H9z", "M9 5.5H6a1 1 0 0 0-1 1V20h14V6.5a1 1 0 0 0-1-1h-3",
+         "M8.5 13l2.2 2.2L15.5 10.5"],
+  project: ["M3 8h18v12H3z", "M9 8V5h6v3", "M3 13h18"],
+  bookmark: ["M6 3h12v18l-6-5-6 5z"],
 };
 
 export function icon(name, cls) {

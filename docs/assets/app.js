@@ -14,11 +14,21 @@ import * as SV from "./subject-views.js";
 import { route, start, resolve, href, currentRoute } from "./router.js";
 
 const main = document.getElementById("main");
-const navPrimary = document.getElementById("navPrimary");
+/*
+ * Five lists now, not four. The old "#navPrimary" held the mixed top-level
+ * rows; those are split into the rows above the accordions (#navTop) and the
+ * rows below them (#navTop2), so the accordions sit between the two without
+ * anything being nested inside a group it does not belong to.
+ *
+ * #navPractice and #navProject were the same element for a while, reached
+ * through two names, which is why clearing one silently emptied the other.
+ * They are separate lists now and each has exactly one name.
+ */
+const navTop = document.getElementById("navTop");
+const navTop2 = document.getElementById("navTop2");
 const navSubjects = document.getElementById("navSubjects");
-const navPractice = document.getElementById("navProject");
-const navProject = navPractice;
 const navPracticeList = document.getElementById("navPractice");
+const navProject = document.getElementById("navProject");
 
 const SUBJECT_ORDER = ["aplus", "cisco", "mikrotik", "win11", "winserver", "rhel"];
 
@@ -73,28 +83,49 @@ async function loadCorpus() {
 
 /* ------------------------------------------------------------------ nav */
 
+/**
+ * One navigation row.
+ *
+ * `opts.icon`   a glyph name from ui.js ICON_PATHS, for the top-level items
+ * `opts.dot`    the subject colour dot, for the subject list
+ * `opts.count`  a number, rendered as a pill badge rather than as loose text
+ *
+ * The count used to be bare text pushed to the right edge with
+ * `margin-left: auto`, which is why the numbers read as stray characters
+ * floating at the edge of the column rather than as part of the label.
+ */
 function navLink(label, routeStr, opts = {}) {
-  const a = h("a.navlink", { href: href(routeStr) },
-    opts.dot ? h("span.navlink__dot", { style: { "--dot": opts.dot } }) : null,
-    h("span", label),
-    opts.count !== undefined ? h("span.navlink__count", String(opts.count)) : null);
+  const a = h("a.navlink", { href: href(routeStr) });
+  if (opts.icon) a.appendChild(icon(opts.icon, "navlink__icon"));
+  if (opts.dot) a.appendChild(h("span.navlink__dot", { style: { "--dot": opts.dot } }));
+  a.appendChild(h("span.navlink__label", label));
+  if (opts.count !== undefined && opts.count !== null && opts.count !== "") {
+    a.appendChild(h("span.navlink__count", String(opts.count)));
+  }
   return h("li", a);
 }
 
+/*
+ * Top-level rows sit flush left with an icon. Sub-items sit indented under
+ * their group with a guide line, so the hierarchy is visible without reading
+ * the labels - which was the complaint: RHEL, Commands and Simple Notes looked
+ * exactly like Home and Bookmarks did.
+ */
 function buildNav() {
   const st = search.searchStats();
   const kmSessions = corpus && corpus.km ? corpus.km.totalSessions : 146;
+  const studyUnits = corpus && corpus.study
+    ? corpus.study.books.reduce((a, b) => a + (b.units || []).length, 0)
+    : 39;
 
-  clear(navPrimary);
-  // Subject-first. The brief asks for a restrained primary nav: what a learner
-  // wants most is "which subject" and "what do I practise". Everything that
-  // crosses subjects (commands, study manuals, certification, knowledge map)
-  // moves to the grouped lists below rather than crowding the top row.
-  navPrimary.appendChild(navLink("Home", ""));
-  navPrimary.appendChild(navLink("Subjects", "subjects"));
-  navPrimary.appendChild(navLink("Practice", "scenarios"));
-  navPrimary.appendChild(navLink("Quizzes", "quizzes", { count: st.quizzes }));
-  navPrimary.appendChild(navLink("Projects", "projects", { count: st.projects }));
+  clear(navTop);
+  navTop.appendChild(navLink("Home", "", { icon: "home" }));
+
+  clear(navTop2);
+  navTop2.appendChild(navLink("My progress", "progress", { icon: "progress" }));
+  navTop2.appendChild(navLink("Quizzes", "quizzes", { icon: "quiz", count: st.quizzes }));
+  navTop2.appendChild(navLink("Projects", "projects", { icon: "project", count: st.projects }));
+  navTop2.appendChild(navLink("Bookmarks", "bookmarks", { icon: "bookmark" }));
 
   clear(navSubjects);
   for (const s of SUBJ.SUBJECTS) {
@@ -104,12 +135,8 @@ function buildNav() {
   clear(navPracticeList);
   navPracticeList.appendChild(navLink("Troubleshooting", "scenarios", { count: st.scenarios }));
   navPracticeList.appendChild(navLink("Commands", "commands", { count: st.commands }));
-  navPracticeList.appendChild(navLink("Study manuals", "study", { count: corpus && corpus.study ? corpus.study.books.reduce((a, b) => a + (b.units || []).length, 0) : 39 }));
+  navPracticeList.appendChild(navLink("Study manuals", "study", { count: studyUnits }));
   navPracticeList.appendChild(navLink("Knowledge Map", "km", { count: kmSessions }));
-  navPracticeList.appendChild(navLink("Bookmarks", "bookmarks"));
-  navPracticeList.appendChild(navLink("My progress", "progress"));
-
-  clear(navProject);
 
   clear(navProject);
   navProject.appendChild(navLink("Simple Notes", "notes"));

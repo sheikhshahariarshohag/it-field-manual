@@ -50,24 +50,25 @@
 
   <nav class="sidenav" id="sidenav" aria-label="Sections">
     <div class="sidenav__scroll">
-      <!--
-        Each group is a real block: a heading with a button inside it that
-        collapses the list beneath, and a bordered panel so the groups are
-        visibly separate things.
 
-        The headings used to be bare <p> elements with a 16px margin. With no
-        rule, no panel and no gap distinct from the gap between items, four
-        groups ran together into one list and there was nothing to collapse.
+      <!--
+        Structure, top level first:
+
+          Home                            link, flush left
+          Subjects          (accordion)   RHEL .. CompTIA A+
+          Practice          (accordion)   Troubleshooting .. Knowledge Map
+          Reference         (accordion)   Simple Notes .. Verification status
+          My progress                     link, flush left
+          Quizzes / Projects / Bookmarks  links, flush left
+
+        The group labels are NOT boxes, and not buttons that look like links.
+        The previous version gave each group a bordered panel with its own
+        hover state, which made the headings read as clickable items that
+        happened to be full width - and there was then no way to tell a
+        section header from a destination. They are now plain uppercase text
+        with a small chevron, and the chevron is the only control-shaped thing.
       -->
-      <section class="sidenav__block" data-group="primary">
-        <h2 class="sidenav__group">
-          <button class="sidenav__toggle" type="button" aria-expanded="true" aria-controls="navPrimary">
-            <span class="sidenav__chev" aria-hidden="true"></span>
-            <span class="sidenav__gname">Field manual</span>
-          </button>
-        </h2>
-        <ul class="sidenav__list" id="navPrimary"></ul>
-      </section>
+      <ul class="sidenav__list sidenav__list--top" id="navTop"></ul>
 
       <section class="sidenav__block" data-group="subjects">
         <h2 class="sidenav__group">
@@ -76,7 +77,7 @@
             <span class="sidenav__gname">Subjects</span>
           </button>
         </h2>
-        <ul class="sidenav__list" id="navSubjects"></ul>
+        <ul class="sidenav__list sidenav__list--sub" id="navSubjects"></ul>
       </section>
 
       <section class="sidenav__block" data-group="practice">
@@ -86,7 +87,7 @@
             <span class="sidenav__gname">Practice</span>
           </button>
         </h2>
-        <ul class="sidenav__list" id="navPractice"></ul>
+        <ul class="sidenav__list sidenav__list--sub" id="navPractice"></ul>
       </section>
 
       <section class="sidenav__block" data-group="reference">
@@ -96,8 +97,10 @@
             <span class="sidenav__gname">Reference</span>
           </button>
         </h2>
-        <ul class="sidenav__list" id="navProject"></ul>
+        <ul class="sidenav__list sidenav__list--sub" id="navProject"></ul>
       </section>
+
+      <ul class="sidenav__list sidenav__list--top sidenav__list--top2" id="navTop2"></ul>
 
       <div class="sidenav__foot">
         <div class="netstat" id="netstat" aria-live="polite"></div>
