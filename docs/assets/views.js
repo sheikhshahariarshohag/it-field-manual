@@ -17,7 +17,7 @@ export const TECH = {
   mikrotik: { label: "MikroTik",       varName: "--tech-mikrotik" },
   win11:    { label: "Windows 11",     varName: "--tech-win11" },
   winserver:{ label: "Windows Server", varName: "--tech-winserver" },
-  rhel:     { label: "RHEL 10",        varName: "--tech-rhel" },
+  rhel:     { label: "RHEL",            varName: "--tech-rhel" },
   cross:    { label: "Cross-domain",   varName: "--tech-cross" },
 };
 
@@ -795,6 +795,62 @@ export function projectView(params) {
     wrap.appendChild(body);
   }
   wrap.appendChild(h("div.btnrow", h("button.btn.btn--primary", { onclick: () => markDone(d) }, "Mark this done")));
+  return wrap;
+}
+
+/* ================================================================== guides */
+
+/**
+ * Central index of certification guides.
+ *
+ * A filtered view of library.json, the same records RHEL -> Certification
+ * Preparation reads. Not a second copy: the guide body is fetched from one
+ * place whichever route you arrived by.
+ */
+export function guidesView() {
+  const wrap = h("div");
+  const lib = search.CORPUS.library;
+  const books = lib && lib.books ? lib.books : [];
+  const exams = (search.CORPUS.objectives && search.CORPUS.objectives.exams) || [];
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Certification guides"),
+    h("p", "Exam syllabi and study guides. Each subject also links to its own " +
+           "certification page — these are the same records."),
+  ));
+
+  if (!books.length && !exams.length) {
+    wrap.appendChild(h("div.empty",
+      h("h2", "Nothing indexed"),
+      h("p", "No certification material has been indexed yet.")));
+    return wrap;
+  }
+
+  if (books.length) {
+    wrap.appendChild(h("h2", "Study guides"));
+    const list = h("div.sub-grid");
+    for (const b of books) {
+      const subject = TECH[b.subject] ? TECH[b.subject].label : "";
+      list.appendChild(h("a.sub-card", { href: href(`library/${b.id}`) },
+        h("span.sub-card__k", subject || "Guide"),
+        h("span.sub-card__n", String((b.chapters || []).length)),
+        h("span.sub-card__d", b.title),
+      ));
+    }
+    wrap.appendChild(list);
+  }
+
+  if (exams.length) {
+    wrap.appendChild(h("h2", "Exam objectives"));
+    const list = h("ul.res-list");
+    for (const e of exams) {
+      list.appendChild(h("li",
+        h("a", { href: href("objectives") }, e.code || e.id || e.title),
+        h("span.res-row__m", e.title || ""),
+      ));
+    }
+    wrap.appendChild(list);
+  }
   return wrap;
 }
 

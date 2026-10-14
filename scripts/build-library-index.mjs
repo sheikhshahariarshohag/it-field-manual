@@ -29,38 +29,6 @@ const ROOT = resolve(fileURLToPath(new URL(".", import.meta.url)), "..");
 const SRC = join(ROOT, "private", "library");
 const OUT = join(ROOT, "docs", "data", "library.json");
 
-/* ------------------------------------------------------------ CCNA book */
-
-/**
- * The Sybex table of contents reads like:
- *   Chapter 1         Network Fundamentals                                1
- *   Chapter 2         TCP/IP                                             29
- * A trailing number is the page. Chapter bodies also repeat the header, so
- * only the first occurrence of each chapter number is kept.
- */
-function parseCcna(text) {
-  const lines = text.split(/\f/);        // form feed = page boundary
-  const pageOf = (idx) => idx + 1;
-  const chapters = [];
-  const seen = new Set();
-
-  lines.forEach((page, pi) => {
-    for (const line of page.split("\n")) {
-      const m = line.match(/^\s*Chapter\s+(\d+)\s+(.+?)\s{2,}(\d{1,4})\s*$/);
-      if (!m) continue;
-      const n = Number(m[1]);
-      if (seen.has(n)) continue;
-      const title = m[2].trim();
-      if (!title || title.length > 80) continue;
-      seen.add(n);
-      chapters.push({ n, title, page: Number(m[3]) });
-    }
-  });
-
-  chapters.sort((a, b) => a.n - b.n);
-  return { chapters, pageCount: lines.length };
-}
-
 /* ------------------------------------------------------- RHCSA guide */
 
 /**
@@ -143,7 +111,6 @@ if (!ccnaText || !rhcsaText) {
   process.exit(1);
 }
 
-const ccna = parseCcna(ccnaText);
 const rhcsa = parseRhcsa(rhcsaText);
 
 const doc = {
@@ -158,15 +125,6 @@ const doc = {
   built: new Date().toISOString().slice(0, 10),
   books: [
     {
-      id: "ccna",
-      subject: "cisco",
-      title: "CCNA Certification Study Guide: Exam 200-301",
-      author: "Todd Lammle",
-      note: "Chapter list from the book's own table of contents.",
-      pages: ccna.pageCount,
-      chapters: ccna.chapters,
-    },
-    {
       id: "rhcsa",
       subject: "rhel",
       title: "RHCSA Certification Study Guide",
@@ -180,8 +138,8 @@ const doc = {
 
 writeFileSync(OUT, JSON.stringify(doc, null, 2), "utf8");
 
-console.log(`  CCNA   : ${ccna.chapters.length} chapters, ${ccna.pageCount} pages`);
-for (const c of ccna.chapters) console.log(`      ch${String(c.n).padStart(2)} p.${String(c.page).padStart(4)}  ${c.title}`);
+
+
 console.log(`  RHCSA  : ${rhcsa.chapters.length} modules, ${rhcsa.pageCount} pages`);
 for (const c of rhcsa.chapters) console.log(`      m${String(c.n).padStart(2)} p.${String(c.page).padStart(4)}  ${c.title} (${c.sections.length} sections)`);
 console.log(`\n  written -> docs/data/library.json (${Math.round(statSync(OUT).size / 1024)} KB)`);

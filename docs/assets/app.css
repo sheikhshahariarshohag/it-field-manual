@@ -1238,3 +1238,147 @@ html[data-theme="dark"] {
 @media (prefers-reduced-motion: reduce) {
   .totop { transition: opacity .18s ease, visibility .18s; transform: none; }
 }
+
+/* ================================================ subject-first home + IA
+   Added for the redesign. Light is the default; dark was already tuned.
+   Every colour below is a token, so both themes are covered without a second
+   rule set, and every text/background pair reuses an existing measured token
+   pair rather than introducing an unmeasured colour. */
+
+/* --- home hero ---------------------------------------------------------- */
+
+.home-hero { margin: 4px 0 26px; max-width: 46rem; }
+.home-hero h1 {
+  margin: 0 0 8px;
+  font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.15rem);
+  line-height: 1.18;
+  letter-spacing: -.02em;
+}
+.home-hero__sub { margin: 0; color: var(--text-dim); font-size: 1rem; line-height: 1.6; }
+
+.home-h {
+  margin: 30px 0 12px;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+/* --- continue learning --------------------------------------------------- */
+
+.home-continue { margin-bottom: 6px; }
+.home-resume { display: flex; flex-wrap: wrap; gap: 8px; }
+.resume {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 9px 13px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface);
+  text-decoration: none; color: var(--text);
+  max-width: 100%;
+}
+.resume:hover { border-color: var(--accent); }
+.resume__dot { width: 9px; height: 9px; border-radius: 999px; background: var(--dot, var(--accent)); flex: none; }
+.resume__body { display: flex; flex-direction: column; min-width: 0; }
+.resume__t { font-size: .92rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.resume__k { font-size: .74rem; color: var(--text-faint); }
+
+/* --- subject cards ------------------------------------------------------- */
+
+.subject-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+.subject-card {
+  display: flex; flex-direction: column; gap: 5px;
+  padding: 15px 16px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-s, var(--accent));
+  border-radius: var(--r-md);
+  background: var(--surface);
+  text-decoration: none; color: var(--text);
+  transition: border-color .14s ease, transform .14s ease;
+}
+.subject-card:hover { border-color: var(--accent-s, var(--accent)); transform: translateY(-1px); }
+.subject-card__name { font-size: 1.06rem; font-weight: 680; letter-spacing: -.01em; }
+.subject-card__blurb { font-size: .88rem; color: var(--text-dim); line-height: 1.5; }
+.subject-card__meta { margin-top: 3px; font-size: .78rem; color: var(--text-faint); }
+.subject-card__exam {
+  margin-top: 5px; font-size: .72rem; font-weight: 650;
+  color: var(--accent); letter-spacing: .02em;
+}
+
+/* --- subsection cards ---------------------------------------------------- */
+
+.sub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(196px, 1fr));
+  gap: 10px;
+}
+.sub-card {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-s, var(--accent));
+  border-radius: var(--r-md);
+  background: var(--surface);
+  text-decoration: none; color: var(--text);
+}
+.sub-card:hover { border-color: var(--accent-s, var(--accent)); }
+.sub-card__k { font-size: .78rem; font-weight: 650; color: var(--text-dim); }
+.sub-card__n { font-size: 1.5rem; font-weight: 700; line-height: 1.1; color: var(--accent-s, var(--accent)); }
+.sub-card__d { font-size: .8rem; color: var(--text-faint); }
+
+.sub-empty { margin-top: 22px; }
+.sub-empty ul.plain { margin: 8px 0 0; padding-left: 20px; color: var(--text-faint); font-size: .9rem; }
+.sub-empty ul.plain li { margin-bottom: 3px; }
+
+/* --- resource lists ------------------------------------------------------ */
+
+.res-list { display: flex; flex-direction: column; gap: 2px; margin: 0 0 18px; }
+.res-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  text-decoration: none; color: var(--text);
+  border-radius: var(--r-sm);
+}
+.res-row:hover { background: var(--surface-2); }
+.res-row__t { font-weight: 600; font-size: .96rem; min-width: 0; }
+.res-row__m { color: var(--text-faint); font-size: .82rem; white-space: nowrap; flex: none; }
+
+ul.res-list > li { padding: 0; }
+ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px solid var(--line-soft); }
+
+/* --- home next step + tools --------------------------------------------- */
+
+.home-next {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  margin: 26px 0 4px; padding: 15px 17px;
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.home-next__body { min-width: 0; }
+.home-next__k { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.home-next p { margin: 3px 0 0; font-size: .94rem; color: var(--text-dim); line-height: 1.55; }
+
+.home-tools {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 10px;
+}
+.home-tool {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 13px 14px;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface);
+  text-decoration: none; color: var(--text);
+}
+.home-tool:hover { border-color: var(--accent); }
+.home-tool__t { font-weight: 650; font-size: .96rem; }
+.home-tool__d { font-size: .82rem; color: var(--text-faint); line-height: 1.45; }
+
+@media (max-width: 560px) {
+  .home-next { flex-direction: column; align-items: stretch; }
+  .subject-grid, .sub-grid, .home-tools { grid-template-columns: 1fr; }
+}

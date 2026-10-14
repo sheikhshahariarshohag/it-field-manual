@@ -9,6 +9,8 @@ import { h, clear, icon, toast, sheet } from "./ui.js";
 import * as search from "./search.js";
 import * as db from "./db.js";
 import * as V from "./views.js";
+import * as SUBJ from "./subjects.js";
+import * as SV from "./subject-views.js";
 import { route, start, resolve, href, currentRoute } from "./router.js";
 
 const main = document.getElementById("main");
@@ -84,29 +86,36 @@ function buildNav() {
   const kmSessions = corpus && corpus.km ? corpus.km.totalSessions : 146;
 
   clear(navPrimary);
+  // Subject-first. The brief asks for a restrained primary nav: what a learner
+  // wants most is "which subject" and "what do I practise". Everything that
+  // crosses subjects (commands, study manuals, certification, knowledge map)
+  // moves to the grouped lists below rather than crowding the top row.
   navPrimary.appendChild(navLink("Home", ""));
-  navPrimary.appendChild(navLink("Commands", "commands", { count: st.commands }));
-  navPrimary.appendChild(navLink("Lessons", "lessons", { count: st.lessons }));
-  navPrimary.appendChild(navLink("Knowledge Map", "km", { count: kmSessions }));
+  navPrimary.appendChild(navLink("Subjects", "subjects"));
+  navPrimary.appendChild(navLink("Practice", "scenarios"));
+  navPrimary.appendChild(navLink("Quizzes", "quizzes", { count: st.quizzes }));
+  navPrimary.appendChild(navLink("Projects", "projects", { count: st.projects }));
 
   clear(navSubjects);
-  for (const t of SUBJECT_ORDER) {
-    const info = V.TECH[t];
-    navSubjects.appendChild(navLink(info.label, `subjects/${t}`, { dot: V.techColor(t) }));
+  for (const s of SUBJ.SUBJECTS) {
+    navSubjects.appendChild(navLink(s.label, `subjects/${s.id}`, { dot: s.varName }));
   }
 
   clear(navPracticeList);
-  navPracticeList.appendChild(navLink("Troubleshooting scenarios", "scenarios", { count: st.scenarios }));
-  navPracticeList.appendChild(navLink("Quizzes", "quizzes", { count: st.quizzes }));
+  navPracticeList.appendChild(navLink("Troubleshooting", "scenarios", { count: st.scenarios }));
+  navPracticeList.appendChild(navLink("Commands", "commands", { count: st.commands }));
+  navPracticeList.appendChild(navLink("Study manuals", "study", { count: corpus && corpus.study ? corpus.study.books.reduce((a, b) => a + (b.units || []).length, 0) : 39 }));
+  navPracticeList.appendChild(navLink("Knowledge Map", "km", { count: kmSessions }));
   navPracticeList.appendChild(navLink("Bookmarks", "bookmarks"));
   navPracticeList.appendChild(navLink("My progress", "progress"));
 
   clear(navProject);
-  navProject.appendChild(navLink("Study Manual", "study"));
+
+  clear(navProject);
   navProject.appendChild(navLink("Simple Notes", "notes"));
+  navProject.appendChild(navLink("Certification guides", "guides"));
   navProject.appendChild(navLink("Library", "library"));
   navProject.appendChild(navLink("Assessment", "assessment"));
-  navProject.appendChild(navLink("Projects", "projects", { count: st.projects }));
   navProject.appendChild(navLink("Exam objectives", "objectives"));
   navProject.appendChild(navLink("Verification status", "verify"));
 }
@@ -156,7 +165,21 @@ function initTheme() {
   const root = document.documentElement;
   let saved = null;
   try { saved = localStorage.getItem(KEY); } catch (_) { /* private mode */ }
-  if (saved === "light" || saved === "dark") root.setAttribute("data-theme", saved);
+
+  // LIGHT IS THE DEFAULT for a first-time visitor.
+  //
+  // Previously the attribute was only set when a value had been saved, so
+  // with nothing stored the element carried no data-theme at all - and the
+  // `prefers-color-scheme: dark` block in app.css applies to
+  // `html:not([data-theme="light"])`. A visitor whose operating system was set
+  // to dark therefore got dark on their very first visit, which is the
+  // opposite of the intended primary experience.
+  //
+  // The attribute is now always set, so the system preference can never win.
+  // A previously saved choice still wins over this, so an existing user who
+  // deliberately chose dark keeps it - no migration of their setting is
+  // needed, because the saved value is already honoured here.
+  root.setAttribute("data-theme", saved === "dark" ? "dark" : "light");
 
   document.getElementById("themeBtn").addEventListener("click", () => {
     const isDark = root.getAttribute("data-theme") === "dark" ||
@@ -365,7 +388,7 @@ async function render(restoreTo) {
   // Some views read IndexedDB and are therefore async, so every view is
   // awaited here rather than each caller remembering to.
   switch (head) {
-    case undefined: node = V.homeView(); break;
+    case undefined: node = SV.homeView(); break;
     case "search": node = V.searchView(rest, cur.query); break;
     case "commands": node = rest.length ? V.commandView({ id: rest[0] }) : V.browseView({ kind: "commands" }, cur.query); break;
     case "lessons": node = rest.length ? V.lessonView({ id: rest[0] }) : V.browseView({ kind: "lessons" }, cur.query); break;
@@ -373,24 +396,15 @@ async function render(restoreTo) {
     case "quizzes": node = rest.length ? V.quizView({ id: rest[0] }) : V.browseView({ kind: "quizzes" }, cur.query); break;
     case "projects": node = rest.length ? V.projectView({ id: rest[0] }) : V.browseView({ kind: "projects" }, cur.query); break;
     case "subjects":
-      if (rest.length) {
-        const tech = rest[0];
-        const lessons = search.CORPUS.lessons.filter((l) => l.tech === tech);
-        const cmds = search.CORPUS.commands.filter((c) => c.tech === tech);
-        const wrap = h("div");
-        wrap.appendChild(h("header.page-head", h("h1", V.TECH[tech] ? V.TECH[tech].label : tech),
-          h("p", `${lessons.length} lessons, ${cmds.length} commands in this subject.`)));
-        if (!lessons.length && !cmds.length) {
-          wrap.appendChild(h("div.note", h("strong", "Not written yet"),
-            h("span", "Mapped in CONTENT_MAP.md, content not started. The count stays honest rather than padded.")));
-        }
-        const cards = h("div.cards");
-        for (const l of lessons) cards.appendChild(h("a.card", { href: href(`lessons/${l.id}`) }, h("div.card__k", "Lesson"), h("div.card__t", l.title), h("div.card__d", l.summary)));
-        for (const c of cmds) cards.appendChild(h("a.card", { href: href(`commands/${c.id}`) }, h("div.card__k", "Command"), h("div.card__t", c.title), h("div.card__d", c.task || c.summary)));
-        wrap.appendChild(cards);
-        node = wrap;
-      } else node = V.subjectsView();
+      // Subject pages are built from subjects.js so a subject landing page and
+      // a central filtered list read the same canonical records. The previous
+      // inline version rebuilt lesson cards from scratch here, which is exactly
+      // the duplication the redesign removes.
+      node = rest.length
+        ? (rest[1] ? SV.subjectSectionView({ id: rest[0], kind: rest[1] }) : SV.subjectView({ id: rest[0] }))
+        : SV.subjectsIndexView();
       break;
+    case "guides": node = V.guidesView(); break;
     case "bookmarks": node = V.bookmarksView(); break;
     case "progress": node = V.progressView(); break;
     case "verify": node = V.verifyView(); break;
@@ -490,6 +504,10 @@ async function boot() {
     route(seg, ({ recalled }) => render(recalled));
     route(`${seg}/:id`, ({ recalled }) => render(recalled));
   }
+  route("subjects", ({ recalled }) => render(recalled));
+  route("subjects/:id", ({ recalled }) => render(recalled));
+  route("subjects/:id/:kind", ({ recalled }) => render(recalled));
+  route("guides", ({ recalled }) => render(recalled));
   route("bookmarks", ({ recalled }) => render(recalled));
   route("progress", ({ recalled }) => render(recalled));
   route("verify", ({ recalled }) => render(recalled));
