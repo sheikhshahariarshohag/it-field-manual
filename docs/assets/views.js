@@ -10,6 +10,7 @@ import * as search from "./search.js";
 import * as db from "./db.js";
 import { href } from "./router.js";
 import * as prose from "./prose.js";
+import { chapterReader } from "./reader.js";
 
 export const TECH = {
   aplus:    { label: "CompTIA A+",     varName: "--tech-aplus" },
@@ -1228,21 +1229,51 @@ export function knowledgeMapView() {
 const STATUS = new Map();
 const CONTENT = new Map();
 
-async function loadSessionContent(id) {
-  if (CONTENT.has(id)) return CONTENT.get(id);
-  if (STATUS.has(id)) return null;
-  STATUS.set(id, "loading");
-  try {
-    const res = await fetch(`data/km/${id}.json`, { cache: "default" });
-    if (!res.ok) throw new Error(String(res.status));
-    const json = await res.json();
-    CONTENT.set(id, json);
-    return json;
-  } catch (err) {
-    STATUS.set(id, "error");
-    return null;
+  /**
+   * Fetches in progress, keyed by session id.
+   *
+   * This map exists because of a real bug, found by building the session
+   * reader rather than by reading this function.
+   *
+   * `loadSessionContent` used to treat "already loading" as "failed" and
+   * return null. That was invisible while the session page only fetched when
+   * you clicked a chip, because nothing asked twice. The reader fetches during
+   * render instead, and the app resolves a route more than once (on start, then
+   * again on the hash change), so the second call arrived while the first was
+   * still fetching, saw its own in-flight request, and rendered "Could not load
+   * this session" over a session that was loading perfectly well. The fetch
+   * succeeded; the page threw the result away.
+   *
+   * The fix is to share the in-flight promise rather than treat it as an
+   * error, so a second caller waits for the first request instead of being
+   * told it failed.
+   */
+  const INFLIGHT = new Map();
+
+  async function loadSessionContent(id) {
+    if (CONTENT.has(id)) return CONTENT.get(id);
+    if (INFLIGHT.has(id)) return INFLIGHT.get(id);
+
+    const p = (async () => {
+      try {
+        const res = await fetch(`data/km/${id}.json`, { cache: "default" });
+        if (!res.ok) throw new Error(String(res.status));
+        const json = await res.json();
+        CONTENT.set(id, json);
+        return json;
+      } catch (err) {
+        STATUS.set(id, "error");
+        return null;
+      }
+    })();
+
+    INFLIGHT.set(id, p);
+    try {
+      return await p;
+    } finally {
+      INFLIGHT.delete(id);
+    }
   }
-}
 
 /**
  * Writable personal notes for a Knowledge Map session.
@@ -1319,7 +1350,43 @@ function kmNotesEditor(session) {
   return h("div.kmnotewrap", box);
 }
 
-export function knowledgeSessionView(params) {
+/**
+ * knowledgeSessionView, rebuilt as a continuous document.
+ *
+ * WHAT WAS WRONG
+ * The session page showed a row of buttons - "Business problem", "Concept",
+ * "Deep dive", "Workflow", ... one per section, up to 20 of them. Clicking a
+ * button cleared the panel below and printed that one section. So:
+ *
+ *   - a topic could not be read as a document, only sampled a section at a time
+ *   - the section text existed in the DOM only for the one open section
+ *   - there was no contents list, because there was no document to list
+ *   - opening the page gave you a wall of buttons instead of the topic
+ *
+ * Memory anchors then sat below as a separate recall aid, which is what the
+ * topic page had really become: an index of things to remember rather than an
+ * explanation of the thing.
+ *
+ * WHAT IT IS NOW
+ * One reader, the same one the Study Manual uses. Every section the document
+ * has becomes a real section of a continuous document, in the document's own
+ * order, with a generated contents list. Memory anchors move into the
+ * contextual rail, where a revision aid belongs, and stop being the main event.
+ *
+ * WHAT WAS KEPT
+ *   - the header and its badges exactly as they were
+ *   - the session text, fetched from the same per-session file on the same
+ *     lazy basis, so offline behaviour is unchanged
+ *   - the fillable notes editor for the document's "Personal notes" prompts
+ *   - the dependency graph, including the honest note about how conservative
+ *     its topic matching is
+ *   - the interview questions, still collapsed behind a disclosure
+ *   - the related field-manual records, the same docById links
+ *   - sibling sessions in the same layer
+ *   - ?to=<section> deep links from the map list, now routed to the reader's
+ *     own ?s= fragment so they still land on the right heading
+ */
+export function knowledgeSessionView(params, query) {
   const wrap = h("div");
   const km = KM();
   const s = kmSession(params.id);
@@ -1331,181 +1398,238 @@ export function knowledgeSessionView(params) {
   };
 
   wrap.appendChild(h("header.page-head",
-    h("h1", `Session ${s.n} — ${s.title}`),
+    h("h1", `Session ${s.n} - ${s.title}`),
     h("p", s.summary),
     h("div.card__meta",
-      h("span.badge", `Layer ${s.layer} · ${s.layerName}`),
-      h("span.badge", `Pages ${s.page}–${s.endPage}`),
+      h("span.badge", `Layer ${s.layer} - ${s.layerName}`),
+      h("span.badge", `Pages ${s.page}-${s.endPage}`),
       s.hasLab ? h("span.badge", "Has a lab") : null,
       h("a.badge", { href: href("km") }, "All sessions"),
     ),
   ));
 
-  // --- what the session actually contains -------------------------------
-  // Every chip opens the real text from the document. Nothing here is a
-  // placeholder: the file is fetched on first open and cached from then on.
-  if (s.sections && s.sections.length) {
-    wrap.appendChild(h("h2", "Sections in this session"));
+  // The text lives in a per-session file, fetched on demand exactly as before.
+  const holder = h("div");
+  wrap.appendChild(holder);
+  holder.appendChild(h("p.srcref", "Loading the full session text..."));
 
-    const panel = h("div.kmreader", { id: "kmreader" });
-    const chips = h("div.chips", { role: "tablist", "aria-label": "Session sections" });
+  loadSessionContent(s.id).then((data) => {
+    clear(holder);
+    if (!data) {
+      holder.appendChild(h("div.note.note--risk",
+        h("strong", "Could not load this session"),
+        h("span", "The text for session " + s.n + " could not be read. It has not been " +
+                  "downloaded yet, and you may be offline.")));
+      return;
+    }
+    holder.appendChild(buildSessionReader(s, data, km, label, query));
+  }).catch((err) => {
+    // Previously this promise chain had no rejection handler, so a fault here
+    // left the page showing "Loading the full session text..." forever with
+    // nothing in the console. A failure that produces no explanation is worse
+    // than one that does.
+    clear(holder);
+    holder.appendChild(h("div.note.note--risk",
+      h("strong", "This session could not be opened"),
+      h("span", String((err && err.message) || err))));
+  });
 
-    const openSection = async (kind, label, btn) => {
-      for (const b of chips.querySelectorAll(".chip")) b.setAttribute("aria-selected", "false");
-      btn.setAttribute("aria-selected", "true");
-      clear(panel);
-      panel.appendChild(h("p.srcref", "Loading " + label + "…"));
-      const data = await loadSessionContent(s.id);
-      clear(panel);
-      if (!data) {
-        panel.appendChild(h("div.note.note--risk",
-          h("strong", "Could not load this section"),
-          h("span", "The text for session " + s.n + " could not be read. It has not been " +
-            "downloaded yet, and you may be offline.")));
-        return;
-      }
-      const items = (data.sections || {})[kind];
-      panel.appendChild(h("h3", label));
-      if (!items || !items.length) {
-        panel.appendChild(h("p.srcref", "This session has no " + label.toLowerCase() +
-          " section in the document."));
-        return;
-      }
-      // The Personal notes section is a set of empty prompts. Printing them
-      // above the inputs is just noise — the inputs carry the labels already.
-      if (kind !== "notes") {
-        const ul = h("ul.prose");
-        for (const it of items) ul.appendChild(h("li", ...paraTokens(it)));
-        panel.appendChild(ul);
-      }
-      panel.appendChild(h("p.srcref",
-        `From Enterprise_Infrastructure_Knowledge_Map_Unified.pdf, pages ${data.page}–${data.endPage}.`));
+  return wrap;
+}
 
-      // The document's own "Personal notes" prompts are printed above. Below
-      // them sit fillable versions that actually save.
-      if (kind === "notes") {
-        panel.appendChild(kmNotesEditor(s));
-      }
-    };
+/* ------------------------------------------------------ paragraph shapes */
 
-    for (const sec of s.sections) {
-      const btn = h("button.chip.chip--btn", {
-        type: "button", role: "tab", "aria-selected": "false",
-      }, sec.label);
-      btn.addEventListener("click", () => openSection(sec.kind, sec.label, btn));
-      chips.appendChild(btn);
+/**
+ * Render the Knowledge Map's stored paragraphs.
+ *
+ * The map stores an array of plain strings per section, and three shapes occur
+ * in the corpus: a bulleted run (each item opens with a bullet character), a
+ * single ASCII relationship line (arrows and pipes), and ordinary prose.
+ * Each is given its own treatment so a diagram is not reflowed into an
+ * unreadable paragraph and a bulleted list is not a stack of near-identical
+ * sentences.
+ */
+function kmParagraphs(items, kind) {
+  const box = h("div");
+  const arr = Array.isArray(items) ? items : [];
+  const BULLET = /^\s*[●•▪]\s*/;
+
+  // A diagram is ASCII art. Wrapping it destroys it, so it stays monospaced.
+  if (kind === "diagram") {
+    box.appendChild(h("div.pl-box.pl-box--output",
+      h("span.pl-box__tag", "diagram"),
+      h("div.pl-box__body", h("pre.pl-out", ...arr.map((t) => t)))));
+    return box;
+  }
+
+  let run = [];
+  const flush = () => {
+    if (!run.length) return;
+    const ul = h("ul.pl-list");
+    for (const t of run) ul.appendChild(h("li", ...prose.markedNodes(t.replace(BULLET, ""))));
+    box.appendChild(ul);
+    run = [];
+  };
+
+  for (const raw of arr) {
+    const t = String(raw == null ? "" : raw).trimEnd();
+
+    // Arrows and pipes mean a relationship, not a sentence.
+    if (/→|-->|<--|\s\|\s/.test(t)) {
+      flush();
+      box.appendChild(h("div.pl-box.pl-box--output",
+        h("span.pl-box__tag", "flow"),
+        h("div.pl-box__body", h("pre.pl-out", t))));
+      continue;
     }
 
-    wrap.appendChild(chips);
-    wrap.appendChild(panel);
-    wrap.appendChild(h("p.srcref",
-      "Every chip opens the matching text from your document. Each session is " +
-      "downloaded once, on first use, then kept for offline."));
+    if (BULLET.test(t)) { run.push(t); continue; }
+    flush();
+    box.appendChild(h("p.pl-p", ...prose.markedNodes(t)));
+  }
+  flush();
+  return box;
+}
+
+/* ------------------------------------------------------ the whole session */
+
+function buildSessionReader(s, data, km, label, query) {
+  const byKind = data.sections || {};
+  const sections = [];
+  let missing = [];
+
+  // Every section the document declares, in the document's own order.
+  const seenIds = new Set();
+  for (const sec of s.sections || []) {
+    const items = byKind[sec.kind];
+    const id = `km-${sec.kind}`;
+
+    if (sec.kind === "notes") {
+      // The document's own "Personal notes" prompts are printed above the
+      // inputs, so the fillable editor is shown on its own here.
+      sections.push({ id, title: sec.label, kicker: "Your notes",
+        build: () => kmNotesEditor(s) });
+      seenIds.add(id);
+      continue;
+    }
+    // Handled by the dedicated interview block below, which prefers the
+    // session file's copy and falls back to the index. Letting the generic
+    // loop build it too produced the same heading twice in the contents list.
+    if (sec.kind === "interview") continue;
+    if (!items || !items.length) { missing.push(sec.label); continue; }
+    if (seenIds.has(id)) continue;
+    seenIds.add(id);
+    sections.push({ id, title: sec.label, build: () => kmParagraphs(items, sec.kind) });
   }
 
-  // --- memory anchors: the recall aid ------------------------------------
+  // Interview questions are real learning content, so they are a section of
+  // the document rather than a rail aside - and still collapsed, because the
+  // point is to answer them from memory.
+  const interviews = byKind.interview && byKind.interview.length
+    ? byKind.interview
+    : (s.interview || []);
+  if (interviews.length) {
+    sections.push({
+      id: "km-interview", title: "Interview questions",
+      kicker: `${interviews.length} question${interviews.length === 1 ? "" : "s"}`,
+      build: () => {
+        const ol = h("ol.pl-list.pl-list--num");
+        for (const q of interviews) ol.appendChild(h("li", ...prose.markedNodes(String(q).replace(/^\s*[●•]\s*/, ""))));
+        return h("div",
+          h("p.srcref", "Answer these out loud. If you cannot, that is the section to re-read."),
+          ol);
+      },
+    });
+  }
+
+  /* --- contextual rail ---------------------------------------------------- */
+
+  const railBits = [];
+
+  // Memory anchors: a revision aid, kept and clearly labelled as one. They are
+  // not the way into the topic any more - the topic is above them.
   if (s.anchors && s.anchors.length) {
-    wrap.appendChild(h("h2", { id: "km-anchors" }, "Memory anchors"));
-    const ul = h("ul.prose");
-    for (const a of s.anchors) ul.appendChild(h("li", ...paraTokens(a)));
-    wrap.appendChild(ul);
+    railBits.push(h("p.rd-toc__hd", "Quick revision"));
+    const ul = h("ul");
+    for (const a of s.anchors) ul.appendChild(h("li", ...prose.markedNodes(a)));
+    railBits.push(ul);
   }
 
-  // --- the dependency graph ----------------------------------------------
   const deps = s.dependsOn || [];
   const dependents = s.dependents || [];
   if (deps.length || dependents.length) {
-    wrap.appendChild(h("h2", { id: "km-deps" }, "How this fits together"));
-    const box = h("div.depgraph");
+    railBits.push(h("p.rd-toc__hd", "How this fits together"));
     if (deps.length) {
-      box.appendChild(h("div.depgraph__row",
-        h("span.depgraph__label", "Needs first"),
-        h("div.chips", deps.map((n) => h("a.chip", { href: href(`km/km-${String(n).padStart(3, "0")}`) }, label(n)))),
-      ));
+      railBits.push(h("p.srcref", "Needs first"));
+      railBits.push(chipRow(deps.map((n) => h("a.chip", { href: href(`km/km-${String(n).padStart(3, "0")}`) }, label(n)))));
     }
     if (dependents.length) {
-      box.appendChild(h("div.depgraph__row",
-        h("span.depgraph__label", "Built on this"),
-        h("div.chips", dependents.map((n) => h("a.chip", { href: href(`km/km-${String(n).padStart(3, "0")}`) }, label(n)))),
-      ));
+      railBits.push(h("p.srcref", "Built on this"));
+      railBits.push(chipRow(dependents.map((n) => h("a.chip", { href: href(`km/km-${String(n).padStart(3, "0")}`) }, label(n)))));
     }
-    wrap.appendChild(box);
-    wrap.appendChild(h("p.srcref",
-      "Links are resolved from the session's own Dependencies and Dependents lists by matching topic " +
-      "names to session titles. Only confident matches are kept — generic names like “Services” or " +
-      "“Security” are deliberately not linked, so this graph is smaller than the prose but should not " +
-      "point anywhere wrong."));
   }
 
-  // --- interview questions: the recall test ------------------------------
-  if (s.interview && s.interview.length) {
-    wrap.appendChild(h("h2", { id: "km-interview" }, "Interview questions"));
-    const ol = h("ol.prose.kmlist");
-    for (const q of s.interview) ol.appendChild(h("li", ...paraTokens(q)));
-    wrap.appendChild(h("details.more",
-      h("summary", `Answer these out loud — ${s.interview.length} question${s.interview.length === 1 ? "" : "s"}`),
-      ol,
-    ));
-  }
-
-  // --- what this manual covers -------------------------------------------
   const docs = (s.manual || []).map((id) => search.docById(id)).filter(Boolean);
-
-  if (!docs.length) {
-    wrap.appendChild(h("div.empty",
-      h("h2", "No hands-on material in the field manual yet"),
-      h("p", "This session has no practice lesson or command written for it. That is a known gap " +
-             "in the field manual, not a gap in your curriculum — the full session text is above, " +
-             "and every chip opens it. See CONTENT_MAP.md for what is queued next."),
-    ));
-  } else {
-    wrap.appendChild(h("h2", { id: "km-manual" }, `In this manual (${docs.length})`));
-    const list = h("ul.linklist");
+  if (docs.length) {
+    railBits.push(h("p.rd-toc__hd", "In this manual"));
+    const ul = h("ul");
     for (const d of docs) {
-      list.appendChild(h("li",
-        h("a", { href: contentHref(d) }, d.title),
-        h("span.kindtag", d.kind),
-        d.tech ? techBadge(d.tech) : null,
-        verifyBadge(d.verification),
-      ));
+      ul.appendChild(h("li", h("a", { href: contentHref(d) }, d.title), " ",
+        verifyBadge(d.verification)));
     }
-    wrap.appendChild(list);
+    railBits.push(ul);
+  } else {
+    railBits.push(h("p.rd-toc__hd", "In this manual"));
+    railBits.push(h("p.srcref",
+      "No practice lesson or command has been written for this session yet. " +
+      "That is a gap in the field manual, not in the material above."));
   }
 
-  // Honour ?to=<section> so the list page's "Lab" / "N interview Q" marks land
-  // on the matching heading instead of the top of the session.
-  //
-  // This MUST be deferred. The view is built before its node is in the
-  // document, and app.js's render() calls scrollTo({top:0}) after appending —
-  // a synchronous scrollIntoView here is silently undone by that. One frame's
-  // timeout runs after both.
-  if (params.query && params.query.to) {
-    const key = params.query.to;
-    setTimeout(() => {
-      const target = wrap.querySelector("#km-" + key);
-      if (!target) return;
-      target.setAttribute("tabindex", "-1");
-      const top = target.getBoundingClientRect().top + window.scrollY - 90;
-      scrollTo({ top, behavior: "instant" });
-      target.classList.add("flash");
-      setTimeout(() => target.classList.remove("flash"), 1500);
-    }, 0);
+  if (s.terms && s.terms.length) {
+    railBits.push(h("p.rd-toc__hd", `Terms in this topic (${s.terms.length})`));
+    railBits.push(h("div.chips", s.terms.slice(0, 40).map((t) => h("span.chip.chip--static", t))));
+    if (s.terms.length > 40) {
+      railBits.push(h("p.srcref", `and ${s.terms.length - 40} more`));
+    }
   }
 
-  // Sibling sessions, so the map is browsable without going back to the top.
+  const rail = railBits.length ? h("div", ...railBits) : null;
+
+  /* --- after: siblings ---------------------------------------------------- */
+
   const layer = km.layers.find((l) => l.n === s.layer);
+  let after = null;
   if (layer) {
     const siblings = km.sessions.filter((x) => x.layer === s.layer && x.id !== s.id);
-    wrap.appendChild(h("h2", `Rest of Layer ${s.layer}`));
-    const chips = h("div.chips");
-    for (const x of siblings) {
-      chips.appendChild(h("a.chip", { href: href(`km/${x.id}`), title: x.summary },
-        `${x.n}. ${x.title}`));
-    }
-    wrap.appendChild(chips);
+    after = h("div.rd-after",
+      h("p.rd-toc__hd", `Rest of Layer ${s.layer}`),
+      h("div.chips", siblings.map((x) =>
+        h("a.chip", { href: href(`km/${x.id}`), title: x.summary }, `${x.n}. ${x.title}`))));
   }
 
-  return wrap;
+  const node = chapterReader({
+    routeBase: `km/${s.id}`,
+    sections,
+    rail,
+    after,
+    // Accept the old ?to=<section> as well as the reader's own ?s=, so links
+    // already in the wild from the map list still land in the right place.
+    fragment: (query && (query.s || query.to)) || null,
+  });
+
+  if (missing.length) {
+    node.insertBefore(
+      h("p.srcref",
+        `This session's document does not contain ${missing.length === 1 ? "a section" : "sections"} for: ` +
+        `${missing.join(", ")}. The contents list shows only the sections that have text.`),
+      node.firstChild.nextSibling);
+  }
+
+  return node;
+}
+
+function chipRow(nodes) {
+  return h("div.chips", nodes);
 }
 
 /* ========================================================== study manual */
@@ -1532,36 +1656,6 @@ async function loadStudyUnit(id) {
     studyCache.set(id, j);
     return j;
   } catch (_) { return null; }
-}
-
-/** Render one content block, upgrading marker lines and headings. */
-function studyBlock(b) {
-  const t = String(b.text || "");
-  // The guides use consistent prefixes for callouts. Surface them rather than
-  // printing "WARNING - ..." as if it were ordinary prose.
-  const m = t.match(/^(RHCSA EXAM CRITICAL|EXAM CRITICAL|WARNING|NOTE|Why this matters)\b\s*[—–-]?\s*([\s\S]*)$/);
-  if (m) {
-    const kind = m[1].toLowerCase();
-    const cls = kind.includes("critical") || kind.includes("warning") ? "note--risk"
-      : kind.includes("why") ? "note" : "note--ok";
-    return h("div", { class: cls ? `note ${cls}` : "note" },
-      h("strong", m[1]), h("span", m[2].trim()));
-  }
-  if (b.level === 2 || b.level === 3) return h("h3", t);
-  if (b.level === 4) return h("h4", t);
-  return h("p", t);
-}
-
-/**
- * Render a run of Study Manual content blocks.
- *
- * Routes through prose.js so a command in the manual is marked exactly the way
- * a command in a book is. Both used to render as a bare <p>, which is why a
- * learner could not tell at a glance which line was one to type and which was
- * an explanation to read.
- */
-function renderStudyList(items) {
-  return h("div.study__body", prose.renderBlocks(items));
 }
 
 const STUDY_STATUS = {
@@ -1724,7 +1818,35 @@ export async function studyManualView() {
   return wrap;
 }
 
-export async function studyUnitView(params) {
+/**
+ * studyUnitView, rebuilt on the shared reader.
+ *
+ * WHAT CHANGED AND WHY
+ * The unit used to render a flat div.study__body: every section was an <h2>
+ * followed by blocks, with no contents list, no way to jump to a section, and
+ * no way to collapse anything. On rh134-09 that is 57 sections and 6,793 words
+ * in one undifferentiated scroll.
+ *
+ * It is now a chapterReader. The sections become the reader's section list, so
+ * the contents list is generated from them, and any heading inside a section
+ * becomes a nested entry. The metadata that already existed (exam, section
+ * count, word count, labs, quizzes) is kept exactly as it was - the reader
+ * does not replace it, it sits above it.
+ *
+ * WHAT WAS NOT CHANGED
+ *   - the progress control and the IndexedDB `progress` store: untouched, so
+ *     existing saved progress keeps working and still exports and imports.
+ *   - the currency warnings: still rendered first, before the chapter, because
+ *     they change how the chapter should be read.
+ *   - the service profiles: moved into the reader's contextual rail, because
+ *     they are reference material beside the chapter rather than part of it.
+ *     They are the same records and the same links.
+ *   - previous / next navigation: kept, in the original book order.
+ *   - every block of text: rendered by prose.renderBlocks, which classifies
+ *     the same content it always did and adds questions, steps, analogies and
+ *     verification labels where the content actually marks them.
+ */
+export async function studyUnitView(params, query) {
   const wrap = h("div");
   const m = STUDY();
   if (!m) return notFound("Study manual", params.id);
@@ -1740,42 +1862,39 @@ export async function studyUnitView(params) {
     h("h1", unit.display),
     h("div.card__meta",
       h("span.badge", book.code),
-      h("span.badge", unit.exam || book.exam),
+      unit.exam || book.exam ? h("span.badge", unit.exam || book.exam) : null,
       h("span.badge", `${unit.sections} topics`),
       h("span.badge", `${unit.words.toLocaleString()} words`),
       unit.labs ? h("span.badge", `${unit.labs} lab${unit.labs === 1 ? "" : "s"}`) : null,
       unit.quizzes ? h("span.badge", `${unit.quizzes} quiz${unit.quizzes === 1 ? "" : "zes"}`) : null,
+      h("a.badge", { href: href(`subjects/${subjectForBook(book)}/study`) }, "All RHEL chapters"),
     ),
     h("p", book.blurb),
   ));
 
-  const body = h("div.study");
-  wrap.appendChild(body);
-  body.appendChild(h("p.srcref", "Loading…"));
-
   const data = await loadStudyUnit(unit.id);
-  clear(body);
   if (!data) {
-    body.appendChild(h("div.note.note--risk", h("strong", "Could not load"),
+    wrap.appendChild(h("div.note.note--risk", h("strong", "Could not load"),
       h("span", "This unit has not been downloaded yet, and you may be offline.")));
     return wrap;
   }
 
-  // Progress control sits above the content so it is reachable without
-  // scrolling past a 2000-word chapter.
+  /* --- above the chapter ------------------------------------------------ */
+
+  const before = h("div.rd-before");
+
   let currentStatus = "open";
   try {
     const rec = await db.get("progress", unit.id);
     if (rec && rec.status) currentStatus = rec.status;
   } catch (_) { /* no database: still render, just not persisted */ }
-  body.appendChild(h("div.study__status",
-    studyStatusControl(unit.id, currentStatus)));
-  body.appendChild(h("p.srcref",
+  before.appendChild(h("div.study__status", studyStatusControl(unit.id, currentStatus)));
+  before.appendChild(h("p.srcref",
     "Progress is stored on this device and travels with your export. It is not uploaded."));
 
   // Currency problems first: they change how the chapter should be read.
   for (const c of data.currency || []) {
-    body.appendChild(h("div.note.note--risk",
+    before.appendChild(h("div.note.note--risk",
       h("strong", `${c.severity === "high" ? "Outdated" : "Worth knowing"} — ${c.title}`),
       h("span",
         h("p", h("b", "The guide says: "), c.found),
@@ -1784,47 +1903,74 @@ export async function studyUnitView(params) {
         h("p.srcref", `Checked ${c.verified} · ${c.source}`))));
   }
 
+  /* --- the sections become the reader's section list -------------------- */
+
+  const sections = [];
+
   for (const s of data.sections || []) {
-    body.appendChild(h("h2", s.title));
-    body.appendChild(renderStudyList(s.content));
+    sections.push({
+      title: s.title,
+      build: () => prose.renderBlocks(s.content),
+    });
   }
-
-  for (const l of data.labs || []) {
-    body.appendChild(h("h2", h("span.sec__n", "L"), l.title));
-    body.appendChild(renderStudyList(l.content));
-  }
-  for (const q of data.quizzes || []) {
-    body.appendChild(h("h2", h("span.sec__n", "Q"), q.title));
-    body.appendChild(renderStudyList(q.content));
-  }
-
-  // Service profiles nested under this chapter.
-  if (data.services && data.services.length) {
-    body.appendChild(h("h2", "Service profiles for this chapter"));
-    body.appendChild(h("p.srcref",
-      "Reference profiles from the field manual, attached here because they cover this material."));
-    const ul = h("ul.linklist");
-    for (const s of data.services) {
-      const doc = search.docById(s.id);
-      ul.appendChild(h("li",
-        h("a", { href: doc ? contentHref(doc) : href("km") }, doc ? doc.title : s.id),
-        doc ? verifyBadge(doc.verification) : null,
-        h("span.kindtag", s.why),
-      ));
+  // Labs and quizzes are chapters in their own right. They get their own
+  // contents entries with a kicker, rather than being appended invisibly at
+  // the end where nobody finds them.
+  for (const [list, kicker] of [[data.labs, "Lab"], [data.quizzes, "Quiz"]]) {
+    for (const l of list || []) {
+      sections.push({
+        title: l.title,
+        kicker,
+        build: () => prose.renderBlocks(l.content),
+      });
     }
-    body.appendChild(ul);
   }
 
-  // Navigation: previous / next in the ORIGINAL book order.
+  /* --- contextual rail: the service profiles for this chapter ----------- */
+
+  let rail = null;
+  if (data.services && data.services.length) {
+    rail = h("div",
+      h("p.rd-toc__hd", "Service manual"),
+      h("p.srcref", "Profiles from the field manual that cover this material."),
+      (() => {
+        const ul = h("ul");
+        for (const s of data.services) {
+          const doc = search.docById(s.id);
+          ul.appendChild(h("li",
+            h("a", { href: doc ? contentHref(doc) : href("km") }, doc ? doc.title : s.id),
+            doc ? verifyBadge(doc.verification) : null,
+            h("span.srcref", s.why)));
+        }
+        return ul;
+      })());
+  }
+
+  /* --- previous / next, in the original book order ---------------------- */
+
   const flat = m.books.flatMap((b) => b.units.map((u) => ({ b, u })));
   const i = flat.findIndex((x) => x.u.id === unit.id);
-  body.appendChild(h("div.btnrow",
+  const after = h("div.btnrow",
     i > 0 ? h("a.btn", { href: href(`study/${flat[i - 1].u.id}`) }, "← " + flat[i - 1].u.display) : null,
-    h("a.btn", { href: href("study") }, "All units"),
+    h("a.btn", { href: href(`study`) }, "All units"),
     i < flat.length - 1 ? h("a.btn", { href: href(`study/${flat[i + 1].u.id}`) }, flat[i + 1].u.display + " →") : null,
-  ));
+  );
+
+  wrap.appendChild(chapterReader({
+    routeBase: `study/${unit.id}`,
+    sections,
+    rail,
+    before,
+    after,
+    fragment: (query && query.s) || null,
+  }));
 
   return wrap;
+}
+
+/** Which subject a study book belongs to, for the breadcrumb link. */
+function subjectForBook(book) {
+  return ({ rh124: "rhel", rh134: "rhel", rh294: "rhel" })[book.id] || "rhel";
 }
 
 /* ============================================================ self-check */
@@ -2418,7 +2564,11 @@ function noteEditor(id) {
 }
 
 function notFound() {
-  return h("div.empty", h("h2", "Not found"),
+  // h1, not h2: this page replaces the whole document, so it starts the
+  // heading outline. As an h2 under no h1 it left the page with no top-level
+  // heading at all, which is both a heading-hierarchy defect and a worse label
+  // for a screen reader landing on a dead link.
+  return h("div.empty", h("h1", "Page not found"),
     h("p", "That page does not exist in this build. It may be content that has not been written yet."),
     h("div.btnrow", h("a.btn", { href: href("") }, "Back to the field manual")));
 }

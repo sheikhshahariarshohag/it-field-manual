@@ -1382,3 +1382,356 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   .home-next { flex-direction: column; align-items: stretch; }
   .subject-grid, .sub-grid, .home-tools { grid-template-columns: 1fr; }
 }
+
+/* ========================================================= the reader shell
+   One layout for every chapter, in every subject.
+   ------------------------------------------------------------------------
+   Every colour below is an existing token that already has a measured dark
+   counterpart, so this block needs no theme override and the two themes cannot
+   drift apart. The light/dark specific code-block colours keep using the
+   --pl-* tokens they already had. */
+
+.rd {
+  display: grid;
+  grid-template-columns: minmax(200px, 254px) minmax(0, 1fr);
+  gap: 30px;
+  align-items: start;
+  position: relative;
+}
+.rd--with-rail { grid-template-columns: minmax(200px, 254px) minmax(0, 1fr) minmax(190px, 230px); }
+
+/* Collapsing gives the text the whole width. Applied by the reader and
+   remembered, so a learner who collapsed it once keeps it collapsed. */
+.rd.is-collapsed { grid-template-columns: minmax(0, 1fr); }
+.rd.is-collapsed .rd-toc,
+.rd.is-collapsed .rd-rail { display: none; }
+
+/* --- reading column ------------------------------------------------------
+   A comfortable measure. The grid track can be wider than this on a large
+   screen, and the text stays readable rather than running the full width. */
+.rd-main { min-width: 0; max-width: 74ch; }
+
+/* Collapsing has to actually widen the text, or the control does nothing
+   visible. It widens the measure from 74ch to 88ch - both comfortable, but
+   noticeably different, and enough to see at a glance. */
+.rd.is-collapsed .rd-main { max-width: 88ch; }
+.rd--with-rail .rd-main { max-width: none; }
+
+/* --- reading progress ----------------------------------------------------
+   Measures real scroll position through the document. It is not a claim about
+   how much the learner has understood, and it is not clickable, so it cannot
+   be mistaken for either. */
+.rd-progress {
+  position: fixed; inset: var(--topbar-h) 0 auto 0;
+  height: 2px; z-index: 5; pointer-events: none;
+  background: transparent;
+}
+.rd-progress__bar {
+  height: 100%; width: 100%;
+  background: var(--accent);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .1s linear;
+}
+
+/* --- contents list ------------------------------------------------------- */
+
+.rd-toc {
+  position: sticky; top: calc(var(--topbar-h) + 16px);
+  max-height: calc(100vh - var(--topbar-h) - 40px);
+  display: flex; flex-direction: column;
+  padding-right: 6px;
+  border-right: 1px solid var(--line-soft);
+}
+.rd-toc__hd {
+  margin: 0 0 8px;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.rd-toc__body { overflow-y: auto; overscroll-behavior: contain; }
+
+.rd-toc__list, .rd-toc__sub { list-style: none; margin: 0; padding: 0; }
+.rd-toc__sub { margin: 2px 0 4px 10px; padding-left: 8px; border-left: 1px solid var(--line-soft); }
+
+.rd-toc__item { margin: 0; }
+.rd-toc__link {
+  display: block;
+  padding: 5px 8px; margin-left: -8px;
+  border-left: 2px solid transparent;
+  font-size: .855rem; line-height: 1.4;
+  color: var(--text-dim);
+  text-decoration: none;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}
+.rd-toc__link:hover { color: var(--text); background: var(--surface-2); }
+.rd-toc__link:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* Nested entries are smaller and quieter, so the hierarchy is visible without
+   relying on the border alone. */
+.rd-toc__item[data-level="3"] > .rd-toc__link { font-size: .79rem; padding: 3px 8px 3px 6px; }
+.rd-toc__item[data-level="4"] > .rd-toc__link { font-size: .75rem; color: var(--text-faint); padding: 2px 8px 2px 6px; }
+
+/* Active section: colour AND a left rule AND weight. Never colour alone. */
+.rd-toc__item.is-active > .rd-toc__link {
+  color: var(--accent); font-weight: 650;
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.rd-toc__collapse {
+  position: absolute; top: 0; left: -2px;
+  width: 22px; height: 22px;
+  display: none;
+  border: 1px solid var(--line); border-radius: 50%;
+  background: var(--surface); color: var(--text-dim);
+  font-size: .8rem; line-height: 1; cursor: pointer;
+}
+.rd:not(.is-collapsed) .rd-toc__collapse { display: block; right: -11px; left: auto; }
+.rd-toc__collapse:hover { border-color: var(--accent); color: var(--accent); }
+
+/* --- mobile drawer ------------------------------------------------------- */
+
+.rd-tocbtn { display: none; }
+
+.rd-toc__backdrop { display: none; }
+
+@media (max-width: 1000px) {
+  .rd, .rd--with-rail { grid-template-columns: minmax(0, 1fr); gap: 0; }
+
+  /* The desktop list is not squeezed onto a phone. It becomes a drawer. */
+  .rd-toc {
+    position: fixed; inset: 0 auto 0 0;
+    z-index: 60;
+    width: min(320px, 86vw);
+    max-height: none; height: 100%;
+    padding: 14px 16px 24px;
+    background: var(--surface);
+    border-right: 1px solid var(--line);
+    box-shadow: var(--shadow-2);
+    transform: translateX(-102%);
+    transition: transform .18s ease;
+    visibility: hidden;
+  }
+  .rd-toc__body.is-open .rd-toc { transform: translateX(0); visibility: visible; }
+  .rd-toc__collapse { display: none !important; }
+
+  .rd-toc__body.is-open .rd-toc__backdrop {
+    display: block;
+    position: fixed; inset: 0; z-index: 59;
+    background: rgba(20, 16, 10, .42);
+    border: 0; padding: 0;
+    cursor: pointer;
+  }
+
+  .rd-tocbtn {
+    display: inline-flex; align-items: center; gap: 9px;
+    position: sticky; top: calc(var(--topbar-h) + 8px);
+    z-index: 6;
+    margin: 0 0 16px;
+    padding: 8px 14px 8px 11px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--surface); color: var(--text);
+    font-size: .87rem; font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-1);
+  }
+  .rd-tocbtn:hover { border-color: var(--accent); }
+  .rd-tocbtn__bars { display: grid; gap: 3px; }
+  .rd-tocbtn__bars span { display: block; width: 15px; height: 2px; background: var(--text-dim); border-radius: 2px; }
+
+  .rd-rail { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rd-toc { transition: none; }
+  .rd-progress__bar { transition: none; }
+}
+
+/* ============================================================ headings */
+
+.rd-s { margin: 0 0 8px; scroll-margin-top: calc(var(--topbar-h) + 20px); }
+
+.rd-h {
+  margin: 0 0 12px;
+  line-height: 1.25;
+  letter-spacing: -.012em;
+  scroll-margin-top: calc(var(--topbar-h) + 20px);
+}
+.rd-h:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+.rd-h--2 {
+  font-size: clamp(1.28rem, 1.14rem + .6vw, 1.58rem);
+  padding-top: 26px;
+  margin-top: 30px;
+  border-top: 1px solid var(--line-soft);
+}
+.rd-s:first-child > .rd-h--2 { margin-top: 0; padding-top: 0; border-top: 0; }
+
+.rd-h--3 { font-size: 1.09rem; margin-top: 26px; }
+.rd-h--4 { font-size: .97rem; margin-top: 20px; color: var(--text-dim); }
+
+.rd-h__kicker {
+  display: block;
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 3px;
+}
+.rd-s__body > :first-child { margin-top: 0; }
+
+/* ============================================== learning components */
+
+.pl-copy {
+  margin-left: auto;
+  padding: 2px 8px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--text-faint);
+  font-family: var(--font); font-size: .7rem; font-weight: 600;
+  cursor: pointer; flex: none;
+}
+.pl-copy:hover { color: var(--accent); border-color: var(--accent); }
+.pl-copy[data-done="1"] { color: var(--ok); border-color: var(--ok); }
+.pl-box { position: relative; }
+.pl-box__tag + .pl-copy { margin-left: auto; }
+.pl-box > .pl-box__tag { flex: none; }
+.pl-box { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.pl-box__body { flex: 1 1 100%; min-width: 0; }
+
+/* --- real lists ---------------------------------------------------------- */
+
+.pl-list { margin: 10px 0; padding-left: 22px; }
+.pl-list li { margin: 5px 0; line-height: 1.62; color: var(--text); overflow-wrap: anywhere; }
+.pl-list li::marker { color: var(--accent); }
+.pl-list--num li::marker { font-weight: 700; font-size: .9em; }
+
+/* --- ordered procedure --------------------------------------------------- */
+
+.pl-steps {
+  margin: 14px 0;
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+.pl-steps__hd { padding: 7px 14px; border-bottom: 1px solid var(--line-soft); background: var(--surface-2); }
+.pl-steps__tag {
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+.pl-steps__list { margin: 0; padding: 12px 16px 14px 34px; }
+.pl-steps__item { margin: 0 0 10px; padding-left: 4px; }
+.pl-steps__item:last-child { margin-bottom: 0; }
+.pl-steps__item::marker { color: var(--accent); font-weight: 700; }
+.pl-steps__n {
+  display: inline-block; margin-right: 7px;
+  padding: 0 6px; border-radius: 4px;
+  background: var(--accent-dim); color: var(--accent);
+  font-size: .78rem; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.pl-steps__body { display: inline; line-height: 1.6; }
+
+/* --- analogy -------------------------------------------------------------
+   Visually distinct from the rule it explains, and labelled, so a learner can
+   tell at a glance that this is a comparison rather than the behaviour. */
+.pl-ana {
+  margin: 14px 0;
+  padding: 11px 15px;
+  border-left: 3px dashed var(--text-faint);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: var(--surface-2);
+}
+.pl-ana__tag {
+  display: inline-block; margin-bottom: 4px;
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint);
+}
+.pl-ana__body { margin: 0; line-height: 1.6; color: var(--text-dim); font-style: italic; }
+
+/* --- verify -------------------------------------------------------------- */
+
+.pl-verify {
+  margin: 14px 0;
+  padding: 11px 15px;
+  border: 1px solid var(--ok); border-left-width: 3px;
+  border-radius: var(--r-md);
+  background: var(--ok-dim);
+}
+.pl-verify__tag {
+  display: inline-block; margin-bottom: 4px;
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--ok);
+}
+.pl-verify__body { line-height: 1.6; }
+.pl-verify__body > :first-child { margin-top: 0; }
+.pl-verify__body > :last-child { margin-bottom: 0; }
+
+/* --- knowledge check -----------------------------------------------------
+   The answer is folded so the learner has to think first. <details> gives
+   keyboard and screen-reader behaviour for free. */
+
+.kc {
+  margin: 18px 0;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface);
+  overflow: hidden;
+}
+.kc__hd {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 9px 15px;
+  border-bottom: 1px solid var(--line-soft);
+  background: var(--surface-2);
+}
+.kc__tag {
+  font-size: .68rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+}
+.kc__n { font-size: .78rem; color: var(--text-faint); }
+.kc__list { margin: 0; padding: 14px 18px 16px 40px; }
+.kc__item { margin-bottom: 14px; }
+.kc__item:last-child { margin-bottom: 0; }
+.kc__item::marker { color: var(--accent); font-weight: 700; }
+.kc__q { margin: 0 0 7px; line-height: 1.6; font-weight: 550; }
+.kc__sum {
+  cursor: pointer; padding: 4px 10px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface-2);
+  font-size: .79rem; font-weight: 600; color: var(--text-dim);
+  display: inline-block;
+}
+.kc__sum:hover { border-color: var(--accent); color: var(--accent); }
+.kc__sum:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kc__abody {
+  margin: 9px 0 0; padding: 10px 13px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  background: var(--accent-dim);
+  line-height: 1.6;
+}
+.kc__noans { margin: 0; font-size: .84rem; color: var(--text-faint); font-style: italic; }
+.kc--orphan { padding: 11px 15px; }
+
+/* ==================================================== contextual rail */
+
+.rd-rail {
+  position: sticky; top: calc(var(--topbar-h) + 16px);
+  max-height: calc(100vh - var(--topbar-h) - 40px);
+  overflow-y: auto;
+  font-size: .87rem;
+}
+.rd-rail .rd-toc__hd { margin-top: 0; }
+.rd-rail ul { list-style: none; margin: 0 0 18px; padding: 0; }
+.rd-rail li { margin-bottom: 7px; line-height: 1.45; }
+.rd-rail a { color: var(--text-dim); }
+.rd-rail a:hover { color: var(--accent); }
+.rd-rail hr { border: 0; border-top: 1px solid var(--line-soft); margin: 16px 0; }
+
+/* ========================================================== narrow text */
+
+@media (max-width: 560px) {
+  .rd-h--2 { font-size: 1.16rem; padding-top: 20px; margin-top: 24px; }
+  .kc__list { padding: 12px 14px 14px 30px; }
+  .pl-steps__list { padding: 10px 12px 12px 28px; }
+  .pl-box { font-size: .84rem; }
+  .pl-out { font-size: .8rem; overflow-x: auto; }
+}
+

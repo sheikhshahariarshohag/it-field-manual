@@ -410,7 +410,7 @@ async function render(restoreTo) {
     case "verify": node = V.verifyView(); break;
     case "objectives": node = V.objectivesView(); break;
     case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
-    case "study": node = rest.length ? V.studyUnitView({ id: rest[0] }) : V.studyManualView(); break;
+    case "study": node = rest.length ? await V.studyUnitView({ id: rest[0] }, cur.query) : await V.studyManualView(); break;
     case "assessment": node = V.selfCheckView(); break;
     case "notes": node = rest.length ? V.notesChapterView({ id: rest[0] }) : V.notesIndexView(); break;
     case "library": node = rest.length ? (rest[1] ? V.libraryChapterView({ book: rest[0], id: rest[1] }) : V.libraryBookView({ id: rest[0] })) : V.libraryView(); break;

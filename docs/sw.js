@@ -28,6 +28,7 @@ const SHELL = [
   "assets/db.js",
   "assets/search.js",
   "assets/prose.js",
+  "assets/reader.js",
   "assets/subjects.js",
   "assets/subject-views.js",
   "assets/router.js",
