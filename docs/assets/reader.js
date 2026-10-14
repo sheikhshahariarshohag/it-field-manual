@@ -30,6 +30,15 @@
  *   - keyboard and screen-reader operable throughout. The mobile drawer is a
  *     real disclosure with aria-expanded, closes on Escape, and returns focus
  *     to the button that opened it.
+ *
+ * WHERE THINGS SIT
+ *   Reading column on the left, ONE floating panel on the right holding the
+ *   contents list and the contextual material together. Two side panels - one
+ *   for the contents, one for everything else - meant the visible Contents
+ *   control belonged to the panel on the opposite side from the list it opened.
+ *
+ *   On a narrow screen that right panel becomes the drawer: it is off-screen
+ *   until asked for, so the single-column reading order is unchanged.
  */
 import { h } from "./ui.js";
 
@@ -89,8 +98,20 @@ export function chapterReader(opts) {
   /* ------------------------------------------------------- contents list */
 
   const tocList = h("ol.rd-toc__list");
+
+  // The collapse control lives inside the panel header, not floating on the
+  // panel's outer edge. It used to be absolutely positioned against the panel
+  // from inside the scrollable list, which put it in two places at once: it
+  // scrolled away with the contents and it was clipped by the scroll box.
+  const collapseBtn = h("button.rd-toc__collapse", {
+    type: "button",
+    "aria-label": "Hide the contents list and widen the text",
+  }, "\u2039");
+
   const tocAside = h("aside.rd-toc", { id: "rd-toc" },
-    h("p.rd-toc__hd", "Contents"),
+    h("div.rd-toc__top",
+      h("p.rd-toc__hd", "Contents"),
+      collapseBtn),
     tocList);
   const tocBody = h("div.rd-toc__body", tocAside);
 
@@ -194,7 +215,6 @@ export function chapterReader(opts) {
     for (const t of targets) {
       const item = h("li.rd-toc__item", { "data-level": String(t.level), "data-sid": t.id });
       const link = h("a.rd-toc__link", { href: deepHref(t.id) }, h("span", t.text));
-      link.addEventListener("click", (ev) => onTocClick(ev, t));
       item.appendChild(link);
       item.__target = t;
       byId.set(t.id, item);
@@ -218,6 +238,27 @@ export function chapterReader(opts) {
   }
 
   /* --------------------------------------------------------- deep links */
+
+  /**
+   * The whole row is the target, not just the words inside it.
+   *
+   * One listener on the list rather than one per entry, so a click anywhere in
+   * the card works: the text, the padding around it, the marker square in the
+   * gutter. Measured before the change: the entry box was 299px wide and the
+   * anchor inside it 297px, and nested entries sat on a transparent row with
+   * only their own text live - so aiming at the row and getting nothing was
+   * the normal result.
+   *
+   * The anchor is still there, with its real href. It stays the keyboard target
+   * and the thing a screen reader announces, and Enter on it produces a click
+   * that bubbles up to this same handler, so there is one code path rather than
+   * two that can drift apart.
+   */
+  tocList.addEventListener("click", (ev) => {
+    const item = ev.target instanceof Element && ev.target.closest(".rd-toc__item");
+    if (!item || !item.__target || !tocList.contains(item)) return;
+    onTocClick(ev, item.__target);
+  });
 
   const deepHref = (id) => (routeBase ? `#/${routeBase}?s=${encodeURIComponent(id)}` : `#s-${id}`);
 
@@ -418,17 +459,14 @@ export function chapterReader(opts) {
     }
   });
 
-  const collapseBtn = h("button.rd-toc__collapse", {
-    type: "button",
-    "aria-label": "Collapse the contents list and widen the text",
-  }, "‹");
-
+  // `collapseBtn` itself is built with the contents panel, above, so that it
+  // can live inside the panel header instead of floating on its outer edge.
   collapseBtn.addEventListener("click", () => {
     const on = root.classList.toggle("is-collapsed");
     collapseBtn.textContent = on ? "›" : "‹";
     collapseBtn.setAttribute("aria-label", on
       ? "Show the contents list"
-      : "Collapse the contents list and widen the text");
+      : "Hide the contents list and widen the text");
     try { localStorage.setItem(COLLAPSE_KEY, on ? "1" : "0"); } catch (_) { /* private */ }
   });
 
@@ -445,7 +483,6 @@ export function chapterReader(opts) {
   drawerClose.addEventListener("click", closeDrawer);
 
   tocBody.appendChild(drawerClose);
-  tocBody.appendChild(collapseBtn);
 
   /* -------------------------------------------------------------- layout */
 
@@ -462,12 +499,51 @@ export function chapterReader(opts) {
   // column, it is always on screen, and sticky, so it stays put while reading.
   const bar = h("div.rd-bar", toggle, collapseInline());
 
+  /*
+   * `before` was accepted, documented in the JSDoc above, and then never
+   * appended to anything. Everything a caller put in it was silently dropped on
+   * the floor.
+   *
+   * Measured on study/rh124-01 before this fix: `document.querySelector
+   * (".rd-before")` was null, `.study__status` was null, and the chapter
+   * carried zero `.note--risk` blocks - while the unit data does build all
+   * three. So every RHEL study chapter was opening without its progress
+   * control and without the "the guide says / current practice / what to do"
+   * warning that the brief requires outdated content to be flagged rather than
+   * quietly corrected.
+   *
+   * It goes ABOVE the control bar, not below it: the bar is sticky, and a
+   * sticky element earlier in the column parks itself at the top of the
+   * viewport instead of floating over the warnings while they are being read.
+   */
+  // `bar` has to be in the column before it can be used as the reference node.
   main.prepend(bar);
-  main.appendChild(after);
+  if (before) main.insertBefore(before, bar);
+  if (after) main.appendChild(after);
 
-  root.appendChild(tocBody);
+  /*
+   * One floating panel on the RIGHT, holding the contents list and the
+   * contextual material together.
+   *
+   * The contents list used to be the left column and the contextual material
+   * the right, which is why clicking Contents on a wide screen appeared to
+   * reveal "Quick revision" instead of a contents list: there were two
+   * competing side panels and the control that was visible belonged to the one
+   * on the other side. One panel removes the ambiguity - the thing you ask for
+   * and the thing you get are the same object.
+   *
+   * The wrapper is also what makes the panel FLOAT. `.rd-side` is the sticky
+   * element and `.rd-toc__body` scrolls inside it, so a 57-section chapter gets
+   * a contents list that stays on screen and scrolls on its own instead of
+   * running off the bottom of it. Sticky on a grid item with
+   * `align-items: start` keeps working; sticky on the grid itself does not.
+   */
+  const side = h("div.rd-side");
+  side.appendChild(tocBody);
+  if (rail) side.appendChild(h("aside.rd-rail", rail));
+
   root.appendChild(main);
-  if (rail) root.appendChild(h("aside.rd-rail", rail));
+  root.appendChild(side);
 
   /** A second, inline collapse control for the reading column. */
   function collapseInline() {

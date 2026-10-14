@@ -1547,14 +1547,18 @@ function buildSessionReader(s, data, km, label, query) {
 
   const railBits = [];
 
-  // Memory anchors: a revision aid, kept and clearly labelled as one. They are
-  // not the way into the topic any more - the topic is above them.
-  if (s.anchors && s.anchors.length) {
-    railBits.push(h("p.rd-toc__hd", "Quick revision"));
-    const ul = h("ul");
-    for (const a of s.anchors) ul.appendChild(h("li", ...prose.markedNodes(a)));
-    railBits.push(ul);
-  }
+  /*
+   * "Quick revision" - the memory anchors - is GONE from here, on request: the
+   * right-hand panel belongs to the contents list, and a revision aid in the
+   * slot the contents list should occupy meant clicking Contents appeared to
+   * open the wrong thing.
+   *
+   * This is a display change only. `s.anchors` is still read, still indexed and
+   * still in data/knowledge-map.json; nothing was deleted from the data. If
+   * the anchors are wanted back they belong at the END of the chapter as a
+   * collapsed section, where they aid revision without displacing the contents
+   * list - that has not been done here because it is a content decision.
+   */
 
   const deps = s.dependsOn || [];
   const dependents = s.dependents || [];
@@ -1619,11 +1623,24 @@ function buildSessionReader(s, data, km, label, query) {
   });
 
   if (missing.length) {
-    node.insertBefore(
-      h("p.srcref",
-        `This session's document does not contain ${missing.length === 1 ? "a section" : "sections"} for: ` +
-        `${missing.join(", ")}. The contents list shows only the sections that have text.`),
-      node.firstChild.nextSibling);
+    // Into the READING COLUMN, above the control bar.
+    //
+    // It used to be spliced into `.rd` itself as a direct child, one node after
+    // the progress bar. That was the only way to put it near the top before the
+    // grid named its areas - and it broke as soon as it did, because an
+    // auto-placed grid item goes into the first free cell, which is after
+    // `.rd-main` had claimed the named area. The note about missing sections
+    // had drifted to the very bottom of the chapter.
+    //
+    // The same applies on a wide screen: the note is about this chapter's
+    // contents, so it belongs with the chapter, not beside it.
+    const note = h("p.srcref",
+      `This session's document does not contain ${missing.length === 1 ? "a section" : "sections"} for: ` +
+      `${missing.join(", ")}. The contents list shows only the sections that have text.`);
+    const column = node.querySelector(".rd-main");
+    const barEl = node.querySelector(".rd-bar");
+    if (column) column.insertBefore(note, barEl || null);
+    else node.appendChild(note);
   }
 
   return node;
