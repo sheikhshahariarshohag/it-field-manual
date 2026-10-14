@@ -50,17 +50,54 @@
 
   <nav class="sidenav" id="sidenav" aria-label="Sections">
     <div class="sidenav__scroll">
-      <p class="sidenav__group">Field manual</p>
-      <ul class="sidenav__list" id="navPrimary"></ul>
+      <!--
+        Each group is a real block: a heading with a button inside it that
+        collapses the list beneath, and a bordered panel so the groups are
+        visibly separate things.
 
-      <p class="sidenav__group">Subjects</p>
-      <ul class="sidenav__list" id="navSubjects"></ul>
+        The headings used to be bare <p> elements with a 16px margin. With no
+        rule, no panel and no gap distinct from the gap between items, four
+        groups ran together into one list and there was nothing to collapse.
+      -->
+      <section class="sidenav__block" data-group="primary">
+        <h2 class="sidenav__group">
+          <button class="sidenav__toggle" type="button" aria-expanded="true" aria-controls="navPrimary">
+            <span class="sidenav__chev" aria-hidden="true"></span>
+            <span class="sidenav__gname">Field manual</span>
+          </button>
+        </h2>
+        <ul class="sidenav__list" id="navPrimary"></ul>
+      </section>
 
-      <p class="sidenav__group">Practice</p>
-      <ul class="sidenav__list" id="navPractice"></ul>
+      <section class="sidenav__block" data-group="subjects">
+        <h2 class="sidenav__group">
+          <button class="sidenav__toggle" type="button" aria-expanded="true" aria-controls="navSubjects">
+            <span class="sidenav__chev" aria-hidden="true"></span>
+            <span class="sidenav__gname">Subjects</span>
+          </button>
+        </h2>
+        <ul class="sidenav__list" id="navSubjects"></ul>
+      </section>
 
-      <p class="sidenav__group">Project</p>
-      <ul class="sidenav__list" id="navProject"></ul>
+      <section class="sidenav__block" data-group="practice">
+        <h2 class="sidenav__group">
+          <button class="sidenav__toggle" type="button" aria-expanded="true" aria-controls="navPractice">
+            <span class="sidenav__chev" aria-hidden="true"></span>
+            <span class="sidenav__gname">Practice</span>
+          </button>
+        </h2>
+        <ul class="sidenav__list" id="navPractice"></ul>
+      </section>
+
+      <section class="sidenav__block" data-group="reference">
+        <h2 class="sidenav__group">
+          <button class="sidenav__toggle" type="button" aria-expanded="true" aria-controls="navProject">
+            <span class="sidenav__chev" aria-hidden="true"></span>
+            <span class="sidenav__gname">Reference</span>
+          </button>
+        </h2>
+        <ul class="sidenav__list" id="navProject"></ul>
+      </section>
 
       <div class="sidenav__foot">
         <div class="netstat" id="netstat" aria-live="polite"></div>

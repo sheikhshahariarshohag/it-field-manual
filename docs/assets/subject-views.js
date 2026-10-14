@@ -245,19 +245,40 @@ export function subjectView(params) {
 
   /* --- a peek at the actual content, not just counts ------------------ */
   const r = S.resourcesFor(s.id);
+
   if (r.lessons.length) {
     wrap.appendChild(h("h2", "Lessons in this subject"));
     const ul = h("ul.res-list");
     for (const l of r.lessons.slice(0, 8)) {
       ul.appendChild(h("li",
         h("a", { href: href(`lessons/${l.id}`) }, l.title),
-        l.kind === "service" ? h("span.badge", "Service") : null,
-      ));
+        l.time ? h("span.res-row__m", l.time) : null));
     }
     wrap.appendChild(ul);
     if (r.lessons.length > 8) {
       wrap.appendChild(h("p.srcref", `and ${r.lessons.length - 8} more in `,
         h("a", { href: href(`subjects/${s.id}/lessons`) }, "all lessons")));
+    }
+  }
+
+  // Service profiles are listed as their own thing, with their own heading.
+  // Listing them under "Lessons" is what made auditd and chronyd look like
+  // lessons when they are reference cards for running a service.
+  if (r.services.length) {
+    wrap.appendChild(h("h2", "Service manual"));
+    wrap.appendChild(h("p.srcref",
+      `${r.services.length} service profile${r.services.length === 1 ? "" : "s"} — ` +
+      "configuration, verification and troubleshooting for individual services."));
+    const ul = h("ul.res-list");
+    for (const x of r.services.slice(0, 12)) {
+      ul.appendChild(h("li",
+        h("a", { href: href(`lessons/${x.id}`) }, x.title),
+        x.verification ? h("span.badge", x.verification) : null));
+    }
+    wrap.appendChild(ul);
+    if (r.services.length > 12) {
+      wrap.appendChild(h("p.srcref", `and ${r.services.length - 12} more in `,
+        h("a", { href: href(`subjects/${s.id}/services`) }, "the service manual")));
     }
   }
 
@@ -340,7 +361,17 @@ export function subjectSectionView(params) {
       if (!r.lessons.length) return emptyState(wrap, s, title);
       put(r.lessons, (x) => h("a.res-row", { href: href(`lessons/${x.id}`) },
         h("span.res-row__t", x.title),
-        h("span.res-row__m", x.kind === "service" ? "Service manual" : x.time || "")));
+        h("span.res-row__m", x.time || "")));
+      break;
+
+    case "services":
+      if (!r.services.length) return emptyState(wrap, s, title);
+      wrap.appendChild(h("p.srcref",
+        "One reference profile per service: what it is for, how to configure it, " +
+        "how to verify it, and what to do when it fails. These are not lessons."));
+      put(r.services, (x) => h("a.res-row", { href: href(`lessons/${x.id}`) },
+        h("span.res-row__t", x.title),
+        x.verification ? h("span.badge", x.verification) : null));
       break;
 
     case "practice":

@@ -106,6 +106,36 @@ export function labelFor(tech) {
 const byId = (a) => a || [];
 
 /**
+ * Is this record a service profile rather than a lesson?
+ *
+ * THE DATA DOES NOT SAY SO
+ * Every one of the 32 lesson records carries `kind: "lesson"`, including all
+ * nineteen RHEL service profiles. So the field that ought to distinguish them
+ * is useless, and anything that filtered on `kind === "service"` returned an
+ * empty list while the subject page went on calling auditd, chronyd, firewalld
+ * and PostgreSQL "lessons". That is what was on screen.
+ *
+ * The records do carry other, reliable evidence, checked in order:
+ *
+ *   quickRef      a reference card of the service's own. Only profiles have one.
+ *   tags          the profiles tag themselves "service"
+ *   id            the profiles are built as `rhel-service-<unit>`
+ *   summary       the profiles introduce themselves as "RHEL 10 service profile
+ *                 for 08-auditd"
+ *
+ * Checked against all 32 records this returns 19 service profiles - every one
+ * of them RHEL - and 13 lessons spread across all six subjects. Measured, not
+ * assumed: `node scripts/check-lesson-kinds.mjs`.
+ */
+export function isServiceProfile(d) {
+  if (!d) return false;
+  if (d.quickRef !== undefined) return true;
+  if (Array.isArray(d.tags) && d.tags.includes("service")) return true;
+  if (/^rhel-service-/.test(String(d.id || ""))) return true;
+  return /service profile/i.test(String(d.summary || ""));
+}
+
+/**
  * Every canonical resource for one subject, grouped by kind.
  *
  * Each group is a filtered view of the existing corpus arrays. Nothing is
@@ -117,18 +147,21 @@ export function resourcesFor(tech) {
   const study = (C.study && C.study.books) || [];
   const notes = (C.notes && C.notes.chapters) || [];
 
+  const mine = byId(C.lessons).filter((x) => x.tech === t);
+
   return {
     id: t,
 
     commands: byId(C.commands).filter((x) => x.tech === t),
-    lessons: byId(C.lessons).filter((x) => x.tech === t),
+
+    // Lessons and service profiles are different resources and are counted
+    // separately. They were conflated until now.
+    lessons: mine.filter((x) => !isServiceProfile(x)),
+    services: mine.filter(isServiceProfile),
+
     scenarios: byId(C.scenarios).filter((x) => x.tech === t),
     quizzes: byId(C.quizzes).filter((x) => x.tech === t),
     projects: byId(C.projects).filter((x) => x.tech === t),
-
-    // The RHEL service profiles are lessons already, so they are not separated
-    // out here; the lesson list carries them with their own kind.
-    services: byId(C.lessons).filter((x) => x.tech === t && x.kind === "service"),
 
     // Study units and notes are keyed by book rather than tech.
     studyUnits: study
@@ -184,6 +217,7 @@ export function countsFor(tech) {
   return {
     commands: r.commands.length,
     lessons: r.lessons.length,
+    services: r.services.length,
     scenarios: r.scenarios.length,
     quizzes: r.quizzes.length,
     projects: r.projects.length,
@@ -191,9 +225,9 @@ export function countsFor(tech) {
     notes: r.notes.length,
     guides: r.guides.length,
     exams: r.exams.length,
-    total: r.commands.length + r.lessons.length + r.scenarios.length +
-           r.quizzes.length + r.projects.length + r.studyUnits.length +
-           r.notes.length + r.guides.length,
+    total: r.commands.length + r.lessons.length + r.services.length +
+           r.scenarios.length + r.quizzes.length + r.projects.length +
+           r.studyUnits.length + r.notes.length + r.guides.length,
   };
 }
 
@@ -201,24 +235,28 @@ export function countsFor(tech) {
  * The subsections a subject page shows, in reading order.
  *
  * A section with nothing in it is returned with `count: 0` so the page can
- * render an honest empty state instead of pretending it does not exist, and
- * without a card full of nothing.
+ * render an honest empty state instead of pretending it does not exist.
+ *
+ * "Service manual" is separate from "Lessons" because they are different
+ * resources: a lesson explains a topic, a service profile is a reference card
+ * for running one piece of software. RHEL has nineteen of the second and one of
+ * the first, and listing them together under one heading is what made auditd,
+ * chronyd and PostgreSQL look like lessons.
  */
 export function sectionsFor(tech) {
-  const r = resourcesFor(tech);
   const c = countsFor(tech);
-  const out = [
+  return [
     { key: "study", label: "Study Manual", blurb: "Chapters in reading order.", count: c.studyUnits, href: `subjects/${tech}/study` },
     { key: "notes", label: "Simple Notes", blurb: "Quick revision, not the full chapter.", count: c.notes, href: `subjects/${tech}/notes` },
+    { key: "lessons", label: "Lessons", blurb: "Topics explained in depth.", count: c.lessons, href: `subjects/${tech}/lessons` },
+    { key: "services", label: "Service Manual", blurb: "Reference profiles, one per service.", count: c.services, href: `subjects/${tech}/services` },
     { key: "commands", label: "Commands", blurb: "Command reference with syntax and risk.", count: c.commands, href: `subjects/${tech}/commands` },
-    { key: "lessons", label: "Lessons", blurb: "Task-oriented walk-throughs.", count: c.lessons, href: `subjects/${tech}/lessons` },
     { key: "labs", label: "Labs and practice", blurb: "Things to do on a spare machine.", count: c.scenarios, href: `subjects/${tech}/practice` },
     { key: "troubleshooting", label: "Troubleshooting", blurb: "Symptoms and investigations.", count: c.scenarios, href: `subjects/${tech}/troubleshooting` },
     { key: "quizzes", label: "Quizzes and review", blurb: "Test yourself.", count: c.quizzes, href: `subjects/${tech}/quizzes` },
     { key: "projects", label: "Projects", blurb: "Bigger end-to-end builds.", count: c.projects, href: `subjects/${tech}/projects` },
     { key: "certification", label: "Certification preparation", blurb: "Exam objectives and readiness.", count: c.guides + c.exams, href: `subjects/${tech}/certification` },
   ];
-  return out;
 }
 
 /** Every subject that has at least one resource, for the home page. */

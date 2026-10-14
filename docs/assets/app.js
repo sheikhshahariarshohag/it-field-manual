@@ -120,6 +120,82 @@ function buildNav() {
   navProject.appendChild(navLink("Verification status", "verify"));
 }
 
+/**
+ * Collapsible groups in the app sidebar.
+ *
+ * Each group's heading is a real button with aria-expanded and aria-controls,
+ * so it works from the keyboard and announces its state. The choice is
+ * remembered per group, because a sidebar that forgets which groups you had
+ * folded is a sidebar you have to set up again on every visit.
+ *
+ * `display: none` on the collapsed list removes it from the layout, so the
+ * remaining groups move up rather than leaving a hole - which is the whole
+ * reason to collapse something.
+ */
+function initSidebarGroups() {
+  const KEY = "field-manual:nav-groups";
+  const blocks = [...document.querySelectorAll(".sidenav__block")];
+  if (!blocks.length) return;
+
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (_) { /* private mode */ }
+
+  /*
+   * The collapsed state is carried by a class on the BLOCK, not by a CSS
+   * sibling selector on the button.
+   *
+   * The markup is <section><h2><button/></h2><ul/></section>, so the list is
+   * a sibling of the heading, not of the button. A selector like
+   * `.sidenav__toggle[aria-expanded="false"] + .sidenav__list` therefore never
+   * matched anything: the button's next sibling does not exist. aria-expanded
+   * is still set, because it is what a screen reader announces, but the class
+   * is what the stylesheet keys on.
+   */
+  const setOpen = (block, open, persist) => {
+    block.querySelector(".sidenav__toggle").setAttribute("aria-expanded", open ? "true" : "false");
+    block.classList.toggle("is-collapsed", !open);
+    if (persist) {
+      const now = {};
+      for (const b of blocks) {
+        now[b.dataset.group] = !b.classList.contains("is-collapsed");
+      }
+      try { localStorage.setItem(KEY, JSON.stringify(now)); } catch (_) { /* private */ }
+    }
+  };
+
+  for (const block of blocks) {
+    const name = block.dataset.group;
+    if (Object.prototype.hasOwnProperty.call(saved, name)) setOpen(block, !!saved[name], false);
+    block.querySelector(".sidenav__toggle").addEventListener("click", () => {
+      setOpen(block, block.classList.contains("is-collapsed"), true);
+    });
+  }
+
+  revealActiveNavGroup();
+  addEventListener("hashchange", revealActiveNavGroup);
+}
+
+/**
+ * Open the sidebar group that holds the page you are on.
+ *
+ * markNav() sets aria-current on the active link, but if that link sits inside
+ * a group the reader has folded, the sidebar shows nothing highlighted and
+ * looks broken. Called after every render and on every hash change.
+ */
+function revealActiveNavGroup() {
+  const cur = document.querySelector('.navlink[aria-current="page"]');
+  if (!cur) return;
+  const block = cur.closest(".sidenav__block");
+  if (!block || !block.classList.contains("is-collapsed")) return;
+  const KEY = "field-manual:nav-groups";
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (_) { /* private */ }
+  saved[block.dataset.group] = true;
+  block.classList.remove("is-collapsed");
+  block.querySelector(".sidenav__toggle").setAttribute("aria-expanded", "true");
+  try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (_) { /* private */ }
+}
+
 /** Highlight the nav item matching the current route. */
 function markNav() {
   const cur = currentRoute();
@@ -422,6 +498,8 @@ async function render(restoreTo) {
   clear(main);
   main.appendChild(node);
   markNav();
+  // markNav may have moved the reader into a collapsed group, or out of one.
+  revealActiveNavGroup();
   if (syncHashToSearch) syncHashToSearch();
   // Move focus to the content only when the user navigated. Stealing focus on
   // every keystroke would make the search box impossible to type in.
@@ -491,6 +569,7 @@ function initBackToTop() {
 async function boot() {
   initTheme();
   initDrawer();
+  initSidebarGroups();
   initNetStatus();
   initBackToTop();
   syncHashToSearch = initSearchBox();

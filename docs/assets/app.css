@@ -2132,11 +2132,13 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
    deliberately warm and low-contrast, and it cannot carry this job on fill
    colour alone. */
 
-.rd {
-  --toc-edge: #d6cdbd;          /* light: ~1.6:1 against the panel */
+/* Declared on :root, not on .rd, because the app sidebar needs the same edge
+   colour and it is not inside the reader. */
+:root {
+  --toc-edge: #d6cdbd;          /* light: ~1.36:1 against a panel */
   --toc-edge-active: #0f6b66;
 }
-html[data-theme="dark"] .rd {
+html[data-theme="dark"] {
   --toc-edge: #423d33;
   --toc-edge-active: #63c9c0;
 }
@@ -2168,4 +2170,95 @@ html[data-theme="dark"] .rd-toc__list > .rd-toc__item {
 }
 html[data-theme="dark"] .rd-toc__list > .rd-toc__item:hover {
   box-shadow: 0 2px 4px rgba(0,0,0,.42), 0 6px 14px rgba(0,0,0,.32);
+}
+
+/* ============================================================================
+   APP SIDEBAR - groups separated and collapsible
+
+   This is the left navigation, not the chapter contents list. The contents list
+   was rebuilt in the previous commit; this is the other one.
+
+   WHAT WAS WRONG
+   Group headings were bare <p> elements with a 16px top margin and nothing
+   else - no rule, no panel, no gap that differed from the gap between items.
+   Four groups therefore ran together into a single list, and there was nothing
+   to collapse because a <p> is not a control.
+
+   The fix is the same shape as the contents list, for the same reason: this
+   palette is warm and flat, so every surface sits within about 1.15:1 of its
+   neighbour and a hairline cannot carry the separation. Each group is a raised
+   panel on the recessed sidebar, with real space between panels, a real border
+   and a shadow.
+   ========================================================================== */
+
+.sidenav__block {
+  margin: 0 0 10px;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--toc-edge, #d6cdbd);
+  border-radius: var(--r-md);
+  box-shadow: 0 1px 2px rgba(60,48,32,.06), 0 2px 6px rgba(60,48,32,.05);
+}
+html[data-theme="dark"] .sidenav__block {
+  box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.22);
+}
+
+.sidenav__group { margin: 0; }
+
+.sidenav__toggle {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%;
+  padding: 8px 8px 8px 6px;
+  border: 0; border-radius: var(--r-sm);
+  background: transparent;
+  font-family: var(--font);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+  color: var(--text-dim);
+  cursor: pointer; text-align: left;
+}
+.sidenav__toggle:hover { background: var(--surface-2); color: var(--text); }
+.sidenav__toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+/* Chevron: a drawn triangle rather than a glyph, so it renders the same
+   everywhere and can rotate without a font swap. */
+.sidenav__chev {
+  width: 0; height: 0;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  flex: none;
+  transition: transform .14s ease;
+  transform: rotate(90deg);
+  opacity: .65;
+}
+.sidenav__block.is-collapsed .sidenav__chev { transform: rotate(0deg); }
+.sidenav__gname { min-width: 0; }
+
+.sidenav__block > .sidenav__list {
+  display: grid; gap: 1px;
+  padding-bottom: 2px;
+}
+
+/* Collapsed: the list is removed from the layout entirely rather than just
+   made transparent, so the remaining groups move up.
+
+   Keyed on the class the JS puts on the BLOCK. A sibling selector on the
+   button cannot work here: the list is a sibling of the <h2>, not of the
+   button, so utton + .list never matched and nothing ever collapsed. */
+.sidenav__block.is-collapsed > .sidenav__list { display: none; }
+
+/* The collapsed heading carries the group name and nothing else, which is the
+   point - so it needs a little more weight to stay legible as a label. */
+.sidenav__block.is-collapsed .sidenav__gname {
+  color: var(--text-faint);
+  letter-spacing: .12em;
+}
+
+/* Links inside a panel need less rounding and no extra background, because the
+   panel already provides the containment. */
+.sidenav__block .navlink { border-radius: var(--r-sm); padding: 7px 9px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sidenav__chev { transition: none; }
 }
