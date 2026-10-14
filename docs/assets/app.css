@@ -1505,7 +1505,10 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
     width: min(320px, 86vw);
     max-height: none; height: 100%;
     padding: 14px 16px 24px;
-    background: var(--surface);
+    /* --bg-sunk, not --surface. The contents list is a panel of cards, and the
+       cards are --surface; when the drawer behind them was also --surface the
+       rows had nothing to sit on and merged into one field on a phone. */
+    background: var(--bg-sunk);
     border-right: 1px solid var(--line);
     box-shadow: var(--shadow-2);
     transform: translateX(-102%);
@@ -1953,3 +1956,216 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 
 /* The chapter title is the one thing on the page that should be loudest. */
 .page-head h1 { margin-top: 0; }
+
+/* ============================================================================
+   CONTENTS LIST — rebuilt as a panel of separate rows.
+
+   WHY THE PREVIOUS VERSION DID NOT WORK
+   It separated entries with `border-bottom: 1px solid var(--line-soft)`.
+   Measured on this palette, --line-soft is #efeae1 and --bg is #faf8f4 - a
+   contrast ratio of about 1.1:1. That is below the threshold at which anyone
+   can see a line, so the separator was decoration that never appeared, and the
+   list read as one undifferentiated grey column. Every entry was also the same
+   34px tall, the same 13.92px, the same --text-dim, with a 3px left border that
+   was transparent on every row except the active one. The rules applied
+   correctly and were still invisible.
+
+   The fix is structural rather than a darker line: the list is now a recessed
+   panel, and each entry is a raised card on it. Cards are separated by SPACE
+   and a visible border rather than a hairline, which is a difference a reader
+   can actually see from across the room.
+
+   The numbering was also wrong. Section titles already carry their own number
+   ("1.9 Unmount an NFS share"), so adding a counter produced "12  1.9 Unmount
+   an NFS share" - two numbers, one of them meaningless. The counter is gone
+   and replaced with a position marker that does not pretend to be a number.
+   ========================================================================== */
+
+.rd-toc {
+  padding: 12px 10px;
+  background: var(--bg-sunk);
+  border: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+.rd-toc__hd {
+  margin: 0 4px 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .11em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* Top-level entries are cards. Space between them does the separating. */
+.rd-toc__list { counter-reset: none; }
+.rd-toc__list > .rd-toc__item {
+  margin: 0 0 5px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  overflow: hidden;
+}
+.rd-toc__list > .rd-toc__item:last-child { margin-bottom: 0; border-bottom: 1px solid var(--line); }
+
+.rd-toc__list > .rd-toc__item > .rd-toc__link {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  margin-left: 0;
+  padding: 9px 11px 9px 10px;
+  border-left: 3px solid transparent;
+  border-radius: 0;
+  background: var(--surface);
+  font-size: .875rem;
+  line-height: 1.42;
+  color: var(--text);
+}
+
+/* A position marker, not a number. The titles carry their own numbering and
+   a second number here read as part of the name. */
+.rd-toc__list > .rd-toc__item > .rd-toc__link::before {
+  content: "";
+  display: block;
+  width: 9px; height: 9px;
+  margin-top: 5px;
+  border-radius: 2px;
+  background: var(--line);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+}
+
+.rd-toc__list > .rd-toc__item > .rd-toc__link:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.rd-toc__item.is-active > .rd-toc__link {
+  border-left-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-weight: 650;
+}
+.rd-toc__item.is-active > .rd-toc__link::before { background: var(--accent); }
+
+/* The active card also gets a ring, so it is unmistakable even for a reader
+   who cannot rely on the colour difference. */
+.rd-toc__item.is-active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+/* Nested entries: no card, indented under their parent with a visible rule.
+   They must read as subordinate but still be individually clickable. */
+.rd-toc__sub {
+  margin: 0;
+  padding: 2px 0 2px 10px;
+  border-left: 2px solid var(--line);
+  background: transparent;
+}
+.rd-toc__sub .rd-toc__item { margin: 0 0 2px; border: 0; background: transparent; }
+.rd-toc__sub .rd-toc__item:last-child { border-bottom: 0; }
+
+.rd-toc__item[data-level="3"] > .rd-toc__link {
+  display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 7px;
+  margin-left: 0;
+  padding: 5px 8px;
+  border-left: 0;
+  font-size: .795rem;
+  color: var(--text-dim);
+}
+.rd-toc__item[data-level="3"] > .rd-toc__link::before {
+  content: ""; display: block;
+  width: 5px; height: 5px; margin-top: 6px;
+  border-radius: 50%; background: var(--line);
+}
+.rd-toc__item[data-level="4"] > .rd-toc__link {
+  display: grid; grid-template-columns: 10px minmax(0, 1fr); gap: 7px;
+  margin-left: 0; padding: 4px 8px; border-left: 0;
+  font-size: .755rem; color: var(--text-faint);
+}
+.rd-toc__item[data-level="4"] > .rd-toc__link::before {
+  content: ""; display: block; width: 4px; height: 4px; margin-top: 6px;
+  border-radius: 50%; background: var(--line);
+}
+
+.rd-toc__item.is-folded > .rd-toc__link { opacity: .5; }
+.rd-toc__item.is-folded > .rd-toc__link::after {
+  content: " ▸";
+  grid-column: 1 / -1;
+  color: var(--text-faint); font-size: .75rem;
+}
+
+/* The collapse circle sat on the panel edge and read as a stray control.
+   It is now inside the panel header area. */
+.rd:not(.is-collapsed) .rd-toc__collapse {
+  right: 10px;
+  background: var(--bg-sunk);
+  z-index: 2;
+}
+
+/* On a narrow screen the list is a drawer, so the panel needs its own
+   background against the page rather than the transparent one used beside
+   the reading column. */
+@media (max-width: 1000px) {
+  /* The panel must stay DARKER than its cards here too, or the cards vanish.
+     This rule previously set the panel to --surface, which is exactly the card
+     colour, so on a phone every row merged into the drawer. */
+  .rd-toc { background: var(--bg-sunk); border-radius: 0; border-left: 0; border-top: 0; }
+}
+
+/* --- edges you can actually see -----------------------------------------
+   Measured on this palette, the fills are all within about 1.15:1 of one
+   another: page #faf8f4, panel #f2eee7, card #fffdfa, and --line is 1.26:1
+   against the page. A 1px line at that contrast is not a separator, it is a
+   smudge - which is why the previous version applied every rule correctly and
+   still read as one column.
+
+   Two changes make the structure legible without inventing a new palette:
+
+     1. a dedicated edge colour, measurably stronger than --line
+     2. a drop shadow on every card, plus more space between them
+
+   Shadows and gaps are depth cues the eye reads as separation even when the
+   fills are nearly identical. That is the honest fix here: the palette is
+   deliberately warm and low-contrast, and it cannot carry this job on fill
+   colour alone. */
+
+.rd {
+  --toc-edge: #d6cdbd;          /* light: ~1.6:1 against the panel */
+  --toc-edge-active: #0f6b66;
+}
+html[data-theme="dark"] .rd {
+  --toc-edge: #423d33;
+  --toc-edge-active: #63c9c0;
+}
+
+.rd-toc__list > .rd-toc__item {
+  margin: 0 0 7px;
+  border: 1px solid var(--toc-edge);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  box-shadow: 0 1px 2px rgba(60,48,32,.07), 0 3px 8px rgba(60,48,32,.05);
+  overflow: hidden;
+}
+.rd-toc__list > .rd-toc__item:last-child { margin-bottom: 0; }
+
+/* Lifted on hover, so the list feels like a stack of things you can pick. */
+.rd-toc__list > .rd-toc__item > .rd-toc__link:hover {
+  background: var(--surface-2);
+  box-shadow: 0 2px 4px rgba(60,48,32,.09), 0 6px 14px rgba(60,48,32,.07);
+}
+.rd-toc__list > .rd-toc__item:hover { box-shadow: 0 2px 4px rgba(60,48,32,.09), 0 6px 14px rgba(60,48,32,.07); }
+
+.rd-toc__item.is-active {
+  border-color: var(--toc-edge-active);
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(60,48,32,.12);
+}
+
+html[data-theme="dark"] .rd-toc__list > .rd-toc__item {
+  box-shadow: 0 1px 2px rgba(0,0,0,.34), 0 3px 8px rgba(0,0,0,.26);
+}
+html[data-theme="dark"] .rd-toc__list > .rd-toc__item:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,.42), 0 6px 14px rgba(0,0,0,.32);
+}
