@@ -2441,3 +2441,22 @@ html[data-theme="dark"] .sidenav__block {
   margin-top: 18px; padding-top: 14px;
   border-top: 1px solid var(--line);
 }
+
+/* --- diagrams and preformatted blocks -------------------------------------
+   `.pl-out` is `white-space: pre-wrap` so that a long terminal line wraps
+   rather than pushing the page sideways. That is right for command output and
+   completely wrong for an ASCII diagram, where wrapping moves every row below
+   it and the drawing stops being a drawing.
+
+   Blocks of the `output` kind carry terminal output, flow diagrams and ASCII
+   diagrams, so they are given `pre` plus horizontal scrolling. A diagram is
+   now stored with its original line structure and must be rendered with its
+   original line structure; before this, the exported data had no newlines in
+   it at all, which is why the rule did not matter before. */
+.pl-box--output .pl-out,
+.pl-box--output pre {
+  white-space: pre;
+  overflow-x: auto;
+}
+/* Never let a diagram be mistaken for a sentence. */
+.pl-box--output .pl-box__tag { letter-spacing: .06em; }

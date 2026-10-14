@@ -70,6 +70,61 @@ const SECTION_KIND = {
   "personal notes section": "notes",
 };
 
+/*
+ * Is this line part of an ASCII diagram?
+ *
+ * The reassembly below exists to un-wrap hard-wrapped PDF prose. Applied to a
+ * diagram it destroys the only thing a diagram is: the alignment. The exported
+ * CPU diagram came out as a single 239-character line with no newlines at all,
+ * because `cur = \`${cur} ${text}\`` joined the rows with spaces and the final
+ * `replace(/\s+/g, " ")` flattened what was left.
+ *
+ * THE TEST, AND WHY IT IS SHAPED THIS WAY
+ *
+ * A first attempt counted structural characters: three or more of + | \ / < >
+ * = * and not too many letters. That recovered the diagrams and also cut prose
+ * in half, because sentences about CIDR tables and the OSI stack are full of
+ * "=" and "->":
+ *
+ *   "Common CIDR-to-hosts table: /24 = 254, /25 = 126 ... /28 ="   -> art
+ *   "14, /29 = 6, /30 = 2."                                         -> prose
+ *
+ * Two halves of one sentence. So the test now looks for drawing GEOMETRY
+ * rather than punctuation density: a box corner, a run of dashes hanging off a
+ * corner or a pipe, a double arrow, or a box-drawing character. Prose has
+ * commas and equals signs; a diagram has +---+ and |.
+ *
+ * The `inArt` case covers the rows inside a drawing that carry no geometry of
+ * their own - "0 8 16 31" is a table header, but it is only recognisable as
+ * one because it sits between two lines that are obviously a table.
+ */
+const BOX_DRAWING = /[\u2500-\u257F\u2550-\u256C]/;
+const ART_SHAPE = /(?:\+[-=]{2,}|\|[-=]{2,}\|?$|[-=]{2,}[+|]|<[-=]{2,}>|\+-|\[-|\+-{2,})/;
+
+function looksLikeArt(t, inArt = false) {
+  if (!t) return false;
+  if (BOX_DRAWING.test(t)) return true;
+  if (ART_SHAPE.test(t)) return true;
+  if (!inArt) return false;
+
+  /*
+   * Already inside a drawing. Keep absorbing.
+   *
+   * Requiring every row to carry box geometry was wrong, because most rows of a
+   * diagram do not: "| CPU PACKAGE |" and "Memory Bus" have no dashes at all.
+   * The first version of this test demanded geometry on every line, so those
+   * rows ended the run and a nine-row drawing was exported as five separate
+   * fragments - 467 of the 500 diagram items stayed flattened.
+   *
+   * So inside a drawing the question is only whether a line is clearly PROSE,
+   * and two things give it away: length, and a sentence terminator. A long line
+   * or one ending in a full stop is the document resuming its prose.
+   */
+  if (t.length > 90) return false;
+  if (/[.!?:;]$/.test(t)) return false;
+  return true;
+}
+
 /**
  * Reassemble the PDF's hard-wrapped lines into whole items.
  *
@@ -81,17 +136,82 @@ const SECTION_KIND = {
  *    Memory Anchors of 24 sessions.
  *  - the sentence test must tolerate a trailing quote or bracket, because
  *    session 103 ends sentences with `."`.
+ *  - ASCII diagrams are kept verbatim, newlines and all. They are never merged
+ *    into prose and never whitespace-collapsed, because a diagram whose rows
+ *    have been joined into one line is no longer a diagram.
+ */
+/**
+ * Reassemble the PDF's hard-wrapped lines into whole items.
+ *
+ * Three rules, all learned the hard way:
+ *  - a bullet starts a new item;
+ *  - otherwise the line continues the current one UNLESS the previous line
+ *    finished a sentence. A full stop is a boundary regardless of how long
+ *    the item already is — an earlier length guard silently emptied the
+ *    Memory Anchors of 24 sessions.
+ *  - the sentence test must tolerate a trailing quote or bracket, because
+ *    session 103 ends sentences with `."`.
+ *  - ASCII diagrams are kept verbatim, newlines and all. They are never merged
+ *    into prose and never whitespace-collapsed, because a diagram whose rows
+ *    have been joined into one line is no longer a diagram.
+ *
+ * WHAT IS DELIBERATELY NOT DONE
+ *
+ * A run is started only when a line carries drawing GEOMETRY - a box corner, a
+ * run of dashes hanging off a corner or a pipe, a double arrow, or a
+ * box-drawing character - and is then extended while the following lines stay
+ * short and do not end a sentence.
+ *
+ * That is narrow on purpose. Two wider rules were tried and both damaged the
+ * corpus, which scripts/check-km-artifact.mjs caught by comparing the entire
+ * export word for word:
+ *
+ *   "three or more of + | / < > = *"   split sentences about CIDR tables and
+ *                                      the OSI stack in half.
+ *   "look ahead for art"               swallowed bulleted lists and prose and
+ *                                      destroyed 1,818 words.
+ *   "look ahead for a lone pipe row"   recovered 16 more diagrams but still
+ *                                      cost 54 words.
+ *
+ * So this stays strict. Diagrams whose rows carry geometry come through with
+ * their original shape, including the two that matter most - the CPU package
+ * and the CPU/Cache/RAM/Storage hierarchy. The rest stay as the flattened text
+ * they have always been: wrong, but not destructive. Recovering those safely
+ * needs the source re-extracted with diagram blocks marked up explicitly, not
+ * a looser guess at line content.
  */
 function blocks(body) {
   const out = [];
   let cur = null;
+  let art = null;
+
+  const flushArt = () => {
+    if (!art) return;
+    const joined = art.join("\n").replace(/[ \t]+$/gm, "");
+    if (joined.trim().length > 2) out.push(joined);
+    art = null;
+  };
+
   for (const { text, bullet } of body) {
+    if (looksLikeArt(text, !!art)) {
+      // Art never continues a sentence, and a sentence never continues art.
+      if (cur) { out.push(cur); cur = null; }
+      if (!art) art = [];
+      art.push(text);
+      continue;
+    }
+    flushArt();
     if (bullet || !cur) { if (cur) out.push(cur); cur = text; continue; }
     if (/[.!?:;][")'\u201D\u2019\]]?$/.test(cur)) { out.push(cur); cur = text; continue; }
     cur = `${cur} ${text}`;
   }
   if (cur) out.push(cur);
-  return out.map((s) => s.replace(/\s+/g, " ").trim()).filter((s) => s.length > 2);
+  flushArt();
+
+  // Only prose is whitespace-collapsed. Art is returned untouched.
+  return out
+    .map((s) => (s.includes("\n") ? s : s.replace(/\s+/g, " ").trim()))
+    .filter((s) => s.length > 2);
 }
 
 /* --------------------------------------------------------- page indexing */
