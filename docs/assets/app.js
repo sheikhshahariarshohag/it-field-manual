@@ -12,6 +12,7 @@ import * as V from "./views.js";
 import * as SUBJ from "./subjects.js";
 import * as SV from "./subject-views.js";
 import { route, start, resolve, href, currentRoute } from "./router.js";
+import * as TR from "./translate.js";
 
 const main = document.getElementById("main");
 /*
@@ -293,6 +294,47 @@ function initTheme() {
   });
 }
 
+/* ------------------------------------------------------------------ translate */
+
+/**
+ * The optional Bangla translation control (translate.js).
+ *
+ * The widget itself is only fetched once the reader picks Bangla, so an
+ * English reader never talks to Google. The chooser reuses the standard sheet
+ * so it looks and behaves like every other dialog in the app.
+ */
+function initLang() {
+  TR.initTranslate();
+  const btn = document.getElementById("langBtn");
+  if (!btn) return;
+
+  const paint = () => {
+    const on = TR.getLang() === "bn";
+    btn.classList.toggle("is-on", on);
+    btn.setAttribute("aria-label", on ? "Translation: Bangla (change)" : "Translate this page");
+  };
+  paint();
+
+  btn.addEventListener("click", () => {
+    const current = TR.getLang();
+    sheet({
+      title: "Translate this page",
+      submitLabel: "Apply",
+      fields: [{ name: "lang", label: "Language", type: "select", options: ["English", "বাংলা (Bangla)"] }],
+      extra: h("p.srcref", "Bangla translation is provided by Google Translate. It needs an internet " +
+        "connection, and it can translate technical terms, commands and code incorrectly — treat the " +
+        "English original as the source of truth."),
+      onSubmit: (v, close) => {
+        const chosen = String(v.lang).startsWith("বাংলা") ? "bn" : "en";
+        close();
+        if (chosen !== current) TR.setLang(chosen);
+      },
+    });
+    const sel = document.querySelector("#sheetHost select");
+    if (sel) sel.value = current === "bn" ? "বাংলা (Bangla)" : "English";
+  });
+}
+
 /* ------------------------------------------------------------------ search box */
 
 function initSearchBox() {
@@ -524,6 +566,9 @@ async function render(restoreTo) {
 
   clear(main);
   main.appendChild(node);
+  // If Bangla is active, rerun the translate widget over the freshly rendered
+  // content (debounced). No-op in English, so it costs nothing by default.
+  TR.reapply();
   markNav();
   // markNav may have moved the reader into a collapsed group, or out of one.
   revealActiveNavGroup();
@@ -601,6 +646,7 @@ async function boot() {
   initBackToTop();
   syncHashToSearch = initSearchBox();
   initDataPanel();
+  initLang();
 
   route("", ({ recalled }) => render(recalled));
   route("search", ({ recalled }) => render(recalled));

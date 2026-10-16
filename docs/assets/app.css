@@ -246,6 +246,28 @@ html[data-theme="dark"] .icon-moon { display: block; }
 html[data-theme="light"] .icon-sun { display: block; }
 html[data-theme="light"] .icon-moon { display: none; }
 
+/* The translate control lights up while Bangla is active. */
+.icon-btn.is-on { color: var(--accent); }
+
+/* ------------------------------------------------------- google translate */
+/* The widget's own UI is hidden; the app drives it from the topbar button.
+   The host must stay in the DOM (the widget mounts its hidden <select> inside
+   it) but it must not occupy layout. */
+.gtranslate {
+  position: absolute; top: 0; left: -9999px;
+  width: 1px; height: 1px; overflow: hidden;
+}
+/* Google injects a banner iframe and pushes <body> down by its height. Both
+   are suppressed so the sticky topbar and the rest of the layout stay put. */
+iframe.goog-te-banner-frame,
+body > .skiptranslate,
+#goog-gt-tt,
+.goog-te-balloon-frame { display: none !important; }
+body { top: 0 !important; }
+/* The yellow flash-highlight Google paints over translated spans is noise in a
+   reference manual; keep the translated text, drop the highlight. */
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
+
 /* ---------------------------------------------------------------- layout */
 
 .layout { display: flex; align-items: flex-start; min-height: calc(100vh - var(--topbar-h)); }

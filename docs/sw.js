@@ -15,7 +15,7 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v2";
+const VERSION = "v3";
 const SHELL_CACHE = `field-manual-shell-${VERSION}`;
 const DATA_CACHE = `field-manual-data-${VERSION}`;
 
@@ -34,6 +34,7 @@ const SHELL = [
   "assets/subject-views.js",
   "assets/router.js",
   "assets/views.js",
+  "assets/translate.js",
   "assets/icon.svg",
   "assets/icon-192.png",
   "assets/icon-512.png",
