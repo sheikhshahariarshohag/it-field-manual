@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -35,51 +35,24 @@
         },
         {
           "level": 0,
-          "text": "#"
+          "level": 0,
+          "text": "| # | Name | Default connection |"
         },
         {
           "level": 0,
-          "text": "Name"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Default connection"
+          "text": "| 0 | stdin (standard input) | Keyboard |"
         },
         {
           "level": 0,
-          "text": "0"
+          "text": "| 1 | stdout (standard output) | Terminal |"
         },
         {
           "level": 0,
-          "text": "stdin (standard input)"
-        },
-        {
-          "level": 0,
-          "text": "Keyboard"
-        },
-        {
-          "level": 0,
-          "text": "1"
-        },
-        {
-          "level": 0,
-          "text": "stdout (standard output)"
-        },
-        {
-          "level": 0,
-          "text": "Terminal"
-        },
-        {
-          "level": 0,
-          "text": "2"
-        },
-        {
-          "level": 0,
-          "text": "stderr (standard error)"
-        },
-        {
-          "level": 0,
-          "text": "Terminal"
+          "text": "| 2 | stderr (standard error) | Terminal |"
         },
         {
           "level": 0,
@@ -87,71 +60,44 @@
         },
         {
           "level": 0,
-          "text": "Operator"
+          "level": 0,
+          "text": "| Operator | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "> file"
+          "text": "| `> file` | stdout overwrites file (creates it if missing) |"
         },
         {
           "level": 0,
-          "text": "stdout overwrites file (creates it if missing)"
+          "text": "| `>> file` | stdout appends to file |"
         },
         {
           "level": 0,
-          "text": ">> file"
+          "text": "| `2> file` | stderr overwrites file |"
         },
         {
           "level": 0,
-          "text": "stdout appends to file"
+          "text": "| `2> /dev/null` | discard error messages entirely |"
         },
         {
           "level": 0,
-          "text": "2> file"
+          "text": "| `> file 2>&1` | stdout AND stderr both to file (order matters — see below) |"
         },
         {
           "level": 0,
-          "text": "stderr overwrites file"
+          "text": "| `&> file` | same as above, shorter modern syntax |"
         },
         {
           "level": 0,
-          "text": "2> /dev/null"
+          "text": "| `&>> file` | stdout AND stderr both appended to file |"
         },
         {
           "level": 0,
-          "text": "discard error messages entirely"
-        },
-        {
-          "level": 0,
-          "text": "> file 2>&1"
-        },
-        {
-          "level": 0,
-          "text": "stdout AND stderr both to file (order matters — see below)"
-        },
-        {
-          "level": 0,
-          "text": "&> file"
-        },
-        {
-          "level": 0,
-          "text": "same as above, shorter modern syntax"
-        },
-        {
-          "level": 0,
-          "text": "&>> file"
-        },
-        {
-          "level": 0,
-          "text": "stdout AND stderr both appended to file"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Order matters with 2>&1"
+          "text": "WARNING — Order matters with 2>&1"
         },
         {
           "level": 0,
@@ -205,7 +151,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — tee — save AND view at the same time"
+          "text": "RHCSA EXAM CRITICAL — tee — save AND view at the same time"
         },
         {
           "level": 0,
@@ -243,51 +189,24 @@
         },
         {
           "level": 0,
-          "text": "Mode"
+          "level": 0,
+          "text": "| Mode | Enter with | Purpose |"
         },
         {
           "level": 0,
-          "text": "Enter with"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "| Command mode | (default on open, or `Esc` from elsewhere) | Navigation, delete, copy/paste, undo |"
         },
         {
           "level": 0,
-          "text": "Command mode"
+          "text": "| Insert mode | `i` | Typing becomes file content |"
         },
         {
           "level": 0,
-          "text": "(default on open, or Esc from elsewhere)"
-        },
-        {
-          "level": 0,
-          "text": "Navigation, delete, copy/paste, undo"
-        },
-        {
-          "level": 0,
-          "text": "Insert mode"
-        },
-        {
-          "level": 0,
-          "text": "i"
-        },
-        {
-          "level": 0,
-          "text": "Typing becomes file content"
-        },
-        {
-          "level": 0,
-          "text": "Extended command mode"
-        },
-        {
-          "level": 0,
-          "text": ":"
-        },
-        {
-          "level": 0,
-          "text": "Save, quit, search/replace, and other whole-file operations"
+          "text": "| Extended command mode | `:` | Save, quit, search/replace, and other whole-file operations |"
         },
         {
           "level": 0,
@@ -303,71 +222,44 @@
         },
         {
           "level": 0,
-          "text": "Keys"
+          "level": 0,
+          "text": "| Keys | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "i"
+          "text": "| `i` | Enter insert mode at the cursor |"
         },
         {
           "level": 0,
-          "text": "Enter insert mode at the cursor"
+          "text": "| `Esc` | Leave insert mode, back to command mode |"
         },
         {
           "level": 0,
-          "text": "Esc"
+          "text": "| `x` | Delete the character under the cursor |"
         },
         {
           "level": 0,
-          "text": "Leave insert mode, back to command mode"
+          "text": "| `u` | Undo the last change |"
         },
         {
           "level": 0,
-          "text": "x"
+          "text": "| `:w` | Write (save), stay open |"
         },
         {
           "level": 0,
-          "text": "Delete the character under the cursor"
+          "text": "| `:wq` | Write and quit |"
         },
         {
           "level": 0,
-          "text": "u"
+          "text": "| `:q!` | Quit, discarding changes since the last save |"
         },
         {
           "level": 0,
-          "text": "Undo the last change"
-        },
-        {
-          "level": 0,
-          "text": ":w"
-        },
-        {
-          "level": 0,
-          "text": "Write (save), stay open"
-        },
-        {
-          "level": 0,
-          "text": ":wq"
-        },
-        {
-          "level": 0,
-          "text": "Write and quit"
-        },
-        {
-          "level": 0,
-          "text": ":q!"
-        },
-        {
-          "level": 0,
-          "text": "Quit, discarding changes since the last save"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This table is exam-day muscle memory"
+          "text": "RHCSA EXAM CRITICAL — This table is exam-day muscle memory"
         },
         {
           "level": 0,
@@ -383,35 +275,24 @@
         },
         {
           "level": 0,
-          "text": "Key"
+          "level": 0,
+          "text": "| Key | Selects |"
         },
         {
           "level": 0,
-          "text": "Selects"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "v"
+          "text": "| `v` | Character by character |"
         },
         {
           "level": 0,
-          "text": "Character by character"
+          "text": "| `Shift+V` | Whole lines |"
         },
         {
           "level": 0,
-          "text": "Shift+V"
-        },
-        {
-          "level": 0,
-          "text": "Whole lines"
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+V"
-        },
-        {
-          "level": 0,
-          "text": "A rectangular block — ideal for editing a column across many lines at once"
+          "text": "| `Ctrl+V` | A rectangular block — ideal for editing a column across many lines at once |"
         },
         {
           "level": 0,
@@ -445,7 +326,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Bare variable name vs. $-prefixed"
+          "text": "WARNING — Bare variable name vs. $-prefixed"
         },
         {
           "level": 0,
@@ -457,27 +338,20 @@
         },
         {
           "level": 0,
-          "text": "Variable"
+          "level": 0,
+          "text": "| Variable | Controls |"
         },
         {
           "level": 0,
-          "text": "Controls"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "PS1"
+          "text": "| `PS1` | The prompt's appearance — e.g. `PS1='[\\u@\\h \\t \\w]$ '` adds user, host, time, working dir. |"
         },
         {
           "level": 0,
-          "text": "The prompt's appearance — e.g. PS1='[\\u@\\h \\t \\w]$ ' adds user, host, time, working dir."
-        },
-        {
-          "level": 0,
-          "text": "HISTFILE / HISTFILESIZE"
-        },
-        {
-          "level": 0,
-          "text": "Where shell history is saved (default ~/.bash_history) and how many commands it keeps."
+          "text": "| `HISTFILE` / `HISTFILESIZE` | Where shell history is saved (default `~/.bash_history`) and how many commands it keeps. |"
         },
         {
           "level": 0,
@@ -501,43 +375,28 @@
         },
         {
           "level": 0,
-          "text": "Variable"
+          "level": 0,
+          "text": "| Variable | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "PATH"
+          "text": "| `PATH` | Directories searched (in order) to find a command's executable |"
         },
         {
           "level": 0,
-          "text": "Directories searched (in order) to find a command's executable"
+          "text": "| `HOME` | Your home directory — set automatically at shell start |"
         },
         {
           "level": 0,
-          "text": "HOME"
+          "text": "| `EDITOR` | Default command-line editor many programs invoke |"
         },
         {
           "level": 0,
-          "text": "Your home directory — set automatically at shell start"
-        },
-        {
-          "level": 0,
-          "text": "EDITOR"
-        },
-        {
-          "level": 0,
-          "text": "Default command-line editor many programs invoke"
-        },
-        {
-          "level": 0,
-          "text": "LANG"
-        },
-        {
-          "level": 0,
-          "text": "Locale — language, character set, date/number formatting"
+          "text": "| `LANG` | Locale — language, character set, date/number formatting |"
         },
         {
           "level": 0,
@@ -561,27 +420,20 @@
         },
         {
           "level": 0,
-          "text": "Scope"
+          "level": 0,
+          "text": "| Scope | Edit this file |"
         },
         {
           "level": 0,
-          "text": "Edit this file"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Just your account, every interactive shell"
+          "text": "| Just your account, every interactive shell | `~/.bashrc` |"
         },
         {
           "level": 0,
-          "text": "~/.bashrc"
-        },
-        {
-          "level": 0,
-          "text": "Every account on the system"
-        },
-        {
-          "level": 0,
-          "text": "A new .sh file in /etc/profile.d/ (root required)"
+          "text": "| Every account on the system | A new `.sh` file in `/etc/profile.d/` (root required) |"
         },
         {
           "level": 0,
@@ -593,7 +445,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Persisting PS1 in the lab"
+          "text": "RHCSA EXAM CRITICAL — Persisting PS1 in the lab"
         },
         {
           "level": 0,
@@ -671,23 +523,23 @@
       "content": [
         {
           "level": 0,
-          "text": "Every process has stdin/stdout/stderr on channels 0/1/2; redirecting one doesn't affect the others unless you explicitly merge them (2>&1, &>)."
+          "text": "- Every process has stdin/stdout/stderr on channels 0/1/2; redirecting one doesn't affect the others unless you explicitly merge them (2>&1, &>)."
         },
         {
           "level": 0,
-          "text": "Pipes (|) connect commands directly; tee lets you save to a file and keep the pipeline flowing at the same time."
+          "text": "- Pipes (|) connect commands directly; tee lets you save to a file and keep the pipeline flowing at the same time."
         },
         {
           "level": 0,
-          "text": "Vim's three core modes are command, insert (i), and extended command (:) — i / Esc / x / u / :w / :wq / :q! covers the exam-critical minimum."
+          "text": "- Vim's three core modes are command, insert (i), and extended command (:) — i / Esc / x / u / :w / :wq / :q! covers the exam-critical minimum."
         },
         {
           "level": 0,
-          "text": "Shell variables live in one session only; export promotes one to an environment variable that child processes inherit."
+          "text": "- Shell variables live in one session only; export promotes one to an environment variable that child processes inherit."
         },
         {
           "level": 0,
-          "text": "~/.bashrc makes a setting persistent for your account; /etc/profile.d/*.sh makes it system-wide."
+          "text": "- ~/.bashrc makes a setting persistent for your account; /etc/profile.d/*.sh makes it system-wide."
         }
       ],
       "words": 101

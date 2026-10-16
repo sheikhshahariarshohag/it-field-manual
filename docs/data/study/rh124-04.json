@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -35,87 +35,52 @@
         },
         {
           "level": 0,
-          "text": "Directory"
+          "level": 0,
+          "text": "| Directory | Purpose |"
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "/usr"
+          "text": "| /usr | Installed software, libraries, read-only program data. /usr/bin (user commands), /usr/sbin (admin commands), /usr/local (locally added software). |"
         },
         {
           "level": 0,
-          "text": "Installed software, libraries, read-only program data. /usr/bin (user commands), /usr/sbin (admin commands), /usr/local (locally added software)."
+          "text": "| /etc | Configuration files for this system. |"
         },
         {
           "level": 0,
-          "text": "/etc"
+          "text": "| /var | Variable data that should survive a reboot — logs, databases, spool files, website content. |"
         },
         {
           "level": 0,
-          "text": "Configuration files for this system."
+          "text": "| /run | Runtime data for currently-running processes (PID files, locks) — wiped and recreated every boot. |"
         },
         {
           "level": 0,
-          "text": "/var"
+          "text": "| /home | Regular users' personal files and settings. |"
         },
         {
           "level": 0,
-          "text": "Variable data that should survive a reboot — logs, databases, spool files, website content."
+          "text": "| /root | Home directory for the root superuser (not the same as /). |"
         },
         {
           "level": 0,
-          "text": "/run"
+          "text": "| /tmp | World-writable scratch space; files untouched for 10 days are auto-deleted (/var/tmp uses 30 days). |"
         },
         {
           "level": 0,
-          "text": "Runtime data for currently-running processes (PID files, locks) — wiped and recreated every boot."
+          "text": "| /boot | Files needed to start the boot process. |"
         },
         {
           "level": 0,
-          "text": "/home"
+          "text": "| /dev | Special device files representing hardware. |"
         },
         {
           "level": 0,
-          "text": "Regular users' personal files and settings."
-        },
-        {
-          "level": 0,
-          "text": "/root"
-        },
-        {
-          "level": 0,
-          "text": "Home directory for the root superuser (not the same as /)."
-        },
-        {
-          "level": 0,
-          "text": "/tmp"
-        },
-        {
-          "level": 0,
-          "text": "World-writable scratch space; files untouched for 10 days are auto-deleted (/var/tmp uses 30 days)."
-        },
-        {
-          "level": 0,
-          "text": "/boot"
-        },
-        {
-          "level": 0,
-          "text": "Files needed to start the boot process."
-        },
-        {
-          "level": 0,
-          "text": "/dev"
-        },
-        {
-          "level": 0,
-          "text": "Special device files representing hardware."
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Legacy /bin, /sbin, /lib"
         },
         {
           "level": 0,
@@ -129,43 +94,24 @@
       "content": [
         {
           "level": 0,
-          "text": "Path type"
+          "level": 0,
+          "text": "| Path type | Rule | Example |"
         },
         {
           "level": 0,
-          "text": "Rule"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Example"
+          "text": "| Absolute | Starts with / — a complete address from the root. | /var/log/messages |"
         },
         {
           "level": 0,
-          "text": "Absolute"
+          "text": "| Relative | Doesn't start with / — read from wherever you currently are. | log/messages (if you're already in /var) |"
         },
         {
           "level": 0,
-          "text": "Starts with / — a complete address from the root."
-        },
-        {
-          "level": 0,
-          "text": "/var/log/messages"
-        },
-        {
-          "level": 0,
-          "text": "Relative"
-        },
-        {
-          "level": 0,
-          "text": "Doesn't start with / — read from wherever you currently are."
-        },
-        {
-          "level": 0,
-          "text": "log/messages (if you're already in /var)"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Case sensitivity"
+          "text": "WARNING — Case sensitivity"
         },
         {
           "level": 0,
@@ -173,67 +119,40 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "level": 0,
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "pwd"
+          "text": "| pwd | Print full path of the current (\"working\") directory. |"
         },
         {
           "level": 0,
-          "text": "Print full path of the current (\"working\") directory."
+          "text": "| ls | List directory contents. -l long format, -a include hidden (dotfile) entries, -R recurse into subdirectories. |"
         },
         {
           "level": 0,
-          "text": "ls"
+          "text": "| cd <path> | Change directory. cd alone (no argument) goes home. |"
         },
         {
           "level": 0,
-          "text": "List directory contents. -l long format, -a include hidden (dotfile) entries, -R recurse into subdirectories."
+          "text": "| cd - | Jump back to whatever directory you were in immediately before this one — great for bouncing between two locations. |"
         },
         {
           "level": 0,
-          "text": "cd <path>"
+          "text": "| cd .. | Move up one level to the parent directory. |"
         },
         {
           "level": 0,
-          "text": "Change directory. cd alone (no argument) goes home."
+          "text": "| cd . | Stay put — \".\" always means \"here\", useful as a destination argument, e.g. cp somefile . |"
         },
         {
           "level": 0,
-          "text": "cd -"
-        },
-        {
-          "level": 0,
-          "text": "Jump back to whatever directory you were in immediately before this one — great for bouncing between two locations."
-        },
-        {
-          "level": 0,
-          "text": "cd .."
-        },
-        {
-          "level": 0,
-          "text": "Move up one level to the parent directory."
-        },
-        {
-          "level": 0,
-          "text": "cd ."
-        },
-        {
-          "level": 0,
-          "text": "Stay put — \".\" always means \"here\", useful as a destination argument, e.g. cp somefile ."
-        },
-        {
-          "level": 0,
-          "text": "touch <file>"
-        },
-        {
-          "level": 0,
-          "text": "Update a file's timestamp, creating it empty if it doesn't exist yet — the standard way to make a quick test file."
+          "text": "| touch <file> | Update a file's timestamp, creating it empty if it doesn't exist yet — the standard way to make a quick test file. |"
         },
         {
           "level": 0,
@@ -247,7 +166,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Command reference"
+          "text": "RHCSA EXAM CRITICAL — Command reference"
         },
         {
           "level": 0,
@@ -255,79 +174,48 @@
         },
         {
           "level": 0,
-          "text": "Task"
+          "level": 0,
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Create a directory"
+          "text": "| Create a directory | `mkdir directory` |"
         },
         {
           "level": 0,
-          "text": "mkdir directory"
+          "text": "| Create parent dirs too if missing | `mkdir -p a/b/c` |"
         },
         {
           "level": 0,
-          "text": "Create parent dirs too if missing"
+          "text": "| Copy a file | `cp file new-file` |"
         },
         {
           "level": 0,
-          "text": "mkdir -p a/b/c"
+          "text": "| Copy a directory + contents | `cp -r directory new-directory` |"
         },
         {
           "level": 0,
-          "text": "Copy a file"
+          "text": "| Move or rename | `mv file new-file` |"
         },
         {
           "level": 0,
-          "text": "cp file new-file"
+          "text": "| Remove a file | `rm file` |"
         },
         {
           "level": 0,
-          "text": "Copy a directory + contents"
+          "text": "| Remove a directory + contents | `rm -r directory` |"
         },
         {
           "level": 0,
-          "text": "cp -r directory new-directory"
+          "text": "| Remove an empty directory | `rmdir directory` (or `rm -d`) |"
         },
         {
           "level": 0,
-          "text": "Move or rename"
-        },
-        {
-          "level": 0,
-          "text": "mv file new-file"
-        },
-        {
-          "level": 0,
-          "text": "Remove a file"
-        },
-        {
-          "level": 0,
-          "text": "rm file"
-        },
-        {
-          "level": 0,
-          "text": "Remove a directory + contents"
-        },
-        {
-          "level": 0,
-          "text": "rm -r directory"
-        },
-        {
-          "level": 0,
-          "text": "Remove an empty directory"
-        },
-        {
-          "level": 0,
-          "text": "rmdir directory (or rm -d)"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — cp and mv overwrite silently"
+          "text": "WARNING — cp and mv overwrite silently"
         },
         {
           "level": 0,
@@ -353,7 +241,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Links"
+          "text": "RHCSA EXAM CRITICAL — Links"
         },
         {
           "level": 0,
@@ -373,27 +261,20 @@
         },
         {
           "level": 0,
-          "text": "Limitation of hard links"
+          "level": 0,
+          "text": "| Limitation of hard links | Why |"
         },
         {
           "level": 0,
-          "text": "Why"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Can't link a directory"
+          "text": "| Can't link a directory | Not allowed by the filesystem, to prevent loops in the directory tree. |"
         },
         {
           "level": 0,
-          "text": "Not allowed by the filesystem, to prevent loops in the directory tree."
-        },
-        {
-          "level": 0,
-          "text": "Can't cross filesystems"
-        },
-        {
-          "level": 0,
-          "text": "A hard link is just another name inside the same on-disk data structure — it can't reach across to a different mounted filesystem. Check with df which \"Mounted on\" boundary two paths fall under."
+          "text": "| Can't cross filesystems | A hard link is just another name inside the same on-disk data structure — it can't reach across to a different mounted filesystem. Check with df which \"Mounted on\" boundary two paths fall under. |"
         },
         {
           "level": 0,
@@ -427,7 +308,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Globbing"
+          "text": "RHCSA EXAM CRITICAL — Globbing"
         },
         {
           "level": 0,
@@ -435,67 +316,40 @@
         },
         {
           "level": 0,
-          "text": "Pattern"
+          "level": 0,
+          "text": "| Pattern | Matches |"
         },
         {
           "level": 0,
-          "text": "Matches"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "*"
+          "text": "| `*` | Any string of zero or more characters |"
         },
         {
           "level": 0,
-          "text": "Any string of zero or more characters"
+          "text": "| `?` | Exactly one character |"
         },
         {
           "level": 0,
-          "text": "?"
+          "text": "| `[abc]` | One character, any of a, b, or c |"
         },
         {
           "level": 0,
-          "text": "Exactly one character"
+          "text": "| `[!abc]` or `[^abc]` | One character, anything except a, b, or c |"
         },
         {
           "level": 0,
-          "text": "[abc]"
+          "text": "| `[[:alpha:]]` | One alphabetic character |"
         },
         {
           "level": 0,
-          "text": "One character, any of a, b, or c"
+          "text": "| `[[:digit:]]` | One digit 0–9 |"
         },
         {
           "level": 0,
-          "text": "[!abc] or [^abc]"
-        },
-        {
-          "level": 0,
-          "text": "One character, anything except a, b, or c"
-        },
-        {
-          "level": 0,
-          "text": "[[:alpha:]]"
-        },
-        {
-          "level": 0,
-          "text": "One alphabetic character"
-        },
-        {
-          "level": 0,
-          "text": "[[:digit:]]"
-        },
-        {
-          "level": 0,
-          "text": "One digit 0–9"
-        },
-        {
-          "level": 0,
-          "text": "[[:upper:]] / [[:lower:]]"
-        },
-        {
-          "level": 0,
-          "text": "One uppercase / lowercase letter"
+          "text": "| `[[:upper:]]` / `[[:lower:]]` | One uppercase / lowercase letter |"
         },
         {
           "level": 0,
@@ -563,39 +417,28 @@
         },
         {
           "level": 0,
-          "text": "Quoting"
+          "level": 0,
+          "text": "| Quoting | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "\\ (backslash)"
+          "text": "| `\\` (backslash) | Escapes just the next single character — e.g. `\\$HOME` prints literally $HOME instead of expanding it. |"
         },
         {
           "level": 0,
-          "text": "Escapes just the next single character — e.g. \\$HOME prints literally $HOME instead of expanding it."
+          "text": "| \"double quotes\" | Blocks globbing/wildcards, but still allows $variable and $(command) substitution. |"
         },
         {
           "level": 0,
-          "text": "\"double quotes\""
+          "text": "| 'single quotes' | Blocks everything — the most literal option. |"
         },
         {
           "level": 0,
-          "text": "Blocks globbing/wildcards, but still allows $variable and $(command) substitution."
-        },
-        {
-          "level": 0,
-          "text": "'single quotes'"
-        },
-        {
-          "level": 0,
-          "text": "Blocks everything — the most literal option."
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Don't confuse ' with `"
+          "text": "WARNING — Don't confuse ' with `"
         },
         {
           "level": 0,
@@ -685,23 +528,23 @@
       "content": [
         {
           "level": 0,
-          "text": "Linux files live in one inverted tree from /; /etc, /var, /home, /tmp, /usr are the directories to know by purpose."
+          "text": "- Linux files live in one inverted tree from /; /etc, /var, /home, /tmp, /usr are the directories to know by purpose."
         },
         {
           "level": 0,
-          "text": "Absolute paths start with /; relative paths are read from the current working directory. cd -, cd .., and cd . are the fast-navigation shortcuts."
+          "text": "- Absolute paths start with /; relative paths are read from the current working directory. cd -, cd .., and cd . are the fast-navigation shortcuts."
         },
         {
           "level": 0,
-          "text": "mkdir, cp, mv, rm(-r), rmdir are the core file-management toolkit — cp/mv overwrite silently, rm has no undo."
+          "text": "- mkdir, cp, mv, rm(-r), rmdir are the core file-management toolkit — cp/mv overwrite silently, rm has no undo."
         },
         {
           "level": 0,
-          "text": "Hard links share the same underlying data (same inode, can't cross filesystems, can't target a directory); soft links are a separate file that stores a path, and can dangle."
+          "text": "- Hard links share the same underlying data (same inode, can't cross filesystems, can't target a directory); soft links are a separate file that stores a path, and can dangle."
         },
         {
           "level": 0,
-          "text": "Glob patterns (*, ?, [abc], [[:digit:]]...), brace expansion ({1..3}), and quoting (\", ', \\) let you operate on many files precisely and efficiently."
+          "text": "- Glob patterns (*, ?, [abc], [[:digit:]]...), brace expansion ({1..3}), and quoting (\", ', \\) let you operate on many files precisely and efficiently."
         }
       ],
       "words": 116

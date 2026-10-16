@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -35,55 +35,27 @@
         },
         {
           "level": 0,
-          "text": "Account type"
+          "text": "| Account type | UID range | Purpose |"
         },
         {
           "level": 0,
-          "text": "UID range"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Purpose"
+          "text": "| Superuser (root) | 0 | Full access to the system, no restrictions |"
         },
         {
           "level": 0,
-          "text": "Superuser (root)"
+          "text": "| System users | 1–200 (static), 201–999 (dynamic) | Run background services/daemons; not meant for interactive login |"
         },
         {
           "level": 0,
-          "text": "0"
+          "text": "| Regular users | 1000+ | Day-to-day human accounts |"
         },
         {
           "level": 0,
-          "text": "Full access to the system, no restrictions"
-        },
-        {
-          "level": 0,
-          "text": "System users"
-        },
-        {
-          "level": 0,
-          "text": "1–200 (static), 201–999 (dynamic)"
-        },
-        {
-          "level": 0,
-          "text": "Run background services/daemons; not meant for interactive login"
-        },
-        {
-          "level": 0,
-          "text": "Regular users"
-        },
-        {
-          "level": 0,
-          "text": "1000+"
-        },
-        {
-          "level": 0,
-          "text": "Day-to-day human accounts"
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — UID ranges changed between major releases"
         },
         {
           "level": 0,
@@ -103,67 +75,39 @@
         },
         {
           "level": 0,
-          "text": "Field #"
+          "text": "| Field # | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "1"
+          "text": "| 1 | Username |"
         },
         {
           "level": 0,
-          "text": "Username"
+          "text": "| 2 | Always x — the real encrypted password lives in /etc/shadow instead |"
         },
         {
           "level": 0,
-          "text": "2"
+          "text": "| 3 | UID |"
         },
         {
           "level": 0,
-          "text": "Always x — the real encrypted password lives in /etc/shadow instead"
+          "text": "| 4 | Primary group's GID |"
         },
         {
           "level": 0,
-          "text": "3"
+          "text": "| 5 | Real name (\"GECOS\" comment field) |"
         },
         {
           "level": 0,
-          "text": "UID"
+          "text": "| 6 | Home directory |"
         },
         {
           "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "Primary group's GID"
-        },
-        {
-          "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "Real name (\"GECOS\" comment field)"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "Home directory"
-        },
-        {
-          "level": 0,
-          "text": "7"
-        },
-        {
-          "level": 0,
-          "text": "Login shell — /sbin/nologin blocks interactive login for service accounts"
+          "text": "| 7 | Login shell — /sbin/nologin blocks interactive login for service accounts |"
         },
         {
           "level": 3,
@@ -189,7 +133,7 @@
       "content": [
         {
           "level": 0,
-          "text": "⚠ WARNING — Don't log in as root directly"
+          "text": "WARNING — Don't log in as root directly"
         },
         {
           "level": 0,
@@ -197,59 +141,35 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "su username"
+          "text": "| `su username` | Switch user, non-login shell — keeps your current environment |"
         },
         {
           "level": 0,
-          "text": "Switch user, non-login shell — keeps your current environment"
+          "text": "| `su - username` | Switch user, login shell — sets up the environment fresh, as if that user had just logged in (the recommended form) |"
         },
         {
           "level": 0,
-          "text": "su - username"
+          "text": "| `su (no name) / su -` | Defaults to root |"
         },
         {
           "level": 0,
-          "text": "Switch user, login shell — sets up the environment fresh, as if that user had just logged in (the recommended form)"
+          "text": "| `sudo command` | Run one command as root, authenticating with YOUR OWN password, not root's |"
         },
         {
           "level": 0,
-          "text": "su (no name) / su -"
+          "text": "| `sudo -i` | Interactive root shell, root's own login environment |"
         },
         {
           "level": 0,
-          "text": "Defaults to root"
-        },
-        {
-          "level": 0,
-          "text": "sudo command"
-        },
-        {
-          "level": 0,
-          "text": "Run one command as root, authenticating with YOUR OWN password, not root's"
-        },
-        {
-          "level": 0,
-          "text": "sudo -i"
-        },
-        {
-          "level": 0,
-          "text": "Interactive root shell, root's own login environment"
-        },
-        {
-          "level": 0,
-          "text": "sudo su -"
-        },
-        {
-          "level": 0,
-          "text": "Interactive root shell via su - (widely used in this course's own examples for consistent PATH behavior)"
+          "text": "| `sudo su -` | Interactive root shell via su - (widely used in this course's own examples for consistent PATH behavior) |"
         },
         {
           "level": 0,
@@ -285,7 +205,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — wheel group behavior changed"
+          "text": "WARNING — wheel group behavior changed"
         },
         {
           "level": 0,
@@ -299,7 +219,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Command reference"
+          "text": "RHCSA EXAM CRITICAL — Command reference"
         },
         {
           "level": 0,
@@ -307,103 +227,59 @@
         },
         {
           "level": 0,
-          "text": "Task"
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Create a user"
+          "text": "| Create a user | `useradd username` |"
         },
         {
           "level": 0,
-          "text": "useradd username"
+          "text": "| Set/change a password | `passwd username` |"
         },
         {
           "level": 0,
-          "text": "Set/change a password"
+          "text": "| Add a real-name comment | `usermod -c \"Full Name\" username` |"
         },
         {
           "level": 0,
-          "text": "passwd username"
+          "text": "| Set primary group | `usermod -g group username` |"
         },
         {
           "level": 0,
-          "text": "Add a real-name comment"
+          "text": "| Set supplementary groups (replaces the set) | `usermod -G group1,group2 username` |"
         },
         {
           "level": 0,
-          "text": "usermod -c \"Full Name\" username"
+          "text": "| Add to a supplementary group (keeps existing ones) | `usermod -aG group username` |"
         },
         {
           "level": 0,
-          "text": "Set primary group"
+          "text": "| Change home directory (and move contents) | `usermod -d /new/home -m username` |"
         },
         {
           "level": 0,
-          "text": "usermod -g group username"
+          "text": "| Change login shell | `usermod -s /bin/bash username` |"
         },
         {
           "level": 0,
-          "text": "Set supplementary groups (replaces the set)"
+          "text": "| Lock / unlock account | `usermod -L username / usermod -U username` |"
         },
         {
           "level": 0,
-          "text": "usermod -G group1,group2 username"
+          "text": "| Delete user, keep home directory | `userdel username` |"
         },
         {
           "level": 0,
-          "text": "Add to a supplementary group (keeps existing ones)"
+          "text": "| Delete user AND home directory | `userdel -r username` |"
         },
         {
           "level": 0,
-          "text": "usermod -aG group username"
-        },
-        {
-          "level": 0,
-          "text": "Change home directory (and move contents)"
-        },
-        {
-          "level": 0,
-          "text": "usermod -d /new/home -m username"
-        },
-        {
-          "level": 0,
-          "text": "Change login shell"
-        },
-        {
-          "level": 0,
-          "text": "usermod -s /bin/bash username"
-        },
-        {
-          "level": 0,
-          "text": "Lock / unlock account"
-        },
-        {
-          "level": 0,
-          "text": "usermod -L username / usermod -U username"
-        },
-        {
-          "level": 0,
-          "text": "Delete user, keep home directory"
-        },
-        {
-          "level": 0,
-          "text": "userdel username"
-        },
-        {
-          "level": 0,
-          "text": "Delete user AND home directory"
-        },
-        {
-          "level": 0,
-          "text": "userdel -r username"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — usermod -G vs -aG — the single most common mistake"
+          "text": "WARNING — usermod -G vs -aG — the single most common mistake"
         },
         {
           "level": 0,
@@ -411,7 +287,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — userdel without -r leaves orphaned files"
+          "text": "WARNING — userdel without -r leaves orphaned files"
         },
         {
           "level": 0,
@@ -425,63 +301,39 @@
       "content": [
         {
           "level": 0,
-          "text": "Task"
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Create a group"
+          "text": "| Create a group | `groupadd groupname` |"
         },
         {
           "level": 0,
-          "text": "groupadd groupname"
+          "text": "| Create with a specific GID | `groupadd -g 10000 groupname` |"
         },
         {
           "level": 0,
-          "text": "Create with a specific GID"
+          "text": "| Create a system group (auto GID from system range) | `groupadd -r groupname` |"
         },
         {
           "level": 0,
-          "text": "groupadd -g 10000 groupname"
+          "text": "| Rename a group | `groupmod -n newname oldname` |"
         },
         {
           "level": 0,
-          "text": "Create a system group (auto GID from system range)"
+          "text": "| Change a group's GID | `groupmod -g newgid groupname` |"
         },
         {
           "level": 0,
-          "text": "groupadd -r groupname"
+          "text": "| Delete a group | `groupdel groupname` |"
         },
         {
           "level": 0,
-          "text": "Rename a group"
-        },
-        {
-          "level": 0,
-          "text": "groupmod -n newname oldname"
-        },
-        {
-          "level": 0,
-          "text": "Change a group's GID"
-        },
-        {
-          "level": 0,
-          "text": "groupmod -g newgid groupname"
-        },
-        {
-          "level": 0,
-          "text": "Delete a group"
-        },
-        {
-          "level": 0,
-          "text": "groupdel groupname"
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — A group still in use can't be deleted"
         },
         {
           "level": 0,
@@ -507,83 +359,47 @@
         },
         {
           "level": 0,
-          "text": "Field"
+          "text": "| Field | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "1"
+          "text": "| 1 | Username |"
         },
         {
           "level": 0,
-          "text": "Username"
+          "text": "| 2 | Encrypted password — format $id$salt$hash (6=SHA-512, the RHEL 8 default; 1=MD5; 5=SHA-256) |"
         },
         {
           "level": 0,
-          "text": "2"
+          "text": "| 3 | Days since 1970-01-01 the password was last changed |"
         },
         {
           "level": 0,
-          "text": "Encrypted password — format $id$salt$hash (6=SHA-512, the RHEL 8 default; 1=MD5; 5=SHA-256)"
+          "text": "| 4 | Minimum days before it can be changed again |"
         },
         {
           "level": 0,
-          "text": "3"
+          "text": "| 5 | Maximum days before it must be changed |"
         },
         {
           "level": 0,
-          "text": "Days since 1970-01-01 the password was last changed"
+          "text": "| 6 | Warning period (days) before expiry |"
         },
         {
           "level": 0,
-          "text": "4"
+          "text": "| 7 | Inactivity grace period after expiry before the account locks |"
         },
         {
           "level": 0,
-          "text": "Minimum days before it can be changed again"
+          "text": "| 8 | Account expiration date (days since epoch) |"
         },
         {
           "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "Maximum days before it must be changed"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "Warning period (days) before expiry"
-        },
-        {
-          "level": 0,
-          "text": "7"
-        },
-        {
-          "level": 0,
-          "text": "Inactivity grace period after expiry before the account locks"
-        },
-        {
-          "level": 0,
-          "text": "8"
-        },
-        {
-          "level": 0,
-          "text": "Account expiration date (days since epoch)"
-        },
-        {
-          "level": 0,
-          "text": "9"
-        },
-        {
-          "level": 0,
-          "text": "Reserved, unused"
+          "text": "| 9 | Reserved, unused |"
         },
         {
           "level": 0,
@@ -599,67 +415,39 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "chage -l username"
+          "text": "| `chage -l username` | Display current aging settings for a user |"
         },
         {
           "level": 0,
-          "text": "Display current aging settings for a user"
+          "text": "| `chage -m N username` | Minimum days between changes |"
         },
         {
           "level": 0,
-          "text": "chage -m N username"
+          "text": "| `chage -M N username` | Maximum days before expiry |"
         },
         {
           "level": 0,
-          "text": "Minimum days between changes"
+          "text": "| `chage -W N username` | Warning days before expiry |"
         },
         {
           "level": 0,
-          "text": "chage -M N username"
+          "text": "| `chage -I N username` | Inactive days after expiry before lockout |"
         },
         {
           "level": 0,
-          "text": "Maximum days before expiry"
+          "text": "| `chage -d 0 username` | Force a password change at next login |"
         },
         {
           "level": 0,
-          "text": "chage -W N username"
-        },
-        {
-          "level": 0,
-          "text": "Warning days before expiry"
-        },
-        {
-          "level": 0,
-          "text": "chage -I N username"
-        },
-        {
-          "level": 0,
-          "text": "Inactive days after expiry before lockout"
-        },
-        {
-          "level": 0,
-          "text": "chage -d 0 username"
-        },
-        {
-          "level": 0,
-          "text": "Force a password change at next login"
-        },
-        {
-          "level": 0,
-          "text": "chage -E YYYY-MM-DD username"
-        },
-        {
-          "level": 0,
-          "text": "Set an account expiration date"
+          "text": "| `chage -E YYYY-MM-DD username` | Set an account expiration date |"
         },
         {
           "level": 0,
@@ -675,55 +463,27 @@
         },
         {
           "level": 0,
-          "text": "Method"
+          "text": "| Method | Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| Lock the password | `usermod -L username` | Blocks password authentication; can be reversed with -U |"
         },
         {
           "level": 0,
-          "text": "Lock the password"
+          "text": "| Expire the account | `usermod -e 2019-10-05 username (or chage -E)` | Blocks login entirely once the date passes |"
         },
         {
           "level": 0,
-          "text": "usermod -L username"
+          "text": "| Block interactive shell | `usermod -s /sbin/nologin username` | Account can still authenticate for non-shell services (mail, file transfer) but gets an immediate disconnect on interactive login attempts |"
         },
         {
           "level": 0,
-          "text": "Blocks password authentication; can be reversed with -U"
-        },
-        {
-          "level": 0,
-          "text": "Expire the account"
-        },
-        {
-          "level": 0,
-          "text": "usermod -e 2019-10-05 username (or chage -E)"
-        },
-        {
-          "level": 0,
-          "text": "Blocks login entirely once the date passes"
-        },
-        {
-          "level": 0,
-          "text": "Block interactive shell"
-        },
-        {
-          "level": 0,
-          "text": "usermod -s /sbin/nologin username"
-        },
-        {
-          "level": 0,
-          "text": "Account can still authenticate for non-shell services (mail, file transfer) but gets an immediate disconnect on interactive login attempts"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Locking out a departing employee"
+          "text": "RHCSA EXAM CRITICAL — Locking out a departing employee"
         },
         {
           "level": 0,
@@ -809,23 +569,23 @@
       "content": [
         {
           "level": 0,
-          "text": "Three account types: superuser (UID 0), system users (1–999), regular users (1000+); /etc/passwd and /etc/group map names to the UIDs/GIDs the system actually tracks."
+          "text": "- Three account types: superuser (UID 0), system users (1–999), regular users (1000+); /etc/passwd and /etc/group map names to the UIDs/GIDs the system actually tracks."
         },
         {
           "level": 0,
-          "text": "Prefer su - (login shell, fresh environment) and sudo (per-user, own-password authentication, fully logged) over logging in directly as root."
+          "text": "- Prefer su - (login shell, fresh environment) and sudo (per-user, own-password authentication, fully logged) over logging in directly as root."
         },
         {
           "level": 0,
-          "text": "useradd/usermod/userdel and groupadd/groupmod/groupdel are the core account-management toolkit; -aG (not -G) is how you add to, rather than replace, a user's supplementary groups."
+          "text": "- useradd/usermod/userdel and groupadd/groupmod/groupdel are the core account-management toolkit; -aG (not -G) is how you add to, rather than replace, a user's supplementary groups."
         },
         {
           "level": 0,
-          "text": "/etc/shadow holds salted, hashed passwords plus aging data; chage manages that aging policy per user, while /etc/login.defs sets defaults for future users only."
+          "text": "- /etc/shadow holds salted, hashed passwords plus aging data; chage manages that aging policy per user, while /etc/login.defs sets defaults for future users only."
         },
         {
           "level": 0,
-          "text": "usermod -L (lock), an expiration date (-e / chage -E), and /sbin/nologin are the three tools for restricting or ending an account's access."
+          "text": "- usermod -L (lock), an expiration date (-e / chage -E), and /sbin/nologin are the three tools for restricting or ending an account's access."
         }
       ],
       "words": 113

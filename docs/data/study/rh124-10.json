@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -43,43 +43,27 @@
         },
         {
           "level": 0,
-          "text": "Extension"
+          "text": "| Extension | Represents |"
         },
         {
           "level": 0,
-          "text": "Represents"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": ".service"
+          "text": "| `.service` | A system service — the type you'll manage most |"
         },
         {
           "level": 0,
-          "text": "A system service — the type you'll manage most"
+          "text": "| `.socket` | An IPC socket systemd watches; a connection triggers systemd to start the matching daemon on demand — delays startup cost until the service is actually needed |"
         },
         {
           "level": 0,
-          "text": ".socket"
+          "text": "| `.path` | Watches for a filesystem change (e.g. a new file in a spool directory) and triggers a service in response — common for print queues |"
         },
         {
           "level": 0,
-          "text": "An IPC socket systemd watches; a connection triggers systemd to start the matching daemon on demand — delays startup cost until the service is actually needed"
-        },
-        {
-          "level": 0,
-          "text": ".path"
-        },
-        {
-          "level": 0,
-          "text": "Watches for a filesystem change (e.g. a new file in a spool directory) and triggers a service in response — common for print queues"
-        },
-        {
-          "level": 0,
-          "text": ".target"
-        },
-        {
-          "level": 0,
-          "text": "A named grouping/synchronization point for other units (e.g. multi-user.target) — the closest systemd equivalent to old-style runlevels"
+          "text": "| `.target` | A named grouping/synchronization point for other units (e.g. multi-user.target) — the closest systemd equivalent to old-style runlevels |"
         },
         {
           "level": 0,
@@ -93,79 +77,47 @@
       "content": [
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "systemctl list-units --type=service"
+          "text": "| `systemctl list-units --type=service` | Loaded AND active service units (the default view) |"
         },
         {
           "level": 0,
-          "text": "Loaded AND active service units (the default view)"
+          "text": "| `systemctl list-units --type=service --all` | Every loaded service unit, active or not |"
         },
         {
           "level": 0,
-          "text": "systemctl list-units --type=service --all"
+          "text": "| `systemctl list-unit-files --type=service` | Every INSTALLED unit file and its enablement STATE — including ones never loaded this boot |"
         },
         {
           "level": 0,
-          "text": "Every loaded service unit, active or not"
+          "text": "| `systemctl status UNIT` | Full detail: load state, active state, main PID, and recent log lines for one unit |"
         },
         {
           "level": 0,
-          "text": "systemctl list-unit-files --type=service"
+          "text": "| `systemctl is-active UNIT` | Just active or inactive — script-friendly, one word |"
         },
         {
           "level": 0,
-          "text": "Every INSTALLED unit file and its enablement STATE — including ones never loaded this boot"
+          "text": "| `systemctl is-enabled UNIT` | Just enabled or disabled — script-friendly |"
         },
         {
           "level": 0,
-          "text": "systemctl status UNIT"
+          "text": "| `systemctl is-failed UNIT` | failed if it errored during startup, active if fine, unknown/inactive if stopped cleanly |"
         },
         {
           "level": 0,
-          "text": "Full detail: load state, active state, main PID, and recent log lines for one unit"
+          "text": "| `systemctl --failed --type=service` | Every service that failed to start — a fast first stop when troubleshooting |"
         },
         {
           "level": 0,
-          "text": "systemctl is-active UNIT"
-        },
-        {
-          "level": 0,
-          "text": "Just active or inactive — script-friendly, one word"
-        },
-        {
-          "level": 0,
-          "text": "systemctl is-enabled UNIT"
-        },
-        {
-          "level": 0,
-          "text": "Just enabled or disabled — script-friendly"
-        },
-        {
-          "level": 0,
-          "text": "systemctl is-failed UNIT"
-        },
-        {
-          "level": 0,
-          "text": "failed if it errored during startup, active if fine, unknown/inactive if stopped cleanly"
-        },
-        {
-          "level": 0,
-          "text": "systemctl --failed --type=service"
-        },
-        {
-          "level": 0,
-          "text": "Every service that failed to start — a fast first stop when troubleshooting"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — list-units vs. list-unit-files — know the difference cold"
+          "text": "RHCSA EXAM CRITICAL — list-units vs. list-unit-files — know the difference cold"
         },
         {
           "level": 0,
@@ -177,99 +129,63 @@
         },
         {
           "level": 0,
-          "text": "Field"
+          "text": "| Field | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Loaded"
+          "text": "| Loaded | Whether the unit's config file was found and parsed successfully |"
         },
         {
           "level": 0,
-          "text": "Whether the unit's config file was found and parsed successfully"
+          "text": "| Active | Current runtime state — see the state table below |"
         },
         {
           "level": 0,
-          "text": "Active"
+          "text": "| Main PID | The service's primary process ID and command name |"
         },
         {
           "level": 0,
-          "text": "Current runtime state — see the state table below"
+          "text": ""
         },
         {
           "level": 0,
-          "text": "Main PID"
+          "text": "| State keyword | Meaning |"
         },
         {
           "level": 0,
-          "text": "The service's primary process ID and command name"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "State keyword"
+          "text": "| `loaded` | Unit file successfully processed |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| `active (running)` | Currently running with one or more live processes |"
         },
         {
           "level": 0,
-          "text": "loaded"
+          "text": "| `active (exited)` | A one-shot action completed successfully; nothing is left running (this is normal, not a failure) |"
         },
         {
           "level": 0,
-          "text": "Unit file successfully processed"
+          "text": "| `active (waiting)` | Running, but currently blocked waiting for an event (common for socket-activated units) |"
         },
         {
           "level": 0,
-          "text": "active (running)"
+          "text": "| `inactive` | Not running |"
         },
         {
           "level": 0,
-          "text": "Currently running with one or more live processes"
+          "text": "| `enabled / disabled` | Whether it's set to start automatically at the next boot |"
         },
         {
           "level": 0,
-          "text": "active (exited)"
-        },
-        {
-          "level": 0,
-          "text": "A one-shot action completed successfully; nothing is left running (this is normal, not a failure)"
-        },
-        {
-          "level": 0,
-          "text": "active (waiting)"
-        },
-        {
-          "level": 0,
-          "text": "Running, but currently blocked waiting for an event (common for socket-activated units)"
-        },
-        {
-          "level": 0,
-          "text": "inactive"
-        },
-        {
-          "level": 0,
-          "text": "Not running"
-        },
-        {
-          "level": 0,
-          "text": "enabled / disabled"
-        },
-        {
-          "level": 0,
-          "text": "Whether it's set to start automatically at the next boot"
-        },
-        {
-          "level": 0,
-          "text": "static"
-        },
-        {
-          "level": 0,
-          "text": "Can't be enabled directly, but may still be started automatically as a dependency of something that IS enabled"
+          "text": "| `static` | Can't be enabled directly, but may still be started automatically as a dependency of something that IS enabled |"
         },
         {
           "level": 0,
@@ -287,7 +203,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Command reference — the core of this chapter"
+          "text": "RHCSA EXAM CRITICAL — Command reference — the core of this chapter"
         },
         {
           "level": 0,
@@ -295,63 +211,39 @@
         },
         {
           "level": 0,
-          "text": "Task"
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Start now (this boot only)"
+          "text": "| Start now (this boot only) | `systemctl start UNIT` |"
         },
         {
           "level": 0,
-          "text": "systemctl start UNIT"
+          "text": "| Stop now (this boot only) | `systemctl stop UNIT` |"
         },
         {
           "level": 0,
-          "text": "Stop now (this boot only)"
+          "text": "| Restart (stop then start — PID changes) | `systemctl restart UNIT` |"
         },
         {
           "level": 0,
-          "text": "systemctl stop UNIT"
+          "text": "| Reload config without restarting (PID unchanged) | `systemctl reload UNIT` |"
         },
         {
           "level": 0,
-          "text": "Restart (stop then start — PID changes)"
+          "text": "| Reload if supported, else restart | `systemctl reload-or-restart UNIT` |"
         },
         {
           "level": 0,
-          "text": "systemctl restart UNIT"
+          "text": "| View full status/logs | `systemctl status UNIT` |"
         },
         {
           "level": 0,
-          "text": "Reload config without restarting (PID unchanged)"
-        },
-        {
-          "level": 0,
-          "text": "systemctl reload UNIT"
-        },
-        {
-          "level": 0,
-          "text": "Reload if supported, else restart"
-        },
-        {
-          "level": 0,
-          "text": "systemctl reload-or-restart UNIT"
-        },
-        {
-          "level": 0,
-          "text": "View full status/logs"
-        },
-        {
-          "level": 0,
-          "text": "systemctl status UNIT"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — restart changes the PID; reload doesn't — and not every service supports reload"
+          "text": "WARNING — restart changes the PID; reload doesn't — and not every service supports reload"
         },
         {
           "level": 0,
@@ -363,47 +255,31 @@
         },
         {
           "level": 0,
-          "text": "Task"
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Start at every future boot"
+          "text": "| Start at every future boot | `systemctl enable UNIT` |"
         },
         {
           "level": 0,
-          "text": "systemctl enable UNIT"
+          "text": "| Stop starting at boot (does NOT stop it now) | `systemctl disable UNIT` |"
         },
         {
           "level": 0,
-          "text": "Stop starting at boot (does NOT stop it now)"
+          "text": "| Start now AND enable at boot, in one line | `systemctl enable --now UNIT` |"
         },
         {
           "level": 0,
-          "text": "systemctl disable UNIT"
+          "text": "| Stop now AND disable at boot, in one line | `systemctl disable --now UNIT` |"
         },
         {
           "level": 0,
-          "text": "Start now AND enable at boot, in one line"
-        },
-        {
-          "level": 0,
-          "text": "systemctl enable --now UNIT"
-        },
-        {
-          "level": 0,
-          "text": "Stop now AND disable at boot, in one line"
-        },
-        {
-          "level": 0,
-          "text": "systemctl disable --now UNIT"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — start/stop and enable/disable are two completely independent axes"
+          "text": "WARNING — start/stop and enable/disable are two completely independent axes"
         },
         {
           "level": 0,
@@ -423,51 +299,23 @@
         },
         {
           "level": 0,
-          "text": "Can start manually?"
+          "text": "|  | Can start manually? | Can start at boot? | Can start as a dependency? |"
         },
         {
           "level": 0,
-          "text": "Can start at boot?"
+          "text": "| --- | --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Can start as a dependency?"
+          "text": "| disabled | Yes | No | Yes |"
         },
         {
           "level": 0,
-          "text": "disabled"
+          "text": "| masked | No | No | No |"
         },
         {
           "level": 0,
-          "text": "Yes"
-        },
-        {
-          "level": 0,
-          "text": "No"
-        },
-        {
-          "level": 0,
-          "text": "Yes"
-        },
-        {
-          "level": 0,
-          "text": "masked"
-        },
-        {
-          "level": 0,
-          "text": "No"
-        },
-        {
-          "level": 0,
-          "text": "No"
-        },
-        {
-          "level": 0,
-          "text": "No"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Why masking exists — conflicting services"
+          "text": "RHCSA EXAM CRITICAL — Why masking exists — conflicting services"
         },
         {
           "level": 0,
@@ -557,23 +405,23 @@
       "content": [
         {
           "level": 0,
-          "text": "systemd (PID 1) manages services, sockets, paths, and targets as units, with parallel startup and automatic dependency ordering."
+          "text": "- systemd (PID 1) manages services, sockets, paths, and targets as units, with parallel startup and automatic dependency ordering."
         },
         {
           "level": 0,
-          "text": "systemctl status/list-units/list-unit-files/is-active/is-enabled/is-failed are how you inspect current and boot-time state — list-units only shows what's loaded THIS boot, list-unit-files shows every installed unit regardless."
+          "text": "- systemctl status/list-units/list-unit-files/is-active/is-enabled/is-failed are how you inspect current and boot-time state — list-units only shows what's loaded THIS boot, list-unit-files shows every installed unit regardless."
         },
         {
           "level": 0,
-          "text": "start/stop act on the running system only; enable/disable act on boot-time behavior only — these are independent axes, and forgetting one half of the pair is the single most common mistake in this chapter."
+          "text": "- start/stop act on the running system only; enable/disable act on boot-time behavior only — these are independent axes, and forgetting one half of the pair is the single most common mistake in this chapter."
         },
         {
           "level": 0,
-          "text": "restart changes a service's PID (full stop+start); reload does not (in-place config re-read) — reload-or-restart is the safe default when you're unsure which the service supports."
+          "text": "- restart changes a service's PID (full stop+start); reload does not (in-place config re-read) — reload-or-restart is the safe default when you're unsure which the service supports."
         },
         {
           "level": 0,
-          "text": "mask is a strictly harder block than disable — it prevents manual, boot-time, AND dependency-triggered starts, and must be explicitly unmasked to reverse."
+          "text": "- mask is a strictly harder block than disable — it prevents manual, boot-time, AND dependency-triggered starts, and must be explicitly unmasked to reverse."
         }
       ],
       "words": 125

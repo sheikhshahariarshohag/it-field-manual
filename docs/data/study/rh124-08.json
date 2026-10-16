@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -35,51 +35,23 @@
         },
         {
           "level": 0,
-          "text": "Permission"
+          "text": "| Permission | Effect on a file | Effect on a directory |"
         },
         {
           "level": 0,
-          "text": "Effect on a file"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Effect on a directory"
+          "text": "| r (read) | Contents can be read | Directory's file names can be listed |"
         },
         {
           "level": 0,
-          "text": "r (read)"
+          "text": "| w (write) | Contents can be changed | Files inside can be created or deleted |"
         },
         {
           "level": 0,
-          "text": "Contents can be read"
-        },
-        {
-          "level": 0,
-          "text": "Directory's file names can be listed"
-        },
-        {
-          "level": 0,
-          "text": "w (write)"
-        },
-        {
-          "level": 0,
-          "text": "Contents can be changed"
-        },
-        {
-          "level": 0,
-          "text": "Files inside can be created or deleted"
-        },
-        {
-          "level": 0,
-          "text": "x (execute)"
-        },
-        {
-          "level": 0,
-          "text": "Can be run as a command"
-        },
-        {
-          "level": 0,
-          "text": "Directory can be entered (cd) and its files accessed, if their own permissions allow it"
+          "text": "| x (execute) | Can be run as a command | Directory can be entered (cd) and its files accessed, if their own permissions allow it |"
         },
         {
           "level": 0,
@@ -91,7 +63,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Deleting a file is a directory permission, not a file permission"
+          "text": "WARNING — Deleting a file is a directory permission, not a file permission"
         },
         {
           "level": 0,
@@ -119,51 +91,31 @@
         },
         {
           "level": 0,
-          "text": "Position"
+          "text": "| Position | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "1st character"
+          "text": "| 1st character | File type: - regular file, d directory, l soft link (b/c/p/s = device or special files) |"
         },
         {
           "level": 0,
-          "text": "File type: - regular file, d directory, l soft link (b/c/p/s = device or special files)"
+          "text": "| Characters 2-4 | Owning user's rwx |"
         },
         {
           "level": 0,
-          "text": "Characters 2-4"
+          "text": "| Characters 5-7 | Owning group's rwx |"
         },
         {
           "level": 0,
-          "text": "Owning user's rwx"
+          "text": "| Characters 8-10 | Other's rwx |"
         },
         {
           "level": 0,
-          "text": "Characters 5-7"
-        },
-        {
-          "level": 0,
-          "text": "Owning group's rwx"
-        },
-        {
-          "level": 0,
-          "text": "Characters 8-10"
-        },
-        {
-          "level": 0,
-          "text": "Other's rwx"
-        },
-        {
-          "level": 0,
-          "text": "After the link count"
-        },
-        {
-          "level": 0,
-          "text": "Owning user, then owning group"
+          "text": "| After the link count | Owning user, then owning group |"
         },
         {
           "level": 3,
@@ -175,7 +127,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — The trap: group permission can be MORE restrictive than other"
+          "text": "RHCSA EXAM CRITICAL — The trap: group permission can be MORE restrictive than other"
         },
         {
           "level": 0,
@@ -209,7 +161,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Capital X vs lowercase x in recursive chmod"
+          "text": "WARNING — Capital X vs lowercase x in recursive chmod"
         },
         {
           "level": 0,
@@ -225,75 +177,31 @@
         },
         {
           "level": 0,
-          "text": "Symbolic"
+          "text": "| Symbolic | Calculation | Digit |"
         },
         {
           "level": 0,
-          "text": "Calculation"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Digit"
+          "text": "| rwx | 4+2+1 | 7 |"
         },
         {
           "level": 0,
-          "text": "rwx"
+          "text": "| rw- | 4+2 | 6 |"
         },
         {
           "level": 0,
-          "text": "4+2+1"
+          "text": "| r-x | 4+1 | 5 |"
         },
         {
           "level": 0,
-          "text": "7"
+          "text": "| r-- | 4 | 4 |"
         },
         {
           "level": 0,
-          "text": "rw-"
-        },
-        {
-          "level": 0,
-          "text": "4+2"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "r-x"
-        },
-        {
-          "level": 0,
-          "text": "4+1"
-        },
-        {
-          "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "r--"
-        },
-        {
-          "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "---"
-        },
-        {
-          "level": 0,
-          "text": "0"
-        },
-        {
-          "level": 0,
-          "text": "0"
+          "text": "| --- | 0 | 0 |"
         },
         {
           "level": 0,
@@ -305,7 +213,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Numeric is what experienced admins actually type"
+          "text": "RHCSA EXAM CRITICAL — Numeric is what experienced admins actually type"
         },
         {
           "level": 0,
@@ -317,55 +225,35 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "chown user file"
+          "text": "| `chown user file` | Change owning user (root only) |"
         },
         {
           "level": 0,
-          "text": "Change owning user (root only)"
+          "text": "| `chown :group file` | Change owning group (root, or the file's own owner if they belong to that group) |"
         },
         {
           "level": 0,
-          "text": "chown :group file"
+          "text": "| `chown user:group file` | Change both at once |"
         },
         {
           "level": 0,
-          "text": "Change owning group (root, or the file's own owner if they belong to that group)"
+          "text": "| `chown -R user:group dir` | Recursively, through a whole directory tree |"
         },
         {
           "level": 0,
-          "text": "chown user:group file"
+          "text": "| `chgrp group file` | Change owning group only — same effect as chown :group |"
         },
         {
           "level": 0,
-          "text": "Change both at once"
-        },
-        {
-          "level": 0,
-          "text": "chown -R user:group dir"
-        },
-        {
-          "level": 0,
-          "text": "Recursively, through a whole directory tree"
-        },
-        {
-          "level": 0,
-          "text": "chgrp group file"
-        },
-        {
-          "level": 0,
-          "text": "Change owning group only — same effect as chown :group"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Always use a colon, never a period, in owner:group"
+          "text": "WARNING — Always use a colon, never a period, in owner:group"
         },
         {
           "level": 0,
@@ -379,7 +267,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Special permissions"
+          "text": "RHCSA EXAM CRITICAL — Special permissions"
         },
         {
           "level": 0,
@@ -387,83 +275,23 @@
         },
         {
           "level": 0,
-          "text": "Special permission"
+          "text": "| Special permission | Symbolic | Octal | Effect on files | Effect on directories |"
         },
         {
           "level": 0,
-          "text": "Symbolic"
+          "text": "| --- | --- | --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Octal"
+          "text": "| setuid | `u+s` | `4` | Runs as the file's owning user, not whoever ran it | No effect |"
         },
         {
           "level": 0,
-          "text": "Effect on files"
+          "text": "| setgid | `g+s` | `2` | Runs as the file's owning group | New files inside inherit the DIRECTORY's group, not the creating user's primary group |"
         },
         {
           "level": 0,
-          "text": "Effect on directories"
-        },
-        {
-          "level": 0,
-          "text": "setuid"
-        },
-        {
-          "level": 0,
-          "text": "u+s"
-        },
-        {
-          "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "Runs as the file's owning user, not whoever ran it"
-        },
-        {
-          "level": 0,
-          "text": "No effect"
-        },
-        {
-          "level": 0,
-          "text": "setgid"
-        },
-        {
-          "level": 0,
-          "text": "g+s"
-        },
-        {
-          "level": 0,
-          "text": "2"
-        },
-        {
-          "level": 0,
-          "text": "Runs as the file's owning group"
-        },
-        {
-          "level": 0,
-          "text": "New files inside inherit the DIRECTORY's group, not the creating user's primary group"
-        },
-        {
-          "level": 0,
-          "text": "sticky bit"
-        },
-        {
-          "level": 0,
-          "text": "o+t"
-        },
-        {
-          "level": 0,
-          "text": "1"
-        },
-        {
-          "level": 0,
-          "text": "No effect"
-        },
-        {
-          "level": 0,
-          "text": "Users can only delete their OWN files here, even with directory write access"
+          "text": "| sticky bit | `o+t` | `1` | No effect | Users can only delete their OWN files here, even with directory write access |"
         },
         {
           "level": 0,
@@ -471,35 +299,23 @@
         },
         {
           "level": 0,
-          "text": "In ls -l, look for"
+          "text": "| In ls -l, look for | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "s where owner's x would be (e.g. rws)"
+          "text": "| s where owner's x would be (e.g. rws) | setuid set — lowercase s means execute was also set, uppercase S means execute was NOT set for owner |"
         },
         {
           "level": 0,
-          "text": "setuid set — lowercase s means execute was also set, uppercase S means execute was NOT set for owner"
+          "text": "| s where group's x would be | setgid set — same uppercase/lowercase execute-present rule |"
         },
         {
           "level": 0,
-          "text": "s where group's x would be"
-        },
-        {
-          "level": 0,
-          "text": "setgid set — same uppercase/lowercase execute-present rule"
-        },
-        {
-          "level": 0,
-          "text": "t where other's x would be"
-        },
-        {
-          "level": 0,
-          "text": "sticky bit set — lowercase t = execute present for other, uppercase T = not present"
+          "text": "| t where other's x would be | sticky bit set — lowercase t = execute present for other, uppercase T = not present |"
         },
         {
           "level": 0,
@@ -529,27 +345,19 @@
         },
         {
           "level": 0,
-          "text": "Object"
+          "text": "| Object | Starting permissions before umask |"
         },
         {
           "level": 0,
-          "text": "Starting permissions before umask"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "New directory"
+          "text": "| New directory | 0777 (rwxrwxrwx) |"
         },
         {
           "level": 0,
-          "text": "0777 (rwxrwxrwx)"
-        },
-        {
-          "level": 0,
-          "text": "New regular file"
-        },
-        {
-          "level": 0,
-          "text": "0666 (rw-rw-rw-) — execute is never included by default, even after umask, specifically so a compromised service can't accidentally create and immediately run a malicious file"
+          "text": "| New regular file | 0666 (rw-rw-rw-) — execute is never included by default, even after umask, specifically so a compromised service can't accidentally create and immediately run a malicious file |"
         },
         {
           "level": 0,
@@ -557,63 +365,27 @@
         },
         {
           "level": 0,
-          "text": "umask"
+          "text": "| umask | New file result | New directory result |"
         },
         {
           "level": 0,
-          "text": "New file result"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "New directory result"
+          "text": "| `0002` | rw-rw-r-- (the common regular-user default) | rwxrwxr-x |"
         },
         {
           "level": 0,
-          "text": "0002"
+          "text": "| `0000` | rw-rw-rw- | rwxrwxrwx |"
         },
         {
           "level": 0,
-          "text": "rw-rw-r-- (the common regular-user default)"
+          "text": "| `0007` | rw-rw---- | rwxrwx--- |"
         },
         {
           "level": 0,
-          "text": "rwxrwxr-x"
-        },
-        {
-          "level": 0,
-          "text": "0000"
-        },
-        {
-          "level": 0,
-          "text": "rw-rw-rw-"
-        },
-        {
-          "level": 0,
-          "text": "rwxrwxrwx"
-        },
-        {
-          "level": 0,
-          "text": "0007"
-        },
-        {
-          "level": 0,
-          "text": "rw-rw----"
-        },
-        {
-          "level": 0,
-          "text": "rwxrwx---"
-        },
-        {
-          "level": 0,
-          "text": "0027"
-        },
-        {
-          "level": 0,
-          "text": "rw-r-----"
-        },
-        {
-          "level": 0,
-          "text": "rwxr-x---"
+          "text": "| `0027` | rw-r----- | rwxr-x--- |"
         },
         {
           "level": 0,
@@ -621,7 +393,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Making a umask change permanent"
+          "text": "RHCSA EXAM CRITICAL — Making a umask change permanent"
         },
         {
           "level": 0,
@@ -699,19 +471,19 @@
       "content": [
         {
           "level": 0,
-          "text": "Every file has one owning user and one owning group; the most specific matching category (user > group > other) is the one that applies to you."
+          "text": "- Every file has one owning user and one owning group; the most specific matching category (user > group > other) is the one that applies to you."
         },
         {
           "level": 0,
-          "text": "chmod changes permissions symbolically (u/g/o/a, +/-/=, r/w/x) or numerically (4/2/1 per digit); chown/chgrp change ownership — always with a colon, never a period, when setting user and group together."
+          "text": "- chmod changes permissions symbolically (u/g/o/a, +/-/=, r/w/x) or numerically (4/2/1 per digit); chown/chgrp change ownership — always with a colon, never a period, when setting user and group together."
         },
         {
           "level": 0,
-          "text": "setuid/setgid/sticky (numeric 4/2/1 as a leading fourth digit) are special permissions: setuid/setgid change what identity a program runs as (or what group new files in a directory inherit); sticky restricts deletion in a shared directory to each file's own owner."
+          "text": "- setuid/setgid/sticky (numeric 4/2/1 as a leading fourth digit) are special permissions: setuid/setgid change what identity a program runs as (or what group new files in a directory inherit); sticky restricts deletion in a shared directory to each file's own owner."
         },
         {
           "level": 0,
-          "text": "New files start at 0666, new directories at 0777, before umask subtracts permissions from that baseline; ~/.bashrc persists a umask per user, /etc/profile.d/ persists it system-wide."
+          "text": "- New files start at 0666, new directories at 0777, before umask subtracts permissions from that baseline; ~/.bashrc persists a umask per user, /etc/profile.d/ persists it system-wide."
         }
       ],
       "words": 122

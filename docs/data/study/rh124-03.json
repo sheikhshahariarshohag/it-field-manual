@@ -55,7 +55,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Logging in with SSH"
+          "text": "RHCSA EXAM CRITICAL — Logging in with SSH"
         },
         {
           "level": 0,
@@ -97,7 +97,7 @@
         },
         {
           "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Optional desktop"
         },
         {
           "level": 0,
@@ -119,51 +119,32 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "level": 0,
+          "text": "| Command | What it does |"
         },
         {
           "level": 0,
-          "text": "What it does"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "date"
+          "text": "| date | Shows current date/time. date +%R gives 24h HH:MM, date +%r gives 12h time, date +%F gives YYYY-MM-DD. |"
         },
         {
           "level": 0,
-          "text": "Shows current date/time. date +%R gives 24h HH:MM, date +%r gives 12h time, date +%F gives YYYY-MM-DD."
+          "text": "| passwd | Changes your own password (asks for the current one first); root can change anyone's. |"
         },
         {
           "level": 0,
-          "text": "passwd"
+          "text": "| file <path> | Reports what type of file something is, without relying on its extension. |"
         },
         {
           "level": 0,
-          "text": "Changes your own password (asks for the current one first); root can change anyone's."
+          "text": "| cat <file> | Dumps a file's whole contents to the screen. |"
         },
         {
           "level": 0,
-          "text": "file <path>"
-        },
-        {
-          "level": 0,
-          "text": "Reports what type of file something is, without relying on its extension."
-        },
-        {
-          "level": 0,
-          "text": "cat <file>"
-        },
-        {
-          "level": 0,
-          "text": "Dumps a file's whole contents to the screen."
-        },
-        {
-          "level": 0,
-          "text": "less <file>"
-        },
-        {
-          "level": 0,
-          "text": "Pages through a file — arrows to scroll, q to quit. Use this instead of cat for anything long."
+          "text": "| less <file> | Pages through a file — arrows to scroll, q to quit. Use this instead of cat for anything long. |"
         },
         {
           "level": 0,
@@ -227,67 +208,40 @@
         },
         {
           "level": 0,
-          "text": "Shortcut"
+          "level": 0,
+          "text": "| Shortcut | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Ctrl+A"
+          "text": "| Ctrl+A | Jump to the start of the line. |"
         },
         {
           "level": 0,
-          "text": "Jump to the start of the line."
+          "text": "| Ctrl+E | Jump to the end of the line. |"
         },
         {
           "level": 0,
-          "text": "Ctrl+E"
+          "text": "| Ctrl+U | Delete from the cursor to the start of the line. |"
         },
         {
           "level": 0,
-          "text": "Jump to the end of the line."
+          "text": "| Ctrl+K | Delete from the cursor to the end of the line. |"
         },
         {
           "level": 0,
-          "text": "Ctrl+U"
+          "text": "| Ctrl+← / Ctrl+→ | Jump a whole word left / right. |"
         },
         {
           "level": 0,
-          "text": "Delete from the cursor to the start of the line."
+          "text": "| Ctrl+R | Search backward through history by typing part of a command. |"
         },
         {
           "level": 0,
-          "text": "Ctrl+K"
-        },
-        {
-          "level": 0,
-          "text": "Delete from the cursor to the end of the line."
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+← / Ctrl+→"
-        },
-        {
-          "level": 0,
-          "text": "Jump a whole word left / right."
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+R"
-        },
-        {
-          "level": 0,
-          "text": "Search backward through history by typing part of a command."
-        },
-        {
-          "level": 0,
-          "text": "Esc+. (or Alt+.)"
-        },
-        {
-          "level": 0,
-          "text": "Insert the last argument of the previous command — repeat to step further back."
+          "text": "| Esc+. (or Alt+.) | Insert the last argument of the previous command — repeat to step further back. |"
         },
         {
           "level": 0,
@@ -389,15 +343,15 @@
       "content": [
         {
           "level": 0,
-          "text": "Bash is RHEL's default shell; commands break down into command, options, and arguments."
+          "text": "- Bash is RHEL's default shell; commands break down into command, options, and arguments."
         },
         {
           "level": 0,
-          "text": "ssh user@host is the standard way to reach a remote shell; key-based auth needs a private key readable only by you."
+          "text": "- ssh user@host is the standard way to reach a remote shell; key-based auth needs a private key readable only by you."
         },
         {
           "level": 0,
-          "text": "Tab completion, !!/!string/!number history recall, and Ctrl-based editing shortcuts are what separate slow typing from fast, low-error command-line work."
+          "text": "- Tab completion, !!/!string/!number history recall, and Ctrl-based editing shortcuts are what separate slow typing from fast, low-error command-line work."
         }
       ],
       "words": 53

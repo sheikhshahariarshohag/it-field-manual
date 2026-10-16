@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -43,79 +43,35 @@
         },
         {
           "level": 0,
-          "text": "Flag"
+          "text": "| Flag | Name | Meaning |"
         },
         {
           "level": 0,
-          "text": "Name"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| `R` | Running | Executing on a CPU, or ready and waiting for one |"
         },
         {
           "level": 0,
-          "text": "R"
+          "text": "| `S` | Sleeping (interruptible) | Waiting on some condition (I/O, a signal); returns to Running once satisfied |"
         },
         {
           "level": 0,
-          "text": "Running"
+          "text": "| `D` | Sleeping (uninterruptible) | Also waiting, but won't respond to signals — reserved for waits where interrupting mid-operation could leave a device in a bad state |"
         },
         {
           "level": 0,
-          "text": "Executing on a CPU, or ready and waiting for one"
+          "text": "| `T` | Stopped | Suspended, usually by a signal (e.g. Ctrl+Z); resumes on another signal |"
         },
         {
           "level": 0,
-          "text": "S"
+          "text": "| `Z` | Zombie | Exited; every resource released except the process-table entry itself, pending the parent's cleanup |"
         },
         {
           "level": 0,
-          "text": "Sleeping (interruptible)"
-        },
-        {
-          "level": 0,
-          "text": "Waiting on some condition (I/O, a signal); returns to Running once satisfied"
-        },
-        {
-          "level": 0,
-          "text": "D"
-        },
-        {
-          "level": 0,
-          "text": "Sleeping (uninterruptible)"
-        },
-        {
-          "level": 0,
-          "text": "Also waiting, but won't respond to signals — reserved for waits where interrupting mid-operation could leave a device in a bad state"
-        },
-        {
-          "level": 0,
-          "text": "T"
-        },
-        {
-          "level": 0,
-          "text": "Stopped"
-        },
-        {
-          "level": 0,
-          "text": "Suspended, usually by a signal (e.g. Ctrl+Z); resumes on another signal"
-        },
-        {
-          "level": 0,
-          "text": "Z"
-        },
-        {
-          "level": 0,
-          "text": "Zombie"
-        },
-        {
-          "level": 0,
-          "text": "Exited; every resource released except the process-table entry itself, pending the parent's cleanup"
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — A single CPU never runs several R-state processes at once"
         },
         {
           "level": 0,
@@ -127,7 +83,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Three option styles, and they don't mix the way you'd expect"
+          "text": "WARNING — Three option styles, and they don't mix the way you'd expect"
         },
         {
           "level": 0,
@@ -135,43 +91,27 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "ps"
+          "text": "| `ps` | Just your own processes attached to the current terminal |"
         },
         {
           "level": 0,
-          "text": "Just your own processes attached to the current terminal"
+          "text": "| `ps aux` | Every process on the system, including ones with no controlling terminal |"
         },
         {
           "level": 0,
-          "text": "ps aux"
+          "text": "| `ps -ef` | Same coverage as aux, UNIX-style column layout |"
         },
         {
           "level": 0,
-          "text": "Every process on the system, including ones with no controlling terminal"
-        },
-        {
-          "level": 0,
-          "text": "ps -ef"
-        },
-        {
-          "level": 0,
-          "text": "Same coverage as aux, UNIX-style column layout"
-        },
-        {
-          "level": 0,
-          "text": "ps lax"
-        },
-        {
-          "level": 0,
-          "text": "Long format — more technical detail, and faster since it skips username lookups"
+          "text": "| `ps lax` | Long format — more technical detail, and faster since it skips username lookups |"
         },
         {
           "level": 0,
@@ -189,51 +129,31 @@
         },
         {
           "level": 0,
-          "text": "Action"
+          "text": "| Action | How |"
         },
         {
           "level": 0,
-          "text": "How"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Start already in the background"
+          "text": "| Start already in the background | `append & to the command` |"
         },
         {
           "level": 0,
-          "text": "append & to the command"
+          "text": "| Suspend the foreground job | `Ctrl+Z (sends SIGTSTP — stops it, doesn't kill it)` |"
         },
         {
           "level": 0,
-          "text": "Suspend the foreground job"
+          "text": "| List this session's jobs | `jobs` |"
         },
         {
           "level": 0,
-          "text": "Ctrl+Z (sends SIGTSTP — stops it, doesn't kill it)"
+          "text": "| Resume a stopped job in the background | `bg %jobnumber (or bg for the default job)` |"
         },
         {
           "level": 0,
-          "text": "List this session's jobs"
-        },
-        {
-          "level": 0,
-          "text": "jobs"
-        },
-        {
-          "level": 0,
-          "text": "Resume a stopped job in the background"
-        },
-        {
-          "level": 0,
-          "text": "bg %jobnumber (or bg for the default job)"
-        },
-        {
-          "level": 0,
-          "text": "Bring a background job to the foreground"
-        },
-        {
-          "level": 0,
-          "text": "fg %jobnumber"
+          "text": "| Bring a background job to the foreground | `fg %jobnumber` |"
         },
         {
           "level": 0,
@@ -241,7 +161,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Exiting a terminal with jobs still suspended"
+          "text": "RHCSA EXAM CRITICAL — Exiting a terminal with jobs still suspended"
         },
         {
           "level": 0,
@@ -263,7 +183,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — The signals you must know cold"
+          "text": "RHCSA EXAM CRITICAL — The signals you must know cold"
         },
         {
           "level": 0,
@@ -271,115 +191,47 @@
         },
         {
           "level": 0,
-          "text": "Number"
+          "text": "| Number | Name | Effect |"
         },
         {
           "level": 0,
-          "text": "Name"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| 1 | `SIGHUP` | Hangup — historically \"controlling terminal closed\"; commonly repurposed to mean \"reload your config\" without restarting |"
         },
         {
           "level": 0,
-          "text": "1"
+          "text": "| 2 | `SIGINT` | Ctrl+C — interrupt; can be blocked or handled |"
         },
         {
           "level": 0,
-          "text": "SIGHUP"
+          "text": "| 3 | `SIGQUIT` | Ctrl+\\ — like SIGINT but also dumps a core file |"
         },
         {
           "level": 0,
-          "text": "Hangup — historically \"controlling terminal closed\"; commonly repurposed to mean \"reload your config\" without restarting"
+          "text": "| 9 | `SIGKILL` | Unconditional, unblockable, unhandleable termination — always fatal, no cleanup runs |"
         },
         {
           "level": 0,
-          "text": "2"
+          "text": "| 15 | `SIGTERM` | The polite request to terminate — the default for kill and the one to try FIRST; can be caught, letting a program clean up before exiting |"
         },
         {
           "level": 0,
-          "text": "SIGINT"
+          "text": "| 18 | `SIGCONT` | Resume a stopped process; can't be blocked |"
         },
         {
           "level": 0,
-          "text": "Ctrl+C — interrupt; can be blocked or handled"
+          "text": "| 19 | `SIGSTOP` | Unconditional suspend; can't be blocked or handled |"
         },
         {
           "level": 0,
-          "text": "3"
+          "text": "| 20 | `SIGTSTP` | Ctrl+Z — the polite, catchable version of SIGSTOP |"
         },
         {
           "level": 0,
-          "text": "SIGQUIT"
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+\\ — like SIGINT but also dumps a core file"
-        },
-        {
-          "level": 0,
-          "text": "9"
-        },
-        {
-          "level": 0,
-          "text": "SIGKILL"
-        },
-        {
-          "level": 0,
-          "text": "Unconditional, unblockable, unhandleable termination — always fatal, no cleanup runs"
-        },
-        {
-          "level": 0,
-          "text": "15"
-        },
-        {
-          "level": 0,
-          "text": "SIGTERM"
-        },
-        {
-          "level": 0,
-          "text": "The polite request to terminate — the default for kill and the one to try FIRST; can be caught, letting a program clean up before exiting"
-        },
-        {
-          "level": 0,
-          "text": "18"
-        },
-        {
-          "level": 0,
-          "text": "SIGCONT"
-        },
-        {
-          "level": 0,
-          "text": "Resume a stopped process; can't be blocked"
-        },
-        {
-          "level": 0,
-          "text": "19"
-        },
-        {
-          "level": 0,
-          "text": "SIGSTOP"
-        },
-        {
-          "level": 0,
-          "text": "Unconditional suspend; can't be blocked or handled"
-        },
-        {
-          "level": 0,
-          "text": "20"
-        },
-        {
-          "level": 0,
-          "text": "SIGTSTP"
-        },
-        {
-          "level": 0,
-          "text": "Ctrl+Z — the polite, catchable version of SIGSTOP"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Don't reach for SIGKILL first"
+          "text": "WARNING — Don't reach for SIGKILL first"
         },
         {
           "level": 0,
@@ -391,67 +243,31 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Targets by | Example |"
         },
         {
           "level": 0,
-          "text": "Targets by"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Example"
+          "text": "| `kill` | PID number | `kill -15 5194 (or kill -TERM 5194 — plain kill with no signal already sends TERM)` |"
         },
         {
           "level": 0,
-          "text": "kill"
+          "text": "| `killall` | Command name, all matches | `killall control` |"
         },
         {
           "level": 0,
-          "text": "PID number"
+          "text": "| `pkill` | Pattern match: command, user (-u), group (-g), parent PID (-P), terminal (-t) | `pkill -u bob / pkill -P 8391` |"
         },
         {
           "level": 0,
-          "text": "kill -15 5194 (or kill -TERM 5194 — plain kill with no signal already sends TERM)"
+          "text": "| `pgrep` | Same matching options as pkill, but LISTS PIDs instead of signaling them | `pgrep -l -u bob` |"
         },
         {
           "level": 0,
-          "text": "killall"
-        },
-        {
-          "level": 0,
-          "text": "Command name, all matches"
-        },
-        {
-          "level": 0,
-          "text": "killall control"
-        },
-        {
-          "level": 0,
-          "text": "pkill"
-        },
-        {
-          "level": 0,
-          "text": "Pattern match: command, user (-u), group (-g), parent PID (-P), terminal (-t)"
-        },
-        {
-          "level": 0,
-          "text": "pkill -u bob / pkill -P 8391"
-        },
-        {
-          "level": 0,
-          "text": "pgrep"
-        },
-        {
-          "level": 0,
-          "text": "Same matching options as pkill, but LISTS PIDs instead of signaling them"
-        },
-        {
-          "level": 0,
-          "text": "pgrep -l -u bob"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Standard workflow: pgrep to find, then pkill to act"
+          "text": "RHCSA EXAM CRITICAL — Standard workflow: pgrep to find, then pkill to act"
         },
         {
           "level": 0,
@@ -517,7 +333,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Reading load average correctly is a real diagnostic skill, not just a number to quote"
+          "text": "RHCSA EXAM CRITICAL — Reading load average correctly is a real diagnostic skill, not just a number to quote"
         },
         {
           "level": 0,
@@ -533,67 +349,39 @@
         },
         {
           "level": 0,
-          "text": "Key"
+          "text": "| Key | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Shift+M"
+          "text": "| `Shift+M` | Sort by memory usage, descending |"
         },
         {
           "level": 0,
-          "text": "Sort by memory usage, descending"
+          "text": "| `Shift+P` | Sort by CPU usage, descending |"
         },
         {
           "level": 0,
-          "text": "Shift+P"
+          "text": "| `u` | Filter to one user |"
         },
         {
           "level": 0,
-          "text": "Sort by CPU usage, descending"
+          "text": "| `k` | Kill a process — prompts for PID, then signal |"
         },
         {
           "level": 0,
-          "text": "u"
+          "text": "| `r` | Renice a process — prompts for PID, then nice value |"
         },
         {
           "level": 0,
-          "text": "Filter to one user"
+          "text": "| `1` | Toggle per-core vs. summary CPU view in the header |"
         },
         {
           "level": 0,
-          "text": "k"
-        },
-        {
-          "level": 0,
-          "text": "Kill a process — prompts for PID, then signal"
-        },
-        {
-          "level": 0,
-          "text": "r"
-        },
-        {
-          "level": 0,
-          "text": "Renice a process — prompts for PID, then nice value"
-        },
-        {
-          "level": 0,
-          "text": "1"
-        },
-        {
-          "level": 0,
-          "text": "Toggle per-core vs. summary CPU view in the header"
-        },
-        {
-          "level": 0,
-          "text": "q"
-        },
-        {
-          "level": 0,
-          "text": "Quit"
+          "text": "| `q` | Quit |"
         },
         {
           "level": 0,
@@ -671,23 +459,23 @@
       "content": [
         {
           "level": 0,
-          "text": "A process is a running program instance with a state (R/S/D/T/Z); ps lists them, with aux or -ef as the common full-listing styles — don't mix option conventions."
+          "text": "- A process is a running program instance with a state (R/S/D/T/Z); ps lists them, with aux or -ef as the common full-listing styles — don't mix option conventions."
         },
         {
           "level": 0,
-          "text": "Job control (&, Ctrl+Z, jobs, bg, fg) manages multiple commands from one shell session; only one job can be foreground at a time."
+          "text": "- Job control (&, Ctrl+Z, jobs, bg, fg) manages multiple commands from one shell session; only one job can be foreground at a time."
         },
         {
           "level": 0,
-          "text": "Signals control processes: SIGTERM (15) is the polite default, SIGKILL (9) is the unblockable last resort — try TERM, then INT, before ever reaching for KILL."
+          "text": "- Signals control processes: SIGTERM (15) is the polite default, SIGKILL (9) is the unblockable last resort — try TERM, then INT, before ever reaching for KILL."
         },
         {
           "level": 0,
-          "text": "kill targets a PID; killall and pkill target by name/user/parent/terminal; pgrep lists matches without acting, and is the safe way to check a target list before pkill acts on it."
+          "text": "- kill targets a PID; killall and pkill target by name/user/parent/terminal; pgrep lists matches without acting, and is the safe way to check a target list before pkill acts on it."
         },
         {
           "level": 0,
-          "text": "Load average (1/5/15-minute, from uptime, w, or top) counts both CPU-ready (R) and I/O-waiting (D) processes — divide by CPU count from lscpu before judging whether a number is actually a problem."
+          "text": "- Load average (1/5/15-minute, from uptime, w, or top) counts both CPU-ready (R) and I/O-waiting (D) processes — divide by CPU count from lscpu before judging whether a number is actually a problem."
         }
       ],
       "words": 139
