@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -59,31 +59,23 @@
         },
         {
           "level": 0,
-          "text": "Location"
+          "text": "| Location | Scope |"
         },
         {
           "level": 0,
-          "text": "Scope"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "~/.ssh/known_hosts"
+          "text": "| `~/.ssh/known_hosts` | Per-user — keys this specific account has accepted |"
         },
         {
           "level": 0,
-          "text": "Per-user — keys this specific account has accepted"
+          "text": "| `/etc/ssh/ssh_known_hosts` | System-wide — administrator-populated, shared by everyone on the box |"
         },
         {
           "level": 0,
-          "text": "/etc/ssh/ssh_known_hosts"
-        },
-        {
-          "level": 0,
-          "text": "System-wide — administrator-populated, shared by everyone on the box"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — A changed host key is a real security signal, not just an annoyance"
+          "text": "RHCSA EXAM CRITICAL — A changed host key is a real security signal, not just an annoyance"
         },
         {
           "level": 0,
@@ -113,31 +105,23 @@
         },
         {
           "level": 0,
-          "text": "File"
+          "text": "| File | Required permissions |"
         },
         {
           "level": 0,
-          "text": "Required permissions"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Private key"
+          "text": "| Private key | 600 (owner read/write only — ssh refuses to use an over-permissive private key file) |"
         },
         {
           "level": 0,
-          "text": "600 (owner read/write only — ssh refuses to use an over-permissive private key file)"
+          "text": "| Public key | 644 |"
         },
         {
           "level": 0,
-          "text": "Public key"
-        },
-        {
-          "level": 0,
-          "text": "644"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Passphrase choice is a real security tradeoff, not a formality"
+          "text": "WARNING — Passphrase choice is a real security tradeoff, not a formality"
         },
         {
           "level": 0,
@@ -153,7 +137,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Regenerating overwrites id_rsa/id_rsa.pub by default"
+          "text": "WARNING — Regenerating overwrites id_rsa/id_rsa.pub by default"
         },
         {
           "level": 0,
@@ -199,7 +183,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Why this is a standard hardening step"
+          "text": "RHCSA EXAM CRITICAL — Why this is a standard hardening step"
         },
         {
           "level": 0,
@@ -207,35 +191,23 @@
         },
         {
           "level": 0,
-          "text": "PermitRootLogin value"
+          "text": "| PermitRootLogin value | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "yes (the default)"
+          "text": "| `yes (the default)` | Root can log in directly, by password or key |"
         },
         {
           "level": 0,
-          "text": "Root can log in directly, by password or key"
+          "text": "| `no` | Root cannot log in over SSH at all, by any method |"
         },
         {
           "level": 0,
-          "text": "no"
-        },
-        {
-          "level": 0,
-          "text": "Root cannot log in over SSH at all, by any method"
-        },
-        {
-          "level": 0,
-          "text": "without-password"
-        },
-        {
-          "level": 0,
-          "text": "Root can log in via key-based auth only — password login as root is refused"
+          "text": "| `without-password` | Root can log in via key-based auth only — password login as root is refused |"
         },
         {
           "level": 0,
@@ -259,7 +231,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Lock yourself out before you check this — a real, common mistake"
+          "text": "WARNING — Lock yourself out before you check this — a real, common mistake"
         },
         {
           "level": 0,
@@ -275,7 +247,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — reload, not restart — this is the same trap from Chapter 9, here with real consequences"
+          "text": "RHCSA EXAM CRITICAL — reload, not restart — this is the same trap from Chapter 9, here with real consequences"
         },
         {
           "level": 0,
@@ -353,19 +325,19 @@
       "content": [
         {
           "level": 0,
-          "text": "ssh logs into a remote system (interactively or to run one command); host keys, saved in known_hosts, let the client detect server impersonation on later connections."
+          "text": "- ssh logs into a remote system (interactively or to run one command); host keys, saved in known_hosts, let the client detect server impersonation on later connections."
         },
         {
           "level": 0,
-          "text": "ssh-keygen generates a private/public key pair (600/644 permissions); ssh-copy-id installs the public key on a remote account; ssh-agent + ssh-add cache a passphrase for a whole session."
+          "text": "- ssh-keygen generates a private/public key pair (600/644 permissions); ssh-copy-id installs the public key on a remote account; ssh-agent + ssh-add cache a passphrase for a whole session."
         },
         {
           "level": 0,
-          "text": "PermitRootLogin (yes/no/without-password) and PasswordAuthentication (yes/no) in /etc/ssh/sshd_config are the two standard hardening settings — verify key-based login works BEFORE disabling password auth, to avoid locking yourself out."
+          "text": "- PermitRootLogin (yes/no/without-password) and PasswordAuthentication (yes/no) in /etc/ssh/sshd_config are the two standard hardening settings — verify key-based login works BEFORE disabling password auth, to avoid locking yourself out."
         },
         {
           "level": 0,
-          "text": "systemctl reload sshd applies config changes without dropping existing connections; restart would work but risks breaking the very session you're using to make the change."
+          "text": "- systemctl reload sshd applies config changes without dropping existing connections; restart would work but risks breaking the very session you're using to make the change."
         }
       ],
       "words": 105

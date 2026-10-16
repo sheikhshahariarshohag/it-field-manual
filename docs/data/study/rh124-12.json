@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -35,27 +35,19 @@
         },
         {
           "level": 0,
-          "text": "Service"
+          "text": "| Service | Job |"
         },
         {
           "level": 0,
-          "text": "Job"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "systemd-journald"
+          "text": "| `systemd-journald` | Collects EVERYTHING — kernel messages, early boot output, every daemon's stdout/stderr, and syslog events — restructures them into a standard format, and writes them to the structured, indexed, BINARY journal. By default this lives in /run/log/journal, which does NOT survive a reboot. |"
         },
         {
           "level": 0,
-          "text": "Collects EVERYTHING — kernel messages, early boot output, every daemon's stdout/stderr, and syslog events — restructures them into a standard format, and writes them to the structured, indexed, BINARY journal. By default this lives in /run/log/journal, which does NOT survive a reboot."
-        },
-        {
-          "level": 0,
-          "text": "rsyslog"
-        },
-        {
-          "level": 0,
-          "text": "Reads syslog-type messages back out of the journal as they arrive, and sorts them into traditional plain-text files under /var/log, based on rules keyed on facility and priority."
+          "text": "| `rsyslog` | Reads syslog-type messages back out of the journal as they arrive, and sorts them into traditional plain-text files under /var/log, based on rules keyed on facility and priority. |"
         },
         {
           "level": 0,
@@ -71,55 +63,35 @@
         },
         {
           "level": 0,
-          "text": "File"
+          "text": "| File | Contents |"
         },
         {
           "level": 0,
-          "text": "Contents"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "/var/log/messages"
+          "text": "| `/var/log/messages` | Most syslog messages — EXCEPT authentication, mail, cron, and pure debug messages, which are split out below |"
         },
         {
           "level": 0,
-          "text": "Most syslog messages — EXCEPT authentication, mail, cron, and pure debug messages, which are split out below"
+          "text": "| `/var/log/secure` | Authentication and security events — this is where failed/successful SSH logins show up |"
         },
         {
           "level": 0,
-          "text": "/var/log/secure"
+          "text": "| `/var/log/maillog` | Mail server activity |"
         },
         {
           "level": 0,
-          "text": "Authentication and security events — this is where failed/successful SSH logins show up"
+          "text": "| `/var/log/cron` | Scheduled job (cron) execution |"
         },
         {
           "level": 0,
-          "text": "/var/log/maillog"
+          "text": "| `/var/log/boot.log` | Non-syslog console messages from system startup |"
         },
         {
           "level": 0,
-          "text": "Mail server activity"
-        },
-        {
-          "level": 0,
-          "text": "/var/log/cron"
-        },
-        {
-          "level": 0,
-          "text": "Scheduled job (cron) execution"
-        },
-        {
-          "level": 0,
-          "text": "/var/log/boot.log"
-        },
-        {
-          "level": 0,
-          "text": "Non-syslog console messages from system startup"
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Not every application logs through rsyslog"
         },
         {
           "level": 0,
@@ -131,111 +103,43 @@
         },
         {
           "level": 0,
-          "text": "Code"
+          "text": "| Code | Priority | Meaning |"
         },
         {
           "level": 0,
-          "text": "Priority"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| `0` | `emerg` | System is unusable |"
         },
         {
           "level": 0,
-          "text": "0"
+          "text": "| `1` | `alert` | Action must be taken immediately |"
         },
         {
           "level": 0,
-          "text": "emerg"
+          "text": "| `2` | `crit` | Critical condition |"
         },
         {
           "level": 0,
-          "text": "System is unusable"
+          "text": "| `3` | `err` | Non-critical error |"
         },
         {
           "level": 0,
-          "text": "1"
+          "text": "| `4` | `warning` | Warning condition |"
         },
         {
           "level": 0,
-          "text": "alert"
+          "text": "| `5` | `notice` | Normal but significant |"
         },
         {
           "level": 0,
-          "text": "Action must be taken immediately"
+          "text": "| `6` | `info` | Informational |"
         },
         {
           "level": 0,
-          "text": "2"
-        },
-        {
-          "level": 0,
-          "text": "crit"
-        },
-        {
-          "level": 0,
-          "text": "Critical condition"
-        },
-        {
-          "level": 0,
-          "text": "3"
-        },
-        {
-          "level": 0,
-          "text": "err"
-        },
-        {
-          "level": 0,
-          "text": "Non-critical error"
-        },
-        {
-          "level": 0,
-          "text": "4"
-        },
-        {
-          "level": 0,
-          "text": "warning"
-        },
-        {
-          "level": 0,
-          "text": "Warning condition"
-        },
-        {
-          "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "notice"
-        },
-        {
-          "level": 0,
-          "text": "Normal but significant"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "info"
-        },
-        {
-          "level": 0,
-          "text": "Informational"
-        },
-        {
-          "level": 0,
-          "text": "7"
-        },
-        {
-          "level": 0,
-          "text": "debug"
-        },
-        {
-          "level": 0,
-          "text": "Debug-level detail"
+          "text": "| `7` | `debug` | Debug-level detail |"
         },
         {
           "level": 0,
@@ -255,43 +159,27 @@
         },
         {
           "level": 0,
-          "text": "Field"
+          "text": "| Field | Value in the example |"
         },
         {
           "level": 0,
-          "text": "Value in the example"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Timestamp"
+          "text": "| Timestamp | Feb 11 20:11:48 |"
         },
         {
           "level": 0,
-          "text": "Feb 11 20:11:48"
+          "text": "| Host | localhost |"
         },
         {
           "level": 0,
-          "text": "Host"
+          "text": "| Program[PID] | sshd[1433] |"
         },
         {
           "level": 0,
-          "text": "localhost"
-        },
-        {
-          "level": 0,
-          "text": "Program[PID]"
-        },
-        {
-          "level": 0,
-          "text": "sshd[1433]"
-        },
-        {
-          "level": 0,
-          "text": "Message"
-        },
-        {
-          "level": 0,
-          "text": "Failed password for student from 172.25.0.10 port 59344 ssh2"
+          "text": "| Message | Failed password for student from 172.25.0.10 port 59344 ssh2 |"
         },
         {
           "level": 0,
@@ -305,7 +193,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This is the single most tested command in this chapter"
+          "text": "RHCSA EXAM CRITICAL — This is the single most tested command in this chapter"
         },
         {
           "level": 0,
@@ -313,99 +201,55 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "journalctl"
+          "text": "| `journalctl` | Everything in the journal, oldest first, paged through less |"
         },
         {
           "level": 0,
-          "text": "Everything in the journal, oldest first, paged through less"
+          "text": "| `journalctl -n 20` | Just the last 20 entries (default is 10 if you omit the number) |"
         },
         {
           "level": 0,
-          "text": "journalctl -n 20"
+          "text": "| `journalctl -f` | Live-follow, like tail -f, for new entries as they arrive — Ctrl+C to stop |"
         },
         {
           "level": 0,
-          "text": "Just the last 20 entries (default is 10 if you omit the number)"
+          "text": "| `journalctl -p err` | Entries at err priority OR HIGHER (accepts either the name or number of any of the 8 syslog priorities) |"
         },
         {
           "level": 0,
-          "text": "journalctl -f"
+          "text": "| `journalctl --since today` | Everything from midnight today onward |"
         },
         {
           "level": 0,
-          "text": "Live-follow, like tail -f, for new entries as they arrive — Ctrl+C to stop"
+          "text": "| `journalctl --since \"2019-02-10 20:30:00\" --until \"2019-02-13 12:00:00\"` | An explicit date/time range (the quotes are required — they preserve the embedded space) |"
         },
         {
           "level": 0,
-          "text": "journalctl -p err"
+          "text": "| `journalctl --since \"-1 hour\"` | Relative time — also accepts yesterday/today/tomorrow as shortcuts |"
         },
         {
           "level": 0,
-          "text": "Entries at err priority OR HIGHER (accepts either the name or number of any of the 8 syslog priorities)"
+          "text": "| `journalctl -b` | This boot only |"
         },
         {
           "level": 0,
-          "text": "journalctl --since today"
+          "text": "| `journalctl -b -1` | The PREVIOUS boot — the standard first move when debugging a crash, since the crash's own final messages are usually at the end of the boot before the one you're currently running |"
         },
         {
           "level": 0,
-          "text": "Everything from midnight today onward"
+          "text": "| `journalctl _SYSTEMD_UNIT=sshd.service` | Only entries tied to one specific unit |"
         },
         {
           "level": 0,
-          "text": "journalctl --since \"2019-02-10 20:30:00\" --until \"2019-02-13 12:00:00\""
-        },
-        {
-          "level": 0,
-          "text": "An explicit date/time range (the quotes are required — they preserve the embedded space)"
-        },
-        {
-          "level": 0,
-          "text": "journalctl --since \"-1 hour\""
-        },
-        {
-          "level": 0,
-          "text": "Relative time — also accepts yesterday/today/tomorrow as shortcuts"
-        },
-        {
-          "level": 0,
-          "text": "journalctl -b"
-        },
-        {
-          "level": 0,
-          "text": "This boot only"
-        },
-        {
-          "level": 0,
-          "text": "journalctl -b -1"
-        },
-        {
-          "level": 0,
-          "text": "The PREVIOUS boot — the standard first move when debugging a crash, since the crash's own final messages are usually at the end of the boot before the one you're currently running"
-        },
-        {
-          "level": 0,
-          "text": "journalctl _SYSTEMD_UNIT=sshd.service"
-        },
-        {
-          "level": 0,
-          "text": "Only entries tied to one specific unit"
-        },
-        {
-          "level": 0,
-          "text": "journalctl _PID=1182"
-        },
-        {
-          "level": 0,
-          "text": "Only entries from one specific process ID"
+          "text": "| `journalctl _PID=1182` | Only entries from one specific process ID |"
         },
         {
           "level": 0,
@@ -435,35 +279,23 @@
         },
         {
           "level": 0,
-          "text": "Storage= value"
+          "text": "| Storage= value | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "volatile"
+          "text": "| `volatile` | /run/log/journal only — cleared every reboot (effectively the default behavior) |"
         },
         {
           "level": 0,
-          "text": "/run/log/journal only — cleared every reboot (effectively the default behavior)"
+          "text": "| `persistent` | /var/log/journal — survives reboots; systemd-journald creates the directory itself if it doesn't already exist |"
         },
         {
           "level": 0,
-          "text": "persistent"
-        },
-        {
-          "level": 0,
-          "text": "/var/log/journal — survives reboots; systemd-journald creates the directory itself if it doesn't already exist"
-        },
-        {
-          "level": 0,
-          "text": "auto"
-        },
-        {
-          "level": 0,
-          "text": "Persistent IF /var/log/journal already exists, volatile otherwise — this is the default when Storage= is left unset"
+          "text": "| `auto` | Persistent IF /var/log/journal already exists, volatile otherwise — this is the default when Storage= is left unset |"
         },
         {
           "level": 0,
@@ -483,7 +315,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This is a two-step task, same pattern as Chapter 9"
+          "text": "RHCSA EXAM CRITICAL — This is a two-step task, same pattern as Chapter 9"
         },
         {
           "level": 0,
@@ -517,51 +349,31 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "timedatectl list-timezones"
+          "text": "| `timedatectl list-timezones` | Lists every valid IANA time zone name (Continent/City format) |"
         },
         {
           "level": 0,
-          "text": "Lists every valid IANA time zone name (Continent/City format)"
+          "text": "| `tzselect` | Interactively helps you find the correct zone name for your location — READ-ONLY, changes nothing on its own |"
         },
         {
           "level": 0,
-          "text": "tzselect"
+          "text": "| `timedatectl set-timezone America/Phoenix` | Actually changes the system's time zone |"
         },
         {
           "level": 0,
-          "text": "Interactively helps you find the correct zone name for your location — READ-ONLY, changes nothing on its own"
+          "text": "| `timedatectl set-time \"09:00:00\"` | Sets the system clock manually |"
         },
         {
           "level": 0,
-          "text": "timedatectl set-timezone America/Phoenix"
-        },
-        {
-          "level": 0,
-          "text": "Actually changes the system's time zone"
-        },
-        {
-          "level": 0,
-          "text": "timedatectl set-time \"09:00:00\""
-        },
-        {
-          "level": 0,
-          "text": "Sets the system clock manually"
-        },
-        {
-          "level": 0,
-          "text": "timedatectl set-ntp true"
-        },
-        {
-          "level": 0,
-          "text": "Turns NTP synchronization on (in RHEL 8 this controls the chronyd service specifically)"
+          "text": "| `timedatectl set-ntp true` | Turns NTP synchronization on (in RHEL 8 this controls the chronyd service specifically) |"
         },
         {
           "level": 0,
@@ -581,43 +393,27 @@
         },
         {
           "level": 0,
-          "text": "Concept"
+          "text": "| Concept | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Stratum"
+          "text": "| Stratum | Hop-count from a reference clock. Stratum 0 = the reference itself, stratum 1 = a server directly attached to it, stratum 2 = synced from a stratum-1 server, and so on — lower stratum generally means higher quality/precision. |"
         },
         {
           "level": 0,
-          "text": "Hop-count from a reference clock. Stratum 0 = the reference itself, stratum 1 = a server directly attached to it, stratum 2 = synced from a stratum-1 server, and so on — lower stratum generally means higher quality/precision."
+          "text": "| server line | An NTP source one stratum above yours |"
         },
         {
           "level": 0,
-          "text": "server line"
+          "text": "| peer line | An NTP source at the SAME stratum as yours (mutual synchronization, not hierarchical) |"
         },
         {
           "level": 0,
-          "text": "An NTP source one stratum above yours"
-        },
-        {
-          "level": 0,
-          "text": "peer line"
-        },
-        {
-          "level": 0,
-          "text": "An NTP source at the SAME stratum as yours (mutual synchronization, not hierarchical)"
-        },
-        {
-          "level": 0,
-          "text": "iburst option"
-        },
-        {
-          "level": 0,
-          "text": "Takes several rapid initial measurements right after startup for faster, more accurate initial sync — recommended on every server line"
+          "text": "| iburst option | Takes several rapid initial measurements right after startup for faster, more accurate initial sync — recommended on every server line |"
         },
         {
           "level": 0,
@@ -711,23 +507,23 @@
       "content": [
         {
           "level": 0,
-          "text": "systemd-journald collects everything into a structured binary journal (queryable with journalctl); rsyslog reads syslog-type messages back out and sorts them into traditional plain-text files under /var/log by facility/priority rules in /etc/rsyslog.conf and /etc/rsyslog.d/."
+          "text": "- systemd-journald collects everything into a structured binary journal (queryable with journalctl); rsyslog reads syslog-type messages back out and sorts them into traditional plain-text files under /var/log by facility/priority rules in /etc/rsyslog.conf and /etc/rsyslog.d/."
         },
         {
           "level": 0,
-          "text": "/var/log/messages, secure, maillog, cron, and boot.log are the key files to know by content; logrotate keeps them from growing unbounded."
+          "text": "- /var/log/messages, secure, maillog, cron, and boot.log are the key files to know by content; logrotate keeps them from growing unbounded."
         },
         {
           "level": 0,
-          "text": "journalctl -n / -f / -p / --since / --until / -b / unit-and-PID filters are the core toolkit — fluency here is disproportionately high-value for the exam and for real troubleshooting."
+          "text": "- journalctl -n / -f / -p / --since / --until / -b / unit-and-PID filters are the core toolkit — fluency here is disproportionately high-value for the exam and for real troubleshooting."
         },
         {
           "level": 0,
-          "text": "The journal is volatile (/run/log/journal, wiped on reboot) unless Storage=persistent is set in /etc/systemd/journald.conf AND systemd-journald is restarted — both steps are required."
+          "text": "- The journal is volatile (/run/log/journal, wiped on reboot) unless Storage=persistent is set in /etc/systemd/journald.conf AND systemd-journald is restarted — both steps are required."
         },
         {
           "level": 0,
-          "text": "timedatectl manages time zone and clock settings; chronyd (configured in /etc/chrony.conf, checked with chronyc sources) keeps the clock synchronized via NTP — essential for any timestamp comparison across multiple servers."
+          "text": "- timedatectl manages time zone and clock settings; chronyd (configured in /etc/chrony.conf, checked with chronyc sources) keeps the clock synchronized via NTP — essential for any timestamp comparison across multiple servers."
         }
       ],
       "words": 138

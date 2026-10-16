@@ -13,7 +13,23 @@
       "content": [
         {
           "level": 0,
-          "text": "Goal: recreate the exact 4-machine classroom this book was written for, inside VMware Workstation, using a real RHEL 8 install instead of the Red Hat Online Learning cloud classroom."
+          "text": "**Goal:** recreate the exact **four-machine classroom** this book was written for, inside VMware Workstation, using a real RHEL 8 install instead of the Red Hat Online Learning cloud classroom."
+        },
+        {
+          "level": 0,
+          "text": "Key takeaways — what Part 0 sets up"
+        },
+        {
+          "level": 0,
+          "text": "Four RHEL 8 machines you will reuse for the whole book: `bastion`, `workstation`, `servera` and `serverb`."
+        },
+        {
+          "level": 0,
+          "text": "One isolated lab network for machine-to-machine traffic, plus one NAT link to the internet that only `bastion` provides."
+        },
+        {
+          "level": 0,
+          "text": "A `clean-baseline` snapshot on every machine, so a broken exercise can be reverted instead of debugged mid-chapter."
         },
         {
           "level": 0,
@@ -21,7 +37,7 @@
         },
         {
           "level": 0,
-          "text": "Every chapter in this book assumes four machines are already up and know about each other: workstation (your desktop), servera and serverb (the two servers you practice on), and bastion (the router that gets everyone online). Work you do in one chapter — a user you create, a key you generate, a service you enable — is expected to still be there in a later chapter."
+          "text": "Every chapter in this book assumes **four machines** are already up and know about each other: **workstation** (your desktop), **servera** and **serverb** (the two servers you practise on), and **bastion** (the router that gets everyone online). Work you do in one chapter — a user you create, a key you generate, a service you enable — is expected to still be there in a later chapter."
         },
         {
           "level": 0,
@@ -39,83 +55,27 @@
         },
         {
           "level": 0,
-          "text": "Machine"
+          "text": "| Machine | Hostname | IP address | Role |"
         },
         {
           "level": 0,
-          "text": "Hostname"
+          "text": "| --- | --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "IP address"
+          "text": "| `bastion` | `bastion.lab.example.com` | `172.25.250.254` | Router between your lab network and the internet. Two network cards. |"
         },
         {
           "level": 0,
-          "text": "Role"
+          "text": "| `workstation` | `workstation.lab.example.com` | `172.25.250.9` | Your graphical admin desktop — where you'll do most exercises from. |"
         },
         {
           "level": 0,
-          "text": "bastion"
+          "text": "| `servera` | `servera.lab.example.com` | `172.25.250.10` | First practice server. |"
         },
         {
           "level": 0,
-          "text": "bastion.lab.example.com"
-        },
-        {
-          "level": 0,
-          "text": "172.25.250.254"
-        },
-        {
-          "level": 0,
-          "text": "Router between your lab network and the internet. Two network cards."
-        },
-        {
-          "level": 0,
-          "text": "workstation"
-        },
-        {
-          "level": 0,
-          "text": "workstation.lab.example.com"
-        },
-        {
-          "level": 0,
-          "text": "172.25.250.9"
-        },
-        {
-          "level": 0,
-          "text": "Your graphical admin desktop — where you'll do most exercises from."
-        },
-        {
-          "level": 0,
-          "text": "servera"
-        },
-        {
-          "level": 0,
-          "text": "servera.lab.example.com"
-        },
-        {
-          "level": 0,
-          "text": "172.25.250.10"
-        },
-        {
-          "level": 0,
-          "text": "First practice server."
-        },
-        {
-          "level": 0,
-          "text": "serverb"
-        },
-        {
-          "level": 0,
-          "text": "serverb.lab.example.com"
-        },
-        {
-          "level": 0,
-          "text": "172.25.250.11"
-        },
-        {
-          "level": 0,
-          "text": "Second practice server."
+          "text": "| `serverb` | `serverb.lab.example.com` | `172.25.250.11` | Second practice server. |"
         },
         {
           "level": 0,
@@ -123,7 +83,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Lab-only credentials"
+          "text": "WARNING — Lab-only credentials"
         },
         {
           "level": 0,
@@ -547,6 +507,39 @@
         }
       ],
       "words": 111
+    },
+    {
+      "title": "Check your understanding",
+      "content": [
+        {
+          "level": 0,
+          "text": "1. Q1 — What unique role does `bastion` play in this lab, and why can't `workstation` reach the internet without it?"
+        },
+        {
+          "level": 0,
+          "text": "2. Q2 — Why clone one gold VM four times instead of installing RHEL 8 four times?"
+        },
+        {
+          "level": 0,
+          "text": "3. Q3 — Why does every clone have to be registered with Red Hat again after cloning?"
+        },
+        {
+          "level": 0,
+          "text": "NOTE — Answers"
+        },
+        {
+          "level": 0,
+          "text": "Q1 — `bastion` is the only machine with a second network card, so it is the router between the isolated lab network and the internet: IP forwarding is on, and firewalld masquerades internal traffic out through its external NIC. The other machines have no route out except through it."
+        },
+        {
+          "level": 0,
+          "text": "Q2 — You install and register RHEL 8 once, get it exactly right, then take four full clones. That is faster and more consistent than four hand installs, and each clone can still be rebuilt without touching the others."
+        },
+        {
+          "level": 0,
+          "text": "Q3 — Red Hat ties a registration to a machine's unique ID, and cloning duplicates that ID. Re-registering (and re-enabling the BaseOS and AppStream repositories) gives each clone its own valid subscription."
+        }
+      ]
     }
   ],
   "labs": [],

@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -31,63 +31,27 @@
       "content": [
         {
           "level": 0,
-          "text": "Layer"
+          "text": "| Layer | Job | Examples |"
         },
         {
           "level": 0,
-          "text": "Job"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Examples"
+          "text": "| Application | How programs talk to each other | SSH, HTTPS, NFS/CIFS, SMTP |"
         },
         {
           "level": 0,
-          "text": "Application"
+          "text": "| Transport | TCP (reliable, connection-oriented) or UDP (connectionless) — combined with an IP address, a port forms a socket | Port list in /etc/services |"
         },
         {
           "level": 0,
-          "text": "How programs talk to each other"
+          "text": "| Internet | Moves data from source host to destination host; routers connect networks | IPv4, IPv6 |"
         },
         {
           "level": 0,
-          "text": "SSH, HTTPS, NFS/CIFS, SMTP"
-        },
-        {
-          "level": 0,
-          "text": "Transport"
-        },
-        {
-          "level": 0,
-          "text": "TCP (reliable, connection-oriented) or UDP (connectionless) — combined with an IP address, a port forms a socket"
-        },
-        {
-          "level": 0,
-          "text": "Port list in /etc/services"
-        },
-        {
-          "level": 0,
-          "text": "Internet"
-        },
-        {
-          "level": 0,
-          "text": "Moves data from source host to destination host; routers connect networks"
-        },
-        {
-          "level": 0,
-          "text": "IPv4, IPv6"
-        },
-        {
-          "level": 0,
-          "text": "Link"
-        },
-        {
-          "level": 0,
-          "text": "Physical/local-segment delivery; each device has a hardware MAC address"
-        },
-        {
-          "level": 0,
-          "text": "Ethernet (802.3), WLAN (802.11)"
+          "text": "| Link | Physical/local-segment delivery; each device has a hardware MAC address | Ethernet (802.3), WLAN (802.11) |"
         },
         {
           "level": 3,
@@ -99,55 +63,35 @@
         },
         {
           "level": 0,
-          "text": "Prefix/pattern"
+          "text": "| Prefix/pattern | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "en / wl / ww"
+          "text": "| `en / wl / ww` | Ethernet / WLAN / WWAN (mobile broadband) |"
         },
         {
           "level": 0,
-          "text": "Ethernet / WLAN / WWAN (mobile broadband)"
+          "text": "| `eno1` | On-board Ethernet device, firmware index 1 |"
         },
         {
           "level": 0,
-          "text": "eno1"
+          "text": "| `ens3` | Ethernet card in PCI hotplug slot 3 |"
         },
         {
           "level": 0,
-          "text": "On-board Ethernet device, firmware index 1"
+          "text": "| `enp0s1` | Ethernet, PCI bus 0, slot 1 |"
         },
         {
           "level": 0,
-          "text": "ens3"
+          "text": "| `enp0s1f0 / enp0s1f1` | Function 0 / function 1 of a multi-port card at that same bus/slot |"
         },
         {
           "level": 0,
-          "text": "Ethernet card in PCI hotplug slot 3"
-        },
-        {
-          "level": 0,
-          "text": "enp0s1"
-        },
-        {
-          "level": 0,
-          "text": "Ethernet, PCI bus 0, slot 1"
-        },
-        {
-          "level": 0,
-          "text": "enp0s1f0 / enp0s1f1"
-        },
-        {
-          "level": 0,
-          "text": "Function 0 / function 1 of a multi-port card at that same bus/slot"
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — The trade-off of persistent naming"
         },
         {
           "level": 0,
@@ -165,71 +109,27 @@
         },
         {
           "level": 0,
-          "text": "Address"
+          "text": "| Address | Prefix | Network address | Broadcast address |"
         },
         {
           "level": 0,
-          "text": "Prefix"
+          "text": "| --- | --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Network address"
+          "text": "| `192.168.1.107` | `/24 (255.255.255.0)` | `192.168.1.0` | `192.168.1.255` |"
         },
         {
           "level": 0,
-          "text": "Broadcast address"
+          "text": "| `10.1.1.18` | `/8 (255.0.0.0)` | `10.0.0.0` | `10.255.255.255` |"
         },
         {
           "level": 0,
-          "text": "192.168.1.107"
+          "text": "| `172.16.181.23` | `/19 (255.255.224.0)` | `172.16.160.0` | `172.16.191.255` |"
         },
         {
           "level": 0,
-          "text": "/24 (255.255.255.0)"
-        },
-        {
-          "level": 0,
-          "text": "192.168.1.0"
-        },
-        {
-          "level": 0,
-          "text": "192.168.1.255"
-        },
-        {
-          "level": 0,
-          "text": "10.1.1.18"
-        },
-        {
-          "level": 0,
-          "text": "/8 (255.0.0.0)"
-        },
-        {
-          "level": 0,
-          "text": "10.0.0.0"
-        },
-        {
-          "level": 0,
-          "text": "10.255.255.255"
-        },
-        {
-          "level": 0,
-          "text": "172.16.181.23"
-        },
-        {
-          "level": 0,
-          "text": "/19 (255.255.224.0)"
-        },
-        {
-          "level": 0,
-          "text": "172.16.160.0"
-        },
-        {
-          "level": 0,
-          "text": "172.16.191.255"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Be fluent converting prefix ↔ netmask ↔ network/broadcast address without a calculator"
+          "text": "RHCSA EXAM CRITICAL — Be fluent converting prefix ↔ netmask ↔ network/broadcast address without a calculator"
         },
         {
           "level": 0,
@@ -275,31 +175,23 @@
         },
         {
           "level": 0,
-          "text": "Shortening rule"
+          "text": "| Shortening rule | Example |"
         },
         {
           "level": 0,
-          "text": "Example"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Leading zeros in a group may be dropped"
+          "text": "| Leading zeros in a group may be dropped | 2001:0db8:0000:0010:0000:0000:0000:0001 → 2001:db8:0:10:0:0:0:1 |"
         },
         {
           "level": 0,
-          "text": "2001:0db8:0000:0010:0000:0000:0000:0001 → 2001:db8:0:10:0:0:0:1"
+          "text": "| One run of consecutive all-zero groups may collapse to :: (once per address, maximum) | 2001:db8:0:10:0:0:0:1 → 2001:db8:0:10::1 |"
         },
         {
           "level": 0,
-          "text": "One run of consecutive all-zero groups may collapse to :: (once per address, maximum)"
-        },
-        {
-          "level": 0,
-          "text": "2001:db8:0:10:0:0:0:1 → 2001:db8:0:10::1"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — A port after an IPv6 address needs brackets"
+          "text": "WARNING — A port after an IPv6 address needs brackets"
         },
         {
           "level": 0,
@@ -307,51 +199,23 @@
         },
         {
           "level": 0,
-          "text": "Address / network"
+          "text": "| Address / network | IPv4 equivalent | Meaning |"
         },
         {
           "level": 0,
-          "text": "IPv4 equivalent"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| `::1/128` | `127.0.0.1` | localhost |"
         },
         {
           "level": 0,
-          "text": "::1/128"
+          "text": "| `::` | `0.0.0.0` | The unspecified address — e.g. a service listening on every configured address |"
         },
         {
           "level": 0,
-          "text": "127.0.0.1"
-        },
-        {
-          "level": 0,
-          "text": "localhost"
-        },
-        {
-          "level": 0,
-          "text": "::"
-        },
-        {
-          "level": 0,
-          "text": "0.0.0.0"
-        },
-        {
-          "level": 0,
-          "text": "The unspecified address — e.g. a service listening on every configured address"
-        },
-        {
-          "level": 0,
-          "text": "::/0"
-        },
-        {
-          "level": 0,
-          "text": "0.0.0.0/0"
-        },
-        {
-          "level": 0,
-          "text": "The default route"
+          "text": "| `::/0` | `0.0.0.0/0` | The default route |"
         },
         {
           "level": 0,
@@ -365,59 +229,35 @@
       "content": [
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "ip link show"
+          "text": "| `ip link show` | Every interface, its state (UP/DOWN), and MAC address |"
         },
         {
           "level": 0,
-          "text": "Every interface, its state (UP/DOWN), and MAC address"
+          "text": "| `ip addr show [dev]` | IPv4/IPv6 addresses and prefixes on one or all interfaces |"
         },
         {
           "level": 0,
-          "text": "ip addr show [dev]"
+          "text": "| `ip -s link show dev` | RX/TX packet, error, and drop counters — a first stop for suspected network issues |"
         },
         {
           "level": 0,
-          "text": "IPv4/IPv6 addresses and prefixes on one or all interfaces"
+          "text": "| `ping -c3 host` | Basic reachability (IPv4); ping6 for IPv6 — always use -c to cap the count, or it runs until Ctrl+C |"
         },
         {
           "level": 0,
-          "text": "ip -s link show dev"
+          "text": "| `ip route / ip -6 route` | The IPv4 / IPv6 routing table |"
         },
         {
           "level": 0,
-          "text": "RX/TX packet, error, and drop counters — a first stop for suspected network issues"
-        },
-        {
-          "level": 0,
-          "text": "ping -c3 host"
-        },
-        {
-          "level": 0,
-          "text": "Basic reachability (IPv4); ping6 for IPv6 — always use -c to cap the count, or it runs until Ctrl+C"
-        },
-        {
-          "level": 0,
-          "text": "ip route / ip -6 route"
-        },
-        {
-          "level": 0,
-          "text": "The IPv4 / IPv6 routing table"
-        },
-        {
-          "level": 0,
-          "text": "tracepath host"
-        },
-        {
-          "level": 0,
-          "text": "Traces the hop-by-hop path to a destination — identifies which router along the way is the problem"
+          "text": "| `tracepath host` | Traces the hop-by-hop path to a destination — identifies which router along the way is the problem |"
         },
         {
           "level": 0,
@@ -439,27 +279,19 @@
         },
         {
           "level": 0,
-          "text": "Term"
+          "text": "| Term | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Device"
+          "text": "| Device | A physical or virtual network interface (e.g. ens3) |"
         },
         {
           "level": 0,
-          "text": "A physical or virtual network interface (e.g. ens3)"
-        },
-        {
-          "level": 0,
-          "text": "Connection"
-        },
-        {
-          "level": 0,
-          "text": "A named bundle of settings that CAN be applied to a device — only one connection is active per device at a time, but several can exist for the same device (e.g. \"work-wifi\" vs. \"home-wifi\" for the same wireless card)"
+          "text": "| Connection | A named bundle of settings that CAN be applied to a device — only one connection is active per device at a time, but several can exist for the same device (e.g. \"work-wifi\" vs. \"home-wifi\" for the same wireless card) |"
         },
         {
           "level": 0,
@@ -467,7 +299,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — The core nmcli command set — memorize this table"
+          "text": "RHCSA EXAM CRITICAL — The core nmcli command set — memorize this table"
         },
         {
           "level": 0,
@@ -475,111 +307,63 @@
         },
         {
           "level": 0,
-          "text": "Task"
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Show all devices and their state"
+          "text": "| Show all devices and their state | `nmcli dev status` |"
         },
         {
           "level": 0,
-          "text": "nmcli dev status"
+          "text": "| List all connections | `nmcli con show` |"
         },
         {
           "level": 0,
-          "text": "List all connections"
+          "text": "| List only active connections | `nmcli con show --active` |"
         },
         {
           "level": 0,
-          "text": "nmcli con show"
+          "text": "| Show every setting for one connection | `nmcli con show NAME` |"
         },
         {
           "level": 0,
-          "text": "List only active connections"
+          "text": "| Create a DHCP connection | `nmcli con add con-name NAME type ethernet ifname DEV` |"
         },
         {
           "level": 0,
-          "text": "nmcli con show --active"
+          "text": "| Create a static IPv4 connection | `nmcli con add con-name NAME type ethernet ifname DEV ip4 IP/PREFIX gw4 GATEWAY` |"
         },
         {
           "level": 0,
-          "text": "Show every setting for one connection"
+          "text": "| Modify a setting on an EXISTING connection | `nmcli con mod NAME ipv4.addresses \"IP/PREFIX GATEWAY\"` |"
         },
         {
           "level": 0,
-          "text": "nmcli con show NAME"
+          "text": "| Add one value without replacing the list | `nmcli con mod NAME +ipv4.dns IP` |"
         },
         {
           "level": 0,
-          "text": "Create a DHCP connection"
+          "text": "| Activate a connection | `nmcli con up NAME` |"
         },
         {
           "level": 0,
-          "text": "nmcli con add con-name NAME type ethernet ifname DEV"
+          "text": "| Deactivate AND disconnect a device (the correct way to bring an interface down) | `nmcli dev dis DEV` |"
         },
         {
           "level": 0,
-          "text": "Create a static IPv4 connection"
+          "text": "| Reload config files after manual edits | `nmcli con reload` |"
         },
         {
           "level": 0,
-          "text": "nmcli con add con-name NAME type ethernet ifname DEV ip4 IP/PREFIX gw4 GATEWAY"
+          "text": "| Delete a connection (and its ifcfg file) | `nmcli con del NAME` |"
         },
         {
           "level": 0,
-          "text": "Modify a setting on an EXISTING connection"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con mod NAME ipv4.addresses \"IP/PREFIX GATEWAY\""
-        },
-        {
-          "level": 0,
-          "text": "Add one value without replacing the list"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con mod NAME +ipv4.dns IP"
-        },
-        {
-          "level": 0,
-          "text": "Activate a connection"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con up NAME"
-        },
-        {
-          "level": 0,
-          "text": "Deactivate AND disconnect a device (the correct way to bring an interface down)"
-        },
-        {
-          "level": 0,
-          "text": "nmcli dev dis DEV"
-        },
-        {
-          "level": 0,
-          "text": "Reload config files after manual edits"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con reload"
-        },
-        {
-          "level": 0,
-          "text": "Delete a connection (and its ifcfg file)"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con del NAME"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — nmcli con down vs. nmcli dev disconnect — a genuine gotcha"
+          "text": "WARNING — nmcli con down vs. nmcli dev disconnect — a genuine gotcha"
         },
         {
           "level": 0,
@@ -587,7 +371,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Switching from DHCP to static requires changing the method, not just adding an address"
+          "text": "WARNING — Switching from DHCP to static requires changing the method, not just adding an address"
         },
         {
           "level": 0,
@@ -609,39 +393,27 @@
       "content": [
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "hostname"
+          "text": "| `hostname` | Shows (or, given an argument, TEMPORARILY changes) the current hostname — doesn't survive reboot |"
         },
         {
           "level": 0,
-          "text": "Shows (or, given an argument, TEMPORARILY changes) the current hostname — doesn't survive reboot"
+          "text": "| `hostnamectl set-hostname NAME` | Sets the PERSISTENT static hostname, stored in /etc/hostname |"
         },
         {
           "level": 0,
-          "text": "hostnamectl set-hostname NAME"
+          "text": "| `hostnamectl status` | Full detail: static hostname, OS, kernel, virtualization, machine/boot IDs |"
         },
         {
           "level": 0,
-          "text": "Sets the PERSISTENT static hostname, stored in /etc/hostname"
-        },
-        {
-          "level": 0,
-          "text": "hostnamectl status"
-        },
-        {
-          "level": 0,
-          "text": "Full detail: static hostname, OS, kernel, virtualization, machine/boot IDs"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — hostname alone doesn't persist — a real, testable distinction"
+          "text": "WARNING — hostname alone doesn't persist — a real, testable distinction"
         },
         {
           "level": 0,
@@ -681,47 +453,31 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "getent hosts NAME"
+          "text": "| `getent hosts NAME` | Tests resolution specifically via /etc/hosts |"
         },
         {
           "level": 0,
-          "text": "Tests resolution specifically via /etc/hosts"
+          "text": "| `host NAME` | Tests resolution via DNS directly, forward or reverse |"
         },
         {
           "level": 0,
-          "text": "host NAME"
+          "text": "| `nmcli con mod NAME ipv4.dns IP` | Set the DNS server(s) for a connection (replaces the list — use +ipv4.dns to add one instead) |"
         },
         {
           "level": 0,
-          "text": "Tests resolution via DNS directly, forward or reverse"
+          "text": "| `nmcli con mod NAME ipv4.ignore-auto-dns yes` | Stop DHCP from overwriting your manually-set DNS servers in /etc/resolv.conf |"
         },
         {
           "level": 0,
-          "text": "nmcli con mod NAME ipv4.dns IP"
-        },
-        {
-          "level": 0,
-          "text": "Set the DNS server(s) for a connection (replaces the list — use +ipv4.dns to add one instead)"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con mod NAME ipv4.ignore-auto-dns yes"
-        },
-        {
-          "level": 0,
-          "text": "Stop DHCP from overwriting your manually-set DNS servers in /etc/resolv.conf"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — A DNS change needs a con down/up (or reload) to actually take effect"
+          "text": "RHCSA EXAM CRITICAL — A DNS change needs a con down/up (or reload) to actually take effect"
         },
         {
           "level": 0,
@@ -799,23 +555,23 @@
       "content": [
         {
           "level": 0,
-          "text": "The TCP/IP model (application/transport/internet/link) describes how data moves between hosts; modern RHEL interface names (en/wl/ww + firmware/PCI info) are persistent, unlike the old eth0-style detection-order names."
+          "text": "- The TCP/IP model (application/transport/internet/link) describes how data moves between hosts; modern RHEL interface names (en/wl/ww + firmware/PCI info) are persistent, unlike the old eth0-style detection-order names."
         },
         {
           "level": 0,
-          "text": "An IPv4 address + prefix determines its network and broadcast address; the most specific matching route wins, with 0.0.0.0/0 as the catch-all default."
+          "text": "- An IPv4 address + prefix determines its network and broadcast address; the most specific matching route wins, with 0.0.0.0/0 as the catch-all default."
         },
         {
           "level": 0,
-          "text": "IPv6 uses 128-bit addresses, mostly /64 subnets, and RHEL runs IPv4/IPv6 dual-stack by default."
+          "text": "- IPv6 uses 128-bit addresses, mostly /64 subnets, and RHEL runs IPv4/IPv6 dual-stack by default."
         },
         {
           "level": 0,
-          "text": "nmcli manages devices (physical/virtual interfaces) and connections (named setting bundles) — con mod for static settings, dev disconnect (not con down) to actually keep an interface offline, and ipv4.method manual whenever moving off DHCP."
+          "text": "- nmcli manages devices (physical/virtual interfaces) and connections (named setting bundles) — con mod for static settings, dev disconnect (not con down) to actually keep an interface offline, and ipv4.method manual whenever moving off DHCP."
         },
         {
           "level": 0,
-          "text": "hostnamectl set-hostname persists to /etc/hostname; plain hostname does not. /etc/hosts is checked before /etc/resolv.conf's DNS servers for name resolution."
+          "text": "- hostnamectl set-hostname persists to /etc/hostname; plain hostname does not. /etc/hosts is checked before /etc/resolv.conf's DNS servers for name resolution."
         }
       ],
       "words": 116

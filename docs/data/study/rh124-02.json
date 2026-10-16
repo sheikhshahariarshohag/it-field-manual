@@ -45,15 +45,15 @@
         },
         {
           "level": 0,
-          "text": "It's open source — anyone can read the code, change it, and redistribute their changes. That transparency is also a security property: bugs and backdoors get found by many eyes, not just one vendor's."
+          "text": "- **It's open source** — anyone can read the code, change it, and redistribute their changes. That transparency is also a security property: bugs and backdoors get found by many eyes, not just one vendor's."
         },
         {
           "level": 0,
-          "text": "It's designed around a scriptable command line — every administrative task can be done (and automated) from the shell. This is the single biggest reason Linux dominates automation and DevOps tooling: if a human can type it, a script can repeat it."
+          "text": "- **It's designed around a scriptable command line** — every administrative task can be done (and automated) from the shell. This is the single biggest reason Linux dominates automation and DevOps tooling: if a human can type it, a script can repeat it."
         },
         {
           "level": 0,
-          "text": "It's modular — the same kernel scales from a stripped-down container image or embedded appliance up to a full graphical workstation, just by choosing which packages sit on top of it."
+          "text": "- **It's modular** — the same kernel scales from a stripped-down container image or embedded appliance up to a full graphical workstation, just by choosing which packages sit on top of it."
         }
       ],
       "words": 117
@@ -67,39 +67,20 @@
         },
         {
           "level": 0,
-          "text": "License family"
+          "level": 0,
+          "text": "| License family | Rule of thumb | Examples |"
         },
         {
           "level": 0,
-          "text": "Rule of thumb"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Examples"
+          "text": "| Copyleft (\"share-alike\") | If you redistribute the code — modified or not — you must pass along the same freedoms to whoever you give it to. Keeps improvements permanently open. | GPL, LGPL (the Linux kernel itself is GPL) |"
         },
         {
           "level": 0,
-          "text": "Copyleft (\"share-alike\")"
-        },
-        {
-          "level": 0,
-          "text": "If you redistribute the code — modified or not — you must pass along the same freedoms to whoever you give it to. Keeps improvements permanently open."
-        },
-        {
-          "level": 0,
-          "text": "GPL, LGPL (the Linux kernel itself is GPL)"
-        },
-        {
-          "level": 0,
-          "text": "Permissive"
-        },
-        {
-          "level": 0,
-          "text": "Reuse it almost however you like, including folding it into closed-source or proprietary products, as long as you keep the original copyright notice."
-        },
-        {
-          "level": 0,
-          "text": "MIT, BSD, Apache 2.0"
+          "text": "| Permissive | Reuse it almost however you like, including folding it into closed-source or proprietary products, as long as you keep the original copyright notice. | MIT, BSD, Apache 2.0 |"
         },
         {
           "level": 0,
@@ -151,59 +132,28 @@
         },
         {
           "level": 0,
-          "text": "Community rebuild (e.g. classic CentOS)"
+          "level": 0,
+          "text": "| Aspect | Community rebuild (e.g. classic CentOS) | RHEL |"
         },
         {
           "level": 0,
-          "text": "RHEL"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Support"
+          "text": "| Support | Self-support: forums, mailing lists, community wiki. | Tiered support (business-hours to 24x7), SLAs, official Red Hat backing. |"
         },
         {
           "level": 0,
-          "text": "Self-support: forums, mailing lists, community wiki."
+          "text": "| Patch timing | Waits for upstream RHEL errata to be published first. | Direct access to Red Hat's own hotfixes and errata, sometimes ahead of public release. |"
         },
         {
           "level": 0,
-          "text": "Tiered support (business-hours to 24x7), SLAs, official Red Hat backing."
+          "text": "| ISV certification | Rarely certified by vendors like SAP, Oracle, SAS. | Thousands of certified applications from official partners. |"
         },
         {
           "level": 0,
-          "text": "Patch timing"
-        },
-        {
-          "level": 0,
-          "text": "Waits for upstream RHEL errata to be published first."
-        },
-        {
-          "level": 0,
-          "text": "Direct access to Red Hat's own hotfixes and errata, sometimes ahead of public release."
-        },
-        {
-          "level": 0,
-          "text": "ISV certification"
-        },
-        {
-          "level": 0,
-          "text": "Rarely certified by vendors like SAP, Oracle, SAS."
-        },
-        {
-          "level": 0,
-          "text": "Thousands of certified applications from official partners."
-        },
-        {
-          "level": 0,
-          "text": "Extended support"
-        },
-        {
-          "level": 0,
-          "text": "None beyond the standard maintenance window."
-        },
-        {
-          "level": 0,
-          "text": "Extended Update Support (EUS) and Extended Lifecycle Support (ELS) add years of coverage for older minor releases."
+          "text": "| Extended support | None beyond the standard maintenance window. | Extended Update Support (EUS) and Extended Lifecycle Support (ELS) add years of coverage for older minor releases. |"
         }
       ],
       "words": 115
@@ -273,23 +223,24 @@
       "content": [
         {
           "level": 0,
-          "text": "Open source means anyone can use, study, modify, and redistribute the source code; copyleft licenses (GPL/LGPL) require sharing improvements back, permissive licenses (MIT/BSD/Apache) don't."
+          "level": 0,
+          "text": "- Open source means anyone can use, study, modify, and redistribute the source code; copyleft licenses (GPL/LGPL) require sharing improvements back, permissive licenses (MIT/BSD/Apache) don't."
         },
         {
           "level": 0,
-          "text": "A distribution bundles the Linux kernel with the user-space software needed to make it a usable OS."
+          "text": "- A distribution bundles the Linux kernel with the user-space software needed to make it a usable OS."
         },
         {
           "level": 0,
-          "text": "Red Hat's pipeline is upstream contribution → Fedora → RHEL, trading Fedora's speed for RHEL's stability and multi-year support."
+          "text": "- Red Hat's pipeline is upstream contribution → Fedora → RHEL, trading Fedora's speed for RHEL's stability and multi-year support."
         },
         {
           "level": 0,
-          "text": "RHEL's subscription pays for support and curated updates, not a software license — the code is still open source."
+          "text": "- RHEL's subscription pays for support and curated updates, not a software license — the code is still open source."
         },
         {
           "level": 0,
-          "text": "You get real, free RHEL for lab use through the Red Hat Developer Subscription for Individuals."
+          "text": "- You get real, free RHEL for lab use through the Red Hat Developer Subscription for Individuals."
         }
       ],
       "words": 95

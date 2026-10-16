@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Why this chapter matters for the exam, specifically"
+          "text": "RHCSA EXAM CRITICAL — Why this chapter matters for the exam, specifically"
         },
         {
           "level": 0,
@@ -35,75 +35,44 @@
         },
         {
           "level": 0,
-          "text": "Section"
+          "level": 0,
+          "text": "| Section | Content |"
         },
         {
           "level": 0,
-          "text": "Content"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "1"
+          "text": "| 1 | User commands |"
         },
         {
           "level": 0,
-          "text": "User commands"
+          "text": "| 2 | System calls (kernel routines) |"
         },
         {
           "level": 0,
-          "text": "2"
+          "text": "| 3 | Library functions |"
         },
         {
           "level": 0,
-          "text": "System calls (kernel routines)"
+          "text": "| 4 | Special files (device files) |"
         },
         {
           "level": 0,
-          "text": "3"
+          "text": "| 5 | File formats (config file layouts) |"
         },
         {
           "level": 0,
-          "text": "Library functions"
+          "text": "| 6 | Games |"
         },
         {
           "level": 0,
-          "text": "4"
+          "text": "| 7 | Conventions, standards, protocols, misc. |"
         },
         {
           "level": 0,
-          "text": "Special files (device files)"
-        },
-        {
-          "level": 0,
-          "text": "5"
-        },
-        {
-          "level": 0,
-          "text": "File formats (config file layouts)"
-        },
-        {
-          "level": 0,
-          "text": "6"
-        },
-        {
-          "level": 0,
-          "text": "Games"
-        },
-        {
-          "level": 0,
-          "text": "7"
-        },
-        {
-          "level": 0,
-          "text": "Conventions, standards, protocols, misc."
-        },
-        {
-          "level": 0,
-          "text": "8"
-        },
-        {
-          "level": 0,
-          "text": "System administration / privileged commands"
+          "text": "| 8 | System administration / privileged commands |"
         },
         {
           "level": 0,
@@ -123,71 +92,44 @@
         },
         {
           "level": 0,
-          "text": "Key"
+          "level": 0,
+          "text": "| Key | Action |"
         },
         {
           "level": 0,
-          "text": "Action"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Space / PageDown"
+          "text": "| Space / PageDown | Scroll forward one screen |"
         },
         {
           "level": 0,
-          "text": "Scroll forward one screen"
+          "text": "| PageUp | Scroll back one screen |"
         },
         {
           "level": 0,
-          "text": "PageUp"
+          "text": "| `↑` / `↓` | Scroll one line |"
         },
         {
           "level": 0,
-          "text": "Scroll back one screen"
+          "text": "| `/string` | Search forward for string |"
         },
         {
           "level": 0,
-          "text": "↑ / ↓"
+          "text": "| `n` / `Shift+N` | Repeat the search forward / backward |"
         },
         {
           "level": 0,
-          "text": "Scroll one line"
+          "text": "| `g` / `Shift+G` | Jump to start / end of the page |"
         },
         {
           "level": 0,
-          "text": "/string"
+          "text": "| `q` | Quit back to the shell |"
         },
         {
           "level": 0,
-          "text": "Search forward for string"
-        },
-        {
-          "level": 0,
-          "text": "n / Shift+N"
-        },
-        {
-          "level": 0,
-          "text": "Repeat the search forward / backward"
-        },
-        {
-          "level": 0,
-          "text": "g / Shift+G"
-        },
-        {
-          "level": 0,
-          "text": "Jump to start / end of the page"
-        },
-        {
-          "level": 0,
-          "text": "q"
-        },
-        {
-          "level": 0,
-          "text": "Quit back to the shell"
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Search strings are regular expressions"
         },
         {
           "level": 0,
@@ -199,67 +141,40 @@
         },
         {
           "level": 0,
-          "text": "Heading"
+          "level": 0,
+          "text": "| Heading | What's there |"
         },
         {
           "level": 0,
-          "text": "What's there"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "NAME"
+          "text": "| `NAME` | One-line description |"
         },
         {
           "level": 0,
-          "text": "One-line description"
+          "text": "| `SYNOPSIS` | The command's syntax summary |"
         },
         {
           "level": 0,
-          "text": "SYNOPSIS"
+          "text": "| `DESCRIPTION` | Full explanation |"
         },
         {
           "level": 0,
-          "text": "The command's syntax summary"
+          "text": "| `OPTIONS` | Every flag, explained |"
         },
         {
           "level": 0,
-          "text": "DESCRIPTION"
+          "text": "| `EXAMPLES` | Worked examples |"
         },
         {
           "level": 0,
-          "text": "Full explanation"
+          "text": "| `FILES` | Related files/paths |"
         },
         {
           "level": 0,
-          "text": "OPTIONS"
-        },
-        {
-          "level": 0,
-          "text": "Every flag, explained"
-        },
-        {
-          "level": 0,
-          "text": "EXAMPLES"
-        },
-        {
-          "level": 0,
-          "text": "Worked examples"
-        },
-        {
-          "level": 0,
-          "text": "FILES"
-        },
-        {
-          "level": 0,
-          "text": "Related files/paths"
-        },
-        {
-          "level": 0,
-          "text": "SEE ALSO"
-        },
-        {
-          "level": 0,
-          "text": "Related man pages"
+          "text": "| `SEE ALSO` | Related man pages |"
         },
         {
           "level": 3,
@@ -279,7 +194,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — man -k in practice"
+          "text": "RHCSA EXAM CRITICAL — man -k in practice"
         },
         {
           "level": 0,
@@ -297,87 +212,36 @@
         },
         {
           "level": 0,
-          "text": "pinfo key"
+          "level": 0,
+          "text": "| pinfo key | man equivalent | Action |"
         },
         {
           "level": 0,
-          "text": "man equivalent"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Action"
+          "text": "| PageDown / Space | PageDown / Space | Scroll forward one screen |"
         },
         {
           "level": 0,
-          "text": "PageDown / Space"
+          "text": "| `d` | (none) | Jump to the directory of topics |"
         },
         {
           "level": 0,
-          "text": "PageDown / Space"
+          "text": "| `u` | (none) | Go up to the parent node |"
         },
         {
           "level": 0,
-          "text": "Scroll forward one screen"
+          "text": "| `↓` then Enter | (none) | Follow a hyperlink |"
         },
         {
           "level": 0,
-          "text": "d"
+          "text": "| `/string` then Enter | `/string` | Search |"
         },
         {
           "level": 0,
-          "text": "(none)"
-        },
-        {
-          "level": 0,
-          "text": "Jump to the directory of topics"
-        },
-        {
-          "level": 0,
-          "text": "u"
-        },
-        {
-          "level": 0,
-          "text": "(none)"
-        },
-        {
-          "level": 0,
-          "text": "Go up to the parent node"
-        },
-        {
-          "level": 0,
-          "text": "↓ then Enter"
-        },
-        {
-          "level": 0,
-          "text": "(none)"
-        },
-        {
-          "level": 0,
-          "text": "Follow a hyperlink"
-        },
-        {
-          "level": 0,
-          "text": "/string then Enter"
-        },
-        {
-          "level": 0,
-          "text": "/string"
-        },
-        {
-          "level": 0,
-          "text": "Search"
-        },
-        {
-          "level": 0,
-          "text": "q"
-        },
-        {
-          "level": 0,
-          "text": "q"
-        },
-        {
-          "level": 0,
-          "text": "Quit"
+          "text": "| `q` | `q` | Quit |"
         },
         {
           "level": 0,
@@ -443,19 +307,19 @@
       "content": [
         {
           "level": 0,
-          "text": "man topic (optionally man <section> topic) reads a manual page; section numbers disambiguate identical names across content types (1=commands, 5=file formats, 8=admin commands, etc.)."
+          "text": "- man topic (optionally man <section> topic) reads a manual page; section numbers disambiguate identical names across content types (1=commands, 5=file formats, 8=admin commands, etc.)."
         },
         {
           "level": 0,
-          "text": "man -k keyword searches the mandb-built index by title/description when you don't know the exact command name."
+          "text": "- man -k keyword searches the mandb-built index by title/description when you don't know the exact command name."
         },
         {
           "level": 0,
-          "text": "pinfo gives package-level, hyperlinked documentation for GNU tools, and falls back to the man page if no Info node exists."
+          "text": "- pinfo gives package-level, hyperlinked documentation for GNU tools, and falls back to the man page if no Info node exists."
         },
         {
           "level": 0,
-          "text": "You're allowed to use these during the RHCSA exam — practicing fast navigation now is time you get back on exam day."
+          "text": "- You're allowed to use these during the RHCSA exam — practicing fast navigation now is time you get back on exam day."
         }
       ],
       "words": 83

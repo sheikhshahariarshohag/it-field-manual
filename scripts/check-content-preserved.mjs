@@ -89,6 +89,13 @@ const fail = (where, msg, detail) => {
  */
 const MARKERS = [
   /^(?:RHCSA EXAM CRITICAL|EXAM CRITICAL|CRITICAL|WARNING|CAUTION|DANGER)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?(?=\S)/i,
+  // The teaching boxes below require their separator, matching CALLOUTS exactly.
+  // An optional separator here would strip "SUMMARY of results" even though the
+  // classifier leaves that line as prose, and the check would report a loss.
+  /^(?:COMMON MISTAKES?|COMMON ERRORS?|COMMON PITFALLS?|PITFALLS?|GOTCHAS?|MISTAKES?)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(?=\S)/i,
+  /^(?:KEY TAKEAWAYS?|TAKEAWAYS?|IN SHORT|SUMMARY|KEY POINTS?)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(?=\S)/i,
+  /^(?:IMPORTANT|KEY RULE|RULE OF THUMB|RULE|MUST REMEMBER|KEY POINT)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(?=\S)/i,
+  /^(?:EXAMPLE|FOR EXAMPLE|E\.G\.|WORKED EXAMPLE)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(?=\S)/i,
   /^(?:NOTE|Tip|TIP|Remember)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?(?=\S)/,
   /^(?:Why this matters)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?(?=\S)/,
   /^\uD83D\uDCA1\s*(?:(?:Why this matters|Remember|Tip|Note)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?)?(?=\S)/i,

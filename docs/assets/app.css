@@ -2576,3 +2576,82 @@ html[data-theme="dark"] .sidenav__block {
 }
 /* Never let a diagram be mistaken for a sentence. */
 .pl-box--output .pl-box__tag { letter-spacing: .06em; }
+
+/* ============================================================ teaching prose
+   Components added by the reader upgrade: inline emphasis, the teaching
+   callouts (rule / example / common mistake / takeaways) and real tables.
+   Every colour is an existing token, so light and dark both keep the contrast
+   that was measured for the palette. See TEST_PLAN.md section 4. */
+
+/* --- inline emphasis ------------------------------------------------------
+   Authored as **bold**. It only nudges the weight and pulls the text to full
+   foreground so a key term reads as a key term inside a paragraph. */
+.pl-em { font-weight: 680; color: var(--text); }
+
+/* --- callouts, refined ----------------------------------------------------
+   The base box gets a soft shadow and rounded right corners so it reads as a
+   card rather than a stripe, and the label carries a coloured dot. */
+.note {
+  border-radius: var(--r-sm) var(--r-md) var(--r-md) var(--r-sm);
+  box-shadow: var(--shadow-1);
+}
+/* `.note strong` (0,1,1) already sets display:block; this selector matches it
+   on specificity (two classes, 0,2,0) so the label keeps the card's styling. */
+.note .note__k {
+  font-size: .72rem; font-weight: 750;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.note .note__k::before {
+  content: "";
+  display: inline-block; vertical-align: middle;
+  width: 8px; height: 8px; margin-right: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+/* The generic NOTE / Tip keeps the warm amber it always had. */
+.note .note__k { color: var(--warn); }
+.note--ok      .note__k { color: var(--ok); }
+.note--risk    .note__k { color: var(--danger); }
+
+/* A rule to remember: the accent, because it is instruction, not a warning. */
+.note--rule     { border-color: var(--accent); background: var(--accent-dim); }
+.note--rule     .note__k { color: var(--accent); }
+
+/* An example: deliberately quiet. It is illustration, not a demand. */
+.note--example  { border-color: var(--line); background: var(--surface-2); }
+.note--example  .note__k { color: var(--text-dim); }
+
+/* A common mistake: the same weight as a warning, and for the same reason. */
+.note--mistake  { border-color: var(--danger); background: var(--danger-dim); }
+.note--mistake  .note__k { color: var(--danger); }
+
+/* Key takeaways: the green "this is what stuck" box, used to close a section. */
+.note--takeaway { border-color: var(--ok); background: var(--ok-dim); }
+.note--takeaway .note__k { color: var(--ok); }
+.note--takeaway ul, .note--takeaway ol { margin: 6px 0 0; padding-left: 20px; }
+.note--takeaway li { margin-bottom: 5px; line-height: 1.55; }
+.note--takeaway li:last-child { margin-bottom: 0; }
+
+/* --- real tables ----------------------------------------------------------
+   Authored as pipe tables. `.tablewrap` already scrolls sideways on a phone;
+   this only gives the table itself a book-like finish. */
+.pl-table { margin: 16px 0; }
+.pl-table table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+.pl-table th, .pl-table td {
+  padding: 9px 13px; text-align: left; vertical-align: top;
+  border: 1px solid var(--line);
+}
+.pl-table thead th {
+  background: var(--surface-2);
+  font-size: .71rem; font-weight: 750;
+  letter-spacing: .07em; text-transform: uppercase; color: var(--text-dim);
+  border-bottom-width: 2px; border-bottom-color: var(--accent);
+}
+.pl-table tbody tr:nth-child(even) { background: var(--bg-sunk); }
+.pl-table td code, .pl-table th code { white-space: nowrap; }
+
+/* --- reading rhythm -------------------------------------------------------
+   Scoped to the reader body so tables and callouts elsewhere are untouched. */
+.rd-s__body p.pl-p { line-height: 1.72; }
+.rd-s__body > .pl-p + .pl-p { margin-top: 12px; }
+.rd-s__body .pl-h { color: var(--text); font-weight: 700; }

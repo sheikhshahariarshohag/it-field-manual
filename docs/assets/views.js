@@ -1472,8 +1472,26 @@ function kmParagraphs(items, kind) {
     run = [];
   };
 
-  for (const raw of arr) {
-    const t = String(raw == null ? "" : raw).trimEnd();
+  for (let i = 0; i < arr.length; i++) {
+    const t = String(arr[i] == null ? "" : arr[i]).trimEnd();
+
+    // A run of pipe lines that carries a `---|---` separator is a real table.
+    // Checked before the flow rule, because a table row also contains pipes.
+    if (/^\s*\|/.test(t)) {
+      const runLines = [];
+      let j = i;
+      while (j < arr.length && /^\s*\|/.test(String(arr[j]).trimEnd())) {
+        runLines.push(String(arr[j]).trimEnd());
+        j++;
+      }
+      const parsed = prose.tableFromLines(runLines);
+      if (parsed) {
+        flush();
+        box.appendChild(prose.renderTable(parsed.head, parsed.rows));
+        i = j - 1;
+        continue;
+      }
+    }
 
     // Arrows and pipes mean a relationship, not a sentence.
     if (/→|-->|<--|\s\|\s/.test(t)) {

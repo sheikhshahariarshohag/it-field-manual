@@ -137,9 +137,18 @@ export function classify(line) {
  * Backticks win over everything else, so a path already inside backticks is
  * not double-marked.
  */
-function inlineTokens(text) {
+function inlineTokens(text, allowBold = true) {
   const out = [];
-  const re = /`([^`]+)`|(\/(?:[\w.-]+)(?:\/[\w.-]+)*)|(-\{1,2}[A-Za-z][\w-]*)|([A-Z_][A-Z0-9_]{2,})\b/g;
+  // `**bold**` is matched last, and only when it starts the token. No other
+  // alternative begins with `*`, so bold wins at the position it appears and a
+  // CONST like `**IMPORTANT**` is caught whole rather than as the word inside.
+  // The inner text is tokenised again with bold disabled, so `**run `ls` now**`
+  // still marks the code span without risking an infinite loop.
+  const bold = allowBold ? "|\\*\\*([^*]+?)\\*\\*" : "";
+  const re = new RegExp(
+    "`([^`]+)`|(\\/(?:[\\w.-]+)(?:\\/[\\w.-]+)*)|(-{1,2}[A-Za-z][\\w-]*)|([A-Z_][A-Z0-9_]{2,})\\b" + bold,
+    "g",
+  );
   let last = 0;
   let m;
   while ((m = re.exec(text)) !== null) {
@@ -147,6 +156,7 @@ function inlineTokens(text) {
     if (m[1] !== undefined) out.push({ code: m[1] });
     else if (m[2] !== undefined) out.push({ path: m[2] });
     else if (m[3] !== undefined) out.push({ flag: m[3] });
+    else if (m[5] !== undefined) out.push({ bold: inlineTokens(m[5], false) });
     else out.push({ const: m[4] });
     last = re.lastIndex;
   }
@@ -160,6 +170,10 @@ function markNode(mark) {
   if (mark.path !== undefined) return h("code.path", mark.path);
   if (mark.flag !== undefined) return h("code.flag", mark.flag);
   if (mark.const !== undefined) return h("code.const", mark.const);
+  if (mark.bold !== undefined) {
+    return h("strong.pl-em", ...mark.bold.map((p) =>
+      (typeof p === "string" ? document.createTextNode(p) : markNode(p))));
+  }
   return document.createTextNode(String(mark));
 }
 
@@ -178,6 +192,68 @@ function marked(text) {
  */
 export function markedNodes(text) {
   return marked(String(text == null ? "" : text));
+}
+
+/* ------------------------------------------------------------- tables */
+
+/**
+ * A real table, authored as GitHub-style pipe rows:
+ *
+ *   | Command | What it does |
+ *   | --- | --- |
+ *   | `ls` | lists files |
+ *
+ * The separator row is what makes this safe. A lone line containing pipes is
+ * how this corpus already draws relationships (`A | B`), so a run of pipe lines
+ * is only promoted to a table when it also contains a `---|---` separator —
+ * otherwise it is left exactly as it was.
+ */
+const RE_TABLE_ROW = /^\s*\|(.+)\|\s*$/;
+
+function isTableSep(line) {
+  return /\|/.test(line) && /-/.test(line) && /^\s*[\s:|-]+$/.test(line);
+}
+
+function tableRowLooks(line) {
+  return RE_TABLE_ROW.test(line) || isTableSep(line);
+}
+
+function tableCells(line) {
+  return line.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+}
+
+/** A real <table>, using the same .tablewrap shell the rest of the app uses. */
+export function renderTable(head, body) {
+  const wrap = h("div.tablewrap.pl-table");
+  const table = h("table");
+  if (head && head.length) {
+    const thead = h("thead");
+    const tr = h("tr");
+    for (const c of head) tr.appendChild(h("th", ...marked(c)));
+    thead.appendChild(tr);
+    table.appendChild(thead);
+  }
+  const tbody = h("tbody");
+  for (const row of body || []) {
+    const tr = h("tr");
+    for (const c of row) tr.appendChild(h("td", ...marked(c)));
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  return wrap;
+}
+
+/**
+ * Turn a run of pipe lines into {head, rows}, or null when it is not a table.
+ * Only a run that carries a separator row and at least one more row qualifies.
+ */
+export function tableFromLines(lines) {
+  // Separator rows also match the row pattern, so they must be filtered out of
+  // the grid or the `---|---` line would render as a row of dashes.
+  const rowLines = lines.filter((l) => RE_TABLE_ROW.test(l) && !isTableSep(l));
+  if (!lines.some(isTableSep) || rowLines.length < 2) return null;
+  return { head: tableCells(rowLines[0]), rows: rowLines.slice(1).map(tableCells) };
 }
 
 /* -------------------------------------------------------------- render */
@@ -235,6 +311,15 @@ export function renderText(text) {
   while (i < lines.length) {
     const kind = classify(lines[i]);
     if (kind === "blank") { i++; continue; }
+
+    if (tableRowLooks(lines[i])) {
+      const run = [];
+      while (i < lines.length && tableRowLooks(lines[i])) run.push(lines[i++]);
+      const parsed = tableFromLines(run);
+      if (parsed) frag.appendChild(renderTable(parsed.head, parsed.rows));
+      else for (const l of run) frag.appendChild(h("p.pl-p", ...marked(l)));
+      continue;
+    }
 
     if (kind === "command" || kind === "config" || kind === "path" || kind === "output") {
       const run = [];
@@ -309,6 +394,13 @@ export function renderText(text) {
  */
 const CALLOUTS = [
   { re: /^(?:RHCSA EXAM CRITICAL|EXAM CRITICAL|CRITICAL|WARNING|CAUTION|DANGER)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?([\s\S]*)$/i, cls: "note--risk", name: null },
+  // Distinct teaching boxes. Each REQUIRES a separator (a dash or a colon), so
+  // an ordinary sentence that merely begins with the word - "Example workloads
+  // scale out horizontally" - is never promoted into a box it has not earned.
+  { re: /^(?:COMMON MISTAKES?|COMMON ERRORS?|COMMON PITFALLS?|PITFALLS?|GOTCHAS?|MISTAKES?)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(\S[\s\S]*)$/i, cls: "note--mistake",  name: "Common mistake" },
+  { re: /^(?:KEY TAKEAWAYS?|TAKEAWAYS?|IN SHORT|SUMMARY|KEY POINTS?)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(\S[\s\S]*)$/i,                    cls: "note--takeaway", name: "Key takeaways" },
+  { re: /^(?:IMPORTANT|KEY RULE|RULE OF THUMB|RULE|MUST REMEMBER|KEY POINT)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(\S[\s\S]*)$/i,           cls: "note--rule",     name: "Important" },
+  { re: /^(?:WORKED EXAMPLE|FOR EXAMPLE|EXAMPLE|E\.G\.)\b\s*(?:[\u2014\u2013-]\s*|:\s*)(\S[\s\S]*)$/i,                              cls: "note--example",  name: "Example" },
   { re: /^(?:NOTE|Tip|TIP|Remember)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?([\s\S]*)$/,             cls: "note",       name: null },
   { re: /^(?:Why this matters)\b\s*(?:[\u2014\u2013-]\s*|:\s*)?([\s\S]*)$/,                    cls: "note",       name: "Why this matters" },
   // The lightbulb keeps its own sentence.
@@ -354,6 +446,12 @@ export function classifyBlock(block) {
 
   if (!t.trim()) return { type: "blank", text: t, level };
 
+  // GitHub-style pipe tables. The separator row is checked first because it also
+  // matches the row pattern; it is the separator that proves the run is a table
+  // and not one of the corpus's `A | B` relationship diagrams.
+  if (isTableSep(t)) return { type: "tableSep", level, text: t };
+  if (RE_TABLE_ROW.test(t)) return { type: "tableRow", level, text: t };
+
   // Checked BEFORE the callouts, and this ordering matters.
   //
   // "NOTE - Answers" matches the NOTE callout pattern, so if callouts ran first
@@ -382,6 +480,19 @@ export function classifyBlock(block) {
         label = { "why this matters": "Why this matters", remember: "Remember",
                   tip: "Tip", note: "Note" }[lead[1].toLowerCase()];
       }
+      // A risk marker names itself. Without this, every risk box (WARNING,
+      // CAUTION, DANGER, CRITICAL) was labelled "Note" - which is the one thing
+      // it is not.
+      if (!label && c.cls === "note--risk") {
+        const kw = t.match(/^(RHCSA EXAM CRITICAL|EXAM CRITICAL|CRITICAL|WARNING|CAUTION|DANGER)\b/i);
+        if (kw) {
+          label = {
+            warning: "Warning", caution: "Caution", danger: "Danger",
+            critical: "Critical", "exam critical": "Exam critical",
+            "rhcsa exam critical": "RHCSA exam critical",
+          }[kw[1].toLowerCase()] || kw[1];
+        }
+      }
       if (!label && !raw) {
         // A line that is nothing but the marker, e.g. a bare "warning" on its
         // own line. Without this it rendered as a note headed "Note" with no
@@ -392,7 +503,10 @@ export function classifyBlock(block) {
       return {
         type: "callout", cls: c.cls, level,
         label: label || "Note",
-        body: lead ? raw.slice(lead[0].length).trim() : raw,
+        // The lead word is only lifted out of the body for the generic markers.
+        // A named box ("Important", "Common mistake") owns its label already, so
+        // its body is left whole even if it happens to begin with "Remember".
+        body: (!c.name && lead) ? raw.slice(lead[0].length).trim() : raw,
       };
     }
   }
@@ -710,6 +824,21 @@ export function renderBlocks(items, opts = {}) {
       case "blank":
         i++;
         continue;
+
+      case "tableRow":
+      case "tableSep": {
+        // Collect the whole run, then decide. A run without a separator row is
+        // not a table and falls back to ordinary paragraphs, line by line.
+        const run = [];
+        while (i < arr.length && (arr[i].type === "tableRow" || arr[i].type === "tableSep")) {
+          run.push(String(arr[i].text || ""));
+          i++;
+        }
+        const parsed = tableFromLines(run);
+        if (parsed) frag.appendChild(renderTable(parsed.head, parsed.rows));
+        else for (const l of run) frag.appendChild(h("p.pl-p", ...marked(l)));
+        continue;
+      }
 
       case "callout": {
         /*

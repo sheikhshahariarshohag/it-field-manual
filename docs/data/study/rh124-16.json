@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -47,67 +47,31 @@
         },
         {
           "level": 0,
-          "text": "Storage type"
+          "text": "| Storage type | Whole-disk naming | Partition naming |"
         },
         {
           "level": 0,
-          "text": "Whole-disk naming"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Partition naming"
+          "text": "| SATA/SAS/USB | `/dev/sda, /dev/sdb...` | `/dev/sda1, /dev/sdb3...` |"
         },
         {
           "level": 0,
-          "text": "SATA/SAS/USB"
+          "text": "| virtio-blk (many VMs) | `/dev/vda, /dev/vdb...` | `/dev/vda1, /dev/vdb3...` |"
         },
         {
           "level": 0,
-          "text": "/dev/sda, /dev/sdb..."
+          "text": "| NVMe SSDs | `/dev/nvme0, /dev/nvme1...` | `/dev/nvme0p1, /dev/nvme1p3...` |"
         },
         {
           "level": 0,
-          "text": "/dev/sda1, /dev/sdb3..."
+          "text": "| SD/MMC cards | `/dev/mmcblk0...` | `/dev/mmcblk0p1...` |"
         },
         {
           "level": 0,
-          "text": "virtio-blk (many VMs)"
-        },
-        {
-          "level": 0,
-          "text": "/dev/vda, /dev/vdb..."
-        },
-        {
-          "level": 0,
-          "text": "/dev/vda1, /dev/vdb3..."
-        },
-        {
-          "level": 0,
-          "text": "NVMe SSDs"
-        },
-        {
-          "level": 0,
-          "text": "/dev/nvme0, /dev/nvme1..."
-        },
-        {
-          "level": 0,
-          "text": "/dev/nvme0p1, /dev/nvme1p3..."
-        },
-        {
-          "level": 0,
-          "text": "SD/MMC cards"
-        },
-        {
-          "level": 0,
-          "text": "/dev/mmcblk0..."
-        },
-        {
-          "level": 0,
-          "text": "/dev/mmcblk0p1..."
-        },
-        {
-          "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Check with lsblk rather than assuming"
         },
         {
           "level": 0,
@@ -131,55 +95,35 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "df"
+          "text": "| `df` | Every mounted file system: total, used, available space, percent used |"
         },
         {
           "level": 0,
-          "text": "Every mounted file system: total, used, available space, percent used"
+          "text": "| `df -h` | Same, in binary-prefix human-readable units (KiB/MiB/GiB, powers of 1024) |"
         },
         {
           "level": 0,
-          "text": "df -h"
+          "text": "| `df -H` | Same, in SI units (KB/MB/GB, powers of 1000 — what drive manufacturers advertise in) |"
         },
         {
           "level": 0,
-          "text": "Same, in binary-prefix human-readable units (KiB/MiB/GiB, powers of 1024)"
+          "text": "| `du /path` | Recursive size of everything under a directory tree, file by file |"
         },
         {
           "level": 0,
-          "text": "df -H"
+          "text": "| `du -h /path` | Same, human-readable |"
         },
         {
           "level": 0,
-          "text": "Same, in SI units (KB/MB/GB, powers of 1000 — what drive manufacturers advertise in)"
-        },
-        {
-          "level": 0,
-          "text": "du /path"
-        },
-        {
-          "level": 0,
-          "text": "Recursive size of everything under a directory tree, file by file"
-        },
-        {
-          "level": 0,
-          "text": "du -h /path"
-        },
-        {
-          "level": 0,
-          "text": "Same, human-readable"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — df -h and df -H report different numbers for the same disk — neither is wrong"
+          "text": "WARNING — df -h and df -H report different numbers for the same disk — neither is wrong"
         },
         {
           "level": 0,
@@ -197,27 +141,19 @@
       "content": [
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "lsblk"
+          "text": "| `lsblk` | Every block device, its size, and current mount point (if any), in a tree showing partition/LVM relationships |"
         },
         {
           "level": 0,
-          "text": "Every block device, its size, and current mount point (if any), in a tree showing partition/LVM relationships"
-        },
-        {
-          "level": 0,
-          "text": "lsblk -fp"
-        },
-        {
-          "level": 0,
-          "text": "Adds full device path, file-system type, and UUID — the command to run before mounting anything by UUID"
+          "text": "| `lsblk -fp` | Adds full device path, file-system type, and UUID — the command to run before mounting anything by UUID |"
         },
         {
           "level": 0,
@@ -229,7 +165,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Mount by UUID, not device name, whenever it matters"
+          "text": "RHCSA EXAM CRITICAL — Mount by UUID, not device name, whenever it matters"
         },
         {
           "level": 0,
@@ -241,7 +177,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Mounting onto a non-empty directory hides its existing contents"
+          "text": "WARNING — Mounting onto a non-empty directory hides its existing contents"
         },
         {
           "level": 0,
@@ -257,7 +193,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — \"target is busy\" almost always means a shell's current directory"
+          "text": "WARNING — \"target is busy\" almost always means a shell's current directory"
         },
         {
           "level": 0,
@@ -287,39 +223,19 @@
       "content": [
         {
           "level": 0,
-          "text": "Tool"
+          "text": "| Tool | How it works | Trade-off |"
         },
         {
           "level": 0,
-          "text": "How it works"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Trade-off"
+          "text": "| locate | Looks up a pre-built index (the mlocate database) | Instant, but can be stale — misses anything created since the last index update |"
         },
         {
           "level": 0,
-          "text": "locate"
-        },
-        {
-          "level": 0,
-          "text": "Looks up a pre-built index (the mlocate database)"
-        },
-        {
-          "level": 0,
-          "text": "Instant, but can be stale — misses anything created since the last index update"
-        },
-        {
-          "level": 0,
-          "text": "find"
-        },
-        {
-          "level": 0,
-          "text": "Crawls the real file system live, right now"
-        },
-        {
-          "level": 0,
-          "text": "Always accurate, but slower on a large tree"
+          "text": "| find | Crawls the real file system live, right now | Always accurate, but slower on a large tree |"
         },
         {
           "level": 3,
@@ -343,7 +259,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — locate can't find what its index doesn't know about yet"
+          "text": "WARNING — locate can't find what its index doesn't know about yet"
         },
         {
           "level": 0,
@@ -383,27 +299,19 @@
         },
         {
           "level": 0,
-          "text": "Option"
+          "text": "| Option | Matches |"
         },
         {
           "level": 0,
-          "text": "Matches"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "-user NAME / -group NAME"
+          "text": "| `-user NAME / -group NAME` | Owning user / group, by name |"
         },
         {
           "level": 0,
-          "text": "Owning user / group, by name"
-        },
-        {
-          "level": 0,
-          "text": "-uid N / -gid N"
-        },
-        {
-          "level": 0,
-          "text": "Owning user / group, by numeric ID"
+          "text": "| `-uid N / -gid N` | Owning user / group, by numeric ID |"
         },
         {
           "level": 0,
@@ -415,39 +323,27 @@
         },
         {
           "level": 0,
-          "text": "Prefix"
+          "text": "| Prefix | Matches files where... |"
         },
         {
           "level": 0,
-          "text": "Matches files where..."
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "(none) e.g. -perm 764"
+          "text": "| (none) e.g. -perm 764 | Permissions are EXACTLY this value |"
         },
         {
           "level": 0,
-          "text": "Permissions are EXACTLY this value"
+          "text": "| - e.g. -perm -324 | ALL of the specified bits are set (others may also be set) |"
         },
         {
           "level": 0,
-          "text": "- e.g. -perm -324"
+          "text": "| / e.g. -perm /442 | AT LEAST ONE of the specified bits is set, in any category |"
         },
         {
           "level": 0,
-          "text": "ALL of the specified bits are set (others may also be set)"
-        },
-        {
-          "level": 0,
-          "text": "/ e.g. -perm /442"
-        },
-        {
-          "level": 0,
-          "text": "AT LEAST ONE of the specified bits is set, in any category"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Drill this distinction with real permission strings, not just in the abstract"
+          "text": "RHCSA EXAM CRITICAL — Drill this distinction with real permission strings, not just in the abstract"
         },
         {
           "level": 0,
@@ -459,43 +355,23 @@
         },
         {
           "level": 0,
-          "text": "Option"
+          "text": "| Option | Example | Matches |"
         },
         {
           "level": 0,
-          "text": "Example"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Matches"
+          "text": "| `-size` | `-size +10G / -size -10k / -size 10M` | Larger than / smaller than / approximately this size (k/M/G — rounds UP to the nearest unit) |"
         },
         {
           "level": 0,
-          "text": "-size"
+          "text": "| `-mmin` | `-mmin 120 / -mmin +200 / -mmin -150` | Content modified exactly / more than / less than N minutes ago |"
         },
         {
           "level": 0,
-          "text": "-size +10G / -size -10k / -size 10M"
-        },
-        {
-          "level": 0,
-          "text": "Larger than / smaller than / approximately this size (k/M/G — rounds UP to the nearest unit)"
-        },
-        {
-          "level": 0,
-          "text": "-mmin"
-        },
-        {
-          "level": 0,
-          "text": "-mmin 120 / -mmin +200 / -mmin -150"
-        },
-        {
-          "level": 0,
-          "text": "Content modified exactly / more than / less than N minutes ago"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — -size rounds up — a 1-byte file matches -size 1M"
+          "text": "WARNING — -size rounds up — a 1-byte file matches -size 1M"
         },
         {
           "level": 0,
@@ -507,43 +383,27 @@
         },
         {
           "level": 0,
-          "text": "-type value"
+          "text": "| -type value | Matches |"
         },
         {
           "level": 0,
-          "text": "Matches"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "f"
+          "text": "| `f` | Regular file |"
         },
         {
           "level": 0,
-          "text": "Regular file"
+          "text": "| `d` | Directory |"
         },
         {
           "level": 0,
-          "text": "d"
+          "text": "| `l` | Soft (symbolic) link |"
         },
         {
           "level": 0,
-          "text": "Directory"
-        },
-        {
-          "level": 0,
-          "text": "l"
-        },
-        {
-          "level": 0,
-          "text": "Soft (symbolic) link"
-        },
-        {
-          "level": 0,
-          "text": "b"
-        },
-        {
-          "level": 0,
-          "text": "Block device"
+          "text": "| `b` | Block device |"
         },
         {
           "level": 0,
@@ -633,19 +493,19 @@
       "content": [
         {
           "level": 0,
-          "text": "Storage devices appear as block devices under /dev (/dev/sd*, /dev/vd*, /dev/nvme*...); partitions and LVM logical volumes are both block devices in their own right, with a mounted file system's contents joined into the single directory tree at its mount point."
+          "text": "- Storage devices appear as block devices under /dev (/dev/sd*, /dev/vd*, /dev/nvme*...); partitions and LVM logical volumes are both block devices in their own right, with a mounted file system's contents joined into the single directory tree at its mount point."
         },
         {
           "level": 0,
-          "text": "df (and -h/-H for human-readable binary vs. SI units) reports space by file system; du reports space recursively by directory tree."
+          "text": "- df (and -h/-H for human-readable binary vs. SI units) reports space by file system; du reports space recursively by directory tree."
         },
         {
           "level": 0,
-          "text": "lsblk -fp identifies devices and their UUIDs; mount UUID=... (preferred over device names, which can shift) attaches a file system, umount detaches it — \"target is busy\" almost always means a process's current directory is still inside the mount point."
+          "text": "- lsblk -fp identifies devices and their UUIDs; mount UUID=... (preferred over device names, which can shift) attaches a file system, umount detaches it — \"target is busy\" almost always means a process's current directory is still inside the mount point."
         },
         {
           "level": 0,
-          "text": "locate is instant but relies on a once-daily index (updatedb refreshes it immediately if needed); find searches live and supports rich criteria — name/-iname, -user/-group/-uid/-gid, -perm (exact / - all-of / + at-least-one-of), -size (rounds up), -mmin, and -type — all combinable in a single command."
+          "text": "- locate is instant but relies on a once-daily index (updatedb refreshes it immediately if needed); find searches live and supports rich criteria — name/-iname, -user/-group/-uid/-gid, -perm (exact / - all-of / + at-least-one-of), -size (rounds up), -mmin, and -type — all combinable in a single command."
         }
       ],
       "words": 147
