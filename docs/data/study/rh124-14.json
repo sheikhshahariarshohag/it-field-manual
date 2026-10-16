@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -35,71 +35,51 @@
         },
         {
           "level": 0,
-          "text": "Operation (pick exactly one)"
+          "text": "| Operation (pick exactly one) | Flag |"
         },
         {
           "level": 0,
-          "text": "Flag"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Create a new archive"
+          "text": "| Create a new archive | `-c / --create` |"
         },
         {
           "level": 0,
-          "text": "-c / --create"
+          "text": "| Extract from an existing archive | `-x / --extract` |"
         },
         {
           "level": 0,
-          "text": "Extract from an existing archive"
+          "text": "| List an archive's contents (table of contents) | `-t / --list` |"
         },
         {
           "level": 0,
-          "text": "-x / --extract"
+          "text": ""
         },
         {
           "level": 0,
-          "text": "List an archive's contents (table of contents)"
+          "text": "| Common companion flag | Effect |"
         },
         {
           "level": 0,
-          "text": "-t / --list"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Common companion flag"
+          "text": "| `-f FILE` | REQUIRED alongside any operation above — names the archive file itself |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| `-v` | Verbose — show each file as it's archived/extracted |"
         },
         {
           "level": 0,
-          "text": "-f FILE"
+          "text": "| `-p` | Preserve exact permissions on extraction, without subtracting the umask |"
         },
         {
           "level": 0,
-          "text": "REQUIRED alongside any operation above — names the archive file itself"
-        },
-        {
-          "level": 0,
-          "text": "-v"
-        },
-        {
-          "level": 0,
-          "text": "Verbose — show each file as it's archived/extracted"
-        },
-        {
-          "level": 0,
-          "text": "-p"
-        },
-        {
-          "level": 0,
-          "text": "Preserve exact permissions on extraction, without subtracting the umask"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — tar overwrites an existing archive with no warning"
+          "text": "WARNING — tar overwrites an existing archive with no warning"
         },
         {
           "level": 0,
@@ -135,7 +115,7 @@
         },
         {
           "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Advanced attributes need --xattrs"
         },
         {
           "level": 0,
@@ -147,67 +127,23 @@
         },
         {
           "level": 0,
-          "text": "Flag"
+          "text": "| Flag | Algorithm | Extension | Trade-off |"
         },
         {
           "level": 0,
-          "text": "Algorithm"
+          "text": "| --- | --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Extension"
+          "text": "| `-z` | gzip | `.tar.gz (or .tgz)` | Fastest, oldest, most universally available |"
         },
         {
           "level": 0,
-          "text": "Trade-off"
+          "text": "| `-j` | bzip2 | `.tar.bz2` | Better compression ratio than gzip, less universally available |"
         },
         {
           "level": 0,
-          "text": "-z"
-        },
-        {
-          "level": 0,
-          "text": "gzip"
-        },
-        {
-          "level": 0,
-          "text": ".tar.gz (or .tgz)"
-        },
-        {
-          "level": 0,
-          "text": "Fastest, oldest, most universally available"
-        },
-        {
-          "level": 0,
-          "text": "-j"
-        },
-        {
-          "level": 0,
-          "text": "bzip2"
-        },
-        {
-          "level": 0,
-          "text": ".tar.bz2"
-        },
-        {
-          "level": 0,
-          "text": "Better compression ratio than gzip, less universally available"
-        },
-        {
-          "level": 0,
-          "text": "-J"
-        },
-        {
-          "level": 0,
-          "text": "xz"
-        },
-        {
-          "level": 0,
-          "text": ".tar.xz"
-        },
-        {
-          "level": 0,
-          "text": "Usually the best ratio of the three, relatively newer"
+          "text": "| `-J` | xz | `.tar.xz` | Usually the best ratio of the three, relatively newer |"
         },
         {
           "level": 0,
@@ -245,39 +181,27 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Direction |"
         },
         {
           "level": 0,
-          "text": "Direction"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "scp localfile user@host:/remote/path"
+          "text": "| `scp localfile user@host:/remote/path` | Local → remote |"
         },
         {
           "level": 0,
-          "text": "Local → remote"
+          "text": "| `scp user@host:/remote/file localpath` | Remote → local |"
         },
         {
           "level": 0,
-          "text": "scp user@host:/remote/file localpath"
+          "text": "| `scp -r user@host:/remote/dir localpath` | Recursive — copies a whole directory tree |"
         },
         {
           "level": 0,
-          "text": "Remote → local"
-        },
-        {
-          "level": 0,
-          "text": "scp -r user@host:/remote/dir localpath"
-        },
-        {
-          "level": 0,
-          "text": "Recursive — copies a whole directory tree"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Recursive scp between two servers still needs read access on the SOURCE"
+          "text": "WARNING — Recursive scp between two servers still needs read access on the SOURCE"
         },
         {
           "level": 0,
@@ -293,47 +217,31 @@
         },
         {
           "level": 0,
-          "text": "sftp command"
+          "text": "| sftp command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "ls / cd / pwd / mkdir / rmdir"
+          "text": "| `ls / cd / pwd / mkdir / rmdir` | Same meaning as the local shell, but operating on the REMOTE filesystem |"
         },
         {
           "level": 0,
-          "text": "Same meaning as the local shell, but operating on the REMOTE filesystem"
+          "text": "| `put localfile` | Upload to the remote system |"
         },
         {
           "level": 0,
-          "text": "put localfile"
+          "text": "| `get remotefile` | Download from the remote system |"
         },
         {
           "level": 0,
-          "text": "Upload to the remote system"
+          "text": "| `exit` | Close the session |"
         },
         {
           "level": 0,
-          "text": "get remotefile"
-        },
-        {
-          "level": 0,
-          "text": "Download from the remote system"
-        },
-        {
-          "level": 0,
-          "text": "exit"
-        },
-        {
-          "level": 0,
-          "text": "Close the session"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — scp vs. sftp — when to reach for which"
+          "text": "RHCSA EXAM CRITICAL — scp vs. sftp — when to reach for which"
         },
         {
           "level": 0,
@@ -355,39 +263,27 @@
         },
         {
           "level": 0,
-          "text": "Option"
+          "text": "| Option | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "-n / --dry-run"
+          "text": "| `-n / --dry-run` | Simulate only — shows what WOULD happen, changes nothing. Run this before any rsync you're not 100% sure about. |"
         },
         {
           "level": 0,
-          "text": "Simulate only — shows what WOULD happen, changes nothing. Run this before any rsync you're not 100% sure about."
+          "text": "| `-v` | Verbose progress output |"
         },
         {
           "level": 0,
-          "text": "-v"
+          "text": "| `-a / --archive` | Shortcut bundling -r (recursive) -l (symlinks) -p (permissions) -t (timestamps) -g (group) -o (owner) -D (devices) — the standard \"just preserve everything sensible\" flag |"
         },
         {
           "level": 0,
-          "text": "Verbose progress output"
-        },
-        {
-          "level": 0,
-          "text": "-a / --archive"
-        },
-        {
-          "level": 0,
-          "text": "Shortcut bundling -r (recursive) -l (symlinks) -p (permissions) -t (timestamps) -g (group) -o (owner) -D (devices) — the standard \"just preserve everything sensible\" flag"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — Archive mode (-a) does NOT include hard links or extended attributes"
+          "text": "WARNING — Archive mode (-a) does NOT include hard links or extended attributes"
         },
         {
           "level": 0,
@@ -411,7 +307,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — The trailing-slash rule is a classic, easy-to-miss exam trap"
+          "text": "RHCSA EXAM CRITICAL — The trailing-slash rule is a classic, easy-to-miss exam trap"
         },
         {
           "level": 0,
@@ -497,19 +393,19 @@
       "content": [
         {
           "level": 0,
-          "text": "tar -c/-x/-t (always with -f FILE) creates, extracts, or lists an archive; -z/-j/-J add gzip/bzip2/xz compression on top — tar overwrites an existing archive file with no warning."
+          "text": "- tar -c/-x/-t (always with -f FILE) creates, extracts, or lists an archive; -z/-j/-J add gzip/bzip2/xz compression on top — tar overwrites an existing archive file with no warning."
         },
         {
           "level": 0,
-          "text": "scp and sftp both ride on SSH, needing no separate service — scp for quick one-shot non-interactive transfers, sftp for interactive browsing of a remote filesystem."
+          "text": "- scp and sftp both ride on SSH, needing no separate service — scp for quick one-shot non-interactive transfers, sftp for interactive browsing of a remote filesystem."
         },
         {
           "level": 0,
-          "text": "rsync transfers only the differences between source and destination after the first sync, making repeat backups dramatically faster than scp; -a bundles the sensible defaults (recursive, permissions, timestamps, ownership) but excludes hard links (-H) and extended attributes (-A/-X)."
+          "text": "- rsync transfers only the differences between source and destination after the first sync, making repeat backups dramatically faster than scp; -a bundles the sensible defaults (recursive, permissions, timestamps, ownership) but excludes hard links (-H) and extended attributes (-A/-X)."
         },
         {
           "level": 0,
-          "text": "A trailing slash on rsync's SOURCE directory changes whether the directory itself or just its contents get synced into the destination — a classic, easy-to-trigger-by-accident distinction via tab-completion."
+          "text": "- A trailing slash on rsync's SOURCE directory changes whether the directory itself or just its contents get synced into the destination — a classic, easy-to-trigger-by-accident distinction via tab-completion."
         }
       ],
       "words": 120

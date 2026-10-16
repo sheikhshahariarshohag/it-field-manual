@@ -27,111 +27,43 @@
         },
         {
           "level": 0,
-          "text": "Domain"
+          "text": "| Domain | Chapters | Priority |"
         },
         {
           "level": 0,
-          "text": "Chapters"
+          "text": "| --- | --- | --- |"
         },
         {
           "level": 0,
-          "text": "Priority"
+          "text": "| Lab environment & registration | Part 0, Ch 14 | Foundational |"
         },
         {
           "level": 0,
-          "text": "Lab environment & registration"
+          "text": "| Command line, files, text editing | Ch 2, 3, 4, 5 | Exam-critical |"
         },
         {
           "level": 0,
-          "text": "Part 0, Ch 14"
+          "text": "| Users, groups, permissions | Ch 6, 7 | Exam-critical |"
         },
         {
           "level": 0,
-          "text": "Foundational"
+          "text": "| Processes & services | Ch 8, 9 | Exam-critical |"
         },
         {
           "level": 0,
-          "text": "Command line, files, text editing"
+          "text": "| SSH & logging | Ch 10, 11 | Exam-critical |"
         },
         {
           "level": 0,
-          "text": "Ch 2, 3, 4, 5"
+          "text": "| Networking & file transfer | Ch 12, 13 | Exam-critical |"
         },
         {
           "level": 0,
-          "text": "Exam-critical"
+          "text": "| Software & storage | Ch 14, 15 | Exam-critical |"
         },
         {
           "level": 0,
-          "text": "Users, groups, permissions"
-        },
-        {
-          "level": 0,
-          "text": "Ch 6, 7"
-        },
-        {
-          "level": 0,
-          "text": "Exam-critical"
-        },
-        {
-          "level": 0,
-          "text": "Processes & services"
-        },
-        {
-          "level": 0,
-          "text": "Ch 8, 9"
-        },
-        {
-          "level": 0,
-          "text": "Exam-critical"
-        },
-        {
-          "level": 0,
-          "text": "SSH & logging"
-        },
-        {
-          "level": 0,
-          "text": "Ch 10, 11"
-        },
-        {
-          "level": 0,
-          "text": "Exam-critical"
-        },
-        {
-          "level": 0,
-          "text": "Networking & file transfer"
-        },
-        {
-          "level": 0,
-          "text": "Ch 12, 13"
-        },
-        {
-          "level": 0,
-          "text": "Exam-critical"
-        },
-        {
-          "level": 0,
-          "text": "Software & storage"
-        },
-        {
-          "level": 0,
-          "text": "Ch 14, 15"
-        },
-        {
-          "level": 0,
-          "text": "Exam-critical"
-        },
-        {
-          "level": 0,
-          "text": "Web Console, Portal, Insights"
-        },
-        {
-          "level": 0,
-          "text": "Ch 16"
-        },
-        {
-          "level": 0,
-          "text": "Awareness only — not graded hands-on"
+          "text": "| Web Console, Portal, Insights | Ch 16 | Awareness only — not graded hands-on |"
         }
       ],
       "words": 96
@@ -145,99 +77,55 @@
         },
         {
           "level": 0,
-          "text": "Domain"
+          "text": "| Domain | Commands |"
         },
         {
           "level": 0,
-          "text": "Commands"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Files"
+          "text": "| Files | `mkdir -p, cp -r, mv, rm -r, ln / ln -s, find (with -name/-perm/-size/-mmin/-type)` |"
         },
         {
           "level": 0,
-          "text": "mkdir -p, cp -r, mv, rm -r, ln / ln -s, find (with -name/-perm/-size/-mmin/-type)"
+          "text": "| Users & groups | `useradd, usermod -aG, userdel -r, groupadd, chage, passwd` |"
         },
         {
           "level": 0,
-          "text": "Users & groups"
+          "text": "| Permissions | `chmod (symbolic and octal), chown user:group, special perms (u+s/g+s/o+t, leading 4/2/1)` |"
         },
         {
           "level": 0,
-          "text": "useradd, usermod -aG, userdel -r, groupadd, chage, passwd"
+          "text": "| Processes | `ps aux, jobs/bg/fg, kill -15 then -9, pgrep/pkill` |"
         },
         {
           "level": 0,
-          "text": "Permissions"
+          "text": "| Services | `systemctl status/start/stop/restart/reload/enable/disable/mask --now` |"
         },
         {
           "level": 0,
-          "text": "chmod (symbolic and octal), chown user:group, special perms (u+s/g+s/o+t, leading 4/2/1)"
+          "text": "| SSH | `ssh-keygen, ssh-copy-id, PermitRootLogin, PasswordAuthentication` |"
         },
         {
           "level": 0,
-          "text": "Processes"
+          "text": "| Logs | `journalctl -p/-b/-u/--since, Storage=persistent` |"
         },
         {
           "level": 0,
-          "text": "ps aux, jobs/bg/fg, kill -15 then -9, pgrep/pkill"
+          "text": "| Networking | `nmcli con mod/up/down, nmcli dev disconnect, hostnamectl set-hostname` |"
         },
         {
           "level": 0,
-          "text": "Services"
+          "text": "| Transfer | `tar -czf/-xzf, scp, rsync -av (mind the trailing slash)` |"
         },
         {
           "level": 0,
-          "text": "systemctl status/start/stop/restart/reload/enable/disable/mask --now"
+          "text": "| Software | `dnf search/install/remove/history, rpm -qf, dnf config-manager` |"
         },
         {
           "level": 0,
-          "text": "SSH"
-        },
-        {
-          "level": 0,
-          "text": "ssh-keygen, ssh-copy-id, PermitRootLogin, PasswordAuthentication"
-        },
-        {
-          "level": 0,
-          "text": "Logs"
-        },
-        {
-          "level": 0,
-          "text": "journalctl -p/-b/-u/--since, Storage=persistent"
-        },
-        {
-          "level": 0,
-          "text": "Networking"
-        },
-        {
-          "level": 0,
-          "text": "nmcli con mod/up/down, nmcli dev disconnect, hostnamectl set-hostname"
-        },
-        {
-          "level": 0,
-          "text": "Transfer"
-        },
-        {
-          "level": 0,
-          "text": "tar -czf/-xzf, scp, rsync -av (mind the trailing slash)"
-        },
-        {
-          "level": 0,
-          "text": "Software"
-        },
-        {
-          "level": 0,
-          "text": "dnf search/install/remove/history, rpm -qf, dnf config-manager"
-        },
-        {
-          "level": 0,
-          "text": "Storage"
-        },
-        {
-          "level": 0,
-          "text": "lsblk -fp, mount UUID=, df -h, du -h"
+          "text": "| Storage | `lsblk -fp, mount UUID=, df -h, du -h` |"
         }
       ],
       "words": 125
@@ -287,7 +175,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Why one integrated exercise beats re-reading nine separate chapters"
+          "text": "RHCSA EXAM CRITICAL — Why one integrated exercise beats re-reading nine separate chapters"
         },
         {
           "level": 0,
@@ -301,7 +189,7 @@
       "content": [
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — Read every task twice before typing anything"
+          "text": "RHCSA EXAM CRITICAL — Read every task twice before typing anything"
         },
         {
           "level": 0,

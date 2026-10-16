@@ -55,67 +55,39 @@
         },
         {
           "level": 0,
-          "text": "What you can do (privileged login)"
+          "text": "| What you can do (privileged login) | Where |"
         },
         {
           "level": 0,
-          "text": "Where"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "View real-time CPU/memory/disk/network graphs"
+          "text": "| View real-time CPU/memory/disk/network graphs | System |"
         },
         {
           "level": 0,
-          "text": "System"
+          "text": "| Browse and filter systemd journal entries by date range and severity | Logs |"
         },
         {
           "level": 0,
-          "text": "Browse and filter systemd journal entries by date range and severity"
+          "text": "| Get a full interactive terminal, in the browser | Terminal |"
         },
         {
           "level": 0,
-          "text": "Logs"
+          "text": "| Start/stop/enable/disable services graphically | Services |"
         },
         {
           "level": 0,
-          "text": "Get a full interactive terminal, in the browser"
+          "text": "| Generate a diagnostic report (sosreport-style bundle) for a support case | Diagnostic Reports |"
         },
         {
           "level": 0,
-          "text": "Terminal"
+          "text": "| Manage user accounts, including SSH keys and password resets | Accounts |"
         },
         {
           "level": 0,
-          "text": "Start/stop/enable/disable services graphically"
-        },
-        {
-          "level": 0,
-          "text": "Services"
-        },
-        {
-          "level": 0,
-          "text": "Generate a diagnostic report (sosreport-style bundle) for a support case"
-        },
-        {
-          "level": 0,
-          "text": "Diagnostic Reports"
-        },
-        {
-          "level": 0,
-          "text": "Manage user accounts, including SSH keys and password resets"
-        },
-        {
-          "level": 0,
-          "text": "Accounts"
-        },
-        {
-          "level": 0,
-          "text": "Restart or shut down the system"
-        },
-        {
-          "level": 0,
-          "text": "System → Power Options"
+          "text": "| Restart or shut down the system | System → Power Options |"
         },
         {
           "level": 0,
@@ -137,43 +109,27 @@
         },
         {
           "level": 0,
-          "text": "Portal area"
+          "text": "| Portal area | What it's for |"
         },
         {
           "level": 0,
-          "text": "What it's for"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Subscriptions"
+          "text": "| Subscriptions | Manage registered systems, entitlements, and activation keys |"
         },
         {
           "level": 0,
-          "text": "Manage registered systems, entitlements, and activation keys"
+          "text": "| Downloads | Product ISOs, updates, evaluation entitlements |"
         },
         {
           "level": 0,
-          "text": "Downloads"
+          "text": "| Support Cases | File and track support tickets (needs sufficient support-tier access) |"
         },
         {
           "level": 0,
-          "text": "Product ISOs, updates, evaluation entitlements"
-        },
-        {
-          "level": 0,
-          "text": "Support Cases"
-        },
-        {
-          "level": 0,
-          "text": "File and track support tickets (needs sufficient support-tier access)"
-        },
-        {
-          "level": 0,
-          "text": "Knowledgebase"
-        },
-        {
-          "level": 0,
-          "text": "Searchable solution articles, FAQs, troubleshooting guides"
+          "text": "| Knowledgebase | Searchable solution articles, FAQs, troubleshooting guides |"
         },
         {
           "level": 0,
@@ -223,43 +179,27 @@
         },
         {
           "level": 0,
-          "text": "Risk factor"
+          "text": "| Risk factor | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Likelihood"
+          "text": "| Likelihood | How likely this specific issue is to actually affect this system |"
         },
         {
           "level": 0,
-          "text": "How likely this specific issue is to actually affect this system"
+          "text": "| Impact | How severe the consequences would be if it does |"
         },
         {
           "level": 0,
-          "text": "Impact"
+          "text": "| Total Risk | Likelihood × Impact, combined into one score |"
         },
         {
           "level": 0,
-          "text": "How severe the consequences would be if it does"
-        },
-        {
-          "level": 0,
-          "text": "Total Risk"
-        },
-        {
-          "level": 0,
-          "text": "Likelihood × Impact, combined into one score"
-        },
-        {
-          "level": 0,
-          "text": "Risk of change"
-        },
-        {
-          "level": 0,
-          "text": "How disruptive the RECOMMENDED FIX itself might be to apply"
+          "text": "| Risk of change | How disruptive the RECOMMENDED FIX itself might be to apply |"
         },
         {
           "level": 0,
@@ -333,19 +273,19 @@
       "content": [
         {
           "level": 0,
-          "text": "Web Console (Cockpit) is a browser-based admin UI at https://host:9090, enabled with systemctl enable --now cockpit.socket — everything it does maps onto a CLI command you already know from earlier chapters."
+          "text": "- Web Console (Cockpit) is a browser-based admin UI at https://host:9090, enabled with systemctl enable --now cockpit.socket — everything it does maps onto a CLI command you already know from earlier chapters."
         },
         {
           "level": 0,
-          "text": "The Red Hat Customer Portal (access.redhat.com) hosts documentation, Knowledgebase, downloads, and support cases; redhat-support-tool brings Knowledgebase search to the command line."
+          "text": "- The Red Hat Customer Portal (access.redhat.com) hosts documentation, Knowledgebase, downloads, and support cases; redhat-support-tool brings Knowledgebase search to the command line."
         },
         {
           "level": 0,
-          "text": "Red Hat Insights (insights-client) uploads anonymized config metadata for server-side analysis against known issues, scoring each by Likelihood, Impact, Total Risk, and separately, Risk of change for the fix itself."
+          "text": "- Red Hat Insights (insights-client) uploads anonymized config metadata for server-side analysis against known issues, scoring each by Likelihood, Impact, Total Risk, and separately, Risk of change for the fix itself."
         },
         {
           "level": 0,
-          "text": "This chapter is lower priority for direct exam prep than most others — it's professional context and a GUI toolset, not a set of hands-on tasks the RHCSA grades."
+          "text": "- This chapter is lower priority for direct exam prep than most others — it's professional context and a GUI toolset, not a set of hands-on tasks the RHCSA grades."
         }
       ],
       "words": 111

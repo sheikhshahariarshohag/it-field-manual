@@ -17,7 +17,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — This whole chapter"
+          "text": "RHCSA EXAM CRITICAL — This whole chapter"
         },
         {
           "level": 0,
@@ -43,59 +43,35 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "subscription-manager register --username=NAME"
+          "text": "| `subscription-manager register --username=NAME` | Register this system to a Red Hat account |"
         },
         {
           "level": 0,
-          "text": "Register this system to a Red Hat account"
+          "text": "| `subscription-manager attach --auto` | Auto-attach the best-matching available subscription (not needed on Simple Content Access accounts) |"
         },
         {
           "level": 0,
-          "text": "subscription-manager attach --auto"
+          "text": "| `subscription-manager attach --pool=ID` | Attach a specific subscription pool |"
         },
         {
           "level": 0,
-          "text": "Auto-attach the best-matching available subscription (not needed on Simple Content Access accounts)"
+          "text": "| `subscription-manager list --available` | Show subscriptions available to attach |"
         },
         {
           "level": 0,
-          "text": "subscription-manager attach --pool=ID"
+          "text": "| `subscription-manager list --consumed` | Show subscriptions currently attached to this system |"
         },
         {
           "level": 0,
-          "text": "Attach a specific subscription pool"
-        },
-        {
-          "level": 0,
-          "text": "subscription-manager list --available"
-        },
-        {
-          "level": 0,
-          "text": "Show subscriptions available to attach"
-        },
-        {
-          "level": 0,
-          "text": "subscription-manager list --consumed"
-        },
-        {
-          "level": 0,
-          "text": "Show subscriptions currently attached to this system"
-        },
-        {
-          "level": 0,
-          "text": "subscription-manager unregister"
-        },
-        {
-          "level": 0,
-          "text": "Detach this system from the account entirely"
+          "text": "| `subscription-manager unregister` | Detach this system from the account entirely |"
         },
         {
           "level": 0,
@@ -103,7 +79,7 @@
         },
         {
           "level": 0,
-          "text": "NOTE —"
+          "text": "NOTE — Activation keys enable unattended registration"
         },
         {
           "level": 0,
@@ -129,43 +105,27 @@
         },
         {
           "level": 0,
-          "text": "Field"
+          "text": "| Field | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "name"
+          "text": "| name | What the package contains (httpd) |"
         },
         {
           "level": 0,
-          "text": "What the package contains (httpd)"
+          "text": "| version | The upstream software's own version number (2.4.37) |"
         },
         {
           "level": 0,
-          "text": "version"
+          "text": "| release | The PACKAGER's release number for that version — may not be the original developer (7.el8) |"
         },
         {
           "level": 0,
-          "text": "The upstream software's own version number (2.4.37)"
-        },
-        {
-          "level": 0,
-          "text": "release"
-        },
-        {
-          "level": 0,
-          "text": "The PACKAGER's release number for that version — may not be the original developer (7.el8)"
-        },
-        {
-          "level": 0,
-          "text": "arch"
-        },
-        {
-          "level": 0,
-          "text": "Target CPU architecture (x86_64, aarch64...), or noarch if the contents aren't architecture-specific"
+          "text": "| arch | Target CPU architecture (x86_64, aarch64...), or noarch if the contents aren't architecture-specific |"
         },
         {
           "level": 0,
@@ -185,95 +145,55 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Shows |"
         },
         {
           "level": 0,
-          "text": "Shows"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "rpm -qa"
+          "text": "| `rpm -qa` | Every installed package |"
         },
         {
           "level": 0,
-          "text": "Every installed package"
+          "text": "| `rpm -q NAME` | Installed version of one package |"
         },
         {
           "level": 0,
-          "text": "rpm -q NAME"
+          "text": "| `rpm -qi NAME` | Full detail (summary, license, size, install date...) |"
         },
         {
           "level": 0,
-          "text": "Installed version of one package"
+          "text": "| `rpm -ql NAME` | Every file the package installed |"
         },
         {
           "level": 0,
-          "text": "rpm -qi NAME"
+          "text": "| `rpm -qc NAME` | Just its configuration files |"
         },
         {
           "level": 0,
-          "text": "Full detail (summary, license, size, install date...)"
+          "text": "| `rpm -qd NAME` | Just its documentation files |"
         },
         {
           "level": 0,
-          "text": "rpm -ql NAME"
+          "text": "| `rpm -qf /path/to/file` | Which INSTALLED package owns a given file |"
         },
         {
           "level": 0,
-          "text": "Every file the package installed"
+          "text": "| `rpm -q --scripts NAME` | The pre/post-install and pre/post-uninstall scripts a package runs |"
         },
         {
           "level": 0,
-          "text": "rpm -qc NAME"
+          "text": "| `rpm -q --changelog NAME` | The package's version history |"
         },
         {
           "level": 0,
-          "text": "Just its configuration files"
+          "text": "| `rpm -qp -i FILE.rpm` | Same queries, but against a downloaded .rpm FILE that isn't installed yet (add -p) |"
         },
         {
           "level": 0,
-          "text": "rpm -qd NAME"
-        },
-        {
-          "level": 0,
-          "text": "Just its documentation files"
-        },
-        {
-          "level": 0,
-          "text": "rpm -qf /path/to/file"
-        },
-        {
-          "level": 0,
-          "text": "Which INSTALLED package owns a given file"
-        },
-        {
-          "level": 0,
-          "text": "rpm -q --scripts NAME"
-        },
-        {
-          "level": 0,
-          "text": "The pre/post-install and pre/post-uninstall scripts a package runs"
-        },
-        {
-          "level": 0,
-          "text": "rpm -q --changelog NAME"
-        },
-        {
-          "level": 0,
-          "text": "The package's version history"
-        },
-        {
-          "level": 0,
-          "text": "rpm -qp -i FILE.rpm"
-        },
-        {
-          "level": 0,
-          "text": "Same queries, but against a downloaded .rpm FILE that isn't installed yet (add -p)"
-        },
-        {
-          "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — rpm -qf is the classic \"what package owns this file\" tool"
+          "text": "RHCSA EXAM CRITICAL — rpm -qf is the classic \"what package owns this file\" tool"
         },
         {
           "level": 0,
@@ -285,7 +205,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — A third-party RPM can run arbitrary root-level scripts"
+          "text": "WARNING — A third-party RPM can run arbitrary root-level scripts"
         },
         {
           "level": 0,
@@ -307,7 +227,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — The core dnf command set — know every row"
+          "text": "RHCSA EXAM CRITICAL — The core dnf command set — know every row"
         },
         {
           "level": 0,
@@ -315,111 +235,63 @@
         },
         {
           "level": 0,
-          "text": "Task"
+          "text": "| Task | Command |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "List installed + available packages"
+          "text": "| List installed + available packages | `dnf list [PATTERN]` |"
         },
         {
           "level": 0,
-          "text": "dnf list [PATTERN]"
+          "text": "| Search names/summaries by keyword | `dnf search KEYWORD` |"
         },
         {
           "level": 0,
-          "text": "Search names/summaries by keyword"
+          "text": "| Search names/summaries/descriptions | `dnf search all KEYWORD` |"
         },
         {
           "level": 0,
-          "text": "dnf search KEYWORD"
+          "text": "| Full detail on one package | `dnf info PACKAGENAME` |"
         },
         {
           "level": 0,
-          "text": "Search names/summaries/descriptions"
+          "text": "| Find what package provides a file/path | `dnf provides /path/or/pattern` |"
         },
         {
           "level": 0,
-          "text": "dnf search all KEYWORD"
+          "text": "| Install a package (+ dependencies) | `dnf install PACKAGENAME` |"
         },
         {
           "level": 0,
-          "text": "Full detail on one package"
+          "text": "| Update one package, or dnf update alone for everything | `dnf update [PACKAGENAME]` |"
         },
         {
           "level": 0,
-          "text": "dnf info PACKAGENAME"
+          "text": "| Remove a package (+ anything that depends on it) | `dnf remove PACKAGENAME` |"
         },
         {
           "level": 0,
-          "text": "Find what package provides a file/path"
+          "text": "| List package groups | `dnf group list` |"
         },
         {
           "level": 0,
-          "text": "dnf provides /path/or/pattern"
+          "text": "| Install a whole group | `dnf group install \"GROUP NAME\"` |"
         },
         {
           "level": 0,
-          "text": "Install a package (+ dependencies)"
+          "text": "| Show transaction history | `dnf history` |"
         },
         {
           "level": 0,
-          "text": "dnf install PACKAGENAME"
+          "text": "| Reverse a past transaction | `dnf history undo ID` |"
         },
         {
           "level": 0,
-          "text": "Update one package, or dnf update alone for everything"
-        },
-        {
-          "level": 0,
-          "text": "dnf update [PACKAGENAME]"
-        },
-        {
-          "level": 0,
-          "text": "Remove a package (+ anything that depends on it)"
-        },
-        {
-          "level": 0,
-          "text": "dnf remove PACKAGENAME"
-        },
-        {
-          "level": 0,
-          "text": "List package groups"
-        },
-        {
-          "level": 0,
-          "text": "dnf group list"
-        },
-        {
-          "level": 0,
-          "text": "Install a whole group"
-        },
-        {
-          "level": 0,
-          "text": "dnf group install \"GROUP NAME\""
-        },
-        {
-          "level": 0,
-          "text": "Show transaction history"
-        },
-        {
-          "level": 0,
-          "text": "dnf history"
-        },
-        {
-          "level": 0,
-          "text": "Reverse a past transaction"
-        },
-        {
-          "level": 0,
-          "text": "dnf history undo ID"
-        },
-        {
-          "level": 0,
-          "text": "⚠ WARNING — dnf remove cascades — read the removal list before confirming"
+          "text": "WARNING — dnf remove cascades — read the removal list before confirming"
         },
         {
           "level": 0,
@@ -461,51 +333,31 @@
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "dnf config-manager --enable REPOID"
+          "text": "| `dnf config-manager --enable REPOID` | Persistently enable a repository |"
         },
         {
           "level": 0,
-          "text": "Persistently enable a repository"
+          "text": "| `dnf config-manager --disable REPOID` | Persistently disable a repository |"
         },
         {
           "level": 0,
-          "text": "dnf config-manager --disable REPOID"
+          "text": "| `dnf config-manager --add-repo URL` | Create a new .repo file pointing at URL |"
         },
         {
           "level": 0,
-          "text": "Persistently disable a repository"
+          "text": "| `dnf --enablerepo=REPOID install PKG` | Enable a repo for ONE command only, without persisting the change |"
         },
         {
           "level": 0,
-          "text": "dnf config-manager --add-repo URL"
-        },
-        {
-          "level": 0,
-          "text": "Create a new .repo file pointing at URL"
-        },
-        {
-          "level": 0,
-          "text": "dnf --enablerepo=REPOID install PKG"
-        },
-        {
-          "level": 0,
-          "text": "Enable a repo for ONE command only, without persisting the change"
-        },
-        {
-          "level": 0,
-          "text": "dnf --disablerepo=REPOID install PKG"
-        },
-        {
-          "level": 0,
-          "text": "Same idea, temporarily disabling instead"
+          "text": "| `dnf --disablerepo=REPOID install PKG` | Same idea, temporarily disabling instead |"
         },
         {
           "level": 0,
@@ -533,7 +385,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Never disable GPG checking on anything but a fully-trusted internal source"
+          "text": "WARNING — Never disable GPG checking on anything but a fully-trusted internal source"
         },
         {
           "level": 0,
@@ -541,7 +393,7 @@
         },
         {
           "level": 0,
-          "text": "🎯 RHCSA EXAM CRITICAL — The content.example.com substitution from Part 0, revisited"
+          "text": "RHCSA EXAM CRITICAL — The content.example.com substitution from Part 0, revisited"
         },
         {
           "level": 0,
@@ -559,99 +411,63 @@
         },
         {
           "level": 0,
-          "text": "Term"
+          "text": "| Term | Meaning |"
         },
         {
           "level": 0,
-          "text": "Meaning"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Module"
+          "text": "| Module | A set of RPM packages that belong together, usually built around one application or language runtime (e.g. \"postgresql\") |"
         },
         {
           "level": 0,
-          "text": "A set of RPM packages that belong together, usually built around one application or language runtime (e.g. \"postgresql\")"
+          "text": "| Stream | One version-line within a module (e.g. postgresql:12 vs. postgresql:13) — only ONE stream per module can be enabled at a time |"
         },
         {
           "level": 0,
-          "text": "Stream"
+          "text": "| Profile | A named subset of packages within a stream for a particular use case (server, client, minimal, development...) — installing a module without specifying one uses its default profile |"
         },
         {
           "level": 0,
-          "text": "One version-line within a module (e.g. postgresql:12 vs. postgresql:13) — only ONE stream per module can be enabled at a time"
+          "text": ""
         },
         {
           "level": 0,
-          "text": "Profile"
+          "text": "| Command | Effect |"
         },
         {
           "level": 0,
-          "text": "A named subset of packages within a stream for a particular use case (server, client, minimal, development...) — installing a module without specifying one uses its default profile"
+          "text": "| --- | --- |"
         },
         {
           "level": 0,
-          "text": "Command"
+          "text": "| `dnf module list` | Every available module and its streams |"
         },
         {
           "level": 0,
-          "text": "Effect"
+          "text": "| `dnf module list MODULENAME` | Streams/profiles for one module, with [d]efault/[e]nabled/[x]disabled/[i]nstalled flags |"
         },
         {
           "level": 0,
-          "text": "dnf module list"
+          "text": "| `dnf module info MODULENAME` | Full detail on the default (or a specified) stream |"
         },
         {
           "level": 0,
-          "text": "Every available module and its streams"
+          "text": "| `dnf module install MODULENAME` | Install the default stream's default profile (auto-enables the stream if needed) |"
         },
         {
           "level": 0,
-          "text": "dnf module list MODULENAME"
+          "text": "| `dnf module install MODULE:STREAM/PROFILE` | Install a specific stream and profile |"
         },
         {
           "level": 0,
-          "text": "Streams/profiles for one module, with [d]efault/[e]nabled/[x]disabled/[i]nstalled flags"
+          "text": "| `dnf module remove MODULENAME` | Remove the installed profile's packages (the stream itself stays enabled) |"
         },
         {
           "level": 0,
-          "text": "dnf module info MODULENAME"
-        },
-        {
-          "level": 0,
-          "text": "Full detail on the default (or a specified) stream"
-        },
-        {
-          "level": 0,
-          "text": "dnf module install MODULENAME"
-        },
-        {
-          "level": 0,
-          "text": "Install the default stream's default profile (auto-enables the stream if needed)"
-        },
-        {
-          "level": 0,
-          "text": "dnf module install MODULE:STREAM/PROFILE"
-        },
-        {
-          "level": 0,
-          "text": "Install a specific stream and profile"
-        },
-        {
-          "level": 0,
-          "text": "dnf module remove MODULENAME"
-        },
-        {
-          "level": 0,
-          "text": "Remove the installed profile's packages (the stream itself stays enabled)"
-        },
-        {
-          "level": 0,
-          "text": "dnf module disable MODULENAME"
-        },
-        {
-          "level": 0,
-          "text": "Fully disable the module stream"
+          "text": "| `dnf module disable MODULENAME` | Fully disable the module stream |"
         },
         {
           "level": 0,
@@ -659,7 +475,7 @@
         },
         {
           "level": 0,
-          "text": "⚠ WARNING — Switching streams is not a routine operation — it's a real upgrade/downgrade"
+          "text": "WARNING — Switching streams is not a routine operation — it's a real upgrade/downgrade"
         },
         {
           "level": 0,
@@ -741,23 +557,23 @@
       "content": [
         {
           "level": 0,
-          "text": "subscription-manager register/attach/list — Red Hat's entitlement system, already exercised during Part 0's lab setup."
+          "text": "- subscription-manager register/attach/list — Red Hat's entitlement system, already exercised during Part 0's lab setup."
         },
         {
           "level": 0,
-          "text": "RPM packages bundle files, metadata, and install/removal scripts; rpm -q* queries the LOCAL database or a downloaded file, with -qf (\"what owns this file\") a particularly high-value pattern."
+          "text": "- RPM packages bundle files, metadata, and install/removal scripts; rpm -q* queries the LOCAL database or a downloaded file, with -qf (\"what owns this file\") a particularly high-value pattern."
         },
         {
           "level": 0,
-          "text": "dnf (yum's modern name, symlinked together in RHEL 8) handles repositories and dependency resolution: search/info/install/update/remove/history are the core commands, and dnf remove cascades to dependents — always read the removal list."
+          "text": "- dnf (yum's modern name, symlinked together in RHEL 8) handles repositories and dependency resolution: search/info/install/update/remove/history are the core commands, and dnf remove cascades to dependents — always read the removal list."
         },
         {
           "level": 0,
-          "text": "Repositories are .repo files in /etc/yum.repos.d/, managed with dnf config-manager --enable/--disable/--add-repo; never disable GPG checking outside a fully-trusted internal source."
+          "text": "- Repositories are .repo files in /etc/yum.repos.d/, managed with dnf config-manager --enable/--disable/--add-repo; never disable GPG checking outside a fully-trusted internal source."
         },
         {
           "level": 0,
-          "text": "Application Streams let multiple versions (streams) of a module coexist in one repository, but only one stream per module can be enabled at a time — switching streams cleanly means removing the old stream's packages first, not installing the new one on top."
+          "text": "- Application Streams let multiple versions (streams) of a module coexist in one repository, but only one stream per module can be enabled at a time — switching streams cleanly means removing the old stream's packages first, not installing the new one on top."
         }
       ],
       "words": 136
