@@ -15,7 +15,11 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v3";
+const VERSION = "v4";
+// The app lives at the scope root. A navigation to any OTHER in-scope path
+// (e.g. /dashboard/) must not be stored under the shell's "index.html" key, or
+// it would overwrite the real shell and break offline navigation for the app.
+const SCOPE = new URL(self.registration.scope).pathname;
 const SHELL_CACHE = `field-manual-shell-${VERSION}`;
 const DATA_CACHE = `field-manual-data-${VERSION}`;
 
@@ -158,16 +162,22 @@ self.addEventListener("fetch", (event) => {
           if (!res || !res.ok || res.type !== "basic") {
             throw new Error("navigation failed: " + (res ? res.status : "no response"));
           }
-          const copy = res.clone();
-          caches.open(SHELL_CACHE).then((c) => c.put("index.html", copy)).catch(() => {});
+          // Only refresh the cached shell when the navigation IS the shell.
+          const isShell = url.pathname === SCOPE || url.pathname === SCOPE + "index.html";
+          if (isShell) {
+            const copy = res.clone();
+            caches.open(SHELL_CACHE).then((c) => c.put("index.html", copy)).catch(() => {});
+          }
           return res;
         })
         .catch(() =>
-          caches.match("index.html").then((r) => r || new Response(
-            "<!doctype html><meta charset=utf-8><title>Offline</title>" +
-            "<p>This page is not available offline yet. Open it once while connected.",
-            { status: 503, headers: { "content-type": "text/html; charset=utf-8" } },
-          )),
+          caches.match(req)
+            .then((r) => r || caches.match("index.html"))
+            .then((r) => r || new Response(
+              "<!doctype html><meta charset=utf-8><title>Offline</title>" +
+              "<p>This page is not available offline yet. Open it once while connected.",
+              { status: 503, headers: { "content-type": "text/html; charset=utf-8" } },
+            )),
         ),
     );
     return;
