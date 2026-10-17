@@ -24,6 +24,18 @@
  *          This is not a WCAG criterion. It is here because the project has
  *          already shipped a list whose separators measured 1.10:1 and were
  *          invisible, while every rule applied correctly.
+ *
+ * THE CANVAS IS DARK IN BOTH THEMES
+ *
+ * The terminal is --code-bg, which is near-black whether or not the page is
+ * light. That makes it the one place where a --pl-* token is the wrong choice:
+ * those are tuned to sit on a box that matches the page, so on the canvas they
+ * invert. It happened once already - the comment colour was pointed at
+ * --pl-out-fg (#14532d, a dark green for a pale background) and measured
+ * 1.96:1 against #0f172a, which is invisible.
+ *
+ * So the --code-* tokens are checked as first-class pairs below, in both
+ * themes, rather than trusted because they look right.
  */
 
 import { readFileSync } from "node:fs";
@@ -157,6 +169,11 @@ const PAIRS = [
   ["warn text on its tint",             "--warn",            "--warn-dim",         TEXT],
   ["danger text on its tint",           "--danger",          "--danger-dim",       TEXT],
   ["terminal text on terminal canvas",  "--code-fg",         "--code-bg",          TEXT],
+  ["terminal muted text on canvas",     "--code-dim",        "--code-bg",          TEXT],
+  ["terminal 'safe' tag on canvas",     "--code-ok",         "--code-bg",          TEXT],
+  ["terminal 'caution' tag on canvas",  "--code-warn",       "--code-bg",          TEXT],
+  ["terminal 'risk' tag on canvas",     "--code-danger",     "--code-bg",          TEXT],
+  ["terminal prompt on canvas",         "--code-prompt",     "--code-bg",          TEXT],
 
   ["border on page",                    "--line",            "--bg",               EDGE],
   ["border on card",                    "--line",            "--surface",          EDGE],

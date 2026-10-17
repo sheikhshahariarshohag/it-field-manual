@@ -596,13 +596,21 @@ function copyButton(getText) {
     type: "button",
     "aria-label": "Copy this block to the clipboard",
   }, "Copy");
+  // A button label changing is announced inconsistently; a live region is
+  // reliable. Same treatment as the copy button in ui.js.
+  const live = h("span.cmd__live", { role: "status", "aria-live": "polite" });
   btn.addEventListener("click", async () => {
     const ok = await copyText(getText());
     btn.textContent = ok ? "Copied" : "Select and copy";
     btn.dataset.done = ok ? "1" : "0";
-    setTimeout(() => { btn.textContent = "Copy"; }, 1600);
+    live.textContent = ok ? "Copied to the clipboard"
+      : "Could not reach the clipboard. Select the text and copy it manually.";
+    setTimeout(() => { btn.textContent = "Copy"; live.textContent = ""; }, 1600);
   });
-  return btn;
+  const wrap = document.createDocumentFragment();
+  wrap.appendChild(btn);
+  wrap.appendChild(live);
+  return wrap;
 }
 
 /**
@@ -610,9 +618,19 @@ function copyButton(getText) {
  *
  * The tag stays visible because the brief requires a reader to be able to tell
  * a line to type from a line the system printed back without relying on colour.
+ *
+ * Terminal WINDOW DOTS go on the two kinds that are actually terminal content -
+ * something you type and something the machine printed back. A config excerpt
+ * or a file path is not a terminal, and three dots on every box would be
+ * decoration that has stopped meaning anything.
  */
 function codeRun(lines, kind) {
   const box = h(`div.pl-box.pl-box--${kind}`);
+  if (kind === "command" || kind === "output") {
+    // Decoration only, same reasoning as the ones in ui.js: aria-hidden, no
+    // pointer events, no hover. See the note on codeBlock().
+    box.appendChild(h("span.cmd__dots", { "aria-hidden": "true" }, h("i"), h("i"), h("i")));
+  }
   box.appendChild(h("span.pl-box__tag", kind === "command" ? "command" : kind));
   box.appendChild(copyButton(() => lines.join("\n")));
   const body = h("div.pl-box__body");

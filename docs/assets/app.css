@@ -139,6 +139,24 @@
   --code-bg:   #0f172a;
   --code-fg:   #e2e8f0;
 
+  /* Colours that live ON the terminal canvas.
+
+     These are separate tokens, not the --pl-* family, because the terminal is
+     dark in BOTH themes while the prose boxes are light in one and dark in the
+     other. A --pl-* value is tuned for a box that matches the page; on the
+     canvas it inverts and disappears.
+
+     Caught by using one: the comment colour was pointed at --pl-out-fg, which
+     is #14532d, a dark green chosen to sit on a pale green background. On the
+     #0f172a canvas that measures 1.96:1 - invisible. Every value below clears
+     4.5:1 against BOTH canvases (#0f172a and #030712), and the contrast gate
+     now checks them as first-class pairs. */
+  --code-dim:    #94a3b8;   /* 6.96 / 7.85 - where, comments, muted chrome */
+  --code-ok:     #4ade80;   /* 10.25 / 11.55 */
+  --code-warn:   #fbbf24;   /* 10.69 / 12.06 */
+  --code-danger: #f87171;   /* 6.45 / 7.28 */
+  --code-prompt: #5eead4;   /* 12.07 / 13.61 - the root@host: prompt */
+
   --r-sm: 8px;  --r-md: 12px; --r-lg: 18px;
   --sp:  16px;
   /* Cool slate shadows to match the new surfaces. The old ones were warm
@@ -181,6 +199,13 @@ html[data-theme="dark"] {
   --danger-dim:#2e1513;
   --code-bg:   #030712;
   --code-fg:   #e5e7eb;
+  /* The canvas is dark here too, so these carry over from :root unchanged -
+     one set, verified against both canvases, rather than two that drift. */
+  --code-dim:    #94a3b8;
+  --code-ok:     #4ade80;
+  --code-warn:   #fbbf24;
+  --code-danger: #f87171;
+  --code-prompt: #5eead4;
   /* Subject colours, restated.
      They were only defined in :root and in the prefers-color-scheme block, so
      a visitor whose OS was set to light and who clicked the dark toggle got
@@ -204,6 +229,8 @@ html[data-theme="dark"] {
     --text-faint:#7d8799; --accent:#38bdf8; --accent-ink:#06202e; --accent-dim:#0c2b40;
     --accent-2:#14b8a6; --ok:#4ade80; --ok-dim:#0d2818; --warn:#fbbf24; --warn-dim:#2b2010;
     --danger:#f87171; --danger-dim:#2e1513; --code-bg:#030712; --code-fg:#e5e7eb;
+    --code-dim:#94a3b8; --code-ok:#4ade80; --code-warn:#fbbf24;
+    --code-danger:#f87171; --code-prompt:#5eead4;
     --tech-aplus:#fbbf24; --tech-cisco:#22d3ee; --tech-mikrotik:#fb923c;
     --tech-win11:#60a5fa; --tech-winserver:#4ade80; --tech-cross:#c084fc; --tech-rhel:#f87171;
     --shadow-1:0 1px 2px rgba(0,0,0,.5); --shadow-2:0 10px 34px rgba(0,0,0,.6);
@@ -590,39 +617,119 @@ h3 { font-size: 1rem; margin: 22px 0 8px; }
 .chip:hover { border-color: var(--text-faint); color: var(--text); }
 .chip[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
-/* ---------------------------------------------------------------- code blocks */
+/* ---------------------------------------------------------------- code blocks
+
+   A terminal window, which is what a command block is. The canvas is dark in
+   BOTH themes (--code-bg): a light-on-light command makes the command stop
+   being distinguishable from the prose around it, which is the one thing this
+   block exists to prevent.
+
+   Every colour here is a token or an rgba over --code-bg, so the block follows
+   the theme and can be measured by scripts/check-prose-contrast.mjs. The risk
+   tag used to be a hex literal inside ui.js, which no CSS-parsing gate can
+   see. */
 
 .cmd {
   position: relative;
   background: var(--code-bg); color: var(--code-fg);
   border-radius: var(--r-md); margin: 0 0 10px;
   overflow: hidden;
+  /* A terminal is not a card, so it gets a border rather than a shadow: a
+     shadow on a near-black box is invisible against a light page anyway. */
+  border: 1px solid rgba(255,255,255,.10);
 }
 .cmd__bar {
   display: flex; align-items: center; gap: 8px;
   padding: 6px 8px 6px 12px;
   border-bottom: 1px solid rgba(255,255,255,.08);
-  font-size: 11.5px; color: #94a3b8;
+  font-size: 11.5px; color: var(--code-dim);
+  /* Named transitions, not `all`. See the note on .navlink. */
+  transition: background-color .2s ease;
 }
+.cmd:hover .cmd__bar { background: rgba(255,255,255,.03); }
+
+/* The three window dots.
+
+   Decoration. `pointer-events: none` so they cannot be aimed at, and the
+   container is aria-hidden in ui.js. They do not minimise, maximise or close
+   anything, and they are deliberately not given a hover state - a dot that
+   responds to the pointer is a promise of a button. */
+.cmd__dots { display: inline-flex; gap: 5px; flex: none; margin-right: 2px; }
+.cmd__dots i {
+  width: 9px; height: 9px; border-radius: 50%;
+  display: block; pointer-events: none;
+}
+.cmd__dots i:nth-child(1) { background: #ff5f57; }   /* red   */
+.cmd__dots i:nth-child(2) { background: #febc2e; }   /* amber */
+.cmd__dots i:nth-child(3) { background: #28c840; }   /* green */
+
 .cmd__tag { font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
-.cmd__where { color: #7c8ba1; }
+.cmd__where { color: var(--code-dim); }
+
+/* Risk tag colours, by data attribute rather than by an inline style, so the
+   values live in the stylesheet where the gate can read them - and are the
+   code-canvas variants, not the page variants. The page's --warn is amber 700
+   for a light background; on the dark canvas it is --code-warn. */
+.cmd__tag[data-risk="safe"]     { color: var(--code-ok); }
+.cmd__tag[data-risk="caution"]  { color: var(--code-warn); }
+.cmd__tag[data-risk="risk"]     { color: var(--code-danger); }
+
 .cmd pre {
   margin: 0; padding: 12px; overflow-x: auto;
   font-family: var(--mono); font-size: 13px; line-height: 1.65;
   white-space: pre; tab-size: 4;
 }
 .cmd pre code { font-family: inherit; background: none; border: 0; padding: 0; color: inherit; }
+
+/* Strip comments.
+
+   The state is on the wrapper, and the button's own label changes as well as
+   its aria-pressed, so the mode is legible from the label alone and not only
+   from the colour. `is-stripped` also hides the note's "nothing was hidden"
+   wording by leaving it empty, which is why the note is a live region. */
+.cmd.is-stripped .comment { display: none; }
+.cmd__strip {
+  flex: none;
+  background: rgba(255,255,255,.10); color: var(--code-dim);
+  border: 0; border-radius: var(--r-sm);
+  padding: 4px 9px; font: inherit; font-size: 11.5px; font-weight: 600;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
+}
+.cmd__strip:hover { background: rgba(255,255,255,.18); }
+.cmd__strip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cmd__strip[aria-pressed="true"] {
+  background: var(--accent); color: var(--accent-ink);
+}
+
+/* Said in words, not by a colour. Hiding text silently would leave a reader
+   copying a block and wondering what went missing. */
+.cmd__note {
+  display: block; padding: 0 12px 8px;
+  font-size: 11px; color: var(--code-dim); font-style: italic;
+}
+.cmd__note:empty { display: none; }
+
+/* Screen-reader-only. The copy button's own label changes on success, but a
+   label change is announced inconsistently; a live region is reliable. */
+.cmd__live {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+
 .cmd__copy {
   margin-left: auto; flex: none;
-  background: rgba(255,255,255,.10); color: #cbd5e1;
+  background: rgba(255,255,255,.10); color: var(--code-dim);
   border: 0; border-radius: var(--r-sm);
   padding: 4px 9px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  transition: background-color .2s ease, color .2s ease;
 }
 .cmd__copy:hover { background: rgba(255,255,255,.18); color: #fff; }
-.cmd__copy[data-done="1"] { background: var(--ok); color: #06251a; }
+.cmd__copy:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cmd__copy[data-done="1"] { background: var(--code-ok); color: #06251a; }
 
-.prompt { color: #5eead4; }
-.comment { color: #7c8ba1; font-style: italic; }
+.prompt { color: var(--code-prompt); }
+.comment { color: var(--code-dim); font-style: italic; }
 
 /* ---------------------------------------------------------------- entries */
 
@@ -1898,6 +2005,10 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 .pl-copy[data-done="1"] { color: var(--ok); border-color: var(--ok); }
 .pl-box { position: relative; }
 .pl-box__tag + .pl-copy { margin-left: auto; }
+/* The window dots come first on terminal-ish boxes, so the tag is no longer
+   the first child. Keep it pinned and let the copy button still be pushed to
+   the end by the sibling rule above. */
+.pl-box > .cmd__dots { flex: none; margin-right: 0; }
 .pl-box > .pl-box__tag { flex: none; }
 .pl-box { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
 .pl-box__body { flex: 1 1 100%; min-width: 0; }

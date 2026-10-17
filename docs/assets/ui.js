@@ -203,18 +203,53 @@ function trapFocus(e, root) {
 
 let copySeq = 0;
 
+/** A line is a comment if its first non-space characters open one. */
+const isCommentLine = (line) => {
+  const t = line.trimStart();
+  return t.startsWith("#") || t.startsWith("//") || t.startsWith(";") || t.startsWith("REM ");
+};
+
 /**
- * Copyable code block.
+ * Copyable code block, styled as a terminal window.
+ *
  * `where`  — where to run it (shell, PowerShell prompt, WinBox, IOS).
  * `risk`   — safe | caution | risk, drives the colour tag.
+ *
+ * THREE THINGS THIS DOES, AND WHY
+ *
+ * 1. The three window dots are DECORATION and are marked aria-hidden with
+ *    pointer-events off. They are not minimise/maximise/close and they do
+ *    nothing. This app has already been bitten by the opposite: boxed sidebar
+ *    headings that read as clickable items that happened to be full width, and
+ *    a control that scrolled away inside the panel it controlled. A dot that
+ *    looks like a button and is not one is the same mistake again, and three
+ *    per block would multiply it.
+ *
+ * 2. The risk colour is a token, not a literal. It used to be hardcoded
+ *    (#f08b83 / #e6b45c / #7ee0b8), which meant the tag could not follow the
+ *    theme and could not be checked by the contrast gate - a colour written as
+ *    a literal in JavaScript is invisible to a script that reads app.css.
+ *
+ * 3. The strip toggle hides COMMENTS ONLY. The brief also asked for stripping
+ *    parameters, and that is not done here: removing a flag changes what the
+ *    command does. "ls -la" and "ls" are not the same command, and a lab aid
+ *    that quietly drops a flag is worse than no lab aid. Comments carry no
+ *    meaning to the shell, so hiding them is safe and reversible.
+ *
+ *    When comments are hidden the block says so, in words, rather than letting
+ *    the reader assume they were never there.
  */
 export function codeBlock(text, { where = "shell", risk = "safe", tag = "" } = {}) {
   const id = `c${++copySeq}`;
   const pre = h("pre", h("code", { id }));
-  // colourise comments and prompts without ever touching markup
-  for (const line of String(text).split("\n")) {
-    const t = line.trimStart();
-    if (t.startsWith("#") || t.startsWith("//")) {
+
+  const lines = String(text).split("\n");
+  let commentLines = 0;
+
+  // Colourise comments and prompts without ever touching markup.
+  for (const line of lines) {
+    if (isCommentLine(line)) {
+      commentLines++;
       pre.appendChild(h("span.comment", line + "\n"));
     } else if (/^[a-zA-Z0-9._-]+[<>#]/.test(line) && !line.includes("://")) {
       const m = line.match(/^([a-zA-Z0-9._-]+[<>#])/);
@@ -226,27 +261,84 @@ export function codeBlock(text, { where = "shell", risk = "safe", tag = "" } = {
     }
   }
 
-  const btn = h("button.cmd__copy", { type: "button" }, "Copy");
+  /* --- copy -------------------------------------------------------- */
+
+  const btn = h("button.cmd__copy", {
+    type: "button",
+    title: "Copy this block to the clipboard",
+  }, "Copy");
+  // Announced to a screen reader, which sees the label change and nothing else.
+  const live = h("span.cmd__live", { role: "status", "aria-live": "polite" });
   btn.addEventListener("click", async () => {
-    const value = pre.textContent.replace(/\n$/, "");
+    // What is on screen is what you get. With comments hidden, you get the
+    // command without them - which is the point of hiding them.
+    const value = visibleText(pre);
     const ok = await copyText(value);
-    btn.textContent = ok ? "Copied" : "Press Ctrl+C";
+    btn.textContent = ok ? "Copied" : "Select and copy";
     btn.dataset.done = ok ? "1" : "0";
-    setTimeout(() => { btn.textContent = "Copy"; delete btn.dataset.done; }, 1800);
+    live.textContent = ok
+      ? "Copied to the clipboard"
+      : "Could not reach the clipboard. Select the text and copy it manually.";
+    setTimeout(() => {
+      btn.textContent = "Copy";
+      delete btn.dataset.done;
+      live.textContent = "";
+    }, 1800);
   });
+
+  /* --- strip comments ---------------------------------------------- */
+
+  let stripBtn = null;
+  let stripNote = null;
+  // Only offered when there is something to strip AND something would be left.
+  const strippable = commentLines > 0 && commentLines < lines.length;
+
+  if (strippable) {
+    stripNote = h("span.cmd__note", { role: "status", "aria-live": "polite" });
+    stripBtn = h("button.cmd__strip", {
+      type: "button",
+      "aria-pressed": "false",
+      title: `Hide the ${commentLines} comment line${commentLines === 1 ? "" : "s"} in this block`,
+    }, "Comments");
+    stripBtn.addEventListener("click", () => {
+      const on = stripBtn.getAttribute("aria-pressed") !== "true";
+      stripBtn.setAttribute("aria-pressed", String(on));
+      stripBtn.textContent = on ? "No comments" : "Comments";
+      stripNote.textContent = on
+        ? `${commentLines} comment line${commentLines === 1 ? "" : "s"} hidden`
+        : "";
+      // On the wrapper, so the CSS can hide .comment and the copy button can
+      // read the visible text without either of them knowing about the other.
+      btn.closest(".cmd").classList.toggle("is-stripped", on);
+    });
+  }
 
   return h("div.cmd",
     h("div.cmd__bar",
-      h("span.cmd__tag", { style: { color: riskColor(risk) } }, tag || where),
+      h("span.cmd__dots", { "aria-hidden": "true" },
+        h("i"), h("i"), h("i")),
+      h("span.cmd__tag", { dataset: { risk } }, tag || where),
       h("span.cmd__where", where),
+      stripBtn,
       btn,
     ),
     pre,
+    stripNote,
+    live,
   );
 }
 
-function riskColor(risk) {
-  return risk === "risk" ? "#f08b83" : risk === "caution" ? "#e6b45c" : "#7ee0b8";
+/** The text a reader can actually see, which is not always pre.textContent. */
+function visibleText(pre) {
+  if (!pre.closest(".cmd")?.classList.contains("is-stripped")) {
+    return pre.textContent.replace(/\n$/, "");
+  }
+  const out = [];
+  for (const node of pre.childNodes) {
+    if (node.nodeType === 1 && node.classList.contains("comment")) continue;
+    out.push(node.textContent);
+  }
+  return out.join("").replace(/\n$/, "");
 }
 
 export async function copyText(text) {
