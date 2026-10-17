@@ -15,7 +15,7 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v4";
+const VERSION = "v5";
 // The app lives at the scope root. A navigation to any OTHER in-scope path
 // (e.g. /dashboard/) must not be stored under the shell's "index.html" key, or
 // it would overwrite the real shell and break offline navigation for the app.
@@ -42,6 +42,14 @@ const SHELL = [
   "assets/icon.svg",
   "assets/icon-192.png",
   "assets/icon-512.png",
+  // Self-hosted fonts. Precached for the same reason as everything else in
+  // this list: a reader in a server room with no signal must still get the type
+  // they were reading. 107.7 KB total, and at most 43 KB is used on one page.
+  "fonts/inter-400.woff2",
+  "fonts/inter-600.woff2",
+  "fonts/inter-700.woff2",
+  "fonts/jetbrains-mono-400.woff2",
+  "fonts/jetbrains-mono-600.woff2",
 ];
 
 const DATA = [

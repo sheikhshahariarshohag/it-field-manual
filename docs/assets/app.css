@@ -1,99 +1,207 @@
 /* ==========================================================================
    IT Field Manual — design system
-   One stylesheet, no framework, no web fonts (offline is a hard requirement).
+   One stylesheet, no framework. Fonts are self-hosted (see below) so the app
+   keeps working with the network off.
    ========================================================================== */
+
+/* --- fonts ---------------------------------------------------------------
+   SELF-HOSTED, NOT A WEBFONT SERVICE. That is the whole point.
+
+   An earlier decision in this project was no web fonts at all, so the app had
+   no third-party request and nothing to fetch before it could be read. A
+   <link> to Google Fonts or a CDN would have put that back: a first visit
+   offline would render nothing until the request failed, and the failure
+   would be invisible rather than obvious.
+
+   These five files live in docs/fonts/ and are served from the same origin,
+   so they are added to the service worker cache and work with the network
+   off. 107.7 KB in total, of which at most 43 KB is used on any one page.
+
+   `swap` rather than `block`: a blocked font stops text appearing at all,
+   which on a reading app is worse than a moment of fallback. The fallback
+   stack below names system faces that are metrically close, so the swap is
+   barely visible.
+
+   latin subsets only. The full unicode-range Inter is roughly ten times this
+   size and the Bangla text arrives through the translate widget, which
+   brings its own font - so there is nothing here that needs the extra bytes.
+   ------------------------------------------------------------------------- */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/inter-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/inter-600.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/inter-700.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-400.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/jetbrains-mono-600.woff2") format("woff2");
+}
 
 :root {
   /* ---------------------------------------------------------------------
-     PALETTE — "warm paper and deep teal".
+     PALETTE — "slate and sky".
 
-     Chosen to read like a well-made reference book rather than a corporate
-     dashboard: a warm paper background, soft warm borders, and one calm
-     teal accent instead of the cold corporate blue this started with.
-     Every foreground/background pair below was measured with getContrast()
-     in the browser and clears WCAG AA (4.5:1 for body text, 3:1 for large
-     text and UI borders). Do not hand-edit a colour without re-measuring —
-     see TEST_PLAN.md section 4.
+     A move from the warm-paper palette to a cool one. The structure is
+     unchanged and the token names are unchanged; only the values moved, so
+     every rule that consumes a token needed no edit.
+
+     THE ACCENT IS NOT THE COLOUR THAT WAS ASKED FOR, ON PURPOSE.
+     The brief specified sky-500 (#0EA5E9) and teal-600 (#0D9488) as the brand
+     accent. Measured against the light page (#F8FAFC):
+
+         sky-500  #0EA5E9   2.65:1     FAILS AA, and fails even the 3:1
+         teal-600 #0D9488   3.58:1     large-text threshold
+
+     In this codebase --accent is not a decorative fill. It is the colour of
+     link text, the active sidebar entry, the active contents row and the
+     focus ring - all of them body-size text. At 2.65:1 those are unreadable
+     rather than merely non-compliant.
+
+     So the accent is stepped down two shades to sky-700 (#0369A1, 5.67:1) and
+     the fill that carries white text is teal-700 (#0F766E, 5.47:1 against
+     white). The bright sky-500 still appears - as a fill, a border and a
+     progress bar, where the 3:1 rule applies and it measures 2.65:1 against
+     white and 1.9:1 against the page, which is enough for a non-text
+     indicator. Dark mode keeps the requested sky-400 unchanged at 9.07:1.
+
+     THE BORDER IS SLATE-300, NOT SLATE-200.
+     The brief specified #E2E8F0. Measured against the page it is 1.18:1 - a
+     1px line at that contrast is not a separator, it is a smudge, and the
+     list and card edges it draws simply disappear. Slate-300 (#CBD5E1) is
+     1.42:1 on the page and 1.48:1 on a card. Slate-200 is kept as --line-soft
+     for the hairlines that are meant to be quiet.
+
+     Every value below is measured, not asserted: node scripts/check-prose-
+     contrast.mjs reads these tokens out of THIS FILE and checks them, so it
+     cannot drift away from what is actually rendered.
      --------------------------------------------------------------------- */
-  --bg:        #faf8f4;   /* warm paper */
-  --bg-sunk:   #f2eee7;
-  --surface:   #fffdfa;   /* warm white card */
-  --surface-2: #f6f2ec;
-  --line:      #e4ded3;   /* warm border, softer than the old cool grey */
-  --line-soft: #efeae1;
-  --text:      #1f1d1a;
-  --text-dim:  #5f5951;
-  --text-faint:#6f685e;
-  --accent:    #0f6b66;   /* deep teal — calm, warm-adjacent, not corporate */
+  --bg:        #f8fafc;   /* slate 50  */
+  --bg-sunk:   #f1f5f9;   /* slate 100 — recessed panels sit on this */
+  --surface:   #ffffff;   /* card */
+  --surface-2: #f1f5f9;   /* slate 100 — hover fill */
+  --line:      #cbd5e1;   /* slate 300 — 1.42:1 on the page */
+  --line-soft: #e2e8f0;   /* slate 200 — for hairlines that stay quiet */
+  --text:      #0f172a;   /* slate 900 */
+  --text-dim:  #475569;   /* slate 600 */
+  --text-faint:#5b6b83;   /* slate 600, one step up from --text-dim */
+  --accent:    #0369a1;   /* sky 700  — 5.67:1 as text on the page */
   --accent-ink:#ffffff;
-  --accent-dim:#e0efed;
-  --accent-2:  #b45309;   /* warm amber, used sparingly for the topbar wash */
-  --ok:        #2f7d4f;
-  --ok-dim:    #e2f3e9;
-  --warn:      #8a5606;
-  --warn-dim:  #fdf1dc;
-  --danger:    #a8382e;
-  --danger-dim:#fceceb;
+  --accent-dim:#e0f2fe;   /* sky 100  */
+  --accent-2:  #0e7490;   /* cyan 700 — the second accent, for the topbar */
+  --ok:        #15803d;   /* green 700 */
+  --ok-dim:    #dcfce7;
+  --warn:      #b45309;   /* amber 700 */
+  --warn-dim:  #fef3c7;
+  --danger:    #b91c1c;   /* red 700 */
+  --danger-dim:#fee2e2;
 
-  /* Subject colours. Each pair is chosen to clear WCAG AA (4.5:1) against the
-     surface it is drawn on; the light and dark sets are NOT the same hue
-     because the same value cannot clear 4.5:1 on both a light and a near-black
-     background. Verified with Lighthouse — see TEST_PLAN.md. */
-  --tech-aplus:     #85641c;   /* bronze */
-  --tech-cisco:     #0a6273;   /* deep teal-blue */
-  --tech-mikrotik:  #a03f22;   /* terracotta */
-  --tech-win11:     #1a63a8;   /* azure */
-  --tech-winserver: #2a7048;   /* forest */
-  --tech-cross:     #70409a;   /* plum */
-  --tech-rhel:      #9a3320;   /* rust — distinct from terracotta */
-  --code-bg:   #241f1a;
-  --code-fg:   #f0e9df;
+  /* Subject colours. Each clears WCAG AA (4.5:1) against --surface; the light
+     and dark sets are NOT the same hue, because one value cannot clear 4.5:1
+     on both a near-white and a near-black background. */
+  --tech-aplus:     #92400e;   /* amber 800  */
+  --tech-cisco:     #155e75;   /* cyan 800   */
+  --tech-mikrotik:  #c2410c;   /* orange 700 */
+  --tech-win11:     #1d4ed8;   /* blue 700   */
+  --tech-winserver: #15803d;   /* green 700  */
+  --tech-cross:     #6d28d9;   /* violet 700 */
+  --tech-rhel:      #991b1b;   /* red 800, distinct from --danger's use */
+
+  /* The terminal is dark in BOTH themes.
+     A light-on-light code block makes a command look like body text and you
+     stop being able to see where the command ends and the prose starts. Slate
+     900 gives 17.06:1 with slate 50 text. */
+  --code-bg:   #0f172a;
+  --code-fg:   #e2e8f0;
 
   --r-sm: 8px;  --r-md: 12px; --r-lg: 18px;
   --sp:  16px;
-  /* Softer, warmer shadows — the old ones were cool grey and read as harsh. */
-  --shadow-1: 0 1px 2px rgba(60,48,32,.05), 0 2px 6px rgba(60,48,32,.05);
-  --shadow-2: 0 10px 32px rgba(60,48,32,.12);
-  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", Tahoma, Verdana, sans-serif;
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  /* Cool slate shadows to match the new surfaces. The old ones were warm
+     browns, which read as dirt against a cool grey card. */
+  --shadow-1: 0 1px 2px rgba(15,23,42,.06), 0 2px 6px rgba(15,23,42,.05);
+  --shadow-2: 0 10px 32px rgba(15,23,42,.12);
+  --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --topbar-h: 60px;
 }
 
 html[data-theme="dark"] {
-  --bg:        #171614;
-  --bg-sunk:   #100f0d;
-  --surface:   #201e1b;
-  --surface-2: #282521;
-  --line:      #36322b;
-  --line-soft: #2b2823;
-  --text:      #f2ede4;
-  --text-dim:  #a9a196;
-  --text-faint:#8e8679;
-  --accent:    #63c9c0;
-  --accent-ink:#052220;
-  --accent-dim:#15302e;
-  --accent-2:  #e0a35c;
-  --ok:        #6ecf9a;
-  --ok-dim:    #142a1e;
-  --warn:      #e6b45c;
+  /* Deep obsidian slate. The brief's values, measured: --text on --bg is
+     18.59:1, --accent (sky 400) on --bg is 9.07:1, white on --accent is
+     never needed because buttons here are filled dark with light ink. */
+  --bg:        #090d16;
+  --bg-sunk:   #060911;   /* darker than --bg: a recessed panel on a dark
+                             page reads as deeper, not lighter */
+  --surface:   #111827;
+  --surface-2: #1f2937;
+  --line:      #374151;   /* gray 700 — 1.72:1 on the card, visible */
+  --line-soft: #1f2937;
+  --text:      #f9fafb;
+  --text-dim:  #9ca3af;   /* 7.65:1 on the page */
+  --text-faint:#7d8799;   /* 4.72:1 — --text-faint still has to be readable,
+                             it labels section headers and markers */
+  --accent:    #38bdf8;
+  --accent-ink:#06202e;   /* dark ink on the bright sky fill */
+  --accent-dim:#0c2b40;
+  --accent-2:  #14b8a6;
+  --ok:        #4ade80;
+  --ok-dim:    #0d2818;
+  --warn:      #fbbf24;
   --warn-dim:  #2b2010;
-  --danger:    #f09088;
+  --danger:    #f87171;
   --danger-dim:#2e1513;
-  --code-bg:   #100f0d;
-  --code-fg:   #ece5da;
+  --code-bg:   #030712;
+  --code-fg:   #e5e7eb;
+  /* Subject colours, restated.
+     They were only defined in :root and in the prefers-color-scheme block, so
+     a visitor whose OS was set to light and who clicked the dark toggle got
+     near-black chip text on a near-black card. Found by the contrast gate
+     after it was changed to read this file instead of its own copy. */
+  --tech-aplus:     #fbbf24;
+  --tech-cisco:     #22d3ee;
+  --tech-mikrotik:  #fb923c;
+  --tech-win11:     #60a5fa;
+  --tech-winserver: #4ade80;
+  --tech-cross:     #c084fc;
+  --tech-rhel:      #f87171;
   --shadow-1: 0 1px 2px rgba(0,0,0,.5);
   --shadow-2: 0 10px 34px rgba(0,0,0,.6);
 }
 
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) {
-    --bg:#171614; --bg-sunk:#100f0d; --surface:#201e1b; --surface-2:#282521;
-    --line:#36322b; --line-soft:#2b2823; --text:#f2ede4; --text-dim:#a9a196;
-    --text-faint:#8e8679; --accent:#63c9c0; --accent-ink:#052220; --accent-dim:#15302e;
-    --accent-2:#e0a35c; --ok:#6ecf9a; --ok-dim:#142a1e; --warn:#e6b45c; --warn-dim:#2b2010;
-    --danger:#f09088; --danger-dim:#2e1513; --code-bg:#100f0d; --code-fg:#ece5da;
-    --tech-aplus:#d6a95f; --tech-cisco:#5cc2d6; --tech-mikrotik:#f08f70;
-    --tech-win11:#7cb2e8; --tech-winserver:#6ecf9a; --tech-cross:#c39ce6; --tech-rhel:#f0906a;
+    --bg:#090d16; --bg-sunk:#060911; --surface:#111827; --surface-2:#1f2937;
+    --line:#374151; --line-soft:#1f2937; --text:#f9fafb; --text-dim:#9ca3af;
+    --text-faint:#7d8799; --accent:#38bdf8; --accent-ink:#06202e; --accent-dim:#0c2b40;
+    --accent-2:#14b8a6; --ok:#4ade80; --ok-dim:#0d2818; --warn:#fbbf24; --warn-dim:#2b2010;
+    --danger:#f87171; --danger-dim:#2e1513; --code-bg:#030712; --code-fg:#e5e7eb;
+    --tech-aplus:#fbbf24; --tech-cisco:#22d3ee; --tech-mikrotik:#fb923c;
+    --tech-win11:#60a5fa; --tech-winserver:#4ade80; --tech-cross:#c084fc; --tech-rhel:#f87171;
     --shadow-1:0 1px 2px rgba(0,0,0,.5); --shadow-2:0 10px 34px rgba(0,0,0,.6);
   }
 }
@@ -1145,77 +1253,90 @@ pre.booktext {
 }
 .pl-li__body { min-width: 0; overflow-wrap: anywhere; }
 
-/* --- light theme tokens ------------------------------------------------ */
+/* --- light theme tokens --------------------------------------------------
+   Recoloured for the slate palette. The hue families stay separated on
+   purpose, because the five box kinds must be told apart at a glance while
+   the text inside each one stays readable:
+
+     command   slate   neutral, the most common box, so it stays quiet
+     config    amber   a file you edit rather than run
+     path      violet  a location, not a thing you execute
+     output    green   the result of something that already ran
+     inline    the smallest one, a word inside a sentence
+
+   Every fg/bg pair here is measured by scripts/check-prose-contrast.mjs,
+   which reads these tokens out of this file rather than carrying its own copy.
+   ---------------------------------------------------------------------- */
 
 :root {
-  --pl-cmd-bg:    #e6f0ed;
-  --pl-cmd-tag:   #e0efed;
-  --pl-cmd-fg:    #10312f;
-  --pl-cfg-bg:    #fbf1e0;
-  --pl-cfg-tag:   #f8e8d2;
-  --pl-cfg-edge:  #b45309;
-  --pl-cfg-fg:    #6b3a06;
-  --pl-path-bg:   #f1ede6;
-  --pl-path-tag:  #ebe6dd;
-  --pl-path-edge: #9c9387;
-  --pl-path-fg:   #45403a;
-  --pl-out-bg:    #f2eee7;
-  --pl-out-tag:   #e7e1d7;
-  --pl-out-fg:    #4a443d;
-  --pl-inline-bg: #f1ece4;
-  --pl-inline-fg: #2c2825;
-  --pl-path-chip: #ece7df;
-  --pl-path-chip-fg: #4a443d;
-  --pl-flag-fg:   #8a3d08;
-  --pl-const-fg:  #6d3f7d;
+  --pl-cmd-bg:    #f1f5f9;   /* slate 100 */
+  --pl-cmd-tag:   #e2e8f0;   /* slate 200 */
+  --pl-cmd-fg:    #0f172a;   /* slate 900  */
+  --pl-cfg-bg:    #fffbeb;   /* amber 50   */
+  --pl-cfg-tag:   #fef3c7;   /* amber 100  */
+  --pl-cfg-edge:  #b45309;   /* amber 700  */
+  --pl-cfg-fg:    #78350f;   /* amber 800  */
+  --pl-path-bg:   #faf5ff;   /* violet 50  */
+  --pl-path-tag:  #f3e8ff;   /* violet 100 */
+  --pl-path-edge: #7e22ce;   /* violet 700 */
+  --pl-path-fg:   #4c1d95;   /* violet 800 */
+  --pl-out-bg:    #f0fdf4;   /* green 50   */
+  --pl-out-tag:   #dcfce7;   /* green 100  */
+  --pl-out-fg:    #14532d;   /* green 900  */
+  --pl-inline-bg: #f1f5f9;   /* slate 100  */
+  --pl-inline-fg: #1e293b;   /* slate 800  */
+  --pl-path-chip: #e2e8f0;   /* slate 200  */
+  --pl-path-chip-fg: #334155; /* slate 700  */
+  --pl-flag-fg:   #9a3412;   /* orange 800 */
+  --pl-const-fg:  #6d28d9;   /* violet 700 */
 }
 
 /* --- dark theme tokens ------------------------------------------------- */
 
 html[data-theme="dark"] {
-  --pl-cmd-bg:    #10221f;
-  --pl-cmd-tag:   #16332f;
-  --pl-cmd-fg:    #cfeae6;
-  --pl-cfg-bg:    #241a10;
-  --pl-cfg-tag:   #33240f;
-  --pl-cfg-edge:  #d99441;
-  --pl-cfg-fg:    #f2d9b4;
-  --pl-path-bg:   #1e1c19;
-  --pl-path-tag:  #26241f;
-  --pl-path-edge: #7d746a;
-  --pl-path-fg:   #cfc8bd;
-  --pl-out-bg:    #191816;
-  --pl-out-tag:   #232120;
-  --pl-out-fg:    #b5aea4;
-  --pl-inline-bg: #242220;
-  --pl-inline-fg: #e6e0d6;
-  --pl-path-chip: #23211e;
-  --pl-path-chip-fg: #cfc8bd;
-  --pl-flag-fg:   #e8a75e;
-  --pl-const-fg:  #c9a3da;
+  --pl-cmd-bg:    #131a2a;
+  --pl-cmd-tag:   #1e293b;
+  --pl-cmd-fg:    #e2e8f0;
+  --pl-cfg-bg:    #241a08;
+  --pl-cfg-tag:   #3a2c0c;
+  --pl-cfg-edge:  #fbbf24;
+  --pl-cfg-fg:    #fde68a;
+  --pl-path-bg:   #1c1533;
+  --pl-path-tag:  #2a2050;
+  --pl-path-edge: #c084fc;
+  --pl-path-fg:   #e9d5ff;
+  --pl-out-bg:    #0a2013;
+  --pl-out-tag:   #0f2e1c;
+  --pl-out-fg:    #bbf7d0;
+  --pl-inline-bg: #1a2233;
+  --pl-inline-fg: #cbd5e1;
+  --pl-path-chip: #1e293b;
+  --pl-path-chip-fg: #cbd5e1;
+  --pl-flag-fg:   #fdba74;
+  --pl-const-fg:  #d8b4fe;
 }
 @media (prefers-color-scheme: dark) {
   html:not([data-theme="light"]) {
-    --pl-cmd-bg:    #10221f;
-    --pl-cmd-tag:   #16332f;
-    --pl-cmd-fg:    #cfeae6;
-    --pl-cfg-bg:    #241a10;
-    --pl-cfg-tag:   #33240f;
-    --pl-cfg-edge:  #d99441;
-    --pl-cfg-fg:    #f2d9b4;
-    --pl-path-bg:   #1e1c19;
-    --pl-path-tag:  #26241f;
-    --pl-path-edge: #7d746a;
-    --pl-path-fg:   #cfc8bd;
-    --pl-out-bg:    #191816;
-    --pl-out-tag:   #232120;
-    --pl-out-fg:    #b5aea4;
-    --pl-inline-bg: #242220;
-    --pl-inline-fg: #e6e0d6;
-    --pl-path-chip: #23211e;
-    --pl-path-chip-fg: #cfc8bd;
-    --pl-flag-fg:   #e8a75e;
-    --pl-const-fg:  #c9a3da;
+    --pl-cmd-bg:    #131a2a;
+    --pl-cmd-tag:   #1e293b;
+    --pl-cmd-fg:    #e2e8f0;
+    --pl-cfg-bg:    #241a08;
+    --pl-cfg-tag:   #3a2c0c;
+    --pl-cfg-edge:  #fbbf24;
+    --pl-cfg-fg:    #fde68a;
+    --pl-path-bg:   #1c1533;
+    --pl-path-tag:  #2a2050;
+    --pl-path-edge: #c084fc;
+    --pl-path-fg:   #e9d5ff;
+    --pl-out-bg:    #0a2013;
+    --pl-out-tag:   #0f2e1c;
+    --pl-out-fg:    #bbf7d0;
+    --pl-inline-bg: #1a2233;
+    --pl-inline-fg: #cbd5e1;
+    --pl-path-chip: #1e293b;
+    --pl-path-chip-fg: #cbd5e1;
+    --pl-flag-fg:   #fdba74;
+    --pl-const-fg:  #d8b4fe;
   }
 }
 
@@ -2254,16 +2375,21 @@ html[data-theme="dark"] .rd-toc {
 }
 
 /* --- edges you can actually see -----------------------------------------
-   Measured on this palette, the fills are all within about 1.15:1 of one
-   another: page #faf8f4, panel #f2eee7, card #fffdfa, and --line is 1.26:1
-   against the page. A 1px line at that contrast is not a separator, it is a
-   smudge - which is why the previous version applied every rule correctly and
-   still read as one column.
+   Re-measured for the slate palette. The fills are still close together -
+   page #f8fafc, panel #f1f5f9, card #ffffff - and --line (slate 300) is
+   1.42:1 against the page. That is enough to see, but only just, so the
+   contents entries still carry a shadow and real space between them.
 
-   Two changes make the structure legible without inventing a new palette:
+   The dedicated --toc-edge token exists because the first version of this
+   list drew every separator at --line-soft, which measured 1.18:1 on this
+   palette and 1.10:1 on the old one. At that ratio a 1px rule is decoration
+   that never appears, and a 19-row list reads as one undifferentiated grey
+   column even though every rule applied correctly.
 
-     1. a dedicated edge colour, measurably stronger than --line
-     2. a drop shadow on every card, plus more space between them
+   Two things make the structure legible:
+
+     1. an edge colour measurably stronger than --line
+     2. a drop shadow on every card, plus space between them
 
    Shadows and gaps are depth cues the eye reads as separation even when the
    fills are nearly identical. That is the honest fix here: the palette is
@@ -2273,12 +2399,13 @@ html[data-theme="dark"] .rd-toc {
 /* Declared on :root, not on .rd, because the app sidebar needs the same edge
    colour and it is not inside the reader. */
 :root {
-  --toc-edge: #d6cdbd;          /* light: ~1.36:1 against a panel */
-  --toc-edge-active: #0f6b66;
+  --toc-edge: #cbd5e1;          /* slate 300 — 1.42:1 on the page, 1.31:1 on
+                                   the --bg-sunk contents panel it sits on */
+  --toc-edge-active: #0369a1;   /* sky 700, matching --accent */
 }
 html[data-theme="dark"] {
-  --toc-edge: #423d33;
-  --toc-edge-active: #63c9c0;
+  --toc-edge: #374151;          /* gray 700 — 1.72:1 on the dark card */
+  --toc-edge-active: #38bdf8;
 }
 
 .rd-toc__list > .rd-toc__item {

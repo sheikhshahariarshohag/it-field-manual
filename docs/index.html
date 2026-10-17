@@ -12,6 +12,14 @@
 <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/icon-192.png">
 <link rel="stylesheet" href="assets/app.css">
+
+<!-- Self-hosted fonts, preloaded so the first paint is already in the right
+     typeface. Same origin as everything else, so they work offline once the
+     service worker has cached them - there is no third-party request anywhere
+     in this app's critical path. -->
+<link rel="preload" href="fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-600.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-700.woff2" as="font" type="font/woff2" crossorigin>
 </head>
 <body>
 

@@ -40,3 +40,5 @@ desktop.ini
 # Build/verification output that is regenerable
 /scripts/out/
 *.log
+# Local preview server, started by hand while developing. Not part of the site.
+preview-server.cjs
