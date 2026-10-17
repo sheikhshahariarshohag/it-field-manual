@@ -1724,6 +1724,15 @@ async function setStudyStatus(unitId, status) {
   const patch = { status, unit: true, at: Date.now() };
   if (status === "done") patch.completed_at = Date.now();
   await db.store.setProgress(unitId, patch);
+  // Tell the shell, which owns the sidebar progress bars, that they are now
+  // out of date. A CustomEvent rather than an import: app.js already imports
+  // this module, so reaching back the other way would close an import cycle -
+  // which is the exact thing a recent commit in this repo took effort to undo.
+  try {
+    dispatchEvent(new CustomEvent("field-manual:progress-changed", {
+      detail: { id: unitId, status },
+    }));
+  } catch (_) { /* no CustomEvent in this environment */ }
 }
 
 /** Small tri-state control rendered on each unit page. */

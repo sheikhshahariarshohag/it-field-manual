@@ -103,6 +103,16 @@ function navLink(label, routeStr, opts = {}) {
   if (opts.count !== undefined && opts.count !== null && opts.count !== "") {
     a.appendChild(h("span.navlink__count", String(opts.count)));
   }
+  // A progress bar only where there is real progress to show. `opts.progressKey`
+  // names the group it belongs to; the width is filled in later by
+  // paintNavProgress(), because the numbers live in IndexedDB and this runs
+  // synchronously.
+  if (opts.progressKey) {
+    const bar = h("span.navlink__bar", { "aria-hidden": "true" },
+      h("i", { style: { transform: "scaleX(0)" } }));
+    a.appendChild(bar);
+    a.dataset.progressKey = opts.progressKey;
+  }
   return h("li", a);
 }
 
@@ -130,13 +140,20 @@ function buildNav() {
 
   clear(navSubjects);
   for (const s of SUBJ.SUBJECTS) {
-    navSubjects.appendChild(navLink(s.label, `subjects/${s.id}`, { dot: s.varName }));
+    navSubjects.appendChild(navLink(s.label, `subjects/${s.id}`, {
+      dot: s.varName,
+      progressKey: `subject:${s.id}`,
+    }));
   }
 
   clear(navPracticeList);
   navPracticeList.appendChild(navLink("Troubleshooting", "scenarios", { count: st.scenarios }));
   navPracticeList.appendChild(navLink("Commands", "commands", { count: st.commands }));
-  navPracticeList.appendChild(navLink("Study manuals", "study", { count: studyUnits }));
+  navPracticeList.appendChild(navLink("Study manuals", "study", {
+    count: studyUnits, progressKey: "study",
+  }));
+  // Knowledge Map has no bar: session reading is not recorded anywhere, so a
+  // bar there would be a number this app cannot honestly produce.
   navPracticeList.appendChild(navLink("Knowledge Map", "km", { count: kmSessions }));
 
   clear(navProject);
@@ -146,6 +163,84 @@ function buildNav() {
   navProject.appendChild(navLink("Assessment", "assessment"));
   navProject.appendChild(navLink("Exam objectives", "objectives"));
   navProject.appendChild(navLink("Verification status", "verify"));
+}
+
+/**
+ * Fill the sidebar progress bars with what is actually stored.
+ *
+ * WHAT IS MEASURED
+ * A bar shows the share of that group's study units marked "Complete". That is
+ * the only progress this app records: the `progress` store holds one entry per
+ * study unit with a status of open / active / done (see STUDY_STATUS in
+ * views.js, which owns that vocabulary).
+ *
+ * WHY ONLY "DONE" COUNTS
+ * "In progress" is a state a unit can sit in indefinitely without advancing,
+ * so counting it would let a bar read as 60% finished when half the reading was
+ * never started. A bar that cannot be wrong is worth more than a smooth one.
+ *
+ * WHY THERE IS NO BAR EVERYWHERE
+ * Commands, lessons, scenarios, quizzes and all 146 Knowledge Map sessions are
+ * not tracked at all. There is no honest fraction to draw for them, so they get
+ * no bar rather than a decorative one.
+ *
+ * Runs after the nav is built and again after the reader changes a status, so
+ * marking a unit complete moves the bar without a reload.
+ */
+async function paintNavProgress() {
+  let records = [];
+  try { records = await db.store.progress(); } catch (_) { records = []; }
+
+  const done = new Map();
+  for (const p of records) {
+    if (p && p.status === "done" && p.id) done.set(p.id, true);
+  }
+
+  /** Which study unit ids belong to one group, and how many there are in all. */
+  const groups = new Map();
+  const add = (key, ids) => {
+    const g = groups.get(key) || { ids: [], total: 0 };
+    for (const id of ids) { g.ids.push(id); g.total++; }
+    groups.set(key, g);
+  };
+
+  const m = corpus && corpus.study ? corpus.study : null;
+  if (m && Array.isArray(m.books)) {
+    for (const b of m.books) {
+      for (const u of b.units || []) add("study", [u.id]);
+      for (const u of b.units || []) add(`book:${b.id}`, [u.id]);
+    }
+  }
+  for (const s of SUBJ.SUBJECTS) {
+    const ids = [];
+    try {
+      const r = SUBJ.resourcesFor(s.id);
+      for (const u of r.studyUnits) ids.push(u.id);
+    } catch (_) { /* a subject with no study units */ }
+    const key = `subject:${s.id}`;
+    const g = groups.get(key) || { ids: [], total: 0 };
+    g.ids.push(...ids);
+    g.total += ids.length;
+    groups.set(key, g);
+  }
+
+  let shown = 0;
+  for (const link of document.querySelectorAll(".navlink[data-progress-key]")) {
+    const g = groups.get(link.dataset.progressKey);
+    const fill = link.querySelector(".navlink__bar i");
+    if (!fill) continue;
+    if (!g || !g.total) { fill.style.transform = "scaleX(0)"; continue; }
+    const complete = g.ids.filter((id) => done.get(id)).length;
+    const frac = g.total ? complete / g.total : 0;
+    fill.style.transform = `scaleX(${frac.toFixed(4)})`;
+    // The number beside the label already says how many items there are. The
+    // bar's own value is for a screen reader as a proportion of the whole.
+    fill.parentElement.title = complete === g.total && g.total
+      ? `All ${g.total} complete`
+      : `${complete} of ${g.total} study units complete`;
+    shown++;
+  }
+  return shown;
 }
 
 /**
@@ -696,6 +791,13 @@ async function boot() {
   }
 
   start(() => render());
+  // Bars are filled from IndexedDB, which is asynchronous, and they are not
+  // awaited: the nav is already on screen and the bars arrive a frame later. A
+  // visitor with no stored progress sees them at zero either way.
+  paintNavProgress();
+  // Marking a unit complete moves its bar without a reload. views.js raises
+  // this event rather than being imported back from here.
+  addEventListener("field-manual:progress-changed", () => { paintNavProgress(); });
   if (!location.hash || location.hash === "#") history.replaceState(null, "", "#/");
 
   // Show the build stamp.

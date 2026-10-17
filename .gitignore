@@ -42,3 +42,6 @@ desktop.ini
 *.log
 # Local preview server, started by hand while developing. Not part of the site.
 preview-server.cjs
+
+# Dev-only wide-viewport probe. See docs/_probe.html.
+docs/_probe.html

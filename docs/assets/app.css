@@ -148,6 +148,10 @@
   --font: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --topbar-h: 60px;
+  /* Sidebar width. A token rather than a literal because the shell grid and
+     anything else that has to line up with the sidebar must not each carry
+     their own copy of 252. */
+  --sidenav-w: 252px;
 }
 
 html[data-theme="dark"] {
@@ -310,7 +314,7 @@ a:hover { text-decoration: underline; }
   border: 1px solid var(--line);
   border-radius: 999px;
   appearance: none;
-  box-shadow: inset 0 1px 2px rgba(60,48,32,.04);
+  box-shadow: inset 0 1px 2px rgba(15,23,42,.04);
   transition: border-color .14s, box-shadow .14s, background .14s;
 }
 /* A reported fault showed the search placeholder glyphs appearing to overlap.
@@ -376,16 +380,38 @@ body { top: 0 !important; }
    reference manual; keep the translated text, drop the highlight. */
 .goog-text-highlight { background: none !important; box-shadow: none !important; }
 
-/* ---------------------------------------------------------------- layout */
+/* ---------------------------------------------------------------- layout
 
-.layout { display: flex; align-items: flex-start; min-height: calc(100vh - var(--topbar-h)); }
+   The shell is a two-column grid rather than a flex row.
+
+   Flex was fine and the difference is not visible in a screenshot, but the
+   flex version had no way to say "the sidebar is 252px until there is no room
+   for it" without also controlling what happens to the main column - every
+   responsive rule had to restate both. With named grid areas the single
+   breakpoint below re-lays the whole shell out in one declaration, and the
+   reading column keeps its own measure either way.
+
+   `min-height` rather than `height` on the shell: the sidebar's sticky travel
+   comes from the page being taller than the viewport, and a shell pinned to
+   exactly one viewport tall gives it nowhere to stick to. */
+
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidenav-w) minmax(0, 1fr);
+  grid-template-areas: "sidenav main";
+  align-items: start;
+  min-height: calc(100vh - var(--topbar-h));
+}
+.sidenav { grid-area: sidenav; }
+.main   { grid-area: main; }
 
 .sidenav {
   position: sticky; top: var(--topbar-h);
-  width: 252px; flex: none;
-  height: calc(100vh - var(--topbar-h));
+  width: auto; height: calc(100vh - var(--topbar-h));
   border-right: 1px solid var(--line);
   background: var(--bg-sunk);
+  /* The sidebar scrolls its own list, so the shell never scrolls sideways. */
+  overscroll-behavior: contain;
 }
 .sidenav__scroll { height: 100%; overflow-y: auto; padding: 14px 10px 24px; }
 
@@ -396,19 +422,46 @@ body { top: 0 !important; }
 .sidenav__group:first-child { margin-top: 2px; }
 .sidenav__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px; }
 
+/* Navigation links.
+
+   The transitions list the properties that actually change on hover. The brief
+   asked for `transition: all .2s ease`; `all` also animates width, height,
+   margin and padding, which force layout on every frame. On a page carrying
+   10,478 study blocks and 13,038 Knowledge Map paragraphs that is the
+   difference between a hover and a stutter, so it is named explicitly. */
 .navlink {
   display: flex; align-items: center; gap: 9px;
   padding: 8px 10px; border-radius: var(--r-md);
   color: var(--text-dim); font-size: 14.5px; font-weight: 500;
   cursor: pointer; border: 0; background: none; width: 100%; text-align: left;
+  transition: background-color .2s ease, color .2s ease;
 }
 .navlink:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+.navlink:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: var(--r-md); }
 .navlink[aria-current="page"] { background: var(--accent-dim); color: var(--accent); font-weight: 650; }
 .navlink__dot {
   width: 8px; height: 8px; border-radius: 50%; flex: none;
   background: var(--dot, var(--text-faint));
 }
 .navlink__count { margin-left: auto; font-size: 12px; color: var(--text-faint); font-variant-numeric: tabular-nums; }
+
+/* A section's progress, as a hairline under its nav row.
+
+   Reads as part of the row rather than as a separate control, and it is
+   aria-hidden because the count beside it is the same number in text - the bar
+   is decoration for the number, not a second, quieter claim about it. */
+.navlink__bar {
+  position: absolute; left: 10px; right: 10px; bottom: 2px;
+  height: 2px; border-radius: 2px; overflow: hidden;
+  background: var(--line-soft);
+}
+.navlink { position: relative; }
+.navlink__bar i {
+  display: block; height: 100%; border-radius: 2px;
+  background: var(--accent);
+  transform-origin: 0 50%;
+}
+.navlink[aria-current="page"] .navlink__bar i { background: var(--accent); }
 
 .sidenav__foot { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
 .netstat { font-size: 12px; color: var(--text-faint); display: grid; gap: 4px; }
@@ -418,15 +471,38 @@ body { top: 0 !important; }
 
 .scrim {
   position: fixed; inset: 0; z-index: 45;
-  background: rgba(10,14,20,.5); border: 0;
+  background: rgba(2,6,23,.6); border: 0;
+  backdrop-filter: blur(2px);
 }
 
 .main {
-  flex: 1 1 auto; min-width: 0;
+  min-width: 0;
   padding: 22px clamp(14px, 3vw, 32px) 60px;
   max-width: 1080px;
 }
 .main:focus { outline: none; }
+
+/* Tablet and phone: one column, and the sidebar becomes an overlay drawer.
+   This is the only rule that decides the shell's shape at any width.
+
+   `data-open` is what app.js sets (nav.dataset.open = "1"/"0"), not a class -
+   the earlier draft of this block used `.is-open` and the drawer would simply
+   never have opened on a phone. */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main"; }
+  .sidenav {
+    position: fixed; inset: var(--topbar-h) auto 0 0;
+    z-index: 46; width: min(288px, 84vw);
+    transform: translateX(-102%);
+    transition: transform .2s ease, visibility .2s;
+    visibility: hidden;
+    box-shadow: var(--shadow-2);
+  }
+  .sidenav[data-open="1"] { transform: translateX(0); visibility: visible; }
+  .topbar__menu { display: inline-flex; }
+  .topbar__title { display: none; }
+  .main { padding: 16px 14px 48px; }
+}
 
 .appfoot {
   border-top: 1px solid var(--line);
@@ -526,10 +602,10 @@ h3 { font-size: 1rem; margin: 22px 0 8px; }
   display: flex; align-items: center; gap: 8px;
   padding: 6px 8px 6px 12px;
   border-bottom: 1px solid rgba(255,255,255,.08);
-  font-size: 11.5px; color: #b3aa9d;
+  font-size: 11.5px; color: #94a3b8;
 }
 .cmd__tag { font-weight: 650; letter-spacing: .04em; text-transform: uppercase; }
-.cmd__where { color: #9c9387; }
+.cmd__where { color: #7c8ba1; }
 .cmd pre {
   margin: 0; padding: 12px; overflow-x: auto;
   font-family: var(--mono); font-size: 13px; line-height: 1.65;
@@ -538,15 +614,15 @@ h3 { font-size: 1rem; margin: 22px 0 8px; }
 .cmd pre code { font-family: inherit; background: none; border: 0; padding: 0; color: inherit; }
 .cmd__copy {
   margin-left: auto; flex: none;
-  background: rgba(255,255,255,.10); color: #ded5c8;
+  background: rgba(255,255,255,.10); color: #cbd5e1;
   border: 0; border-radius: var(--r-sm);
   padding: 4px 9px; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
 }
 .cmd__copy:hover { background: rgba(255,255,255,.18); color: #fff; }
-.cmd__copy[data-done="1"] { background: var(--ok); color: #0a2418; }
+.cmd__copy[data-done="1"] { background: var(--ok); color: #06251a; }
 
-.prompt { color: #7fd9b4; }
-.comment { color: #9c9387; font-style: italic; }
+.prompt { color: #5eead4; }
+.comment { color: #7c8ba1; font-style: italic; }
 
 /* ---------------------------------------------------------------- entries */
 
@@ -723,17 +799,9 @@ tr:last-child td { border-bottom: 0; }
 
 /* ---------------------------------------------------------------- responsive */
 
-@media (max-width: 900px) {
-  .topbar__menu { display: inline-flex; }
-  .topbar__title { display: none; }
-  .sidenav {
-    position: fixed; top: var(--topbar-h); left: 0; z-index: 46;
-    transform: translateX(-100%); transition: transform .18s ease;
-    box-shadow: var(--shadow-2);
-  }
-  .sidenav[data-open="1"] { transform: translateX(0); }
-  .main { padding: 16px 14px 48px; }
-}
+/* The shell's own breakpoint lives with the layout, above, so there is one
+   place that decides how the app is arranged rather than two that each do half
+   and can disagree. What remains here is the per-component part. */
 
 @media (max-width: 560px) {
   .cards { grid-template-columns: 1fr; }
@@ -2198,13 +2266,16 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 
    WHY THE PREVIOUS VERSION DID NOT WORK
    It separated entries with `border-bottom: 1px solid var(--line-soft)`.
-   Measured on this palette, --line-soft is #efeae1 and --bg is #faf8f4 - a
-   contrast ratio of about 1.1:1. That is below the threshold at which anyone
-   can see a line, so the separator was decoration that never appeared, and the
-   list read as one undifferentiated grey column. Every entry was also the same
-   34px tall, the same 13.92px, the same --text-dim, with a 3px left border that
-   was transparent on every row except the active one. The rules applied
-   correctly and were still invisible.
+   Measured on the warm palette it came from, --line-soft was #efeae1 and --bg
+   #faf8f4 - a contrast ratio of about 1.1:1. That is below the threshold at
+   which anyone can see a line, so the separator was decoration that never
+   appeared, and the list read as one undifferentiated grey column. Every entry
+   was also the same 34px tall, the same 13.92px, the same --text-dim, with a
+   3px left border that was transparent on every row except the active one. The
+   rules applied correctly and were still invisible.
+
+   It measured 1.18:1 on the slate palette too, which is why this was rebuilt
+   structurally rather than merely recoloured.
 
    The fix is structural rather than a darker line: the list is now a recessed
    panel, and each entry is a raised card on it. Cards are separated by SPACE
@@ -2226,7 +2297,7 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   /* It floats. The panel sticks below the header for the whole read, so it
      needs a shadow to read as a separate object above the page rather than as
      a tint on it. */
-  box-shadow: 0 1px 2px rgba(60,48,32,.06), 0 4px 16px rgba(60,48,32,.07);
+  box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 4px 16px rgba(15,23,42,.07);
 }
 html[data-theme="dark"] .rd-toc {
   box-shadow: 0 1px 2px rgba(0,0,0,.32), 0 4px 16px rgba(0,0,0,.26);
@@ -2413,7 +2484,7 @@ html[data-theme="dark"] {
   border: 1px solid var(--toc-edge);
   border-radius: var(--r-sm);
   background: var(--surface);
-  box-shadow: 0 1px 2px rgba(60,48,32,.07), 0 3px 8px rgba(60,48,32,.05);
+  box-shadow: 0 1px 2px rgba(15,23,42,.07), 0 3px 8px rgba(15,23,42,.05);
   overflow: hidden;
 }
 .rd-toc__list > .rd-toc__item:last-child { margin-bottom: 0; }
@@ -2421,13 +2492,13 @@ html[data-theme="dark"] {
 /* Lifted on hover, so the list feels like a stack of things you can pick. */
 .rd-toc__list > .rd-toc__item > .rd-toc__link:hover {
   background: var(--surface-2);
-  box-shadow: 0 2px 4px rgba(60,48,32,.09), 0 6px 14px rgba(60,48,32,.07);
+  box-shadow: 0 2px 4px rgba(15,23,42,.09), 0 6px 14px rgba(15,23,42,.07);
 }
-.rd-toc__list > .rd-toc__item:hover { box-shadow: 0 2px 4px rgba(60,48,32,.09), 0 6px 14px rgba(60,48,32,.07); }
+.rd-toc__list > .rd-toc__item:hover { box-shadow: 0 2px 4px rgba(15,23,42,.09), 0 6px 14px rgba(15,23,42,.07); }
 
 .rd-toc__item.is-active {
   border-color: var(--toc-edge-active);
-  box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(60,48,32,.12);
+  box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(15,23,42,.12);
 }
 
 html[data-theme="dark"] .rd-toc__list > .rd-toc__item {
@@ -2460,9 +2531,9 @@ html[data-theme="dark"] .rd-toc__list > .rd-toc__item:hover {
   margin: 0 0 10px;
   padding: 4px;
   background: var(--surface);
-  border: 1px solid var(--toc-edge, #d6cdbd);
+  border: 1px solid var(--toc-edge, #cbd5e1);
   border-radius: var(--r-md);
-  box-shadow: 0 1px 2px rgba(60,48,32,.06), 0 2px 6px rgba(60,48,32,.05);
+  box-shadow: 0 1px 2px rgba(15,23,42,.06), 0 2px 6px rgba(15,23,42,.05);
 }
 html[data-theme="dark"] .sidenav__block {
   box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px rgba(0,0,0,.22);
