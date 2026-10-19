@@ -15,7 +15,7 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v5";
+const VERSION = "v6";
 // The app lives at the scope root. A navigation to any OTHER in-scope path
 // (e.g. /dashboard/) must not be stored under the shell's "index.html" key, or
 // it would overwrite the real shell and break offline navigation for the app.
@@ -39,6 +39,7 @@ const SHELL = [
   "assets/router.js",
   "assets/views.js",
   "assets/translate.js",
+  "assets/viewmode.js",
   "assets/icon.svg",
   "assets/icon-192.png",
   "assets/icon-512.png",

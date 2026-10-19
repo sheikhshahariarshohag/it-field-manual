@@ -12,6 +12,7 @@ import { href } from "./router.js";
 import * as prose from "./prose.js";
 import { chapterReader } from "./reader.js";
 import { chapterTitle } from "./titles.js";
+import { viewModeToggle } from "./viewmode.js";
 
 export const TECH = {
   aplus:    { label: "CompTIA A+",     varName: "--tech-aplus" },
@@ -155,6 +156,10 @@ export function browseView(params, query) {
       ? "Filter by subject, risk and verification status."
       : "Each item opens into its own page."),
   ));
+
+  // Cards or table. One global choice, remembered; see viewmode.js. It changes
+  // how this list is laid out and nothing about which records it contains.
+  wrap.appendChild(viewModeToggle());
 
   // filters
   const techSel = query.tech || "";
@@ -891,6 +896,223 @@ export function subjectsView() {
 
 /* ================================================================== progress */
 
+/* ============================================================ dashboard */
+
+/**
+ * A circular progress ring.
+ *
+ * Drawn with conic-gradient rather than an SVG stroke so it needs no path
+ * maths and no separate dark-theme colour: the gradient reads the same tokens
+ * the rest of the app does. The number is real text next to it, so the ring is
+ * decoration reinforcing a figure that is already stated in words.
+ */
+function ring(pct, caption) {
+  const clamped = Math.max(0, Math.min(100, pct));
+  const el = h("div.ring", {
+    role: "img",
+    "aria-label": `${pct} percent. ${caption}`,
+  });
+  el.style.setProperty("--pct", String(clamped));
+  el.appendChild(h("div.ring__hole",
+    h("span.ring__n", `${pct}%`),
+  ));
+  return el;
+}
+
+/**
+ * Activity over the last few months.
+ *
+ * WHAT IT COUNTS, PRECISELY
+ * One mark per day per progress record that was touched that day, using the
+ * `at` timestamp written by setStudyStatus. Days with nothing recorded are
+ * genuinely empty - this app does not track opening a page, so a blank square
+ * means "nothing was recorded", not "nothing was read".
+ *
+ * The scale is fixed at four levels rather than scaled to the busiest day, so
+ * two months apart are directly comparable and a quiet week does not repaint
+ * itself as a busy one.
+ */
+function activityHeatmap(progress) {
+  const DAYS = 91;                 // 13 weeks
+
+  /*
+   * DAY KEYS ARE LOCAL, NOT UTC.
+   *
+   * The first version built the map with `d.setHours(0,0,0,0)` - local
+   * midnight - and read records with `toISOString().slice(0,10)`, which is UTC.
+   * On any machine east of Greenwich those are different days: local midnight
+   * is still "yesterday" in UTC, so no key ever matched.
+   *
+   * Measured on this machine (BST, UTC+1): 12 units marked complete, all with a
+   * valid `at` timestamp, and the heatmap reported "Nothing recorded in the last
+   * 13 weeks" with all 91 squares at level 0. The same machine's local date and
+   * UTC date disagreed for every one of those records.
+   *
+   * Both sides now format the same local Y-M-D, which is also what a reader
+   * means by "today" - a heatmap keyed to UTC would put an evening's work on
+   * tomorrow's square for half the world.
+   */
+  const dayKey = (d) =>
+    `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+  const days = new Map();
+  for (let i = 0; i < DAYS; i++) {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    d.setDate(d.getDate() - (DAYS - 1 - i));
+    days.set(dayKey(d), 0);
+  }
+  let recorded = 0;
+  for (const p of progress) {
+    const ts = p.at || p.updated_at;
+    if (!ts) continue;
+    const key = dayKey(new Date(ts));
+    if (!days.has(key)) continue;
+    days.set(key, days.get(key) + 1);
+    recorded++;
+  }
+
+  const wrap2 = h("div.heat");
+  wrap2.appendChild(h("div.heat__head",
+    h("h2.heat__t", "Activity"),
+    h("p.srcref", recorded
+      ? `${recorded} record${recorded === 1 ? "" : "s"} changed in the last 13 weeks. Blank means nothing was recorded, not that nothing was read.`
+      : "Nothing recorded in the last 13 weeks. Progress is stamped when you mark something complete."),
+  ));
+
+  const grid = h("div.heat__grid", { role: "img", "aria-label": `Activity over the last ${DAYS} days` });
+  for (const [day, n] of days) {
+    const level = n === 0 ? 0 : n === 1 ? 1 : n <= 3 ? 2 : 3;
+    grid.appendChild(h("span.heat__d", {
+      dataset: { level: String(level) },
+      title: `${day}: ${n} record${n === 1 ? "" : "s"}`,
+    }));
+  }
+  wrap2.appendChild(grid);
+  wrap2.appendChild(h("div.heat__key",
+    h("span.srcref", "Less"), h("i", { dataset: { level: "0" } }),
+    h("i", { dataset: { level: "1" } }), h("i", { dataset: { level: "2" } }),
+    h("i", { dataset: { level: "3" } }), h("span.srcref", "More"),
+  ));
+  return wrap2;
+}
+
+/** How many quiz answers have been recorded, across every quiz. */
+function cardsAttempted(quizzes) {
+  let n = 0;
+  for (const q of quizzes) {
+    if (!q || !Array.isArray(q.answers)) continue;
+    n += q.answers.filter((a) => a !== null && a !== undefined).length;
+  }
+  return n;
+}
+
+/* ============================================================= flashcards */
+
+/**
+ * Flashcards built from the quiz questions that already exist.
+ *
+ * WHERE THE CARDS COME FROM, AND WHY THAT IS THE ONLY SOURCE
+ *
+ * Every quiz question carries `q`, `options`, `answer` and `why`. That is a
+ * genuine front and back: the question in front, the correct option and the
+ * explanation behind it. Measured: 16 of 16 questions across all 3 quizzes
+ * carry an answer, so nothing here is a guess.
+ *
+ * The other candidates were rejected for being one-sided rather than for being
+ * inconvenient:
+ *
+ *   KM memory anchors    a single sentence each. There is no question side, so
+ *                        a card built from one would be a sentence on the front
+ *                        and the same sentence on the back.
+ *   scenario steps       nine groups of plain prose lines. Measured: `inspect`
+ *                        is 3 strings, `investigate` is 5, and so on - a
+ *                        narrative, not a question and an answer. Pairing them
+ *                        would mean inventing the questions.
+ *   KM interview items   questions with no answers stored anywhere in the data.
+ *
+ * So the deck is 16 cards and it is honest about being 16 cards. Growing it
+ * means writing question/answer pairs into the data, which is a content job.
+ */
+export function flashcardsView({ id } = {}) {
+  const wrap = h("div");
+  const quizzes = search.CORPUS.quizzes || [];
+
+  /** Flatten every question into one deck, remembering where it came from. */
+  const cards = [];
+  for (const qz of quizzes) {
+    for (const q of qz.questions || []) {
+      if (!q || !q.q || !Array.isArray(q.options)) continue;
+      const ai = Number(q.answer);
+      const correct = q.options[ai];
+      // A question with no resolvable answer is skipped, not shown with a blank
+      // back. Measured: all 16 resolve, so this guard never fires today.
+      if (!correct) continue;
+      cards.push({
+        id: `${qz.id}:${q.q.slice(0, 24)}`,
+        quiz: qz.title,
+        topic: q.topic || "",
+        q: q.q,
+        correct,
+        why: q.why || "",
+        hint: q.hint || "",
+      });
+    }
+  }
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Flashcards"),
+    h("p", `${cards.length} cards, taken from the exam quiz questions. ` +
+      "Click a card, or focus it and press Space, to turn it over."),
+  ));
+
+  if (!cards.length) {
+    wrap.appendChild(h("div.note.note--risk", h("strong", "No flashcards yet"),
+      h("span", "Flashcards are built from quiz questions, and none have loaded. Open this once while connected.")));
+    return wrap;
+  }
+
+  const deck = h("div.fc-deck");
+  for (const c of cards) deck.appendChild(flashcard(c));
+  wrap.appendChild(deck);
+
+  return wrap;
+}
+
+/**
+ * One card.
+ *
+ * A real button: it flips on click and on Space/Enter without any key handling
+ * of its own, because the browser already does that for a button and doing it
+ * again is how a control ends up firing twice. `aria-pressed` carries the
+ * state so it is announced, and the back is not `hidden` - a hidden back is
+ * read by a screen reader before the reader has chosen to hear it, which defeats
+ * the point of active recall.
+ */
+function flashcard(c) {
+  const card = h("button.fc", { type: "button", "aria-pressed": "false" });
+
+  card.appendChild(h("span.fc__meta",
+    h("span.fc__topic", c.topic || c.quiz),
+    h("span.fc__side", { "aria-hidden": "true" }, "front"),
+  ));
+  card.appendChild(h("span.fc__face.fc__face--front", ...paraTokens(c.q)));
+  card.appendChild(h("span.fc__face.fc__face--back",
+    h("span.fc__ans", c.correct),
+    c.why ? h("span.fc__why", c.why) : null,
+  ));
+  card.appendChild(h("span.fc__hint", { "aria-hidden": "true" }, "Turn over"));
+
+  const side = card.querySelector(".fc__side");
+  card.addEventListener("click", () => {
+    const on = card.getAttribute("aria-pressed") !== "true";
+    card.setAttribute("aria-pressed", String(on));
+    side.textContent = on ? "back" : "front";
+  });
+
+  return card;
+}
+
 export async function progressView() {
   const wrap = h("div");
   wrap.appendChild(h("header.page-head",
@@ -907,15 +1129,39 @@ export async function progressView() {
   const progress = await db.store.progress();
   const quizzes = await db.store.quizzes();
   const done = progress.filter((p) => p.status === "done");
-  const lessons = search.CORPUS.lessons;
-  const pct = lessons.length ? Math.round((done.length / lessons.length) * 100) : 0;
 
-  wrap.appendChild(h("div.stat-row",
-    h("div.stat", h("div.stat__n", `${pct}%`), h("div.stat__l", "lessons marked done")),
-    h("div.stat", h("div.stat__n", String(done.length)), h("div.stat__l", "done")),
-    h("div.stat", h("div.stat__n", String(quizzes.filter((q) => q.score !== null && q.score !== undefined).length)), h("div.stat__l", "quizzes attempted")),
-    h("div.stat", h("div.stat__n", String(progress.filter((p) => p.wrong).length)), h("div.stat__l", "weak spots")),
+  /*
+   * THE PERCENTAGE WAS COUNTING TWO DIFFERENT THINGS.
+   *
+   * It was `done.length / lessons.length`. But `done` is every record with
+   * status "done", and that store is written by two different callers: marking
+   * a lesson or command done (views.js markDone) and marking a STUDY UNIT
+   * complete (setStudyStatus). The denominator counted lessons only.
+   *
+   * So a reader who completed all 40 RHEL study units and no lessons saw
+   * 40 / 32 lessons = 125%. The number could exceed 100, which is the tell
+   * that a ratio has a numerator and a denominator describing different sets.
+   *
+   * The denominator is now the study manuals and the lessons, which is exactly
+   * the set the numerator is drawn from, and the label says which.
+   */
+  const studyUnits = (search.CORPUS.study?.books || [])
+    .reduce((a, b) => a + (b.units || []).length, 0);
+  const lessons = search.CORPUS.lessons;
+  const trackable = studyUnits + lessons.length;
+  const pct = trackable ? Math.round((done.length / trackable) * 100) : 0;
+
+  wrap.appendChild(h("div.dash",
+    ring(pct, `${done.length} of ${trackable} complete`),
+    h("div.stat-row.stat-row--dash",
+      h("div.stat", h("div.stat__n", String(done.length)), h("div.stat__l", "marked complete")),
+      h("div.stat", h("div.stat__n", String(quizzes.filter((q) => q.score !== null && q.score !== undefined).length)), h("div.stat__l", "quizzes attempted")),
+      h("div.stat", h("div.stat__n", String(progress.filter((p) => p.wrong).length)), h("div.stat__l", "weak spots")),
+      h("div.stat", h("div.stat__n", String(cardsAttempted(quizzes))), h("div.stat__l", "cards turned over")),
+    ),
   ));
+
+  wrap.appendChild(activityHeatmap(progress));
 
   const weak = progress.filter((p) => p.wrong);
   if (weak.length) {

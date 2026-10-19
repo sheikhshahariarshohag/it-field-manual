@@ -234,11 +234,7 @@ if (!PREFERS) {
   }
 }
 
-/* A token the stylesheet names but the palette never defines would silently
-   fall back to the browser default - black on white, in a dark theme. Cheap to
-   check, and it is exactly how a palette swap rots.
-
-   A var() with a fallback is exempt: `var(--accent-s, var(--accent))` is a
+/* A var() with a fallback is exempt: `var(--accent-s, var(--accent))` is a
    deliberate "use the per-subject colour if one was set, otherwise the accent"
    hook, and --accent-s is legitimately undefined for most subjects. Only a
    var() with nothing after the comma is an orphan. */
@@ -248,18 +244,34 @@ console.log("\n  every var() in app.css must resolve");
     ...Object.keys(LIGHT || {}), ...Object.keys(DARK || {}),
     ...Object.keys(PREFERS || {}),
   ]);
+
+  /* Custom properties set at RUNTIME from JavaScript, so they cannot appear in
+   * this file by definition. Each one is named here on purpose, with the line
+   * that sets it, so that adding another is a decision rather than an accident.
+   *
+   *   --pct     views.js ring() - the progress percentage, 0-100, written with
+   *             el.style.setProperty so the ring can animate without a re-render
+   */
+  const RUNTIME = new Set(["--pct"]);
+
   const orphans = new Set();
   for (const m of CSS_TEXT.matchAll(/var\(\s*(--[a-z0-9-]+)\s*([^)]*)\)/gi)) {
     const [, name, rest] = m;
     if (rest.includes(",")) continue;          // has a fallback: fine
-    if (!defined.has(name)) orphans.add(name);
+    if (defined.has(name) || RUNTIME.has(name)) continue;
+    orphans.add(name);
   }
   const list = [...orphans].sort();
   if (list.length) {
-    for (const o of list) console.log(`    FAIL   ${o} is used with no fallback and never defined`);
+    for (const o of list) {
+      console.log(`    FAIL   ${o} is used with no fallback and never defined`);
+      if (!RUNTIME.has(o)) {
+        console.log(`            not a stylesheet token and not in the runtime list in this script`);
+      }
+    }
     bad += list.length;
   } else {
-    console.log("    ok        every var() either has a fallback or is defined");
+    console.log(`    ok        every var() either has a fallback, is defined, or is a listed runtime property`);
   }
 }
 

@@ -13,6 +13,7 @@ import * as SUBJ from "./subjects.js";
 import * as SV from "./subject-views.js";
 import { route, start, resolve, href, currentRoute } from "./router.js";
 import * as TR from "./translate.js";
+import { initViewMode, viewModeToggle } from "./viewmode.js";
 
 const main = document.getElementById("main");
 /*
@@ -137,6 +138,7 @@ function buildNav() {
   navTop2.appendChild(navLink("Quizzes", "quizzes", { icon: "quiz", count: st.quizzes }));
   navTop2.appendChild(navLink("Projects", "projects", { icon: "project", count: st.projects }));
   navTop2.appendChild(navLink("Bookmarks", "bookmarks", { icon: "bookmark" }));
+  navTop2.appendChild(navLink("Flashcards", "flashcards", { icon: "quiz" }));
 
   clear(navSubjects);
   for (const s of SUBJ.SUBJECTS) {
@@ -647,6 +649,7 @@ async function render(restoreTo) {
     case "guides": node = V.guidesView(); break;
     case "bookmarks": node = V.bookmarksView(); break;
     case "progress": node = V.progressView(); break;
+    case "flashcards": node = V.flashcardsView({ id: rest[0] }); break;
     case "verify": node = V.verifyView(); break;
     case "objectives": node = V.objectivesView(); break;
     case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
@@ -757,6 +760,7 @@ async function boot() {
   route("guides", ({ recalled }) => render(recalled));
   route("bookmarks", ({ recalled }) => render(recalled));
   route("progress", ({ recalled }) => render(recalled));
+  route("flashcards", ({ recalled }) => render(recalled));
   route("verify", ({ recalled }) => render(recalled));
   route("objectives", ({ recalled }) => render(recalled));
   route("km", ({ recalled }) => render(recalled));
@@ -777,6 +781,9 @@ async function boot() {
   try {
     corpus = await loadCorpus();
     buildNav();
+    // Before the first render, so the very first paint is already in the
+    // chosen mode and nothing visibly reflows a moment later.
+    initViewMode();
     if (corpus.commands.length + corpus.lessons.length === 0) {
       clear(main);
       main.appendChild(h("div.errbox",
