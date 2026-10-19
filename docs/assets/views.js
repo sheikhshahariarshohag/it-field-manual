@@ -1132,6 +1132,128 @@ function flashcard(c) {
   return card;
 }
 
+/**
+ * One card per study manual: chapters done, words, labs, questions.
+ *
+ * The prototype this was promoted from had a single book card in its left rail
+ * reading "Network Fundamentals / Page 58 of 420" — one hardcoded book, a fake
+ * page count, and no relationship to anything the reader had actually done.
+ *
+ * The useful idea in it was per-book progress. That is what this is: every
+ * course in the corpus, counted from real records, with no invented numbers and
+ * no book singled out. A course with no progress still appears, because "you
+ * have not started this one" is information.
+ */
+function courseBreakdown(progress, done) {
+  const m = search.CORPUS.study;
+  const books = (m && m.books) || [];
+  const doneIds = new Set(done.map((d) => d.id));
+
+  const grid = h("div.coursegrid");
+  for (const b of books) {
+    const units = b.units || [];
+    const total = units.length;
+    const finished = units.filter((u) => doneIds.has(u.id)).length;
+    const words = units.reduce((a, u) => a + (u.words || 0), 0);
+    const labs = units.reduce((a, u) => a + (u.labs || 0), 0);
+    const qs = units.reduce((a, u) => a + (u.quizzes || 0), 0);
+    const pct = total ? Math.round((finished / total) * 100) : 0;
+
+    grid.appendChild(h("a.course", { href: href(`study/${units[0] ? units[0].id : ""}`) },
+      h("div.course__hd",
+        h("strong.course__t", b.title),
+        h("span.course__pct", total ? `${pct}%` : "—"),
+      ),
+      h("div.cbar", { role: "img", "aria-label": `${finished} of ${total} chapters complete` },
+        h("i", { style: { transform: `scaleX(${(total ? finished / total : 0).toFixed(4)})` } }),
+      ),
+      h("div.course__meta",
+        h("span", `${finished}/${total} chapters`),
+        h("span", words > 999 ? `${Math.round(words / 1000)}k words` : `${words} words`),
+        h("span", `${labs} labs`),
+        h("span", `${qs} questions`),
+      ),
+    ));
+  }
+  return h("section.dashsec",
+    h("h2", "By course"),
+    h("p.srcref", "Counted from what you have marked complete, against the chapters that exist. Nothing here is estimated."),
+    grid,
+  );
+}
+
+/*
+ * The lab checklist.
+ *
+ * Reading a chapter is not the same as having done its labs, and the app used
+ * to treat them as the same thing: it tracked chapters and left labs as text.
+ * With 138 labs in CCNA alone, "I have read chapter 8" and "I can build a VLAN"
+ * are different claims.
+ *
+ * What this page shows, and why:
+ *
+ *   - The totals. Every lab in the corpus is counted from the study manual
+ *     index, and every ticked lab from the progress store, so both sides of
+ *     "x of y" come from real data.
+ *   - Which chapters have labs, and how many each holds, linking to the chapter
+ *     where the tick box is.
+ *
+ * What it deliberately does NOT show is a tick box per lab. Lab identity is the
+ * lab's title, and the index stores only a count per chapter, so naming them
+ * here would mean fetching all 63 unit files before the page could finish
+ * painting. A checklist that lies about which labs you have done is worse than
+ * a list of chapters that admit it does not know.
+ */
+function labChecklist(progress) {
+  const m = search.CORPUS.study;
+  const books = (m && m.books) || [];
+  const ticked = new Set(
+    progress.filter((p) => isLabRecord(p) && p.status === "done").map((p) => p.id),
+  );
+
+  const rows = [];
+  for (const b of books) {
+    for (const u of b.units || []) {
+      const n = u.labs || 0;
+      if (!n) continue;
+      rows.push({ book: b.title, unit: u, count: n });
+    }
+  }
+  const total = rows.reduce((a, r) => a + r.count, 0);
+
+  const body = h("div");
+  if (!total) {
+    body.appendChild(h("div.note.note--ok",
+      h("strong", "No labs in the corpus yet"),
+      h("span", "When a chapter has hands-on labs you can tick them off, they collect here.")));
+  } else {
+    body.appendChild(h("div.dashstat",
+      h("div.stat", h("div.stat__n", String(ticked.size)), h("div.stat__l", "labs ticked")),
+      h("div.stat", h("div.stat__n", String(total)), h("div.stat__l", "labs in the corpus")),
+      h("div.stat", h("div.stat__n", String(rows.length)), h("div.stat__l", "chapters with labs")),
+    ));
+    const ul = h("ul.lablist");
+    for (const r of rows) {
+      ul.appendChild(h("li.lablist__row",
+        h("a", { href: href(`study/${r.unit.id}`) },
+          h("strong", r.unit.display || r.unit.title),
+          h("small", `${r.book} · ${r.count} lab${r.count === 1 ? "" : "s"}`)),
+      ));
+    }
+    body.appendChild(ul);
+    body.appendChild(h("p.srcref",
+      `There is no per-lab tick box on this page: a lab is identified by its title, and ` +
+      `the index records only how many each chapter has. Tick a lab in the chapter ` +
+      `reader, where it is written.`));
+  }
+
+  return h("section.dashsec",
+    h("h2", "Labs"),
+    h("p.srcref", "Counted from the chapters that exist and the ticks you have saved. Nothing estimated."),
+    body,
+  );
+}
+
 export async function progressView() {
   const wrap = h("div");
   wrap.appendChild(h("header.page-head",
@@ -1147,7 +1269,25 @@ export async function progressView() {
 
   const progress = await db.store.progress();
   const quizzes = await db.store.quizzes();
-  const done = progress.filter((p) => p.status === "done");
+
+  /*
+   * A lab tick and a completed chapter are BOTH records in the progress store
+   * with status "done", and they are not the same thing.
+   *
+   * Counting both would put the lab total into the chapter numerator: tick
+   * eight labs in chapter one and "marked complete" jumps to eight while the
+   * ring claims you have finished 8 of 63 chapters. That is the exact
+   * numerator/denominator mismatch this function was already fixed for once -
+   * do not put it back.
+   *
+   * Every record written by setStudyStatus carries `unit: true` and every one
+   * written by setLabStatus carries `lab: true`. Records written before those
+   * flags existed carry neither, so they are counted as unit completions, which
+   * is what they were.
+   */
+  const labRecords = progress.filter(isLabRecord);
+  const unitProgress = progress.filter((p) => !isLabRecord(p));
+  const done = unitProgress.filter((p) => p.status === "done");
 
   /*
    * THE PERCENTAGE WAS COUNTING TWO DIFFERENT THINGS.
@@ -1175,14 +1315,17 @@ export async function progressView() {
     h("div.stat-row.stat-row--dash",
       h("div.stat", h("div.stat__n", String(done.length)), h("div.stat__l", "marked complete")),
       h("div.stat", h("div.stat__n", String(quizzes.filter((q) => q.score !== null && q.score !== undefined).length)), h("div.stat__l", "quizzes attempted")),
-      h("div.stat", h("div.stat__n", String(progress.filter((p) => p.wrong).length)), h("div.stat__l", "weak spots")),
+      h("div.stat", h("div.stat__n", String(unitProgress.filter((p) => p.wrong).length)), h("div.stat__l", "weak spots")),
       h("div.stat", h("div.stat__n", String(cardsAttempted(quizzes))), h("div.stat__l", "cards turned over")),
     ),
   ));
 
-  wrap.appendChild(activityHeatmap(progress));
+  wrap.appendChild(courseBreakdown(progress, done));
+  wrap.appendChild(labChecklist(progress));
 
-  const weak = progress.filter((p) => p.wrong);
+  wrap.appendChild(activityHeatmap(unitProgress));
+
+  const weak = unitProgress.filter((p) => p.wrong);
   if (weak.length) {
     wrap.appendChild(h("h2", "Weak spots"));
     const ul = h("ul.prose");
@@ -1985,6 +2128,55 @@ async function studyProgressAll() {
   return byUnit;
 }
 
+/**
+ * A stable id for one lab in one chapter.
+ *
+ * Built from the lab's TITLE rather than its position, so that re-running the
+ * builder over a corrected .docx does not orphan every tick: insert a lab at
+ * the top and an index-based id would silently re-point every saved tick at a
+ * different lab. A title change does lose the tick, and that is the honest
+ * trade — the tick said "I did the domain-counting lab" and there is no longer
+ * a lab by that name to credit.
+ *
+ * The unit id keeps its `#`, which cannot appear in a chapter id, so a record
+ * can always be split back into its two halves.
+ */
+export function labKey(unitId, lab) {
+  const title = String(lab.title || "");
+  const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+  return `${unitId}#lab-${slug || "untitled"}`;
+}
+
+/** True when this progress record is a lab tick rather than a chapter or lesson. */
+export const isLabRecord = (r) => !!(r && r.lab);
+
+/** True when this progress record is a study-unit completion. */
+export const isUnitRecord = (r) => !!(r && r.unit);
+
+/**
+ * Tick or untick one lab.
+ *
+ * Writes `lab: true` rather than reusing a unit id, because a lab is not a
+ * chapter: completing a chapter does not mean you ran every lab in it, and
+ * collapsing the two would make both numbers wrong.
+ */
+async function setLabStatus(unitId, lab, done) {
+  const key = labKey(unitId, lab);
+  await db.store.setProgress(key, {
+    status: done ? "done" : "open",
+    lab: true,
+    labTitle: String(lab.title || ""),
+    unit: false,
+    at: Date.now(),
+  });
+  try {
+    dispatchEvent(new CustomEvent("field-manual:progress-changed", {
+      detail: { id: key, status: done ? "done" : "open", lab: true },
+    }));
+  } catch (_) { /* no CustomEvent here */ }
+  return key;
+}
+
 async function setStudyStatus(unitId, status) {
   const patch = { status, unit: true, at: Date.now() };
   if (status === "done") patch.completed_at = Date.now();
@@ -2229,16 +2421,49 @@ export async function studyUnitView(params, query) {
       build: () => prose.renderBlocks(s.content, { selfCheckKey: `${unit.id}:${s.title}` }),
     });
   }
-  // Labs and quizzes are chapters in their own right. They get their own
-  // contents entries with a kicker, rather than being appended invisibly at
-  // the end where nobody finds them.
+  /*
+   * Labs and quizzes are chapters in their own right. They get their own
+   * contents entries with a kicker, rather than being appended invisibly at
+   * the end where nobody finds them.
+   *
+   * A lab also gets a tick. The reading is the easy half of a lab; the part
+   * that tells you whether you can actually do it is putting the cable in and
+   * getting the answer. Marking that is what makes the lab checklist on the
+   * progress page mean anything, and it is only worth having if the tick sits
+   * next to the lab rather than on some separate tracking screen.
+   */
+  const progAll = await studyProgressAll();
+  const labDone = new Set(
+    [...progAll.keys()].filter((k) => progAll.get(k).status === "done"),
+  );
   for (const [list, kicker] of [[data.labs, "Lab"], [data.quizzes, "Quiz"]]) {
     for (const l of list || []) {
-      sections.push({
-        title: l.title,
-        kicker,
-        build: () => prose.renderBlocks(l.content, { selfCheckKey: `${unit.id}:${l.title}` }),
+      if (kicker === "Quiz") {
+        sections.push({
+          title: l.title,
+          kicker,
+          build: () => prose.renderBlocks(l.content, { selfCheckKey: `${unit.id}:${l.title}` }),
+        });
+        continue;
+      }
+      const key = labKey(unit.id, l);
+      const body = h("div");
+      const tick = h("label.labtick", { for: key });
+      const box = h("input.labtick__box", {
+        type: "checkbox", id: key, checked: labDone.has(key) ? true : null,
+        onchange: async (ev) => {
+          const on = ev.currentTarget.checked;
+          await setLabStatus(unit.id, l, on);
+          if (on) labDone.add(key); else labDone.delete(key);
+          toast(on ? "Lab ticked — it will show on your progress page"
+                   : "Lab unticked");
+        },
       });
+      tick.appendChild(box);
+      tick.appendChild(h("span.labtick__t", "I have done this lab"));
+      body.appendChild(tick);
+      body.appendChild(prose.renderBlocks(l.content, { selfCheckKey: `${unit.id}:${l.title}` }));
+      sections.push({ title: l.title, kicker, build: () => body });
     }
   }
 

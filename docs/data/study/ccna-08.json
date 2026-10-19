@@ -7,7 +7,7 @@
  "display": "Chapter 8: VLANs and Inter-VLAN Routing",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 11799,
+ "words": 11956,
  "sections": [
   {
    "title": "About this chapter",
@@ -2748,6 +2748,48 @@
    "words": 150
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (or any lab tool). Packet Tracer can behave differently from real equipment, and I could not run it here. Every output below is what you should expect, not something I saw. CHECK After each lab, write down what you actually saw in the tracker table at the end. That record is the evidence for changing a status."
+    },
+    {
+     "level": 0,
+     "text": "| VLAN | Name | Subnet | Gateway |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | Sales | 192.168.10.0/24 | 192.168.10.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | Admin | 192.168.20.0/24 | 192.168.20.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 30 | Voice | 192.168.30.0/24 | 192.168.30.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 99 | Native (no hosts, no IP) | none | none |"
+    },
+    {
+     "level": 0,
+     "text": "| 100 | Management | 192.168.100.0/24 | 192.168.100.1 |"
+    },
+    {
+     "level": 0,
+     "text": "Hosts: PC1 192.168.10.11 and PC3 192.168.10.12 (Sales). PC2 192.168.20.11 and PC4 192.168.20.12 (Admin). Switch management: S1 192.168.100.11, S2 192.168.100.12. All /24. The four subnets do not overlap (calculated). ADDED"
+    }
+   ],
+   "words": 157
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2871,48 +2913,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Use Cisco Packet Tracer (or any lab tool). Packet Tracer can behave differently from real equipment, and I could not run it here. Every output below is what you should expect, not something I saw. CHECK After each lab, write down what you actually saw in the tracker table at the end. That record is the evidence for changing a status."
-    },
-    {
-     "level": 0,
-     "text": "| VLAN | Name | Subnet | Gateway |"
-    },
-    {
-     "level": 0,
-     "text": "| --- | --- | --- | --- |"
-    },
-    {
-     "level": 0,
-     "text": "| 10 | Sales | 192.168.10.0/24 | 192.168.10.1 |"
-    },
-    {
-     "level": 0,
-     "text": "| 20 | Admin | 192.168.20.0/24 | 192.168.20.1 |"
-    },
-    {
-     "level": 0,
-     "text": "| 30 | Voice | 192.168.30.0/24 | 192.168.30.1 |"
-    },
-    {
-     "level": 0,
-     "text": "| 99 | Native (no hosts, no IP) | none | none |"
-    },
-    {
-     "level": 0,
-     "text": "| 100 | Management | 192.168.100.0/24 | 192.168.100.1 |"
-    },
-    {
-     "level": 0,
-     "text": "Hosts: PC1 192.168.10.11 and PC3 192.168.10.12 (Sales). PC2 192.168.20.11 and PC4 192.168.20.12 (Admin). Switch management: S1 192.168.100.11, S2 192.168.100.12. All /24. The four subnets do not overlap (calculated). ADDED"
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "VLANs and access ports on one switch",
@@ -4311,8 +4311,8 @@
  "generatedFrom": "CC08.docx",
  "totalWords": 15360,
  "wordBreakdown": {
-  "sections": 11799,
-  "labs": 1202,
+  "sections": 11956,
+  "labs": 1045,
   "quizzes": 1630,
   "currency": 510,
   "sources": 219

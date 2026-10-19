@@ -15,10 +15,18 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v7";
+const VERSION = "v8";
 // The app lives at the scope root. A navigation to any OTHER in-scope path
-// (e.g. /dashboard/) must not be stored under the shell's "index.html" key, or
-// it would overwrite the real shell and break offline navigation for the app.
+// must not be stored under the shell's "index.html" key, or it would overwrite
+// the real shell and break offline navigation for the app.
+//
+// "/dashboard/" is the example that no longer exists. It was a standalone
+// three-panel prototype with its own index.html, app.js and styles.css, never
+// linked from anywhere, holding only hardcoded mock data - it reported
+// "Network Fundamentals / Page 58 of 420" whether you had read anything or not.
+// Its useful part, per-course progress and ticking labs off, is now on the real
+// progress page, on real records. The directory was removed rather than left
+// behind as a second dashboard showing invented numbers.
 const SCOPE = new URL(self.registration.scope).pathname;
 const SHELL_CACHE = `field-manual-shell-${VERSION}`;
 const DATA_CACHE = `field-manual-data-${VERSION}`;

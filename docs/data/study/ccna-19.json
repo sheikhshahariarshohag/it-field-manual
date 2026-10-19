@@ -7,7 +7,7 @@
  "display": "Chapter 19: Wireless Technologies",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 8366,
+ "words": 8401,
  "sections": [
   {
    "title": "About this chapter",
@@ -1988,6 +1988,16 @@
    "words": 116
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Lab 1 uses your own Windows laptop. Labs 2 and 3 use Cisco Packet Tracer. Lab 4 is calculations. Write down what you actually saw, including mistakes, in the self-assessment table and in your tracker."
+    }
+   ],
+   "words": 35
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2115,16 +2125,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Lab 1 uses your own Windows laptop. Labs 2 and 3 use Cisco Packet Tracer. Lab 4 is calculations. Write down what you actually saw, including mistakes, in the self-assessment table and in your tracker."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Inspect real Wi-Fi on your own laptop",
@@ -3501,8 +3501,8 @@
  "generatedFrom": "CC19.docx",
  "totalWords": 11064,
  "wordBreakdown": {
-  "sections": 8366,
-  "labs": 712,
+  "sections": 8401,
+  "labs": 677,
   "quizzes": 1411,
   "currency": 401,
   "sources": 174

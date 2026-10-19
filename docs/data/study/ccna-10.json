@@ -7,7 +7,7 @@
  "display": "Chapter 10: Access Lists",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 9620,
+ "words": 9675,
  "sections": [
   {
    "title": "About this chapter",
@@ -2722,6 +2722,16 @@
    "words": 106
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED The labs use Cisco Packet Tracer. Interface names and some outputs differ between Packet Tracer versions and from real routers, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided."
+    }
+   ],
+   "words": 55
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2849,16 +2859,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "ADDED The labs use Cisco Packet Tracer. Interface names and some outputs differ between Packet Tracer versions and from real routers, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Build the network and test a standard ACL",
@@ -4548,8 +4548,8 @@
  "generatedFrom": "CC10.docx",
  "totalWords": 13393,
  "wordBreakdown": {
-  "sections": 9620,
-  "labs": 1093,
+  "sections": 9675,
+  "labs": 1038,
   "quizzes": 1772,
   "currency": 632,
   "sources": 276

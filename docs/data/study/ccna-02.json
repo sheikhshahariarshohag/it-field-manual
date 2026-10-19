@@ -7,7 +7,7 @@
  "display": "Chapter 2: TCP/IP",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 6822,
+ "words": 6873,
  "sections": [
   {
    "title": "About this chapter",
@@ -1802,6 +1802,20 @@
    "words": 91
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. Labs are written for Cisco Packet Tracer and your own PC. After each one, record what you actually saw in the tracker row (Practical lab, Evidence / mistakes). Simulators differ from real equipment, so write down your real results."
+    }
+   ],
+   "words": 51
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -1909,20 +1923,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WARNING"
-    },
-    {
-     "level": 0,
-     "text": "Before you start. I cannot run a Cisco simulator for you. Labs are written for Cisco Packet Tracer and your own PC. After each one, record what you actually saw in the tracker row (Practical lab, Evidence / mistakes). Simulators differ from real equipment, so write down your real results."
-    }
-   ]
-  },
   {
    "number": "2.1",
    "title": "Port-number drill (paper, 10 minutes)",
@@ -2979,8 +2979,8 @@
  "generatedFrom": "CC02.docx",
  "totalWords": 9121,
  "wordBreakdown": {
-  "sections": 6822,
-  "labs": 985,
+  "sections": 6873,
+  "labs": 934,
   "quizzes": 864,
   "currency": 339,
   "sources": 111

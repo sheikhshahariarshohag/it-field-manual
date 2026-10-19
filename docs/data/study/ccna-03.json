@@ -7,7 +7,7 @@
  "display": "Chapter 3: Easy Subnetting",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 5500,
+ "words": 5533,
  "sections": [
   {
    "title": "About this chapter",
@@ -1460,6 +1460,20 @@
    "words": 61
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. These labs are written for Cisco Packet Tracer. Record what you actually saw in the tracker (Practical lab, Evidence / mistakes)."
+    }
+   ],
+   "words": 33
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -1535,20 +1549,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WARNING"
-    },
-    {
-     "level": 0,
-     "text": "Before you start. I cannot run a Cisco simulator for you. These labs are written for Cisco Packet Tracer. Record what you actually saw in the tracker (Practical lab, Evidence / mistakes)."
-    }
-   ]
-  },
   {
    "number": "3.1",
    "title": "The \"What do we know?\" table (paper, 15 minutes)",
@@ -2291,8 +2291,8 @@
  "generatedFrom": "CC03.docx",
  "totalWords": 7222,
  "wordBreakdown": {
-  "sections": 5500,
-  "labs": 613,
+  "sections": 5533,
+  "labs": 580,
   "quizzes": 730,
   "currency": 267,
   "sources": 112

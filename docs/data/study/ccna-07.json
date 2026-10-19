@@ -7,7 +7,7 @@
  "display": "Chapter 7: Layer 2 Switching",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 4526,
+ "words": 4558,
  "sections": [
   {
    "title": "About this chapter",
@@ -1276,6 +1276,16 @@
    "words": 99
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer with 2960 switches and PCs. Simulator output may differ from real switches. Write down what you actually saw, including mistakes, in the self-assessment table and in your tracker."
+    }
+   ],
+   "words": 32
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -1387,16 +1397,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Use Cisco Packet Tracer with 2960 switches and PCs. Simulator output may differ from real switches. Write down what you actually saw, including mistakes, in the self-assessment table and in your tracker."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Watch the MAC table learn",
@@ -2235,8 +2235,8 @@
  "generatedFrom": "CC07.docx",
  "totalWords": 6406,
  "wordBreakdown": {
-  "sections": 4526,
-  "labs": 503,
+  "sections": 4558,
+  "labs": 471,
   "quizzes": 924,
   "currency": 302,
   "sources": 151

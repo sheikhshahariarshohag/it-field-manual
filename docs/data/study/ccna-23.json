@@ -7,7 +7,7 @@
  "display": "Chapter 23: Configuration Management",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 8816,
+ "words": 8892,
  "sections": [
   {
    "title": "About this chapter",
@@ -2436,6 +2436,20 @@
    "words": 113
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run these tools for you. Cisco Packet Tracer cannot be used as an Ansible target for this chapter. Ansible runs on a Linux (or WSL) computer and needs real or emulated Cisco devices with SSH, such as Cisco CML, GNS3 or EVE-NG CHECK . Labs 23.1 to 23.3, 23.6 and 23.7 need no network equipment. Record what you actually did and saw in the tracker (Practical lab, Evidence / mistakes)."
+    }
+   ],
+   "words": 76
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2543,20 +2557,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WARNING"
-    },
-    {
-     "level": 0,
-     "text": "Before you start. I cannot run these tools for you. Cisco Packet Tracer cannot be used as an Ansible target for this chapter. Ansible runs on a Linux (or WSL) computer and needs real or emulated Cisco devices with SSH, such as Cisco CML, GNS3 or EVE-NG CHECK . Labs 23.1 to 23.3, 23.6 and 23.7 need no network equipment. Record what you actually did and saw in the tracker (Practical lab, Evidence / mistakes)."
-    }
-   ]
-  },
   {
    "number": "23.1",
    "title": "Which team does what? (paper, 15 minutes)",
@@ -3535,8 +3535,8 @@
  "generatedFrom": "CC23.docx",
  "totalWords": 11288,
  "wordBreakdown": {
-  "sections": 8816,
-  "labs": 919,
+  "sections": 8892,
+  "labs": 843,
   "quizzes": 934,
   "currency": 434,
   "sources": 185

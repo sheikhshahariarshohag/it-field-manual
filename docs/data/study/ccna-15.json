@@ -7,7 +7,7 @@
  "display": "Chapter 15: Virtual Private Networks (VPNs)",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 8801,
+ "words": 8875,
  "sections": [
   {
    "title": "About this chapter",
@@ -2192,6 +2192,16 @@
    "words": 126
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED The labs use Cisco Packet Tracer. Interface names, GRE support and some outputs differ between Packet Tracer versions and from real routers, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided. IPsec configuration is not part of these labs, because the exam only asks you to describe IPsec."
+    }
+   ],
+   "words": 74
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2335,16 +2345,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "ADDED The labs use Cisco Packet Tracer. Interface names, GRE support and some outputs differ between Packet Tracer versions and from real routers, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided. IPsec configuration is not part of these labs, because the exam only asks you to describe IPsec."
-    }
-   ]
-  },
   {
    "number": "",
    "title": "Lab topology (used by Labs 1 to 5)",
@@ -4233,8 +4233,8 @@
  "generatedFrom": "CC15.docx",
  "totalWords": 12764,
  "wordBreakdown": {
-  "sections": 8801,
-  "labs": 1239,
+  "sections": 8875,
+  "labs": 1165,
   "quizzes": 1758,
   "currency": 688,
   "sources": 278

@@ -602,19 +602,28 @@ function buildUnit(doc, n, fileCode) {
   }
 
   /*
-   * The labs preamble becomes a lab of its own.
+   * The labs preamble becomes a SECTION, not a lab.
    *
    * "Before you start. I cannot run a Cisco simulator for you. These labs are
    * written for Cisco Packet Tracer (or GNS3, or CML)..." is the sentence that
    * stops a reader wasting an evening looking for a simulator the document
    * cannot provide. It sits before the first "Lab N.M" heading, so it has no
    * lab to belong to and was being dropped.
+   *
+   * It was first rescued onto `labs`, which kept the words but gave a warning
+   * a "Lab" kicker and a tick box reading "I have done this lab" - against a
+   * paragraph that says the labs cannot be run for you at all. There is no such
+   * thing as having done it. A section renders in the contents with no tick,
+   * which is the honest shape.
+   *
+   * This also corrects the corpus count: 146 labs was 123 real ones plus
+   * these 23. It is now 123.
    */
   if (preamble.length) {
-    labs.unshift({
-      number: "",
+    sections.push({
       title: "Before you start",
       content: preamble,
+      words: wordsOf(preamble),
     });
   }
 

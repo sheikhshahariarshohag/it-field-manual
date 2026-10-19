@@ -7,7 +7,7 @@
  "display": "Chapter 4: Troubleshooting IP Addressing",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 4057,
+ "words": 4093,
  "sections": [
   {
    "title": "About this chapter",
@@ -922,6 +922,20 @@
    "words": 106
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. Labs are written for Cisco Packet Tracer and your own PC. Record what you actually saw in the tracker (Practical lab, Evidence / mistakes)."
+    }
+   ],
+   "words": 36
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -997,20 +1011,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WARNING"
-    },
-    {
-     "level": 0,
-     "text": "Before you start. I cannot run a Cisco simulator for you. Labs are written for Cisco Packet Tracer and your own PC. Record what you actually saw in the tracker (Practical lab, Evidence / mistakes)."
-    }
-   ]
-  },
   {
    "number": "4.1",
    "title": "Run the four steps on your own PC (10 minutes)",
@@ -1660,8 +1660,8 @@
  "generatedFrom": "CC04.docx",
  "totalWords": 5698,
  "wordBreakdown": {
-  "sections": 4057,
-  "labs": 687,
+  "sections": 4093,
+  "labs": 651,
   "quizzes": 642,
   "currency": 228,
   "sources": 84

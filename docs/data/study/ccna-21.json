@@ -7,7 +7,7 @@
  "display": "Chapter 21: Virtualization, Automation, and Programmability",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 9607,
+ "words": 9696,
  "sections": [
   {
    "title": "About this chapter",
@@ -2552,6 +2552,24 @@
    "words": 97
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The chapter points to bonus labs on the author's website (page 662) but has no labs in the chapter pages (661 to 688). The labs below are new. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Labs 2, 3, and 4 need only Python 3 on your own computer and no network. I ran the scripts in the build environment and the results shown are what they printed. Your computer may differ slightly. Labs 1 and 5 depend on software or services I did not run, so their results are CHECK ."
+    }
+   ],
+   "words": 89
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2715,24 +2733,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WHAT THE BOOK SAYS"
-    },
-    {
-     "level": 0,
-     "text": "The chapter points to bonus labs on the author's website (page 662) but has no labs in the chapter pages (661 to 688). The labs below are new. ADDED"
-    },
-    {
-     "level": 0,
-     "text": "Labs 2, 3, and 4 need only Python 3 on your own computer and no network. I ran the scripts in the build environment and the results shown are what they printed. Your computer may differ slightly. Labs 1 and 5 depend on software or services I did not run, so their results are CHECK ."
-    }
-   ]
-  },
   {
    "number": "0",
    "title": "Paper lab, read the JSON",
@@ -4547,8 +4547,8 @@
  "generatedFrom": "CC21.docx",
  "totalWords": 13255,
  "wordBreakdown": {
-  "sections": 9607,
-  "labs": 1427,
+  "sections": 9696,
+  "labs": 1338,
   "quizzes": 1333,
   "currency": 627,
   "sources": 261

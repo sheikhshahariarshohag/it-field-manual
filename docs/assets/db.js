@@ -264,7 +264,33 @@ export async function importPersonal(raw) {
     if (have.has(b)) continue;
     await put("bookmarks", b, {});
   }
-  for (const p of progress) await store.setProgress(p.id, { status: p.status, score: p.score });
+  /*
+   * Carries the flags that say WHAT a progress record is about.
+   *
+   * This line used to copy only status and score. Everything that
+   * distinguishes one kind of progress from another was dropped on the way in:
+   *
+   *   unit / lab  setStudyStatus writes `unit: true`, the lab checklist writes
+   *               `lab: true`. Without them an imported lab tick is
+   *               indistinguishable from a completed chapter, and it would be
+   *               counted in the "marked complete" total and the ring. That is
+   *               the same numerator/denominator mismatch the progress page
+   *               already had to be fixed for once.
+   *   at          the activity heatmap is drawn from this. Losing it blanks the
+   *               heatmap for everything imported, so exporting and reimporting
+   *               your own data loses your history.
+   *   completed_at  the "done" date.
+   */
+  for (const p of progress) {
+    await store.setProgress(p.id, {
+      status: p.status,
+      score: p.score,
+      ...(p.unit ? { unit: true } : {}),
+      ...(p.lab ? { lab: true } : {}),
+      ...(p.at ? { at: p.at } : {}),
+      ...(p.completed_at ? { completed_at: p.completed_at } : {}),
+    });
+  }
   for (const q of quiz) await store.saveQuiz(q.id, { answers: q.answers, score: q.score, submitted_at: q.submitted_at });
 
   return {

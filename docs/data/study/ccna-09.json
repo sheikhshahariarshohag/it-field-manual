@@ -7,7 +7,7 @@
  "display": "Chapter 9: Enhanced Switched Technologies",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 9057,
+ "words": 9113,
  "sections": [
   {
    "title": "About this chapter",
@@ -2440,6 +2440,16 @@
    "words": 88
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Default tool: Cisco Packet Tracer. No lab was run while writing this document, so each expected result is based on how the protocol should work. Simulator output may differ from real equipment. CHECK Record what you actually saw in the tracker: set Practical lab to Done or Needs redo and note surprises in Evidence / mistakes."
+    }
+   ],
+   "words": 56
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2571,16 +2581,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Default tool: Cisco Packet Tracer. No lab was run while writing this document, so each expected result is based on how the protocol should work. Simulator output may differ from real equipment. CHECK Record what you actually saw in the tracker: set Practical lab to Done or Needs redo and note surprises in Evidence / mistakes."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Watch the default STP elect a root",
@@ -4033,8 +4033,8 @@
  "generatedFrom": "CC09.docx",
  "totalWords": 12286,
  "wordBreakdown": {
-  "sections": 9057,
-  "labs": 1195,
+  "sections": 9113,
+  "labs": 1139,
   "quizzes": 1235,
   "currency": 554,
   "sources": 245

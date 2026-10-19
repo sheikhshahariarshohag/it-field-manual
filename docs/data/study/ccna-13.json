@@ -7,7 +7,7 @@
  "display": "Chapter 13: Security",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 8312,
+ "words": 8392,
  "sections": [
   {
    "title": "About this chapter",
@@ -2436,6 +2436,24 @@
    "words": 54
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Default tool: Cisco Packet Tracer. Record what you actually saw. Packet Tracer does not behave exactly like real IOS, so every expected result is CHECK ."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Packet Tracer limits (not tested by me): AAA servers (RADIUS and TACACS+) exist as a server service on some end devices; DHCP snooping, DAI and sticky port security support varies by version and device model. If a command is missing, note it and try virtual IOS (CML or GNS3) or real hardware. CHECK"
+    }
+   ],
+   "words": 80
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2563,24 +2581,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Default tool: Cisco Packet Tracer. Record what you actually saw. Packet Tracer does not behave exactly like real IOS, so every expected result is CHECK ."
-    },
-    {
-     "level": 0,
-     "text": "VERIFY"
-    },
-    {
-     "level": 0,
-     "text": "Packet Tracer limits (not tested by me): AAA servers (RADIUS and TACACS+) exist as a server service on some end devices; DHCP snooping, DAI and sticky port security support varies by version and device model. If a command is missing, note it and try virtual IOS (CML or GNS3) or real hardware. CHECK"
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Device passwords",
@@ -4225,8 +4225,8 @@
  "generatedFrom": "CC13.docx",
  "totalWords": 10816,
  "wordBreakdown": {
-  "sections": 8312,
-  "labs": 607,
+  "sections": 8392,
+  "labs": 527,
   "quizzes": 1312,
   "currency": 442,
   "sources": 143

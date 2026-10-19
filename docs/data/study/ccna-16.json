@@ -7,7 +7,7 @@
  "display": "Chapter 16: Quality of Service (QoS)",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 5368,
+ "words": 5412,
  "sections": [
   {
    "title": "About this chapter",
@@ -1422,6 +1422,20 @@
    "words": 107
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. The chapter has no configuration, so these labs are mostly paper exercises, with one optional device lab. Record what you actually did and saw in the tracker (Practical lab, Evidence / mistakes)."
+    }
+   ],
+   "words": 44
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -1505,20 +1519,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WARNING"
-    },
-    {
-     "level": 0,
-     "text": "Before you start. I cannot run a Cisco simulator for you. The chapter has no configuration, so these labs are mostly paper exercises, with one optional device lab. Record what you actually did and saw in the tracker (Practical lab, Evidence / mistakes)."
-    }
-   ]
-  },
   {
    "number": "16.1",
    "title": "Choose the mechanism (paper, 15 minutes)",
@@ -2395,8 +2395,8 @@
  "generatedFrom": "CC16.docx",
  "totalWords": 7380,
  "wordBreakdown": {
-  "sections": 5368,
-  "labs": 773,
+  "sections": 5412,
+  "labs": 729,
   "quizzes": 840,
   "currency": 276,
   "sources": 123

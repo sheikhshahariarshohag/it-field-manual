@@ -7,7 +7,7 @@
  "display": "Chapter 14: First Hop Redundancy Protocol (HSRP)",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 7701,
+ "words": 8007,
  "sections": [
   {
    "title": "About this chapter",
@@ -1984,6 +1984,84 @@
    "words": 130
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The chapter points to bonus labs on the author's website (page 412) but has no labs in the chapter pages (411 to 432). The labs below are new. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (three routers, one switch, two PCs, one server). All expected results are CHECK : nothing here was run in Packet Tracer or on real equipment, and the simulator may not support every HSRP feature (for example tracking or version 2)."
+    },
+    {
+     "level": 0,
+     "text": "| Device | Interface | Address | Role |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 | G0/0 | 192.168.10.2/24 | LAN side, HSRP member (will be active) |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 | G0/1 | 10.0.13.1/30 | Link to R3 (uplink, tracked in Lab 4) |"
+    },
+    {
+     "level": 0,
+     "text": "| R2 | G0/0 | 192.168.10.3/24 | LAN side, HSRP member (will be standby) |"
+    },
+    {
+     "level": 0,
+     "text": "| R2 | G0/1 | 10.0.23.1/30 | Link to R3 |"
+    },
+    {
+     "level": 0,
+     "text": "| R3 (\"core / Internet\") | G0/0, G0/1, G0/2 | 10.0.13.2/30, 10.0.23.2/30, 192.0.2.1/24 | Connects both gateways and the server |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual router | (HSRP) | 192.168.10.1 | Gateway for the PCs |"
+    },
+    {
+     "level": 0,
+     "text": "| PC1, PC2 | NIC | 192.168.10.11, .12 /24 | Gateway 192.168.10.1 (after Lab 1) |"
+    },
+    {
+     "level": 0,
+     "text": "| Server | NIC | 192.0.2.10/24 | Gateway 192.0.2.1 |"
+    },
+    {
+     "level": 0,
+     "text": "Routes CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ip route 0.0.0.0 0.0.0.0 10.0.13.2"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# ip route 0.0.0.0 0.0.0.0 10.0.23.2"
+    },
+    {
+     "level": 0,
+     "text": "R3(config)# ip route 192.168.10.0 255.255.255.0 10.0.23.1"
+    },
+    {
+     "level": 0,
+     "text": "Script check: all LAN addresses are in 192.168.10.0/24 and unique, both links are valid /30 networks with .1 and .2 in the same subnet, and nothing overlaps. R3 sends return traffic for the LAN through R2 only, so replies may come back by a different router than the one that forwarded the request. That works here, but a real network would use a routing protocol so R3 learns the LAN from both routers. ADDED"
+    }
+   ],
+   "words": 306
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2115,84 +2193,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WHAT THE BOOK SAYS"
-    },
-    {
-     "level": 0,
-     "text": "The chapter points to bonus labs on the author's website (page 412) but has no labs in the chapter pages (411 to 432). The labs below are new. ADDED"
-    },
-    {
-     "level": 0,
-     "text": "Use Cisco Packet Tracer (three routers, one switch, two PCs, one server). All expected results are CHECK : nothing here was run in Packet Tracer or on real equipment, and the simulator may not support every HSRP feature (for example tracking or version 2)."
-    },
-    {
-     "level": 0,
-     "text": "| Device | Interface | Address | Role |"
-    },
-    {
-     "level": 0,
-     "text": "| --- | --- | --- | --- |"
-    },
-    {
-     "level": 0,
-     "text": "| R1 | G0/0 | 192.168.10.2/24 | LAN side, HSRP member (will be active) |"
-    },
-    {
-     "level": 0,
-     "text": "| R1 | G0/1 | 10.0.13.1/30 | Link to R3 (uplink, tracked in Lab 4) |"
-    },
-    {
-     "level": 0,
-     "text": "| R2 | G0/0 | 192.168.10.3/24 | LAN side, HSRP member (will be standby) |"
-    },
-    {
-     "level": 0,
-     "text": "| R2 | G0/1 | 10.0.23.1/30 | Link to R3 |"
-    },
-    {
-     "level": 0,
-     "text": "| R3 (\"core / Internet\") | G0/0, G0/1, G0/2 | 10.0.13.2/30, 10.0.23.2/30, 192.0.2.1/24 | Connects both gateways and the server |"
-    },
-    {
-     "level": 0,
-     "text": "| Virtual router | (HSRP) | 192.168.10.1 | Gateway for the PCs |"
-    },
-    {
-     "level": 0,
-     "text": "| PC1, PC2 | NIC | 192.168.10.11, .12 /24 | Gateway 192.168.10.1 (after Lab 1) |"
-    },
-    {
-     "level": 0,
-     "text": "| Server | NIC | 192.0.2.10/24 | Gateway 192.0.2.1 |"
-    },
-    {
-     "level": 0,
-     "text": "Routes CHECK"
-    },
-    {
-     "level": 0,
-     "text": "R1(config)# ip route 0.0.0.0 0.0.0.0 10.0.13.2"
-    },
-    {
-     "level": 0,
-     "text": "R2(config)# ip route 0.0.0.0 0.0.0.0 10.0.23.2"
-    },
-    {
-     "level": 0,
-     "text": "R3(config)# ip route 192.168.10.0 255.255.255.0 10.0.23.1"
-    },
-    {
-     "level": 0,
-     "text": "Script check: all LAN addresses are in 192.168.10.0/24 and unique, both links are valid /30 networks with .1 and .2 in the same subnet, and nothing overlaps. R3 sends return traffic for the LAN through R2 only, so replies may come back by a different router than the one that forwarded the request. That works here, but a real network would use a routing protocol so R3 learns the LAN from both routers. ADDED"
-    }
-   ]
-  },
   {
    "number": "0",
    "title": "Paper lab, MACs and elections",
@@ -3222,8 +3222,8 @@
  "generatedFrom": "CC14.docx",
  "totalWords": 10736,
  "wordBreakdown": {
-  "sections": 7701,
-  "labs": 1317,
+  "sections": 8007,
+  "labs": 1011,
   "quizzes": 989,
   "currency": 500,
   "sources": 229

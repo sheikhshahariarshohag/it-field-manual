@@ -7,7 +7,7 @@
  "display": "Chapter 6: Open Shortest Path First (OSPF)",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 7859,
+ "words": 7923,
  "sections": [
   {
    "title": "About this chapter",
@@ -2134,6 +2134,16 @@
    "words": 83
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (routers such as the 2911, which has Gi0/0, Gi0/1 and Gi0/2). Interface names may differ for your model. Simulator output can differ from real equipment, so each lab has a CHECK note. Write down what you actually saw, including mistakes, in the self-assessment table at the end of this document and in your tracker (Practical lab: Done or Needs redo)."
+    }
+   ],
+   "words": 64
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2261,16 +2271,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Use Cisco Packet Tracer (routers such as the 2911, which has Gi0/0, Gi0/1 and Gi0/2). Interface names may differ for your model. Simulator output can differ from real equipment, so each lab has a CHECK note. Write down what you actually saw, including mistakes, in the self-assessment table at the end of this document and in your tracker (Practical lab: Done or Needs redo)."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Single-area OSPF on three routers, then point-to-point",
@@ -3679,8 +3679,8 @@
  "generatedFrom": "CC06.docx",
  "totalWords": 11176,
  "wordBreakdown": {
-  "sections": 7859,
-  "labs": 1314,
+  "sections": 7923,
+  "labs": 1250,
   "quizzes": 1424,
   "currency": 397,
   "sources": 182

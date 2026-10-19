@@ -7,7 +7,7 @@
  "display": "Chapter 20: Configuring Wireless",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 8514,
+ "words": 8616,
  "sections": [
   {
    "title": "About this chapter",
@@ -2526,6 +2526,24 @@
    "words": 51
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Wireless is hard to lab. Record what you actually saw and what tool you used. Every expected result is CHECK ."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Tool limits (not tested by me). Cisco Packet Tracer includes a WLC and lightweight AP in some versions with a limited GUI (WLAN creation with WPA2-PSK). It will not show AireOS CLI output like the book, and CAPWAP is simulated. For a real WLC feel, use a virtual 9800 controller in Cisco CML or a lab WLC. If you have none, do Labs 1 and 2 (switch side and option 43) and read the GUI screens in the book. CHECK"
+    }
+   ],
+   "words": 102
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2649,24 +2667,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Wireless is hard to lab. Record what you actually saw and what tool you used. Every expected result is CHECK ."
-    },
-    {
-     "level": 0,
-     "text": "VERIFY"
-    },
-    {
-     "level": 0,
-     "text": "Tool limits (not tested by me). Cisco Packet Tracer includes a WLC and lightweight AP in some versions with a limited GUI (WLAN creation with WPA2-PSK). It will not show AireOS CLI output like the book, and CAPWAP is simulated. For a real WLC feel, use a virtual 9800 controller in Cisco CML or a lab WLC. If you have none, do Labs 1 and 2 (switch side and option 43) and read the GUI screens in the book. CHECK"
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Switch side for a WLC and APs",
@@ -4183,8 +4183,8 @@
  "generatedFrom": "CC20.docx",
  "totalWords": 10805,
  "wordBreakdown": {
-  "sections": 8514,
-  "labs": 669,
+  "sections": 8616,
+  "labs": 567,
   "quizzes": 1137,
   "currency": 358,
   "sources": 127

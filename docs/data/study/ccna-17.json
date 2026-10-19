@@ -7,7 +7,7 @@
  "display": "Chapter 17: Internet Protocol Version 6 (IPv6)",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 9261,
+ "words": 9322,
  "sections": [
   {
    "title": "About this chapter",
@@ -2694,6 +2694,16 @@
    "words": 49
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Default tool: Cisco Packet Tracer. No lab was run while writing this document, so each expected result is based on how the protocol should work. Simulator output may differ from real equipment. CHECK Use the documentation prefix 2001:db8::/32. Record what you actually saw in the tracker: set Practical lab to Done or Needs redo and note surprises in Evidence / mistakes."
+    }
+   ],
+   "words": 61
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2845,16 +2855,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Default tool: Cisco Packet Tracer. No lab was run while writing this document, so each expected result is based on how the protocol should work. Simulator output may differ from real equipment. CHECK Use the documentation prefix 2001:db8::/32. Record what you actually saw in the tracker: set Practical lab to Done or Needs redo and note surprises in Evidence / mistakes."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Manual IPv6 addressing and static routes",
@@ -4668,8 +4668,8 @@
  "generatedFrom": "CC17.docx",
  "totalWords": 12669,
  "wordBreakdown": {
-  "sections": 9261,
-  "labs": 1191,
+  "sections": 9322,
+  "labs": 1130,
   "quizzes": 1402,
   "currency": 624,
   "sources": 191

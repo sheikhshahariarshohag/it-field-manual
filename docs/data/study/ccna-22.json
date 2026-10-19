@@ -7,7 +7,7 @@
  "display": "Chapter 22: SDN Controllers",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 11251,
+ "words": 11328,
  "sections": [
   {
    "title": "About this chapter",
@@ -2724,6 +2724,16 @@
    "words": 129
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED Labs 1 and 2 use Cisco Packet Tracer. Lab 3 uses Cisco's free DevNet sandbox, so it needs no equipment but depends on that sandbox being available. Interface names, supported commands and outputs differ between Packet Tracer versions and from real devices, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided."
+    }
+   ],
+   "words": 77
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2883,16 +2893,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "ADDED Labs 1 and 2 use Cisco Packet Tracer. Lab 3 uses Cisco's free DevNet sandbox, so it needs no equipment but depends on that sandbox being available. Interface names, supported commands and outputs differ between Packet Tracer versions and from real devices, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "Build a spine/leaf Layer 3 underlay",
@@ -4788,8 +4788,8 @@
  "generatedFrom": "CC22.docx",
  "totalWords": 15358,
  "wordBreakdown": {
-  "sections": 11251,
-  "labs": 1487,
+  "sections": 11328,
+  "labs": 1410,
   "quizzes": 1710,
   "currency": 676,
   "sources": 234

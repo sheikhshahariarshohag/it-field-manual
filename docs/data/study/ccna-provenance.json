@@ -9,8 +9,8 @@
    "sourceWords": 7644,
    "sourceDistinctWords": 1445,
    "unitWords": 8547,
-   "sections": 14,
-   "labs": 6,
+   "sections": 15,
+   "labs": 5,
    "questions": 22
   },
   {
@@ -20,8 +20,8 @@
    "sourceWords": 7971,
    "sourceDistinctWords": 1365,
    "unitWords": 9121,
-   "sections": 13,
-   "labs": 7,
+   "sections": 14,
+   "labs": 6,
    "questions": 31
   },
   {
@@ -31,8 +31,8 @@
    "sourceWords": 6045,
    "sourceDistinctWords": 917,
    "unitWords": 7222,
-   "sections": 12,
-   "labs": 5,
+   "sections": 13,
+   "labs": 4,
    "questions": 22
   },
   {
@@ -42,8 +42,8 @@
    "sourceWords": 5021,
    "sourceDistinctWords": 860,
    "unitWords": 5698,
-   "sections": 11,
-   "labs": 5,
+   "sections": 12,
+   "labs": 4,
    "questions": 22
   },
   {
@@ -53,8 +53,8 @@
    "sourceWords": 9689,
    "sourceDistinctWords": 1253,
    "unitWords": 10929,
-   "sections": 15,
-   "labs": 8,
+   "sections": 16,
+   "labs": 7,
    "questions": 34
   },
   {
@@ -64,8 +64,8 @@
    "sourceWords": 9917,
    "sourceDistinctWords": 1291,
    "unitWords": 11176,
-   "sections": 15,
-   "labs": 5,
+   "sections": 16,
+   "labs": 4,
    "questions": 54
   },
   {
@@ -75,8 +75,8 @@
    "sourceWords": 5847,
    "sourceDistinctWords": 1068,
    "unitWords": 6406,
-   "sections": 12,
-   "labs": 4,
+   "sections": 13,
+   "labs": 3,
    "questions": 38
   },
   {
@@ -86,8 +86,8 @@
    "sourceWords": 13814,
    "sourceDistinctWords": 1404,
    "unitWords": 15360,
-   "sections": 14,
-   "labs": 6,
+   "sections": 15,
+   "labs": 5,
    "questions": 50
   },
   {
@@ -97,8 +97,8 @@
    "sourceWords": 11148,
    "sourceDistinctWords": 1449,
    "unitWords": 12286,
-   "sections": 16,
-   "labs": 7,
+   "sections": 17,
+   "labs": 6,
    "questions": 49
   },
   {
@@ -108,8 +108,8 @@
    "sourceWords": 11803,
    "sourceDistinctWords": 1303,
    "unitWords": 13393,
-   "sections": 15,
-   "labs": 5,
+   "sections": 16,
+   "labs": 4,
    "questions": 62
   },
   {
@@ -119,8 +119,8 @@
    "sourceWords": 9382,
    "sourceDistinctWords": 1113,
    "unitWords": 10305,
-   "sections": 14,
-   "labs": 7,
+   "sections": 15,
+   "labs": 6,
    "questions": 38
   },
   {
@@ -130,8 +130,8 @@
    "sourceWords": 8855,
    "sourceDistinctWords": 1308,
    "unitWords": 10054,
-   "sections": 15,
-   "labs": 5,
+   "sections": 16,
+   "labs": 4,
    "questions": 62
   },
   {
@@ -141,8 +141,8 @@
    "sourceWords": 9540,
    "sourceDistinctWords": 1695,
    "unitWords": 10816,
-   "sections": 20,
-   "labs": 4,
+   "sections": 21,
+   "labs": 3,
    "questions": 62
   },
   {
@@ -152,8 +152,8 @@
    "sourceWords": 9772,
    "sourceDistinctWords": 1192,
    "unitWords": 10736,
-   "sections": 14,
-   "labs": 8,
+   "sections": 15,
+   "labs": 7,
    "questions": 43
   },
   {
@@ -163,8 +163,8 @@
    "sourceWords": 11345,
    "sourceDistinctWords": 1445,
    "unitWords": 12764,
-   "sections": 12,
-   "labs": 7,
+   "sections": 13,
+   "labs": 6,
    "questions": 63
   },
   {
@@ -174,8 +174,8 @@
    "sourceWords": 6415,
    "sourceDistinctWords": 1156,
    "unitWords": 7380,
-   "sections": 13,
-   "labs": 6,
+   "sections": 14,
+   "labs": 5,
    "questions": 30
   },
   {
@@ -185,8 +185,8 @@
    "sourceWords": 11054,
    "sourceDistinctWords": 1577,
    "unitWords": 12669,
-   "sections": 17,
-   "labs": 8,
+   "sections": 18,
+   "labs": 7,
    "questions": 67
   },
   {
@@ -196,8 +196,8 @@
    "sourceWords": 17291,
    "sourceDistinctWords": 1809,
    "unitWords": 19564,
-   "sections": 16,
-   "labs": 6,
+   "sections": 17,
+   "labs": 5,
    "questions": 62
   },
   {
@@ -207,8 +207,8 @@
    "sourceWords": 9738,
    "sourceDistinctWords": 1729,
    "unitWords": 11064,
-   "sections": 16,
-   "labs": 5,
+   "sections": 17,
+   "labs": 4,
    "questions": 59
   },
   {
@@ -218,8 +218,8 @@
    "sourceWords": 9549,
    "sourceDistinctWords": 1418,
    "unitWords": 10805,
-   "sections": 19,
-   "labs": 5,
+   "sections": 20,
+   "labs": 4,
    "questions": 58
   },
   {
@@ -229,8 +229,8 @@
    "sourceWords": 11823,
    "sourceDistinctWords": 1630,
    "unitWords": 13255,
-   "sections": 16,
-   "labs": 7,
+   "sections": 17,
+   "labs": 6,
    "questions": 63
   },
   {
@@ -240,8 +240,8 @@
    "sourceWords": 13559,
    "sourceDistinctWords": 1851,
    "unitWords": 15358,
-   "sections": 18,
-   "labs": 4,
+   "sections": 19,
+   "labs": 3,
    "questions": 67
   },
   {
@@ -251,8 +251,8 @@
    "sourceWords": 10324,
    "sourceDistinctWords": 1598,
    "unitWords": 11288,
-   "sections": 18,
-   "labs": 8,
+   "sections": 19,
+   "labs": 7,
    "questions": 34
   }
  ]

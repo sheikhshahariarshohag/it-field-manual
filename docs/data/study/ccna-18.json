@@ -7,7 +7,7 @@
  "display": "Chapter 18: Troubleshooting IP, IPv6, and VLANs",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 14729,
+ "words": 14820,
  "sections": [
   {
    "title": "About this chapter",
@@ -3388,6 +3388,16 @@
    "words": 161
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (or another lab tool). Packet Tracer can behave differently from real equipment, and I could not run it here. Every output below is what you should expect, not something I saw. CHECK After each lab, write down what you actually saw in the tracker table at the end. That record is the evidence for changing a status. Labs 1, 2 and 4 are \"find the fault\" labs: build the working network first, save a copy, then break it (or ask someone to) and troubleshoot with the method."
+    }
+   ],
+   "words": 91
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -3539,16 +3549,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Use Cisco Packet Tracer (or another lab tool). Packet Tracer can behave differently from real equipment, and I could not run it here. Every output below is what you should expect, not something I saw. CHECK After each lab, write down what you actually saw in the tracker table at the end. That record is the evidence for changing a status. Labs 1, 2 and 4 are \"find the fault\" labs: build the working network first, save a copy, then break it (or ask someone to) and troubleshoot with the method."
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "IPv4 method with planted faults",
@@ -5464,8 +5464,8 @@
  "generatedFrom": "CC18.docx",
  "totalWords": 19564,
  "wordBreakdown": {
-  "sections": 14729,
-  "labs": 2025,
+  "sections": 14820,
+  "labs": 1934,
   "quizzes": 1953,
   "currency": 612,
   "sources": 245

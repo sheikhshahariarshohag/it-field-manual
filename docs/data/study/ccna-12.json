@@ -7,7 +7,7 @@
  "display": "Chapter 12: IP Services",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 7337,
+ "words": 7422,
  "sections": [
   {
    "title": "About this chapter",
@@ -2266,6 +2266,24 @@
    "words": 70
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Default tool: Cisco Packet Tracer. Record what you actually saw in the Self-Assessment table. Packet Tracer does not behave exactly like real IOS, so every expected result is marked CHECK ."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Packet Tracer limits (not tested by me): some versions have no LLDP commands, NTP and SNMP support is partial, and SSH key sizes or show output may differ. If a command is missing, say so in your notes and try it on virtual IOS (for example CML or GNS3) or real equipment. CHECK"
+    }
+   ],
+   "words": 85
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2385,24 +2403,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "Default tool: Cisco Packet Tracer. Record what you actually saw in the Self-Assessment table. Packet Tracer does not behave exactly like real IOS, so every expected result is marked CHECK ."
-    },
-    {
-     "level": 0,
-     "text": "VERIFY"
-    },
-    {
-     "level": 0,
-     "text": "Packet Tracer limits (not tested by me): some versions have no LLDP commands, NTP and SNMP support is partial, and SSH key sizes or show output may differ. If a command is missing, say so in your notes and try it on virtual IOS (for example CML or GNS3) or real equipment. CHECK"
-    }
-   ]
-  },
   {
    "number": "1",
    "title": "CDP and LLDP",
@@ -4102,8 +4102,8 @@
  "generatedFrom": "CC12.docx",
  "totalWords": 10054,
  "wordBreakdown": {
-  "sections": 7337,
-  "labs": 771,
+  "sections": 7422,
+  "labs": 686,
   "quizzes": 1342,
   "currency": 412,
   "sources": 192

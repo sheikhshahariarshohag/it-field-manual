@@ -3171,3 +3171,87 @@ html[data-theme="dark"] .sidenav__block {
 .rd-s__body p.pl-p { line-height: 1.72; }
 .rd-s__body > .pl-p + .pl-p { margin-top: 12px; }
 .rd-s__body .pl-h { color: var(--text); font-weight: 700; }
+
+/* ============================================================ progress page --
+   Per-course progress and the lab checklist, promoted from the standalone
+   prototype in docs/dashboard/ (now removed).
+
+   Every colour here is an existing token. The contrast gate in
+   scripts/check-prose-contrast.mjs checks declared token pairs, so a new
+   literal hex in this block would sit outside it - these have to be tokens
+   for the guarantee to hold. .cbar's fill is a UI component edge, not text,
+   and rides the same 3:1 rule the sidebar bars already meet. */
+
+.dashsec {
+  margin: 26px 0;
+}
+.dashsec > h2 { margin: 0 0 4px; }
+
+/* --- one card per study manual ---------------------------------------- */
+.coursegrid {
+  display: grid; gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  margin-top: 12px;
+}
+.course {
+  display: block; padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: inherit; text-decoration: none;
+}
+a.course:hover { border-color: var(--accent); background: var(--surface-2); }
+.course__hd {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 10px; margin-bottom: 8px;
+}
+.course__t { color: var(--text); font-size: .95rem; }
+.course__pct {
+  color: var(--text-dim); font-size: .82rem;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.course__meta {
+  display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 8px;
+  color: var(--text-dim); font-size: .78rem;
+}
+
+/* The bar animates with transform, not width, so filling it does not
+   relayout the card. */
+.cbar {
+  height: 4px; border-radius: 2px; overflow: hidden;
+  background: var(--line-soft);
+}
+.cbar i {
+  display: block; height: 100%; width: 100%;
+  background: var(--accent);
+  transform-origin: left center; transform: scaleX(0);
+  transition: transform .25s ease;
+}
+
+/* --- lab checklist ----------------------------------------------------- */
+.lablist { list-style: none; margin: 12px 0 0; padding: 0; }
+.lablist__row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 12px; padding: 7px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.lablist__row:last-child { border-bottom: 0; }
+.lablist__row strong { display: block; font-weight: 600; }
+.lablist__row small { color: var(--text-dim); font-size: .78rem; }
+
+/* --- the tick beside a lab --------------------------------------------- */
+.labtick {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin: 0 0 12px; padding: 6px 12px 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text-dim); font-size: .82rem;
+  cursor: pointer; user-select: none;
+}
+.labtick:hover { border-color: var(--accent); color: var(--text); }
+.labtick:has(.labtick__box:checked) {
+  border-color: var(--ok); color: var(--text);
+}
+.labtick__box { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
+.labtick__box:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }

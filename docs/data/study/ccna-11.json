@@ -7,7 +7,7 @@
  "display": "Chapter 11: Network Address Translation (NAT)",
  "exam": "CCNA 200-301",
  "subject": "cisco",
- "words": 7458,
+ "words": 7720,
  "sections": [
   {
    "title": "About this chapter",
@@ -2028,6 +2028,68 @@
    "words": 135
   },
   {
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The chapter introduction (page 320) says hands-on labs are provided at the end of the chapter. There are no labs in the chapter pages (319 to 336). The labs below are new. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (two routers, one switch, three PCs, two servers). Public addresses come from the documentation ranges (RFC 5737), so they never clash with the real Internet. All expected results are CHECK : nothing here was run in Packet Tracer or on real equipment, and the simulator may behave differently."
+    },
+    {
+     "level": 0,
+     "text": "| Device | Interface | Address | Role |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 (corporate border) | G0/0 | 192.168.10.1/24 | NAT inside |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 | G0/1 | 198.51.100.2/30 | NAT outside |"
+    },
+    {
+     "level": 0,
+     "text": "| ISP router | G0/0 | 198.51.100.1/30 | Link to R1 |"
+    },
+    {
+     "level": 0,
+     "text": "| ISP router | G0/1 | 192.0.2.1/24 | The \"Internet\" side |"
+    },
+    {
+     "level": 0,
+     "text": "| PC1, PC2, PC3 | NIC | 192.168.10.11, .12, .13 /24 | Gateway 192.168.10.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| SRV1 | NIC | 192.168.10.100/24 | Inside server, gateway 192.168.10.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| NetSrv | NIC | 192.0.2.10/24 | Internet server, gateway 192.0.2.1. Turn on the HTTP service. |"
+    },
+    {
+     "level": 0,
+     "text": "| Customer public block | (not on an interface) | 203.0.113.0/29 (usable .1 to .6) | Static .2, dynamic pool .3 to .4, PAT pool .5 |"
+    },
+    {
+     "level": 0,
+     "text": "Script check: the public block, the WAN link, and the inside LAN do not overlap. ACL 1 below (192.168.10.0 with wildcard 0.0.0.31) covers .0 to .31, so it matches PC1 to PC3 and does not match SRV1 (.100)."
+    }
+   ],
+   "words": 262
+  },
+  {
    "title": "Before you answer",
    "content": [
     {
@@ -2151,68 +2213,6 @@
   }
  ],
  "labs": [
-  {
-   "number": "",
-   "title": "Before you start",
-   "content": [
-    {
-     "level": 0,
-     "text": "WHAT THE BOOK SAYS"
-    },
-    {
-     "level": 0,
-     "text": "The chapter introduction (page 320) says hands-on labs are provided at the end of the chapter. There are no labs in the chapter pages (319 to 336). The labs below are new. ADDED"
-    },
-    {
-     "level": 0,
-     "text": "Use Cisco Packet Tracer (two routers, one switch, three PCs, two servers). Public addresses come from the documentation ranges (RFC 5737), so they never clash with the real Internet. All expected results are CHECK : nothing here was run in Packet Tracer or on real equipment, and the simulator may behave differently."
-    },
-    {
-     "level": 0,
-     "text": "| Device | Interface | Address | Role |"
-    },
-    {
-     "level": 0,
-     "text": "| --- | --- | --- | --- |"
-    },
-    {
-     "level": 0,
-     "text": "| R1 (corporate border) | G0/0 | 192.168.10.1/24 | NAT inside |"
-    },
-    {
-     "level": 0,
-     "text": "| R1 | G0/1 | 198.51.100.2/30 | NAT outside |"
-    },
-    {
-     "level": 0,
-     "text": "| ISP router | G0/0 | 198.51.100.1/30 | Link to R1 |"
-    },
-    {
-     "level": 0,
-     "text": "| ISP router | G0/1 | 192.0.2.1/24 | The \"Internet\" side |"
-    },
-    {
-     "level": 0,
-     "text": "| PC1, PC2, PC3 | NIC | 192.168.10.11, .12, .13 /24 | Gateway 192.168.10.1 |"
-    },
-    {
-     "level": 0,
-     "text": "| SRV1 | NIC | 192.168.10.100/24 | Inside server, gateway 192.168.10.1 |"
-    },
-    {
-     "level": 0,
-     "text": "| NetSrv | NIC | 192.0.2.10/24 | Internet server, gateway 192.0.2.1. Turn on the HTTP service. |"
-    },
-    {
-     "level": 0,
-     "text": "| Customer public block | (not on an interface) | 203.0.113.0/29 (usable .1 to .6) | Static .2, dynamic pool .3 to .4, PAT pool .5 |"
-    },
-    {
-     "level": 0,
-     "text": "Script check: the public block, the WAN link, and the inside LAN do not overlap. ACL 1 below (192.168.10.0 with wildcard 0.0.0.31) covers .0 to .31, so it matches PC1 to PC3 and does not match SRV1 (.100)."
-    }
-   ]
-  },
   {
    "number": "0",
    "title": "Paper lab, name the four addresses",
@@ -3220,8 +3220,8 @@
  "generatedFrom": "CC11.docx",
  "totalWords": 10305,
  "wordBreakdown": {
-  "sections": 7458,
-  "labs": 1125,
+  "sections": 7720,
+  "labs": 863,
   "quizzes": 985,
   "currency": 483,
   "sources": 254
