@@ -59,10 +59,26 @@ for (const f of readdirSync(NEW).filter((x) => x.endsWith(".json"))) {
     if (lostWords <= 5) console.log(`  LOST in ${f}: ${gone.slice(0, 12).join(" ")}`);
   }
 
-  for (const items of Object.values(after.sections || {})) {
+  /*
+   * Multi-line blocks outside the diagram section must look like diagrams.
+   *
+   * Inside `sections.diagram` they are diagrams BY SECTION - the exporter
+   * already treats every line there as art - so the geometry test does not
+   * apply. It never did: a drawing assembled only from pipes and words has no
+   * geometry anywhere in it, and requiring geometry there flagged the very
+   * drawings this check was supposed to be protecting. Those are 6 of the 136
+   * blocks, all of them restored by the section-kind fix in
+   * scripts/export-knowledge-content.mjs.
+   *
+   * The test stays exactly as strict as before for every other section, where a
+   * multi-line block with no geometry really does mean a wrapped paragraph was
+   * mistaken for art.
+   */
+  for (const [kind, items] of Object.entries(after.sections || {})) {
     for (const t of items) {
       if (!String(t).includes("\n")) continue;
       artItems++;
+      if (kind === "diagram") continue;
       const lines = String(t).split("\n").filter((l) => l.trim());
       const shaped = lines.some((l) => GEOMETRY.test(l) || BOX.test(l));
       if (!shaped || lines.length < 2) {

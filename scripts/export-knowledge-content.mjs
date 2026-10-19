@@ -180,7 +180,40 @@ function looksLikeArt(t, inArt = false) {
  * needs the source re-extracted with diagram blocks marked up explicitly, not
  * a looser guess at line content.
  */
-function blocks(body) {
+/*
+ * Reassemble the PDF's hard-wrapped lines into whole items.
+ *
+ * `kind` is the SECTION this body came from, and it answers a question the
+ * line-level tests cannot answer on their own.
+ *
+ * WHY THE SECTION KIND BEATS GUESSING AT THE LINES
+ *
+ * looksLikeArt() decides a line is a drawing by looking for geometry: box
+ * drawing characters, or a `+---` / `|---|` run. That works for most diagrams
+ * and fails for a whole class of them. A drawing assembled only from pipes and
+ * words -
+ *
+ *     |
+ *     | Applications (...)
+ *     |
+ *     | Subsystem DLLs ...
+ *
+ * has no geometry anywhere in it, so the run never opens, and the final
+ * whitespace collapse flattens the drawing to one line. Measured across the
+ * corpus: 31 of 123 diagram sections shipped as a single flattened string,
+ * which is why the renderer fix could only rescue the other 87. Those newlines
+ * are not in the shipped JSON; they have to come back from the source.
+ *
+ * But the exporter is standing inside "18. Visual Diagram" and knows it. In that
+ * section every line IS art, by definition. So a diagram section skips the
+ * guess entirely.
+ *
+ * `kind` is optional: every other section passes nothing and behaves exactly as
+ * before. That matters, because the sentence and bullet rules below are
+ * load-bearing for the prose - they are what stops Memory Anchors from being
+ * emptied - and this must not disturb them.
+ */
+function blocks(body, kind) {
   const out = [];
   let cur = null;
   let art = null;
@@ -192,8 +225,11 @@ function blocks(body) {
     art = null;
   };
 
+  // In a diagram section, art is the default rather than the exception.
+  const inDiagram = kind === "diagram";
+
   for (const { text, bullet } of body) {
-    if (looksLikeArt(text, !!art)) {
+    if (inDiagram || looksLikeArt(text, !!art)) {
       // Art never continues a sentence, and a sentence never continues art.
       if (cur) { out.push(cur); cur = null; }
       if (!art) art = [];
@@ -312,7 +348,7 @@ for (const s of outline.sessions) {
 
   const body = {};
   for (const kind of ordered) {
-    const items = blocks(sections[kind]);
+    const items = blocks(sections[kind], kind);
     if (items.length) body[kind] = items;
   }
 
