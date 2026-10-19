@@ -1,0 +1,5132 @@
+{
+ "id": "ccna-22",
+ "n": 22,
+ "sourceNumber": "CC22",
+ "kind": "chapter",
+ "title": "SDN Controllers",
+ "display": "Chapter 22: SDN Controllers",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 11251,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 22"
+    },
+    {
+     "level": 0,
+     "text": "SDN Controllers"
+    },
+    {
+     "level": 0,
+     "text": "This manual replaces Chapter 22 of CCNA Certification Study Guide, Volume 2 (Exam 200-301) by Todd Lammle (2020), book pages 689 to 742. It follows the book's order. It adds simple explanations, command breakdowns, labs and quizzes, and it marks every place where this document differs from the book."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 689 to 742 (PDF pages 747 to 800; page offset +58 confirmed in this session) |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 22 - SDN Controllers, plus 22.1 to 22.8 and their subtopics (40 rows). The Seq numbers are not listed here because the Notion tracker could not be reached in this chat. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 5 to 7 hours including the labs. This is a suggestion, not a measured need. It is the longest chapter so far. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | v1.1 (retires 2 Feb 2027) and v2.0 (first exam day 3 Feb 2027). The book targets the original 200-301 v1.0. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Nothing in this document assumes you already know any of it. |"
+    },
+    {
+     "level": 3,
+     "text": "Tag legend"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is outdated or unclear. The text says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified, or only a simulator or general knowledge. Verify before relying on it. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives. The book lists these exam topics for this chapter (v1.0 wording): 1.1.e Controllers (Cisco DNA Center and WLC); 6.2 Compare traditional networks with controller-based networking; 6.3 Describe controller-based and software defined architectures (overlay, underlay, and fabric), with 6.3.a Separation of control plane and data plane and 6.3.b North-bound and south-bound APIs; 6.4 Compare traditional campus device management with Cisco DNA Center enabled device management."
+    },
+    {
+     "level": 0,
+     "text": "After this chapter you should be able to:"
+    },
+    {
+     "level": 0,
+     "text": "1. Explain what an NMS and an NCM do, and how SNMP, traps and syslog fit in."
+    },
+    {
+     "level": 0,
+     "text": "2. Name the management, control and data planes and say what runs in each."
+    },
+    {
+     "level": 0,
+     "text": "3. Explain what SDN is, and what the northbound and southbound interfaces are."
+    },
+    {
+     "level": 0,
+     "text": "4. Compare the campus (3-tier) and spine/leaf (Clos) architectures."
+    },
+    {
+     "level": 0,
+     "text": "5. Explain underlay, overlay and fabric."
+    },
+    {
+     "level": 0,
+     "text": "6. Describe what a controller such as Cisco DNA Center (now Catalyst Center) adds compared with traditional tools and with manual work."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. The underlay addressing, link counts and address-space comparisons in this document were calculated with a Python script (ipaddress module). Product facts were checked against Cisco pages, IETF RFC references in Cisco documents, and the sources listed at the end. No command here was run on real Cisco equipment or in Packet Tracer. Outputs are illustrative and tagged CHECK ."
+    }
+   ],
+   "words": 486
+  },
+  {
+   "title": "Where this chapter fits in the exam",
+   "content": [
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Big change. The official v2.0 outline (read in this session) has no line for underlay, overlay, fabric, northbound or southbound APIs, or Cisco DNA Center. It has 5.3 Describe network management approaches (device-based, cloud-based, controller-based, automation-based, and infrastructure as code), 5.4 Describe the function of SNMP in network operations, and 5.6 Interpret syslog message content, severity levels, and facilities. In v1.1 (secondary sources), 6.4 was replaced by an AI and machine learning topic, and 1.1.e became just \"Controllers\". So the product-specific Catalyst Center parts of this chapter are now background, while SNMP, syslog and the idea of controller-based management still matter."
+    },
+    {
+     "level": 0,
+     "text": "The v1.1 wording comes from secondary sources, because Cisco's own v1.1 PDF was not opened in this session CHECK . Cisco says that related topics may also appear on any exam."
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1 NMS: SNMP, traps, syslog (22.1.1 to 22.1.7) | 4.4 SNMP and 4.5 syslog CHECK | 5.4 SNMP and 5.6 syslog | High for SNMP and syslog, low for the product screens |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.2 NCM (configuration managers) | 6.1 automation CHECK | 5.3 (automation-based approaches) | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.3 Traditional networking: management, control, data planes, forwarding | 6.3.a | Not listed as such; background for 5.3 | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.4 Introduction to SDN: northbound and southbound interfaces, solutions | 6.3.b | Not listed; background for 5.3 (controller-based) | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.5 Separating the control plane, 22.6 controller-based architectures | 6.2, 6.3.a | 5.3 (controller-based, cloud-based) | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.6.1 Campus and 22.6.2 spine/leaf | 1.2 and 6.3 CHECK | Not listed (the 3-tier and spine-leaf topics are not in the v2.0 list) | Low to medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.7 Underlay, overlay, fabric | 6.3 | Not listed | Low to medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8 DNA Center (Catalyst Center) features, 22.8.1 to 22.8.11 | 1.1.e and old 6.4 (replaced in v1.1) | Not listed; background for 5.3 | Low |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.12 Restful API | 6.5 | Not listed in v2.0 (official) | Low (REST is covered in Chapter 21) |"
+    }
+   ],
+   "words": 358
+  },
+  {
+   "title": "Step 0: Pre-check (do this before you read)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer all five from memory. Do not look anything up. Write K (I know it), U (unsure) or G (I guessed) next to each. Answers are in Answer Key A at the end. Be honest: a lucky guess is not knowledge."
+    },
+    {
+     "level": 0,
+     "text": "- Which protocol does a network monitoring system use to poll devices for information? Confidence: K / U / G"
+    },
+    {
+     "level": 0,
+     "text": "- Name the three planes of a router. Confidence: K / U / G"
+    },
+    {
+     "level": 0,
+     "text": "- What is the northbound interface of an SDN controller used for? Confidence: K / U / G"
+    },
+    {
+     "level": 0,
+     "text": "- In one sentence each, what are the underlay and the overlay? Confidence: K / U / G"
+    },
+    {
+     "level": 0,
+     "text": "- Which plane does OSPF run in? Confidence: K / U / G"
+    }
+   ],
+   "words": 124
+  },
+  {
+   "title": "22.1 Traditional Network Monitoring Systems (NMS)",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 690 and 691. A network team learns about problems in two ways: angry users, or a Network Monitoring System (NMS) that alerts them. An NMS continuously polls your devices using SNMP so it can spot misbehaving ones. It also records performance such as ICMP response times, how much traffic flows, and (depending on the product) applications and VoIP call quality."
+    },
+    {
+     "level": 0,
+     "text": "- By default an NMS polls devices about every couple of minutes."
+    },
+    {
+     "level": 0,
+     "text": "- A device can also send an SNMP trap on its own, for example when an interface goes down."
+    },
+    {
+     "level": 0,
+     "text": "- Alerts can go out as email, SMS (for the person on call), or as an alert on a screen in the Network Operations Center."
+    },
+    {
+     "level": 0,
+     "text": "The book demonstrates SolarWinds Network Performance Monitor and mentions Cisco Prime Infrastructure."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED The book says DNA Center is the successor of Prime Infrastructure. Cisco's product page says Prime Infrastructure 3.10 is no longer sold (end of sale 29 September 2023, end of support 30 September 2028) and tells users to consider switching to Cisco Catalyst Center or Cisco Meraki Dashboard. Cisco's data sheet says Catalyst Center is the former Cisco DNA Center. Verification: official Cisco pages."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED SNMP in plain words. An SNMP manager (the NMS) asks an SNMP agent (on the device) for values, or the agent sends an unrequested trap or inform. The values live in a MIB and each has an OID (a number path). Versions: SNMPv1 and v2c use a plain-text community string (like a password); SNMPv3 adds real authentication and encryption. Polls and requests normally use UDP 161, and traps use UDP 162. CHECK (general knowledge)"
+    },
+    {
+     "level": 2,
+     "text": "22.1.1 Configuring SNMP"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 691 and 692. The book configures a Catalyst 3750X switch."
+    },
+    {
+     "level": 0,
+     "text": "SNMP and traps BOOK"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)#snmp-server community testlabRO RO"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)#snmp-server community testlabRW RW"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)#snmp-server host 10.20.2.115 traps testlabTRAPS"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)#snmp-server source-interface traps vlan 310"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)#snmp-server enable traps"
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server community testlabRO RO creates a read-only community string. The NMS can read but not change."
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server community testlabRW RW creates a read-write community string. The NMS can also make changes. This is more dangerous."
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server host 10.20.2.115 traps testlabTRAPS tells the switch where to send traps, and which community string to use for them."
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server source-interface traps vlan 310 chooses which interface's address the traps come from."
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server enable traps turns on all supported traps. Add one trap name to enable just that one, and use no to turn one off. Type snmp-server enable traps ? to see the list on your device."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED Use SNMPv3 where you can. The book uses community strings (SNMPv1/v2c), which travel in plain text, and a read-write string with an easy name. In real networks: use SNMPv3 with authentication and encryption, limit which hosts may use a community with an ACL (this ties back to Chapter 10: snmp-server community <string> RO <acl>), and avoid read-write unless needed. CHECK for the exact commands on your IOS version."
+    },
+    {
+     "level": 0,
+     "text": "SNMPv3 example ADDED CHECK (syntax varies by version)"
+    },
+    {
+     "level": 0,
+     "text": "snmp-server group NMS-GROUP v3 priv"
+    },
+    {
+     "level": 0,
+     "text": "snmp-server user NMS-USER NMS-GROUP v3 auth sha <auth-password> priv aes 128 <priv-password>"
+    },
+    {
+     "level": 0,
+     "text": "snmp-server host 10.20.2.115 traps version 3 priv NMS-USER"
+    },
+    {
+     "level": 2,
+     "text": "22.1.2 Network Health"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 692 and 693. An NMS usually shows device status with three colours:"
+    },
+    {
+     "level": 0,
+     "text": "| Colour | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Green | Healthy nodes with no reported problems. |"
+    },
+    {
+     "level": 0,
+     "text": "| Yellow | Nodes that are up, but have reported issues, such as an interface that is down or a failed fan. |"
+    },
+    {
+     "level": 0,
+     "text": "| Red | Nodes that are not reachable and are probably down. |"
+    },
+    {
+     "level": 0,
+     "text": "The NMS has default rules about how to treat events (an interface down, a router reboot). Every NMS lets you customise alerts. The book jokes that with an open source NMS you may end up writing Java code at 3 a.m."
+    },
+    {
+     "level": 2,
+     "text": "22.1.3 Central Syslog"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 694 and 695. An NMS can also be the central syslog server. You can search and filter the many messages, and create rules, for example to run a script when an OSPF-related message arrives."
+    },
+    {
+     "level": 0,
+     "text": "Send syslog to the NMS BOOK"
+    },
+    {
+     "level": 0,
+     "text": "CSR31(config)#logging trap debugging"
+    },
+    {
+     "level": 0,
+     "text": "CSR31(config)#logging host 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "- logging trap debugging sets the severity level of messages sent to the syslog server. debugging is level 7, the highest and noisiest."
+    },
+    {
+     "level": 0,
+     "text": "- logging host 10.20.2.115 sets the IP address of the syslog server."
+    },
+    {
+     "level": 0,
+     "text": "| Level | Name | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 0 | emergencies | System unusable |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | alerts | Immediate action needed |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | critical | Critical condition |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | errors | Error condition |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | warnings | Warning condition |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | notifications | Normal but significant condition |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | informational | Informational message |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | debugging | Debugging messages |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Lower number = more severe. A setting of level N sends level N and all lower numbers. So logging trap warnings (4) sends levels 0 to 4."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED Why the book's level 7 is only for demos. debugging sends everything and floods the server. Real networks usually use informational (6) or notifications (5). The v2.0 exam (objective 5.6) asks you to interpret syslog messages, severity levels and facilities. A Cisco message looks like %LINK-3-UPDOWN: Interface Gi0/1, changed state to down: a facility (LINK), a severity number (3) and a mnemonic (UPDOWN). The level numbers above were checked against the standard list. CHECK for the exact message wording and for the \"facility\" meaning, because syslog itself also uses facility codes such as local0 to local7."
+    },
+    {
+     "level": 2,
+     "text": "22.1.4 Central SNMP Traps"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 695. Traps show up on the NMS much like syslog messages. The main difference: traps usually give a lot more detail than log messages. You can search by keyword, filter by device and set rules, for example to run something when a trap arrives."
+    },
+    {
+     "level": 2,
+     "text": "22.1.5 Interface Information"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 695 to 697. The NMS can graph interface utilization (how busy), a buffer misses graph (buffers overloaded) and an interface error graph. It can also show the interface description and the assigned VLAN name."
+    },
+    {
+     "level": 2,
+     "text": "22.1.6 Hardware Health"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 697. Hardware health is hard to follow manually unless you are on the box or notice a log message. The NMS presents an easy graph, so a failing part is noticed before \"the router blows up at 2 a.m.\"."
+    },
+    {
+     "level": 2,
+     "text": "22.1.7 Network Information"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 697 to 699. Two graphs the book highlights: Response Time and Packet Loss (good for \"slow Internet\" calls) and CPU Load and Memory Utilization (is the router healthy, should it be upgraded). The NMS also uses CDP information to see which devices are attached and which VLANs exist. It reads routing tables to detect route flapping (a route appearing and disappearing repeatedly) and can show whether a switch is in a stack."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK All screenshots (Figures 22.1 to 22.9) are from a 2019 SolarWinds lab. Product names, screens and features have changed since. Learn the ideas, not the screens."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which protocol does an NMS use to poll devices?"
+    },
+    {
+     "level": 0,
+     "text": "A. Telnet"
+    },
+    {
+     "level": 0,
+     "text": "B. SNMP"
+    },
+    {
+     "level": 0,
+     "text": "C. SMTP"
+    },
+    {
+     "level": 0,
+     "text": "D. RESTCONF"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the book says an NMS polls devices using SNMP."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What is the difference between an SNMP poll and an SNMP trap?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A poll is requested by the NMS. A trap is sent by the device on its own when something happens - traps usually carry more detail than syslog messages."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which syslog level number is \"debugging\", and is it more or less severe than \"errors\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Level 7, and it is the least severe - lower numbers are more severe. Errors is level 3."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which command sets the IP address of the syslog server?"
+    },
+    {
+     "level": 0,
+     "text": "A. logging trap 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "B. logging host 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "C. snmp-server host 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "D. syslog server 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - logging host sets the server. logging trap sets the severity level."
+    },
+    {
+     "level": 0,
+     "text": "Q5. Why is a read-write SNMP community string risky?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A device that knows it can change the configuration, and community strings travel in plain text - use SNMPv3 and ACLs where possible. ADDED"
+    }
+   ],
+   "words": 1378
+  },
+  {
+   "title": "22.2 Traditional Network Configuration Managers (NCM)",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 699 to 702. Monitoring tells you something is wrong. A Network Configuration Manager (NCM) manages your configurations. The book's question: if your main Internet router fails, do you copy and paste an old config from Notepad? A busy router can have hundreds or thousands of lines."
+    },
+    {
+     "level": 0,
+     "text": "An NCM can be the same server as the NMS, or a separate one. What it does:"
+    },
+    {
+     "level": 0,
+     "text": "- Backs up configurations by connecting to each device and copying the config to the server. Devices can also tell the NCM when a change happens."
+    },
+    {
+     "level": 0,
+     "text": "- Lets you search saved configs for keywords."
+    },
+    {
+     "level": 0,
+     "text": "- Lets you compare two versions to see what changed (useful after a crash or before a disaster)."
+    },
+    {
+     "level": 0,
+     "text": "- Lets you push configurations, and use templates with its own scripting language to make mass changes. Every NCM uses a different scripting engine."
+    },
+    {
+     "level": 0,
+     "text": "Let the NCM log in to a router BOOK"
+    },
+    {
+     "level": 0,
+     "text": "CSR31(config)#aaa new-model"
+    },
+    {
+     "level": 0,
+     "text": "CSR31(config)#aaa authentication login default local"
+    },
+    {
+     "level": 0,
+     "text": "CSR31(config)#username ncm secret ncmPass"
+    },
+    {
+     "level": 0,
+     "text": "CSR31(config)#enable sec ncmEnable"
+    },
+    {
+     "level": 0,
+     "text": "- aaa new-model turns on the AAA system."
+    },
+    {
+     "level": 0,
+     "text": "- aaa authentication login default local makes logins check the local user list."
+    },
+    {
+     "level": 0,
+     "text": "- username ncm secret ncmPass creates a user for the NCM. The secret keyword stores the password hashed."
+    },
+    {
+     "level": 0,
+     "text": "- enable sec ncmEnable is the short form of enable secret ncmEnable. It sets the privileged mode password."
+    },
+    {
+     "level": 0,
+     "text": "The NCM must be able to Telnet or SSH into the device. NCMs can also use the SNMP read-write community to make changes."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED Use SSH, not Telnet, for NCM access, and never copy the book's example passwords (ncmPass, ncmEnable): they are lab values. SSH needs a hostname, a domain name and RSA keys on the device (the book's DNA Center upgrade pre-checks mention the same requirements). The book's answer key for Chapter 22, question 15, lists Telnet as an NCM protocol. Treat Telnet as a legacy answer."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The book says DNA Center uses Apache Velocity for templates (section 22.8.3). SolarWinds has a similar template feature with its own language (Figure 22.12). Figures 22.10 to 22.12 show the config overview, compare and push screens."
+    },
+    {
+     "level": 3,
+     "text": "NMS, NCM and manual work"
+    },
+    {
+     "level": 0,
+     "text": "| Task | Manual | NMS | NCM |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Know which devices are healthy | Log in to each device | Dashboard from SNMP polling | Not its job |"
+    },
+    {
+     "level": 0,
+     "text": "| Hear about a failure | Users complain | Traps, syslog, alerts | Not its job |"
+    },
+    {
+     "level": 0,
+     "text": "| Back up configs | Copy and paste into Notepad | Not its job | Scheduled backups |"
+    },
+    {
+     "level": 0,
+     "text": "| See what changed | Compare by eye | Not its job | Compare saved versions |"
+    },
+    {
+     "level": 0,
+     "text": "| Make a change on many devices | Log in to each one | Not its job | Push config, templates |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Short version: NMS = watch and alert (SNMP, syslog). NCM = back up, compare and push configs (SSH or Telnet, SNMP read-write). A controller such as Catalyst Center does both and more."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Name three things an NCM does."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Any three of: back up configs, search configs, compare versions, push configs, templates - these are the main NCM functions in the book."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What does the secret keyword do in username ncm secret ncmPass?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stores the password in a hashed form - it is safer than a plain password entry."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which is better for NCM login, Telnet or SSH, and why?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH, because Telnet sends everything in plain text - this is an update to the book's answer key. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which tool would you use to see what changed in a router's config last night?"
+    },
+    {
+     "level": 0,
+     "text": "A. NMS"
+    },
+    {
+     "level": 0,
+     "text": "B. NCM"
+    },
+    {
+     "level": 0,
+     "text": "C. A syslog filter"
+    },
+    {
+     "level": 0,
+     "text": "D. A ping"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - an NCM can compare saved configuration versions."
+    }
+   ],
+   "words": 640
+  },
+  {
+   "title": "22.3 Traditional Networking",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 702 to 706. To understand SDN you first need to see how a normal router sends a packet. Before it can forward, a router needs routes, learned from a static route, a default route or a routing protocol. The book uses OSPF for the example (the CCNA focuses on OSPF). The router then looks up the destination (Cisco uses Cisco Express Forwarding, CEF), needs an ARP entry for the next hop, decreases the TTL by one, and recalculates the IP header and Ethernet frame checksums before sending."
+    },
+    {
+     "level": 0,
+     "text": "Routers split these jobs into three planes:"
+    },
+    {
+     "level": 0,
+     "text": "| Plane | Job | Examples in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Management plane | Everything about logging in to and managing the device | Telnet, SSH, SNMP, HTTP and HTTPS (web interface), APIs such as REST, console port, AUX port, management port |"
+    },
+    {
+     "level": 0,
+     "text": "| Control plane | The brain. Runs the protocols and makes the decisions, to build the forwarding information | Routing protocols such as OSPF (adjacencies, route learning), ARP, STP, VTP, MAC address tables, QoS, CDP and LLDP, and the defining of ACLs and NAT |"
+    },
+    {
+     "level": 0,
+     "text": "| Data plane | The workhorse. Uses what the control plane built to forward the traffic | Encapsulating and de-encapsulating, adding and removing headers, dropping traffic that hits an ACL deny, moving the packet from the inbound to the outbound interface |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Plane quick sort. Management = how you reach the box (SSH, SNMP, HTTPS, console). Control = protocols and decisions (OSPF, ARP, STP, CDP/LLDP). Data = forwarding the actual traffic (the data plane does not run protocols)."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The book (page 703, and question 6 and its answer) puts CDP and LLDP in the control plane. Other sources put neighbour-discovery protocols elsewhere. For this exam, follow the book's classification. Also note the book says ACLs and NAT are defined in the control plane but drops traffic in the data plane: think of it as you define the rule, the data plane enforces it."
+    },
+    {
+     "level": 2,
+     "text": "22.3.1 Management Plane"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 702 and 703. Covers logging in (Telnet, SSH, not that we would ever use Telnet), SNMP (so an NMS can poll), HTTP and HTTPS, APIs (including REST, from the Automation chapter), and the console, AUX and management ports. In modern IOS-XE the web interface is much nicer than in early IOS (Figure 22.13)."
+    },
+    {
+     "level": 2,
+     "text": "22.3.2 Control Plane"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 703. The brain of the router: all the protocols run here and all the decisions are made. The goal is to produce the information needed to send the packet towards its destination."
+    },
+    {
+     "level": 2,
+     "text": "22.3.3 Data Plane"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 703 and 704. Everything that happens here directly affects traffic. It uses the control plane information to forward the packet."
+    },
+    {
+     "level": 2,
+     "text": "22.3.4 Forwarding"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 704 to 706. The book follows R02 forwarding a packet from R01 to R03 (Figures 22.14 and 22.15):"
+    },
+    {
+     "level": 0,
+     "text": "- OSPF on R02 forms adjacencies with R01 and R03, and the control plane receives routes in LSAs."
+    },
+    {
+     "level": 0,
+     "text": "- The LSAs go into the Link State Database (LSDB). It contains type 1 LSAs for each router and type 2 LSAs for DRs (unless the OSPF network type is changed)."
+    },
+    {
+     "level": 0,
+     "text": "- Neighbour information is kept in the neighbour table."
+    },
+    {
+     "level": 0,
+     "text": "- The neighbour table and the LSDB feed the routing table, where the best route is chosen (lowest metric, lowest administrative distance, longest match)."
+    },
+    {
+     "level": 0,
+     "text": "Then, on the data plane side:"
+    },
+    {
+     "level": 0,
+     "text": "- CEF takes the best routes from the routing table and installs them in the Forwarding Information Base (FIB)."
+    },
+    {
+     "level": 0,
+     "text": "- The ARP table is used to build the adjacency table. The forwarding table needs ARP resolved for the next hop before the route is valid."
+    },
+    {
+     "level": 0,
+     "text": "- The information is pushed to hardware for forwarding."
+    },
+    {
+     "level": 0,
+     "text": "How the tables relate (same idea as Figures 22.14 and 22.15) BOOK CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Control plane: Static routes / OSPF -> Neighbor table + LSDB -> Routing table ARP table"
+    },
+    {
+     "level": 0,
+     "text": "| |"
+    },
+    {
+     "level": 0,
+     "text": "Data plane: Incoming interface -> Forwarding table (FIB) + Adjacency table -> Outgoing interface"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED Commands to look at these tables on a Cisco router: show ip route (routing table), show ip ospf neighbor, show ip cef (FIB), show adjacency (adjacency table), show ip arp. The book says the full CEF story is outside the CCNA. CHECK for exact output on your platform."
+    },
+    {
+     "level": 0,
+     "text": "The book finishes with a reason SDN matters: adding a new VM in a traditional 3-tier network. The steps for a new VLAN and subnet that needs Internet access (Figure 22.16):"
+    },
+    {
+     "level": 0,
+     "text": "| # | Task in a traditional network |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Choose a new VLAN and subnet (hopefully with an IP address management tool). |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Make sure the VLAN exists on all switches (VTP can help). |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Configure STP so the new VLAN has the right root switch. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Add the VLAN to trunk allow lists. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Create an SVI on each distribution switch, and use an FHRP. |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | Add the new subnet to the routing protocol. |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | Update firewall rules, and configure NAT. |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | Adjust external routing, depending on requirements. |"
+    },
+    {
+     "level": 0,
+     "text": "Doing this often is slow and risky: it needs planning, change control, and clean-up when the VM is gone. This is the pain that a controller can automate."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which plane does SSH belong to?"
+    },
+    {
+     "level": 0,
+     "text": "A. Management"
+    },
+    {
+     "level": 0,
+     "text": "B. Control"
+    },
+    {
+     "level": 0,
+     "text": "C. Data"
+    },
+    {
+     "level": 0,
+     "text": "D. None of them"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - SSH, Telnet, SNMP and HTTPS are management plane."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which plane runs OSPF?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The control plane - the control plane runs protocols and makes decisions."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which plane drops a packet that hits an ACL deny?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The data plane - the data plane enforces the rule on actual traffic."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What does CEF build from the routing table?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The Forwarding Information Base (FIB) - the adjacency table is built from ARP."
+    },
+    {
+     "level": 0,
+     "text": "Q5. What does the data plane do about protocols?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It does not run protocols; it forwards traffic - the book's answer to review question 7."
+    }
+   ],
+   "words": 1027
+  },
+  {
+   "title": "22.4 Introduction to SDN",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 706 to 709. An SDN solution has two important interfaces. You reach the controller through the Northbound Interface (NBI), which is similar to the management plane. The controller reaches the network devices through the Southbound Interface (SBI)."
+    },
+    {
+     "level": 0,
+     "text": "SDN architecture (same idea as Figure 22.17) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Users / Scripts"
+    },
+    {
+     "level": 0,
+     "text": "|"
+    },
+    {
+     "level": 0,
+     "text": "API"
+    },
+    {
+     "level": 0,
+     "text": "|"
+    },
+    {
+     "level": 0,
+     "text": "Northbound Interface (NBI)"
+    },
+    {
+     "level": 0,
+     "text": "|"
+    },
+    {
+     "level": 0,
+     "text": "SDN Controller (control plane)"
+    },
+    {
+     "level": 0,
+     "text": "|"
+    },
+    {
+     "level": 0,
+     "text": "Southbound Interface (SBI)"
+    },
+    {
+     "level": 0,
+     "text": "|"
+    },
+    {
+     "level": 0,
+     "text": "Network devices (data plane)"
+    },
+    {
+     "level": 2,
+     "text": "22.4.1 Northbound Interfaces"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 707. You use the NBI to get something done through the controller, usually with a GUI (for example in Meraki) or a RESTful API call inside a script. You can use any scripting language, because all the script does is call the REST API. Through the NBI you can create VLANs, list devices, poll network health, and even automate the VM scenario above."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "NBI = how users, scripts and apps talk to the controller (REST API, GUI). SBI = how the controller talks to the devices."
+    },
+    {
+     "level": 2,
+     "text": "22.4.2 Southbound Interfaces"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 708. There are many ways for the controller to talk to devices. The book lists four:"
+    },
+    {
+     "level": 0,
+     "text": "| SBI | What the book says | Today |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| OpenFlow | Industry-standard API defined by the ONF. Configures non-proprietary \"white label\" switches and determines the flow path. Sends detailed, complex instructions to the control plane of the elements: an imperative SDN model. Used by OpenDaylight. | Cisco prefers its own solutions because of OpenFlow limits (book). |"
+    },
+    {
+     "level": 0,
+     "text": "| NETCONF | IETF-standard network management protocol. With RPC you install, change and delete device configuration, using XML. | Widely used. See the verified facts below. |"
+    },
+    {
+     "level": 0,
+     "text": "| onePK | Cisco-proprietary. Lets you inspect or change device configuration. SDKs for Java, C and Python. | Legacy, though still found (book). |"
+    },
+    {
+     "level": 0,
+     "text": "| OpFlex | Used by Cisco ACI. A declarative model: the controller (Cisco calls it the APIC) sends a more abstract \"summary policy\", and the devices apply it with their own (partly centralised) control planes. | Used by ACI. |"
+    },
+    {
+     "level": 0,
+     "text": "|  | Imperative | Declarative |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| What the controller sends | Detailed, step-by-step instructions | The desired result (a summary policy) |"
+    },
+    {
+     "level": 0,
+     "text": "| Who works out the details | The controller | The devices, with their own control planes |"
+    },
+    {
+     "level": 0,
+     "text": "| Example in the book | OpenFlow | OpFlex (Cisco ACI) |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED NETCONF facts, checked against Cisco IOS XE documents: NETCONF is defined in RFC 6241, uses XML and an RPC mechanism, runs over SSH with TCP port 830 as the default, and models data with YANG. RESTCONF (RFC 8040) is the related YANG-based, REST-like interface. The book does not mention YANG or RESTCONF. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The book says of OpenFlow: \"All configuration is done via NETCONF.\" OpenFlow itself programs flow entries in a switch. Configuring the switch (ports, controller address) through NETCONF is a separate ONF specification called OF-Config. Treat the book's sentence as too simple. The review answer you need is: OpenDaylight uses OpenFlow."
+    },
+    {
+     "level": 2,
+     "text": "22.4.3 SDN Solutions"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 708 and 709. Controllers you may meet:"
+    },
+    {
+     "level": 0,
+     "text": "| Solution | Book says | Note |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Cisco APIC-EM | Cisco's first enterprise SDN controller, focused on IWAN. Legacy. Succeeded by DNA Center. | Legacy. BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| Cisco DNA Center | Cisco's main enterprise SDN controller. | Now called Cisco Catalyst Center (Cisco data sheet). UPDATED |"
+    },
+    {
+     "level": 0,
+     "text": "| Cisco ACI | Cisco's data center SDN solution (APIC controller). | Data Center track. |"
+    },
+    {
+     "level": 0,
+     "text": "| Cisco SD-WAN | Brings SDN to the WAN. | Cisco has renamed parts of this product line. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| OpenDaylight (ODL) | Popular open source OpenFlow controller (Figure 22.18). | Cisco gives limited OpenFlow support. |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the northbound interface used for?"
+    },
+    {
+     "level": 0,
+     "text": "A. Talking to the network devices"
+    },
+    {
+     "level": 0,
+     "text": "B. Letting users and scripts interact with the controller"
+    },
+    {
+     "level": 0,
+     "text": "C. Tracking AP performance"
+    },
+    {
+     "level": 0,
+     "text": "D. Routing traffic out of the network"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the NBI is how you reach the controller, usually through a GUI or REST API."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OpenFlow for OpenDaylight and OpFlex for ACI - the book's review questions 8 and 9."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which model sends detailed instructions: imperative or declarative?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Imperative (OpenFlow) - OpFlex is declarative and sends a summary policy."
+    },
+    {
+     "level": 0,
+     "text": "Q4. NETCONF uses which transport and default port?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH and TCP port 830 - Cisco IOS XE documentation. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Q5. Which Cisco SBI is legacy?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: onePK - the book says it is legacy but may still be found."
+    }
+   ],
+   "words": 783
+  },
+  {
+   "title": "22.5 Separating the Control Plane",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 709 and 710. \"SDN\" can mean many things, but it generally means separating the control plane from the data plane on a network device. Devices can then be managed centrally by a controller instead of one at a time."
+    },
+    {
+     "level": 0,
+     "text": "Separating the control plane (same idea as Figures 22.19 and 22.20) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Traditional: Controller-based (SDN):"
+    },
+    {
+     "level": 0,
+     "text": "[Control plane] [Control plane] [ SDN Controller: control plane ]"
+    },
+    {
+     "level": 0,
+     "text": "| | | |"
+    },
+    {
+     "level": 0,
+     "text": "[Data plane]--trunk--[Data plane] [Data plane]--trunk--[Data plane]"
+    },
+    {
+     "level": 0,
+     "text": "Each device has its own control plane. One central control plane; devices only forward."
+    },
+    {
+     "level": 0,
+     "text": "Meraki is the book's example. Everything in the Meraki line is managed from the cloud, so the devices mostly provide the data plane. Good: you can manage everything from anywhere (there is even an app). Bad: devices must reach the Meraki cloud before you can manage them, which is awkward when you are trying to fix an outage. Meraki does give basic local management tools to help troubleshoot connection problems (Figure 22.20)."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The book says Meraki devices \"really only provide the data plane\". That is a simplification. The cloud is for management. Devices still forward traffic when the cloud cannot be reached, though you lose central management. The exam point is the idea of a cloud-managed, controller-based model (v2.0 objective 5.3 lists cloud-based and controller-based approaches)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.5"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What does SDN generally mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Separating the control plane from the data plane - the controller holds the intelligence."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Name one advantage and one disadvantage of the cloud-managed Meraki model."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Advantage: manage from anywhere. Disadvantage: devices must reach the cloud before you can manage them - the book's two points."
+    }
+   ],
+   "words": 276
+  },
+  {
+   "title": "22.6 Controller-Based Architectures",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 710 and 711. A good example is the Cisco Wireless LAN Controller (WLC). The access points that join the WLC are not clever alone, so they rely on the controller to push their configuration. DNA Center goes further and lets you manage network device configuration centrally through applications that run on the controller."
+    },
+    {
+     "level": 0,
+     "text": "| Advantage | Disadvantage |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Change a setting once and it is copied to all relevant devices. Configuration is consistent everywhere and typing mistakes on 50 switches are avoided. | A mistake in a template is pushed everywhere at once. The book's example: typing switchport trunk allowed vlan 10 instead of switchport trunk allowed vlan add 10 on one switch is an outage you can fix. Pushing that to all switches is a disaster. |"
+    },
+    {
+     "level": 0,
+     "text": "| You can build and review configuration in the controller before applying it, even with a peer review. |  |"
+    },
+    {
+     "level": 0,
+     "text": "| A convenient central point for monitoring and automation, because the controller knows a large part of the network. |  |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Controller-based means central management, consistency, review before applying, one place to monitor and script. Its risk is that errors spread fast, so review first."
+    },
+    {
+     "level": 2,
+     "text": "22.6.1 Campus Architecture"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 711. The campus architecture is the traditional hierarchy. It is easy to troubleshoot because each layer has a clear job (like the OSI model)."
+    },
+    {
+     "level": 0,
+     "text": "| Layer | Job |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Access | Endpoints connect here. VLANs are assigned. Port-level features such as port security and 802.1X are applied. Usually only Layer 2 (no Layer 3 except management), so cheaper switches work. |"
+    },
+    {
+     "level": 0,
+     "text": "| Distribution | Hosts the SVIs and IP services such as DHCP relay. Layer 2 links down to access switches, Layer 3 links up to core. Runs a routing protocol with the core. |"
+    },
+    {
+     "level": 0,
+     "text": "| Core | High-speed routing between distribution switches. No other services. |"
+    },
+    {
+     "level": 2,
+     "text": "22.6.2 Spine/Leaf Architecture"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 712. The spine/leaf design (also called Clos) is the new, preferred architecture for controller-based networks and data centers. It has two kinds of switch:"
+    },
+    {
+     "level": 0,
+     "text": "| Switch | Role |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Leaf | Where devices connect. Maps to the access and distribution layers of the 3-tier model. Each leaf has a high-bandwidth uplink to each spine. |"
+    },
+    {
+     "level": 0,
+     "text": "| Spine | Like the core: its only job is fast transport between the leaf switches. |"
+    },
+    {
+     "level": 0,
+     "text": "- Leaf switches connect only to spine switches, never to other leaf switches. Every destination in the fabric follows the same path: Leaf to Spine to Leaf."
+    },
+    {
+     "level": 0,
+     "text": "- Because the paths are the same length, traffic is easily load balanced with equal-cost multipath (ECMP)."
+    },
+    {
+     "level": 0,
+     "text": "- Easy to grow: need more ports? Add a leaf. Need more bandwidth? Add a spine."
+    },
+    {
+     "level": 0,
+     "text": "| Design | Devices | Links (script-checked) | Path between two edge devices |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Full mesh of 8 switches | 8 | 28 | Direct, but links grow very fast (16 switches need 120 links) |"
+    },
+    {
+     "level": 0,
+     "text": "| Spine/leaf with 2 spines and 8 leaves | 10 | 16 | Leaf to spine to leaf, with 2 equal-cost paths |"
+    },
+    {
+     "level": 0,
+     "text": "| Spine/leaf with 4 spines and 16 leaves | 20 | 64 | Leaf to spine to leaf, with 4 equal-cost paths |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED The book says Clos \"stands for nothing other than the guy's name\" and that everything is \"3 hops away\". The design is named after Charles Clos, who described the multistage switching idea. CHECK (general knowledge) A cleaner way to say it: every leaf-to-leaf path crosses exactly one spine, so the paths are all equal length."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.6"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Name two advantages of controller-based networking."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Any two of: central management, mass configuration, consistent configuration, central monitoring and scripting - the book lists these."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which layer of the campus architecture hosts the SVIs?"
+    },
+    {
+     "level": 0,
+     "text": "A. Access"
+    },
+    {
+     "level": 0,
+     "text": "B. Distribution"
+    },
+    {
+     "level": 0,
+     "text": "C. Core"
+    },
+    {
+     "level": 0,
+     "text": "D. Spine"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the distribution layer hosts SVIs, DHCP relay and the Layer 3 boundary."
+    },
+    {
+     "level": 0,
+     "text": "Q3. In spine/leaf, which devices does a leaf switch connect to?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only spine switches - leaf switches do not connect to other leaf switches."
+    },
+    {
+     "level": 0,
+     "text": "Q4. How do you add more ports, and how do you add more bandwidth, in spine/leaf?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Add a leaf for ports. Add a spine for bandwidth - the book's growth rule."
+    },
+    {
+     "level": 0,
+     "text": "Q5. What load-balancing method does spine/leaf make easy?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ECMP (equal-cost multipath) - paths are equal length."
+    }
+   ],
+   "words": 755
+  },
+  {
+   "title": "22.7 SDN Network Components",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Book pages 712 to 718. An SDN controller can abstract away the boring stuff. It does this by dividing the network into two parts: an underlay and an overlay. Together, the network devices that use the solution are called the fabric."
+    },
+    {
+     "level": 0,
+     "text": "|  | Underlay | Overlay | Fabric |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| What it is | The physical network. Focus: lots of Layer 3 connectivity everywhere. | A virtual network tunnelled over the underlay. The controller's services run here. | A shorthand for the Layer 3 network devices (routers, switches, firewalls, WLCs, APs) that the SDN solution manages. |"
+    },
+    {
+     "level": 0,
+     "text": "| Usually built with | Spine/leaf (or campus, depending on the solution). OSPF or IS-IS. | VXLAN tunnels in most solutions. DMVPN over the WAN. | Underlay and overlay together, abstracted by the controller. |"
+    },
+    {
+     "level": 0,
+     "text": "| Does | Carries traffic and gives the tunnels something to run over. | Applies advanced services such as security and QoS. | Gives a simple, high-speed network that scales better than Layer 2 designs. |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "From the Exam Essentials: the underlay provides connectivity for the tunnels. The overlay provides the actual services. The fabric is the term for all the devices that use the SDN solution."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The underlay is usually spine/leaf but can be campus. Cisco's Software-Defined Access (SD-Access) is based on a campus topology and uses slightly different names: the access layer is the edge and the middle node is like the distribution layer."
+    },
+    {
+     "level": 2,
+     "text": "22.7.1 Underlay"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 713 to 716. The underlay is the physical network that gives connectivity so the overlay can be built on it. It has basic configuration, and its job is mostly to advertise each device's loopback IP into OSPF (or IS-IS, which is beyond the CCNA). Devices are cabled for high redundancy. A full mesh gives maximum redundancy but gets out of hand as the network grows."
+    },
+    {
+     "level": 0,
+     "text": "The book builds the underlay in four parts: MTU, interface configuration, OSPF configuration and verification."
+    },
+    {
+     "level": 3,
+     "text": "MTU"
+    },
+    {
+     "level": 0,
+     "text": "The underlay carries larger packets than a normal network, so the book raises the MTU on the underlay switches."
+    },
+    {
+     "level": 0,
+     "text": "Raise MTU, enable routing BOOK (shortened)"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config)#system mtu ?"
+    },
+    {
+     "level": 0,
+     "text": "<1500-9198> MTU size in bytes"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config)#system mtu 9000"
+    },
+    {
+     "level": 0,
+     "text": "Global Ethernet MTU is set to 9000 bytes."
+    },
+    {
+     "level": 0,
+     "text": "SW01(config)#do reload"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config)#ip routing"
+    },
+    {
+     "level": 0,
+     "text": "- system mtu 9000 sets the Ethernet payload size. On this platform the switch must be reloaded."
+    },
+    {
+     "level": 0,
+     "text": "- ip routing turns the switch into a Layer 3 switch so it can run a routing protocol."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "OSPF needs matching MTUs on both ends of a neighbour relationship. If you change the MTU on one switch, change it on its neighbours too, or add ip ospf mtu-ignore on the neighbouring interfaces to get around it without changing the MTU."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The system mtu command, its range (1500-9198) and the reload requirement are from the book's Catalyst example and depend on the platform. A common reason to raise the MTU is that tunnel headers (VXLAN adds roughly 50 bytes) would otherwise force fragmentation of full-size frames. That number is general knowledge, not checked in this session."
+    },
+    {
+     "level": 3,
+     "text": "Interface configuration"
+    },
+    {
+     "level": 0,
+     "text": "BOOK It is a bad idea to use STP in the underlay: STP blocks redundant links, which wastes fast uplinks (10, 40, 100 Gb/s). The better way: use only Layer 3 interfaces. Then STP does not run, nothing is blocked, loops are not a problem (routing handles it), and the routing table can load balance across links with ECMP."
+    },
+    {
+     "level": 0,
+     "text": "Layer 3 underlay interfaces BOOK (shortened)"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config)#int g3/0"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-if)#no switchport"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-if)#ip address 10.1.21.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-if)#ip ospf network point-to-point"
+    },
+    {
+     "level": 0,
+     "text": "(repeated for g3/1, g3/2, g3/3, g2/2, g2/3 with their own addresses)"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-if)#interface loopback 0"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-if)#ip add 192.168.255.1 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "- no switchport turns the port into a routed (Layer 3) port."
+    },
+    {
+     "level": 0,
+     "text": "- ip address ... gives it an IP address."
+    },
+    {
+     "level": 0,
+     "text": "- ip ospf network point-to-point sets the OSPF network type to point-to-point, so there is no DR/BDR election."
+    },
+    {
+     "level": 0,
+     "text": "- interface loopback 0 and a /32 address give each switch a stable identity for the overlay later."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED Address space. The book gives each point-to-point link its own /24. That wastes addresses: a script comparison for the six links on SW01 shows 1536 addresses used with /24s, 24 with /30s and only 12 with /31s (a /31 is allowed on point-to-point links, RFC 3021). Use /30 or /31 for real underlay links. Lab 1 below uses /31 links, checked by script. Packet Tracer may not accept /31, so a /30 fallback is given. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "OSPF configuration"
+    },
+    {
+     "level": 0,
+     "text": "Enable OSPF on all interfaces BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-if)#router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "SW01(config-router)#network 0.0.0.0 0.0.0.0 area 0"
+    },
+    {
+     "level": 0,
+     "text": "The book uses this \"shortcut\" to run OSPF on all interfaces in area 0. It says EIGRP would work too, but the CCNA focuses on OSPF."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The usual way to write \"all interfaces\" is network 0.0.0.0 255.255.255.255 area 0. Remember the wildcard idea from Chapter 10: a wildcard of 0.0.0.0 means every bit must match, and 255.255.255.255 means match anything. The book's version worked in its lab, but do not rely on it. A neat alternative is to enable OSPF directly on each interface with ip ospf 1 area 0. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Other underlay configuration and verification"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The underlay's focus is routing, so there is little else: standard switch setup such as AAA or NTP. Some solutions need multicast routing (above the CCNA)."
+    },
+    {
+     "level": 0,
+     "text": "Verification, shortened BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SW01#show ip ospf nei"
+    },
+    {
+     "level": 0,
+     "text": "Neighbor ID Pri State Dead Time Address Interface"
+    },
+    {
+     "level": 0,
+     "text": "192.168.255.3 0 FULL/ - 00:00:38 10.1.32.3 GigabitEthernet3/3"
+    },
+    {
+     "level": 0,
+     "text": "192.168.255.3 0 FULL/ - 00:00:37 10.1.31.3 GigabitEthernet3/2"
+    },
+    {
+     "level": 0,
+     "text": "192.168.255.2 0 FULL/ - 00:00:37 10.1.22.2 GigabitEthernet3/1"
+    },
+    {
+     "level": 0,
+     "text": "... (6 neighbour entries in total)"
+    },
+    {
+     "level": 0,
+     "text": "SW01#show ip route ospf | b 192.168.255"
+    },
+    {
+     "level": 0,
+     "text": "O 192.168.255.2 [110/2] via 10.1.22.2, GigabitEthernet3/1"
+    },
+    {
+     "level": 0,
+     "text": "[110/2] via 10.1.21.2, GigabitEthernet3/0"
+    },
+    {
+     "level": 0,
+     "text": "- FULL/ - with priority 0 shows no DR/BDR (the -), because of the point-to-point network type."
+    },
+    {
+     "level": 0,
+     "text": "- The same neighbour ID appears twice because there are two links to that neighbour."
+    },
+    {
+     "level": 0,
+     "text": "- Two entries with the same metric for one loopback = ECMP load balancing."
+    },
+    {
+     "level": 2,
+     "text": "22.7.2 Overlay"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 716 and 717. The overlay is a virtual network tunnelled over the underlay. It lets the controller keep strict control over the traffic. The tunnel type depends on the solution, but it is generally VXLAN (Virtual Extensible LAN), a way of tunnelling Layer 2 traffic over Layer 3. This lets you connect VLANs across routed networks. The overlay is where advanced configuration such as security and QoS is added; the underlay cannot see inside the tunnels, so it cannot filter them."
+    },
+    {
+     "level": 0,
+     "text": "The book says DMVPN is a very popular overlay over the WAN: each branch connects to the hub through DMVPN (Figure 22.24), so an IGP can run across the Internet. This links back to Chapter 15."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED The book says overlay routing is \"usually handled by BGP or EIGRP\" and that link-state protocols are \"a bad idea\". That is oversimplified. In Cisco SD-Access, the fabric is built from three technologies: a LISP control plane, a VXLAN data plane, and Cisco TrustSec policy (Security Group Tags carried in the VXLAN header). The underlay uses a link-state protocol (OSPF or IS-IS). The book never names LISP or TrustSec. Verification: Cisco Live presentations (Cisco) and other secondary descriptions. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "| SD-Access fabric part | Role (secondary sources) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Control plane node | Keeps the map of where each endpoint is (LISP). |"
+    },
+    {
+     "level": 0,
+     "text": "| Edge node | Where endpoints connect. Encapsulates traffic in VXLAN. |"
+    },
+    {
+     "level": 0,
+     "text": "| Border node | Connects the fabric to outside networks. |"
+    },
+    {
+     "level": 0,
+     "text": "| Intermediate node | Forwards VXLAN traffic across the underlay. |"
+    },
+    {
+     "level": 2,
+     "text": "22.7.3 Fabric"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 718. \"The simplest thing in this chapter.\" The network fabric is a shorthand for all the Layer 3 devices (routers, switches, firewalls, wireless controllers, access points) in a solution. We can call it a fabric because the network details are abstracted by the controller. Put another way, a fabric is a simple, high-speed Layer 3 network. IP networks scale better than Layer 2 networks, with no STP limits, and misconfigurations are less likely because the controller builds and maintains the underlay and overlay dynamically."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED The book answer to review question 18 says a fabric \"entirely consists of layer 3 only\". That is true of the underlay. The overlay can provide both Layer 2 and Layer 3 services across the fabric (VXLAN carries Layer 2 over Layer 3). For the book's question, answer Layer 3; for real understanding, remember the difference. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.7"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the underlay?"
+    },
+    {
+     "level": 0,
+     "text": "A. A layer where tunnels are built to provide services"
+    },
+    {
+     "level": 0,
+     "text": "B. A layer that provides connectivity throughout the fabric"
+    },
+    {
+     "level": 0,
+     "text": "C. A term for everything in the SDN network"
+    },
+    {
+     "level": 0,
+     "text": "D. The controller's GUI"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the book's review question 2. Option A is the overlay, and option C is the fabric."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why should the underlay use only Layer 3 interfaces?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: So STP does not run and block uplinks, and ECMP can balance traffic - STP would waste the fast redundant links."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which OSPF network type removes the need for a DR on underlay links?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Point-to-point - ip ospf network point-to-point."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What does VXLAN do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Tunnels Layer 2 traffic over a Layer 3 network - it lets VLANs span routed networks."
+    },
+    {
+     "level": 0,
+     "text": "Q5. What must match for an OSPF adjacency to form, and what can you use if it does not?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The MTU, and ip ospf mtu-ignore - a mismatch stops OSPF neighbours from working properly."
+    }
+   ],
+   "words": 1595
+  },
+  {
+   "title": "22.8 DNA Center Overview",
+   "content": [
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED Name change. Cisco's Catalyst Center data sheet says Cisco Catalyst Center is formerly Cisco DNA Center. The book (2020) uses DNA Center everywhere. This manual keeps the book's heading but says \"Catalyst Center\" where it matters. A secondary source also says v1.1 changed 1.1.e from \"Controllers (Cisco DNA Center and WLC)\" to just \"Controllers\". CHECK"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 718 and 719. DNA Center aims to be your \"one-stop shop\" for managing and troubleshooting the network. What the book says it provides:"
+    },
+    {
+     "level": 0,
+     "text": "- Full network monitoring as in an NMS (SNMP and statistics), plus a snapshot of your network for up to a week, and troubleshooting advice using AI and big-data analytics."
+    },
+    {
+     "level": 0,
+     "text": "- A strong NCM side: templates, and zero-touch setup of new switches by plugging them in and powering them on."
+    },
+    {
+     "level": 0,
+     "text": "- A real SDN controller: it builds underlay and overlay networks for Software-Defined Access. It can also manage IWAN (a legacy SD-WAN solution) and centrally manage WLCs, with SD-WAN and ACI management expected in the future."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED Licensing. The book says each device \"has the proper license installed locally\", in contrast with per-interface NMS licences. Cisco's Catalyst Center data sheet describes subscription licences (Cisco DNA Essentials or Advantage, or Catalyst licences) that devices must have to send data to Catalyst Center. Check the current licence terms before you design anything. Verification: official Cisco data sheet."
+    },
+    {
+     "level": 0,
+     "text": "The rest of the chapter goes through the features and compares each with a traditional NMS or NCM and with doing it manually."
+    },
+    {
+     "level": 0,
+     "text": "| Feature | Traditional NMS or NCM | Manual | DNA / Catalyst Center |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Discovery | Can usually discover nodes. May charge per element or interface. | Spreadsheet of devices | Searches IP ranges or follows CDP/LLDP; tries SNMP, SSH, Telnet, HTTP(S), NETCONF |"
+    },
+    {
+     "level": 0,
+     "text": "| Network Hierarchy | NCMs have Compliance (alerts only, usually no push) | Log in constantly to check | Sites and locations; pushes common settings and wireless settings |"
+    },
+    {
+     "level": 0,
+     "text": "| Templates | Similar, different scripting engines | Text files, copy and paste | IOS config plus Apache Velocity (variables and tags) |"
+    },
+    {
+     "level": 0,
+     "text": "| Topology | Maps are often made by hand | Visio, usually out of date | Dynamic Layer 3 map from CDP, LLDP, MAC and ARP |"
+    },
+    {
+     "level": 0,
+     "text": "| Upgrades | Usually just TFTP copy and reboot | Download, copy, boot statement, reload | Downloads from Cisco.com, SCP or HTTPS, pre-checks |"
+    },
+    {
+     "level": 0,
+     "text": "| Command Runner | Similar, push commands to many devices | One device at a time | Run show commands on many devices and save output |"
+    },
+    {
+     "level": 0,
+     "text": "| Assurance | NMS data and graphs | Ask users and check logs | Stores data for a time window; correlates issues and suggests causes |"
+    },
+    {
+     "level": 0,
+     "text": "| Path Trace | NetPath (agents) | traceroute, tcptraceroute, hping3 | Visual path, tunnels, and ACL check from device data |"
+    },
+    {
+     "level": 0,
+     "text": "| EasyQoS | NCM can push QoS you create | Plan and edit every device | Application groups converted to QoS policy |"
+    },
+    {
+     "level": 0,
+     "text": "| LAN Automation | Not possible | Pre-configure devices before shipping | Plug and Play with DHCP |"
+    },
+    {
+     "level": 0,
+     "text": "| SD-Access | Not possible | Configure each feature by hand | Intent-based segmentation across the fabric |"
+    },
+    {
+     "level": 2,
+     "text": "22.8.1 Discovery"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 719 to 721. Discovery finds devices by querying IP ranges you give it, or by logging in to one device and following CDP/LLDP through the network. Once found, it tries SNMPv2, SNMPv3, Telnet, SSH, HTTP(S) and NETCONF to gain control and add the device to the inventory. Jobs can be scheduled, and you can have several jobs with different credentials for different parts of the network. Book comparison: SolarWinds and Prime charge licences per node, and SolarWinds even per interface (a stack of four 48-port switches is 192 licences), so people monitor only uplinks."
+    },
+    {
+     "level": 2,
+     "text": "22.8.2 Network Hierarchy"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 721 to 723. Network Hierarchy lets you organise the network into sites and locations. This gives troubleshooting advantages, gives site survey information to wireless controllers, and keeps configuration consistent. Common settings (authentication, syslog servers, NTP servers, message of the day) are pushed automatically when a device is added. Update the NTP server once in DNA Center and the change flows out. DNA Center can also manage wireless (for example adding an SSID once for several WLCs). Traditional NCMs have Compliance, which alerts you when config differs but usually does not push it."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The text says Network Hierarchy is \"pictured in Figure 22.26\". Figure 22.26 is the discovery page. The hierarchy is Figure 22.27. That is a book typo."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED The book says DNA Center \"doesn't yet support device configuration backups\". Cisco community answers (from Cisco staff) say a Configuration Archive feature was added in later versions (2.3.x), so this statement is out of date. Check your version. Verification: secondary (Cisco community). CHECK"
+    },
+    {
+     "level": 2,
+     "text": "22.8.3 Templates"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 723 and 724. Templates push specific IOS configuration to a location in the hierarchy. They support the Apache Velocity scripting language:"
+    },
+    {
+     "level": 0,
+     "text": "| Feature | How it works |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Variables | A word with a dollar sign in front, such as $loopback_ip. Gives each device a different value (for example a different loopback address). |"
+    },
+    {
+     "level": 0,
+     "text": "| Enable mode | By default everything is a configuration command. For an exec command (like clock set), wrap it in #MODE_ENABLE and #MODE_END_ENABLE. |"
+    },
+    {
+     "level": 0,
+     "text": "| Interactive commands | For commands that ask a question (like banner motd or crypto key generate rsa general-keys), wrap them in #INTERACTIVE and #ENDS_INTERACTIVE. Use <IQ> for the expected question and <R> for your answer. |"
+    },
+    {
+     "level": 0,
+     "text": "Template examples BOOK"
+    },
+    {
+     "level": 0,
+     "text": "#MODE_ENABLE"
+    },
+    {
+     "level": 0,
+     "text": "clock set Sept 17 2019 00:00:00"
+    },
+    {
+     "level": 0,
+     "text": "#MODE_END_ENABLE"
+    },
+    {
+     "level": 0,
+     "text": "#INTERACTIVE"
+    },
+    {
+     "level": 0,
+     "text": "crypto key generate rsa general-keys <IQ>yes/no<R> yes"
+    },
+    {
+     "level": 0,
+     "text": "#ENDS_INTERACTIVE"
+    },
+    {
+     "level": 0,
+     "text": "The book says you do not need to write templates for the exam. Other NCMs have similar features with different scripting engines. Doing it manually usually means text files that the team copies and pastes."
+    },
+    {
+     "level": 2,
+     "text": "22.8.4 Topology"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 724 and 725. DNA Center builds a Layer 3 diagram of the devices it knows. It uses CDP and LLDP, and also follows the MAC and ARP tables to see what is connected. You can edit the map by hand. The topology also feeds features such as SD-Access. NMS products can draw maps, but they are often made manually. The book points out that hand-made Visio diagrams almost always get out of date."
+    },
+    {
+     "level": 2,
+     "text": "22.8.5 Upgrades"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 725 to 728. Manual upgrade: find the image, copy it to the device, set the boot statement, reload, and wait. With a hundred routers it gets out of control. DNA Center helps you standardise IOS versions, can upgrade new devices automatically, can download images directly from Cisco.com or accept manual uploads, and suggests the recommended release. It moves the image with SCP or HTTPS, which is more efficient than TFTP. Before an upgrade it runs readiness pre-checks:"
+    },
+    {
+     "level": 0,
+     "text": "| Pre-check | What it checks |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Device management status | The device is managed successfully in DNA Center. |"
+    },
+    {
+     "level": 0,
+     "text": "| File transfer check | The device is reachable through SCP and HTTPS. |"
+    },
+    {
+     "level": 0,
+     "text": "| NTP clock check | Device time matches DNA Center time so certificates can be installed. |"
+    },
+    {
+     "level": 0,
+     "text": "| Flash check | There is enough room. Some devices can clean up unused files. |"
+    },
+    {
+     "level": 0,
+     "text": "| Config register check | The config register value will let the switch boot properly (for example after a password recovery). |"
+    },
+    {
+     "level": 0,
+     "text": "| Crypto RSA check | An RSA certificate exists (needed for SSH and HTTPS). |"
+    },
+    {
+     "level": 0,
+     "text": "| Crypto TLS check | The device supports TLS 1.2. |"
+    },
+    {
+     "level": 0,
+     "text": "| IP domain name check | A domain name is configured (needed for SSH and HTTPS). |"
+    },
+    {
+     "level": 0,
+     "text": "| Startup config check | A startup configuration exists. |"
+    },
+    {
+     "level": 0,
+     "text": "| Service Entitlement check | The device has a valid licence. |"
+    },
+    {
+     "level": 0,
+     "text": "| Interface check | The status of the management interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| CDP neighbors, Running Config, Spanning Tree Summary, AP Summary checks | Show the neighbours, the running config, STP information and associated APs (for wireless controllers). |"
+    },
+    {
+     "level": 0,
+     "text": "Book comparison: an NCM can push images, but usually with fewer safety checks. SolarWinds basically sends a copy tftp command, may set the boot statement and reload, and cannot download from cisco.com for you."
+    },
+    {
+     "level": 2,
+     "text": "22.8.6 Command Runner"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 728 and 729. Command Runner runs commands against many devices in the inventory and stores the results (for example to check that all routers can see a new OSPF route). Output can be exported as a text file. Configuration commands are not supported: use templates to push changes. NCMs have similar functions. Without a tool you would connect to each device one at a time."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book question 19: Command Runner pushes show commands and shows the results. It does not push configuration."
+    },
+    {
+     "level": 2,
+     "text": "22.8.7 Assurance"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 729 to 731. Assurance is a \"time machine\". It stores logs, network health issues and connection results for a week (the book's figure), correlates issues, and offers suggestions and troubleshooting tips. The book's example: a manager could not connect to the wireless a few days ago, and now it works. Manually you would check tickets, ask colleagues, search the WLC and ISE logs, or try to repeat the problem. Assurance can look back."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED The \"one week\" figure is out of date. Cisco community answers say older documentation gave 14 days of Assurance data and that newer versions increased retention. Retention depends on the version and the sizing. For the book's review question 12 the book's answer is one week, but do not repeat that number as a fact about current products. Verification: secondary (Cisco community). CHECK"
+    },
+    {
+     "level": 2,
+     "text": "22.8.8 Path Trace"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 731 and 732. Traceroute cannot show that wireless traffic goes through a CAPWAP tunnel, or that a site is connected through a VPN or DMVPN, and it does not show Layer 2 switches. Path Trace (an evolution of the APIC-EM Path Trace) uses DNA Center's knowledge of all devices to show the visual path from source to destination, reveals the true path of tunnels, can show ACLs that will block your traffic, and lets you choose which ports to test. SolarWinds has NetPath, but it uses agents and cannot detect ACL problems."
+    },
+    {
+     "level": 2,
+     "text": "22.8.9 EasyQoS"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 732 to 734. EasyQoS simplifies QoS by grouping applications into three categories (you can move applications between them):"
+    },
+    {
+     "level": 0,
+     "text": "| Category | Meaning | Examples in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Business Relevant | Applications important to the business | Email, Active Directory |"
+    },
+    {
+     "level": 0,
+     "text": "| Business Irrelevant | Applications with no business value | BitTorrent, YouTube, Facebook |"
+    },
+    {
+     "level": 0,
+     "text": "| Default | Applications in neither group | DNS, database traffic |"
+    },
+    {
+     "level": 0,
+     "text": "DNA Center converts the application policy into a QoS policy for all devices. You adjust DSCP values and bandwidth allocations. Service provider profiles are in Figure 22.39. (QoS is covered in Chapter 16.) NCMs can push QoS policies you create, but are not designed to manage them end to end."
+    },
+    {
+     "level": 2,
+     "text": "22.8.10 LAN Automation"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book pages 734 and 735. Normally a new device needs reachability to the server, authentication, SSH and SNMP before DNA Center can manage it. LAN Automation uses Cisco Plug and Play (PnP): a DHCP server on the upstream device gives the new device an IP address and the PnP server details when it boots. DNA Center then configures basic routing and other underlay settings (such as multicast), and the device appears in the right site. Doing it manually means pre-configuring the router before shipping it."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book question 13: LAN Automation uses Plug and Play, because a new switch has no SNMP or login information out of the box."
+    },
+    {
+     "level": 2,
+     "text": "22.8.11 SD-Access"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 735. Software-Defined Access is \"the flagship feature\" of DNA Center. It supports intent-based networking: you state that the Marketing team may not reach the IT team's resources, and DNA Center works out how. The mechanics are very complex and beyond the CCNA. It is Cisco proprietary, so an NMS or NCM cannot do something similar."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED Under the hood, SD-Access uses a LISP control plane, a VXLAN data plane and TrustSec policy (see 22.7.2). You do not need the details for the exam."
+    },
+    {
+     "level": 2,
+     "text": "22.8.12 Restful API"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Book page 736. Everything in DNA Center can be managed by REST (covered in the previous chapter), so your scripts can talk to DNA Center instead of connecting to each device. Code Preview lets you try REST calls in the web interface and generates code snippets, including in Python."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED Cisco's developer documentation says REST requests use HTTPS with JSON, and organises Catalyst Center API paths under prefixes such as /dna/intent/api/ and /dna/system/api/. An authentication call returns a token that you send with later requests. Cisco DevNet offers a free Catalyst Center Always-On sandbox for practice. Its availability and read-only nature can change. Use the Cisco documentation for current details. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 22.8"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What was DNA Center renamed?"
+    },
+    {
+     "level": 0,
+     "text": "A. Cisco Catalyst Center"
+    },
+    {
+     "level": 0,
+     "text": "B. Cisco Prime Center"
+    },
+    {
+     "level": 0,
+     "text": "C. Cisco Meraki Center"
+    },
+    {
+     "level": 0,
+     "text": "D. Cisco ACI Center"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - Cisco's data sheet says Catalyst Center is formerly DNA Center."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which DNA Center feature is the \"time machine\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Assurance - it stores historical network data to look back at past issues."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which feature configures new switches automatically using Plug and Play?"
+    },
+    {
+     "level": 0,
+     "text": "A. Path Trace"
+    },
+    {
+     "level": 0,
+     "text": "B. LAN Automation"
+    },
+    {
+     "level": 0,
+     "text": "C. EasyQoS"
+    },
+    {
+     "level": 0,
+     "text": "D. Command Runner"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - LAN Automation uses PnP with a DHCP server on the upstream device."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which feature shows ACLs that would block a path?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Path Trace - traceroute cannot show that."
+    },
+    {
+     "level": 0,
+     "text": "Q5. Can Command Runner push configuration?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No, only show commands - use Templates for configuration."
+    },
+    {
+     "level": 0,
+     "text": "Q6. Name the three EasyQoS application categories."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Business Relevant, Business Irrelevant, Default - applications can be moved between them."
+    },
+    {
+     "level": 0,
+     "text": "Q7. How do scripts talk to DNA Center?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Through its REST API - Code Preview can generate snippets."
+    }
+   ],
+   "words": 2358
+  },
+  {
+   "title": "Troubleshooting Monitoring, Underlays and Controllers",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED CHECK This table comes from general knowledge and the rules in this chapter. It was not tested on hardware."
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| NMS shows a device as red but you can reach it | Wrong SNMP community or version, an ACL blocks SNMP, or the NMS source IP is not allowed | show snmp, the community string, the ACL on snmp-server community |"
+    },
+    {
+     "level": 0,
+     "text": "| No traps arrive at the NMS | Traps not enabled, wrong snmp-server host address or community, or the source interface is wrong | show running-config \\| include snmp, show snmp |"
+    },
+    {
+     "level": 0,
+     "text": "| No syslog messages at the server | logging host missing or wrong, severity level too low, or a firewall blocks UDP 514 | show logging, logging trap level, the host address. CHECK for the UDP port |"
+    },
+    {
+     "level": 0,
+     "text": "| Too many syslog messages | Severity set to debugging (7) | Raise the threshold to informational or notifications |"
+    },
+    {
+     "level": 0,
+     "text": "| NCM cannot back up a router | No SSH, wrong credentials, no domain name or RSA keys, or an ACL on the VTY lines blocks the NCM | Test SSH from the NCM. Check username, ip domain-name, crypto key generate rsa, access-class |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPF neighbours do not form on the underlay | MTU mismatch, wrong IP or mask on the link, network type mismatch, or OSPF not enabled on the interface | show ip ospf neighbor, show ip ospf interface, show interfaces for MTU |"
+    },
+    {
+     "level": 0,
+     "text": "| Underlay link is up but not used | OSPF not running on it, or one end is still a switchport | show ip ospf interface brief, show ip interface brief |"
+    },
+    {
+     "level": 0,
+     "text": "| Only one path is used (no ECMP) | Different costs, or only one adjacency | show ip route <loopback> and look for two next hops |"
+    },
+    {
+     "level": 0,
+     "text": "| Controller cannot discover a device | Missing reachability, SSH or SNMP credentials, or no domain name or RSA keys | Ping and SSH from the controller's network. Check the device credentials set in the discovery job |"
+    },
+    {
+     "level": 0,
+     "text": "| A template change broke many devices | Mistake in the template pushed everywhere | Review before pushing. Test on one device first. Keep a backup. The book's own warning about \"switchport trunk allowed vlan\" |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "A fast routine for the underlay: (1) show ip interface brief: are the routed ports up with the right IPs? (2) show ip ospf neighbor: are all neighbours FULL? (3) show ip route ospf: do you see every loopback, with two paths where expected? (4) Check MTU if neighbours get stuck."
+    }
+   ],
+   "words": 441
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| NMS | Polls with SNMP, receives traps and syslog, shows health (green, yellow, red), graphs. Examples: SolarWinds, Prime Infrastructure (end of sale). |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMP | Manager and agent. v1 and v2c use community strings (plain text). v3 adds authentication and encryption. Read-only versus read-write. UDP 161 and 162. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| Syslog | Levels 0 (emergencies) to 7 (debugging). Lower number = more severe. logging host, logging trap <level>. Message format: facility, severity, mnemonic. |"
+    },
+    {
+     "level": 0,
+     "text": "| NCM | Backs up, searches, compares and pushes configs. Needs SSH or Telnet (use SSH) and sometimes SNMP read-write. |"
+    },
+    {
+     "level": 0,
+     "text": "| Three planes | Management (SSH, SNMP, HTTPS, console). Control (OSPF, ARP, STP, CDP/LLDP). Data (forwarding, ACL drops; no protocols). |"
+    },
+    {
+     "level": 0,
+     "text": "| Forwarding tables | Routing table to FIB (CEF). ARP to adjacency table. Pushed to hardware. |"
+    },
+    {
+     "level": 0,
+     "text": "| SDN | Separate the control plane from the data plane. Controller holds the control plane. |"
+    },
+    {
+     "level": 0,
+     "text": "| NBI and SBI | NBI = users and scripts to the controller (GUI, REST). SBI = controller to devices (OpenFlow, NETCONF, OpFlex, onePK legacy). |"
+    },
+    {
+     "level": 0,
+     "text": "| OpenFlow, OpFlex | OpenFlow is imperative (detailed instructions), used by OpenDaylight. OpFlex is declarative (summary policy), used by Cisco ACI. |"
+    },
+    {
+     "level": 0,
+     "text": "| NETCONF | IETF RFC 6241. XML, RPC, SSH, TCP 830, YANG. RESTCONF is RFC 8040. |"
+    },
+    {
+     "level": 0,
+     "text": "| Campus versus spine/leaf | Campus: access, distribution, core. Spine/leaf (Clos): leaf to every spine, never leaf to leaf; add a leaf for ports, a spine for bandwidth; ECMP. |"
+    },
+    {
+     "level": 0,
+     "text": "| Underlay | Physical Layer 3 network. Routed ports, no STP, OSPF or IS-IS, loopbacks, ECMP, bigger MTU. OSPF needs matching MTU. |"
+    },
+    {
+     "level": 0,
+     "text": "| Overlay | Virtual network tunnelled over the underlay (VXLAN). Services such as security and QoS live here. DMVPN is a WAN overlay. |"
+    },
+    {
+     "level": 0,
+     "text": "| Fabric | All the devices that use the SDN solution (underlay plus overlay). |"
+    },
+    {
+     "level": 0,
+     "text": "| Catalyst Center | Formerly DNA Center. Discovery, Hierarchy, Templates, Topology, Upgrades, Command Runner (show only), Assurance, Path Trace, EasyQoS, LAN Automation (PnP), SD-Access (LISP, VXLAN, TrustSec), REST API. |"
+    },
+    {
+     "level": 0,
+     "text": "| v2.0 objective | 5.3 Describe network management approaches (device-based, cloud-based, controller-based, automation-based, infrastructure as code). Also 5.4 SNMP and 5.6 syslog. |"
+    }
+   ],
+   "words": 373
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "The five allowed statuses are: Not assessed, Know, Partially understand, Need to learn, Needs revision. Every row starts as Not assessed. A row may be set to Know only after you answer related questions correctly without help, or you finish the lab and can repeat it. Record what you saw, your confidence (High, Medium, Low) and your mistakes."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Chapter 22 - SDN Controllers |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1 Traditional Network Monitoring Systems (NMS) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.1 Configuring SNMP |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.2 Network Health |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.3 Central Syslog |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.4 Central SNMP Traps |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.5 Interface Information |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.6 Hardware Health |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.1.7 Network Information |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.2 Traditional Network Configuration Managers (NCM) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.3 Traditional Networking |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.3.1 Management Plane |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.3.2 Control Plane |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.3.3 Data Plane |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.3.4 Forwarding |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.4 Introduction to SDN |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.4.1 Northbound Interfaces |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.4.2 Southbound Interfaces |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.4.3 SDN Solutions |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.5 Separating the Control Plane |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.6 Controller-Based Architectures |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.6.1 Campus Architecture |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.6.2 Spine/Leaf Architecture |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.7 SDN Network Components |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.7.1 Underlay |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.7.2 Overlay |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.7.3 Fabric |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8 DNA Center Overview |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.1 Discovery |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.2 Network Hierarchy |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.3 Templates |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.4 Topology |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.5 Upgrades |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.6 Command Runner |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.7 Assurance |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.8 Path Trace |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.9 EasyQoS |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.10 LAN Automation |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.11 SD-Access |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 22.8.12 Restful API |  | Not assessed |  |  |"
+    }
+   ],
+   "words": 528
+  },
+  {
+   "title": "Answer Key A: Pre-check",
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1. Protocol an NMS uses to poll devices."
+    },
+    {
+     "level": 0,
+     "text": "Answer: SNMP - traps and syslog are sent by the device on its own."
+    },
+    {
+     "level": 0,
+     "text": "Q2. The three planes."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Management, control and data - management = how you reach the device, control = protocols and decisions, data = forwarding."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Northbound interface."
+    },
+    {
+     "level": 0,
+     "text": "Answer: How users, scripts and apps interact with the SDN controller (GUI or REST API) - the southbound interface is how the controller reaches the devices."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Underlay and overlay."
+    },
+    {
+     "level": 0,
+     "text": "Answer: The underlay is the physical Layer 3 network that gives connectivity. The overlay is a virtual network tunnelled over it that provides the services - together with the devices they form the fabric."
+    },
+    {
+     "level": 0,
+     "text": "Q5. Plane that runs OSPF."
+    },
+    {
+     "level": 0,
+     "text": "Answer: The control plane - the data plane only forwards."
+    }
+   ],
+   "words": 129
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Also do the book's own 20 review questions on pages 738 to 741 and check them against the Chapter 22 answers in the book's answer appendix. These questions here are original and are not copied from the book. I checked the book's answers: the letters follow the book's own teaching, but some need care. Question 10 lists \"Python\" as a protocol. Question 20 says \"choose three\" but the key gives only one letter. Question 12 gives one week (out of date), and 18 and 15 are simplified or use Telnet (see the Gaps Log). CHECK"
+    }
+   ],
+   "words": 97
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Exam topics 1.1.e, 6.2, 6.3, 6.3.a, 6.3.b, 6.4 (p. 689). | Shows that v1.1 replaced 6.4 (AI and ML) and shortened 1.1.e, and that v2.0 has only 5.3 (plus 5.4 SNMP and 5.6 syslog) for this material. UPDATED | v2.0: official Cisco PDF read this session. v1.1: secondary source. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | \"DNA Center\" throughout. | Notes the new name Cisco Catalyst Center. UPDATED | Cisco Catalyst Center data sheet (official). |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Prime Infrastructure called a full solution whose successor is DNA Center (p. 691). | Adds end of sale (29 Sep 2023), end of support (30 Sep 2028) and Cisco's advice. UPDATED | Cisco product page (official). |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | SolarWinds screens (2019) and features (p. 691 to 699, 720 to 732). | Keeps the ideas, flags the screens as dated. CHECK | Not re-verified. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | SNMP config uses plain community strings, including read-write (p. 691). | Adds SNMPv3 and ACL advice. ADDED | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | logging trap debugging (level 7) (p. 694). | Explains levels and why production uses 5 or 6. ADDED | Standard syslog levels. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | Syslog facilities and message format are not explained. | Adds a short explanation because v2.0 5.6 names them. ADDED | Official v2.0 outline. CHECK on details. |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | NCM login with Telnet or SSH, example passwords (p. 700); answer key Q15 lists Telnet. | Says use SSH and never reuse the example passwords. UPDATED | General practice. |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | CDP and LLDP are in the control plane (p. 703; Q6). | Follows the book for the exam and flags the point. CHECK | Book text. |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | ACLs and NAT \"defined\" in the control plane but enforced in the data plane (p. 703 to 704). | Explains define versus enforce. CHECK | Book text. |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | CEF, FIB and adjacency table said to be outside the CCNA (p. 705). | Adds show commands. ADDED | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | OpenFlow: \"All configuration is done via NETCONF\" (p. 708). | Flags that this mixes OpenFlow with OF-Config. CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | NETCONF described briefly (p. 708). | Adds RFC 6241, SSH, port 830, YANG, and RESTCONF. ADDED | Cisco IOS XE documents (official). |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | Cisco SD-WAN named as a solution (p. 709). | Notes that product names have changed. CHECK | Not verified in this session. |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | Meraki devices \"only provide the data plane\" (p. 709). | Clarifies that only management is in the cloud. CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | Clos \"the guy's name\" and \"3 hops\" (p. 712). | Names Charles Clos and says every leaf-to-leaf path crosses one spine. CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | Underlay uses a /24 for every point-to-point link (p. 715). | Uses /31 links in the lab and shows the address saving. UPDATED | Python script (1536, 24 and 12 addresses). |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | system mtu range, reload, and its use (p. 714). | Notes it is platform specific. CHECK | Book text. |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | network 0.0.0.0 0.0.0.0 area 0 (p. 715). | Recommends the usual wildcard or the interface command. CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | Overlay routing \"usually BGP or EIGRP\", link-state \"a bad idea\" (p. 717). | Calls it oversimplified and adds LISP, VXLAN and TrustSec. UPDATED | Cisco Live material (Cisco) and secondary sources. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 21 | Fabric is \"entirely Layer 3\" (p. 718; Q18). | Explains underlay versus overlay services. UPDATED | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 22 | DNA Center licensing: each device has the licence installed locally (p. 720). | Replaces it with subscription licensing. UPDATED | Cisco data sheet (official). |"
+    },
+    {
+     "level": 0,
+     "text": "| 23 | Network Hierarchy \"pictured in Figure 22.26\" (p. 721). | Corrects to Figure 22.27. CHECK | Book text and figure order. |"
+    },
+    {
+     "level": 0,
+     "text": "| 24 | DNA Center \"doesn't yet support device configuration backups\" (p. 723). | Says a Configuration Archive feature exists in later versions. UPDATED | Cisco community answers (secondary). CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 25 | Assurance keeps data for one week (p. 730; Q12). | Says retention depends on version; older docs said 14 days. UPDATED | Cisco community (secondary). CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 26 | Templates use Apache Velocity (p. 723). | Kept. Other template languages may exist now. CHECK | Not verified. |"
+    },
+    {
+     "level": 0,
+     "text": "| 27 | Q10 lists Python as a protocol; Q20 says \"choose three\" but the key has one answer; Q18 oversimplified (p. 739 to 741; appendix). | Flags them. CHECK | Book text and appendix. |"
+    },
+    {
+     "level": 0,
+     "text": "| 28 | No labs, no troubleshooting, no SNMP versions or ports. | Adds three labs, three paper labs, a troubleshooting table and SNMP basics. ADDED | Not run. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 29 | Exam Essentials are short (p. 737). | Adds plane, NBI and SBI, underlay steps and v2.0 objective details. ADDED | Official v2.0 outline. |"
+    }
+   ],
+   "words": 874
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware, on a Cisco simulator or in Packet Tracer. All commands and outputs are examples that may differ on your platform or software version."
+    }
+   ],
+   "words": 34
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED Labs 1 and 2 use Cisco Packet Tracer. Lab 3 uses Cisco's free DevNet sandbox, so it needs no equipment but depends on that sandbox being available. Interface names, supported commands and outputs differ between Packet Tracer versions and from real devices, so every expected result is tagged CHECK . Record what you actually saw in the Self-Assessment table and in your Notion tracker. Do not mark anything as Know until you can repeat it unaided."
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "Build a spine/leaf Layer 3 underlay",
+   "content": [
+    {
+     "level": 0,
+     "text": "Build 2 spine and 3 leaf multilayer switches (for example 3650 or 3560 models in Packet Tracer). Every leaf connects to every spine, and leaves do not connect to each other. This gives 6 links. The addresses were checked by script: no overlaps, and the loopbacks sit outside the link pool."
+    },
+    {
+     "level": 0,
+     "text": "| Link | Spine side | Leaf side |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE1 to LEAF1 | 10.255.0.0/31 | 10.255.0.1/31 |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE1 to LEAF2 | 10.255.0.2/31 | 10.255.0.3/31 |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE1 to LEAF3 | 10.255.0.4/31 | 10.255.0.5/31 |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE2 to LEAF1 | 10.255.0.6/31 | 10.255.0.7/31 |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE2 to LEAF2 | 10.255.0.8/31 | 10.255.0.9/31 |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE2 to LEAF3 | 10.255.0.10/31 | 10.255.0.11/31 |"
+    },
+    {
+     "level": 0,
+     "text": "| Device | Loopback 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE1 | 10.255.255.1/32 |"
+    },
+    {
+     "level": 0,
+     "text": "| SPINE2 | 10.255.255.2/32 |"
+    },
+    {
+     "level": 0,
+     "text": "| LEAF1 | 10.255.255.11/32 |"
+    },
+    {
+     "level": 0,
+     "text": "| LEAF2 | 10.255.255.12/32 |"
+    },
+    {
+     "level": 0,
+     "text": "| LEAF3 | 10.255.255.13/32 |"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "CHECK Packet Tracer switches may not accept a /31 mask on a routed port. If yours does not, use /30 links instead (for example 10.255.0.0/30 for each link, using the .1 and .2 addresses) and keep the rest of the lab the same."
+    },
+    {
+     "level": 0,
+     "text": "1. Cable the 6 links. Use any free ports, and write down which port goes where."
+    },
+    {
+     "level": 0,
+     "text": "On SPINE1 (repeat the same pattern with its own addresses on SPINE2; on each leaf use its own link and loopback addresses from the tables):"
+    },
+    {
+     "level": 0,
+     "text": "Lab 1: SPINE1 (port names vary)"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config)#ip routing"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config)#interface GigabitEthernet1/0/1"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config-if)#no switchport"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config-if)#ip address 10.255.0.0 255.255.255.254"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config-if)#ip ospf network point-to-point"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config-if)#no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "(repeat for the links to LEAF2 and LEAF3 with 10.255.0.2 and 10.255.0.4)"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config)#interface loopback 0"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config-if)#ip address 10.255.255.1 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config)#router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "SPINE1(config-router)#network 10.255.0.0 0.0.255.255 area 0"
+    },
+    {
+     "level": 0,
+     "text": "- ip routing makes the switch route."
+    },
+    {
+     "level": 0,
+     "text": "- no switchport makes the port a routed port. There is no STP on it."
+    },
+    {
+     "level": 0,
+     "text": "- ip ospf network point-to-point removes the DR/BDR election."
+    },
+    {
+     "level": 0,
+     "text": "- The network 10.255.0.0 0.0.255.255 area 0 line covers both the links (10.255.0.x) and the loopbacks (10.255.255.x). This uses a normal wildcard instead of the book's all-zeros shortcut."
+    },
+    {
+     "level": 0,
+     "text": "2. Configure LEAF1, LEAF2 and LEAF3 in the same way: two routed ports (one to each spine), a loopback, and the same OSPF command."
+    },
+    {
+     "level": 0,
+     "text": "3. Verify neighbours. On LEAF1 run show ip ospf neighbor. Expected: two neighbours (SPINE1 and SPINE2), state FULL with no DR/BDR (shown as -). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "4. Verify ECMP. On LEAF1 run show ip route ospf. Expected: the loopback of LEAF2 (10.255.255.12) has two equal-cost next hops, one through each spine. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "5. Prove the path. Ping 10.255.255.12 from LEAF1, using its own loopback as the source: ping 10.255.255.12 source loopback 0. Then run traceroute 10.255.255.12 source loopback 0. Expected: it succeeds and crosses exactly one spine (leaf, spine, leaf). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "6. Break and fix. Shut one uplink on LEAF1 (shutdown). Run show ip route ospf again. Expected: only one path remains. Re-enable the port. Expected: two paths return after OSPF converges. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "7. Scale it. Add LEAF4 (new loopback 10.255.255.14/32, new /31 links 10.255.0.12 and 10.255.0.14). Notice that you did not have to touch the existing leaves. That is the spine/leaf growth rule."
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "This lab shows the book's underlay ideas: Layer 3 only, no STP, OSPF on loopbacks, ECMP, and simple scaling."
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "Syslog and SNMP configuration",
+   "content": [
+    {
+     "level": 0,
+     "text": "Topology: one router (R1), one switch, and a Server-PT (Packet Tracer server) at 10.255.100.10/24 on the same LAN as R1's interface 10.255.100.1/24 (both addresses checked by script)."
+    },
+    {
+     "level": 0,
+     "text": "1. Configure R1's LAN interface 10.255.100.1/24 and the server address 10.255.100.10/24 with gateway 10.255.100.1. Ping from R1 to the server. Expected: success."
+    },
+    {
+     "level": 0,
+     "text": "Lab 2 configuration (SNMP commands may be limited in Packet Tracer) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)#logging host 10.255.100.10"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)#logging trap informational"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)#access-list 10 permit host 10.255.100.10"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)#snmp-server community labRO RO 10"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)#snmp-server host 10.255.100.10 traps labTRAPS"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)#snmp-server enable traps"
+    },
+    {
+     "level": 0,
+     "text": "- logging host sends syslog to the server. logging trap informational sends levels 0 to 6."
+    },
+    {
+     "level": 0,
+     "text": "- access-list 10 permit host 10.255.100.10 plus the 10 at the end of the community command restricts that community to the NMS address (a Chapter 10 idea)."
+    },
+    {
+     "level": 0,
+     "text": "- The SNMP lines are the book's commands, with an ACL added."
+    },
+    {
+     "level": 0,
+     "text": "2. On the server open Services, then SYSLOG, and turn it on."
+    },
+    {
+     "level": 0,
+     "text": "3. On R1 make an event: interface GigabitEthernet0/0, shutdown, then no shutdown. Expected: messages like %LINK-5-CHANGED and %LINEPROTO-5-UPDOWN appear on the router, and (if the server's syslog service works in your version) on the server. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "4. Run show logging on R1 and note the severity number in each message. Practise reading the facility, severity and mnemonic."
+    },
+    {
+     "level": 0,
+     "text": "5. Change to logging trap errors and repeat step 3. Expected: the level 5 messages no longer reach the server, because 5 is less severe than 3. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "6. Run show snmp and show running-config | include snmp. Record what you see. CHECK Packet Tracer may not include a working SNMP manager; the aim is to practise the commands."
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "Lab 3 (optional): Call a controller's REST API",
+   "content": [
+    {
+     "level": 0,
+     "text": "This lab needs no equipment. It uses the Cisco DevNet Catalyst Center Always-On sandbox, which Cisco documents as a free, 24x7 hosted lab. Community posts show that it sometimes goes down and that the Always-On devices only accept read (GET) requests. CHECK Take the address and the published read-only credentials from Cisco's own sandbox page, and do not save them in your notes."
+    },
+    {
+     "level": 0,
+     "text": "1. Open Cisco's Catalyst Center sandbox page on developer.cisco.com and read the Always-On sandbox instructions."
+    },
+    {
+     "level": 0,
+     "text": "2. Use Postman or curl to request an authentication token from the sandbox (a POST to its auth path). Cisco's Getting Started page gives the path and the headers. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "3. Use the token in a header to GET the list of network devices through the Intent API. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "4. Read the JSON you get back. Write down three fields you see for the first device (for example its type and its management IP address)."
+    },
+    {
+     "level": 0,
+     "text": "5. Connect the dots: you just used the northbound interface of a controller. The controller then uses its southbound protocols (SSH, SNMP, NETCONF) to talk to the devices. You never logged in to a device."
+    },
+    {
+     "level": 2,
+     "text": "Paper lab 1: sort the items into planes"
+    },
+    {
+     "level": 0,
+     "text": "Use the book's classification."
+    },
+    {
+     "level": 0,
+     "text": "| # | Item | Plane |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | SSH login to the router | Management |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | SNMP polling by an NMS | Management |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | OSPF adjacency forming | Control |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | STP deciding which port blocks | Control |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | ARP resolving the next hop | Control |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | Dropping a packet that matches an ACL deny | Data |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | Moving a packet from the inbound to the outbound interface | Data |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | The console port | Management |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | CDP neighbour discovery (book's classification) | Control CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | Adding and removing packet headers | Data |"
+    },
+    {
+     "level": 2,
+     "text": "Paper lab 2: NMS, NCM or controller?"
+    },
+    {
+     "level": 0,
+     "text": "| # | Need | Best answer |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Alert the on-call engineer when an interface goes down | NMS (SNMP trap or syslog) |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | See what changed in a router config since last week | NCM (compare saved versions) |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Plug a new switch in and have it configure itself | Controller (LAN Automation with PnP) |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Show the path through a VPN and tell me if an ACL blocks it | Controller (Path Trace) |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Find out why a user could not join Wi-Fi three days ago | Controller (Assurance) |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | Graph interface utilization and CPU load | NMS |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | Push the same NTP and syslog settings to every site | Controller (Network Hierarchy), or an NCM template |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | Run show ip route on 40 routers and keep the output | Controller (Command Runner), or an NCM |"
+    },
+    {
+     "level": 2,
+     "text": "Paper lab 3: Clos link counts"
+    },
+    {
+     "level": 0,
+     "text": "Spine/leaf links = spines times leaves. Full mesh links = n times (n minus 1) divided by 2. All values calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "| Design | Links |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 spines, 3 leaves | 6 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 spines, 8 leaves | 16 |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 spines, 16 leaves | 64 |"
+    },
+    {
+     "level": 0,
+     "text": "| Full mesh, 4 devices | 6 |"
+    },
+    {
+     "level": 0,
+     "text": "| Full mesh, 8 devices | 28 |"
+    },
+    {
+     "level": 0,
+     "text": "| Full mesh, 32 devices | 496 |"
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "SDN Controllers — review questions",
+   "questions": [
+    {
+     "source": "Q1. Which protocol does an NMS use to poll devices?",
+     "sourceNumber": "Q1",
+     "q": "Which protocol does an NMS use to poll devices?",
+     "options": [
+      "Telnet",
+      "SNMP",
+      "SMTP",
+      "RESTCONF"
+     ],
+     "answer": "B",
+     "why": "the book says an NMS polls devices using SNMP.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. What is the difference between an SNMP poll and an SNMP trap?",
+     "sourceNumber": "Q2",
+     "q": "What is the difference between an SNMP poll and an SNMP trap?",
+     "options": [],
+     "answer": "A",
+     "why": "poll is requested by the NMS. A trap is sent by the device on its own when something happens - traps usually carry more detail than syslog messages.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which syslog level number is \"debugging\", and is it more or less severe than \"errors\"?",
+     "sourceNumber": "Q3",
+     "q": "Which syslog level number is \"debugging\", and is it more or less severe than \"errors\"?",
+     "options": [],
+     "answer": null,
+     "why": "Level 7, and it is the least severe - lower numbers are more severe. Errors is level 3.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which command sets the IP address of the syslog server?",
+     "sourceNumber": "Q4",
+     "q": "Which command sets the IP address of the syslog server?",
+     "options": [
+      "logging trap 10.20.2.115",
+      "logging host 10.20.2.115",
+      "snmp-server host 10.20.2.115",
+      "syslog server 10.20.2.115"
+     ],
+     "answer": "B",
+     "why": "logging host sets the server. logging trap sets the severity level.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q5. Why is a read-write SNMP community string risky?",
+     "sourceNumber": "Q5",
+     "q": "Why is a read-write SNMP community string risky?",
+     "options": [],
+     "answer": "A",
+     "why": "device that knows it can change the configuration, and community strings travel in plain text - use SNMPv3 and ACLs where possible. ADDED",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Name three things an NCM does.",
+     "sourceNumber": "Q1",
+     "q": "Name three things an NCM does.",
+     "options": [],
+     "answer": "A",
+     "why": "ny three of: back up configs, search configs, compare versions, push configs, templates - these are the main NCM functions in the book.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What does the secret keyword do in username ncm secret ncmPass?",
+     "sourceNumber": "Q2",
+     "q": "What does the secret keyword do in username ncm secret ncmPass?",
+     "options": [],
+     "answer": null,
+     "why": "Stores the password in a hashed form - it is safer than a plain password entry.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which is better for NCM login, Telnet or SSH, and why?",
+     "sourceNumber": "Q3",
+     "q": "Which is better for NCM login, Telnet or SSH, and why?",
+     "options": [],
+     "answer": null,
+     "why": "SSH, because Telnet sends everything in plain text - this is an update to the book's answer key. UPDATED",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which tool would you use to see what changed in a router's config last night?",
+     "sourceNumber": "Q4",
+     "q": "Which tool would you use to see what changed in a router's config last night?",
+     "options": [
+      "NMS",
+      "NCM",
+      "A syslog filter",
+      "A ping"
+     ],
+     "answer": "B",
+     "why": "an NCM can compare saved configuration versions.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q1. Which plane does SSH belong to?",
+     "sourceNumber": "Q1",
+     "q": "Which plane does SSH belong to?",
+     "options": [
+      "Management",
+      "Control",
+      "Data",
+      "None of them"
+     ],
+     "answer": "A",
+     "why": "SSH, Telnet, SNMP and HTTPS are management plane.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which plane runs OSPF?",
+     "sourceNumber": "Q2",
+     "q": "Which plane runs OSPF?",
+     "options": [],
+     "answer": null,
+     "why": "The control plane - the control plane runs protocols and makes decisions.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which plane drops a packet that hits an ACL deny?",
+     "sourceNumber": "Q3",
+     "q": "Which plane drops a packet that hits an ACL deny?",
+     "options": [],
+     "answer": null,
+     "why": "The data plane - the data plane enforces the rule on actual traffic.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What does CEF build from the routing table?",
+     "sourceNumber": "Q4",
+     "q": "What does CEF build from the routing table?",
+     "options": [],
+     "answer": null,
+     "why": "The Forwarding Information Base (FIB) - the adjacency table is built from ARP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What does the data plane do about protocols?",
+     "sourceNumber": "Q5",
+     "q": "What does the data plane do about protocols?",
+     "options": [],
+     "answer": null,
+     "why": "It does not run protocols; it forwards traffic - the book's answer to review question 7.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the northbound interface used for?",
+     "sourceNumber": "Q1",
+     "q": "What is the northbound interface used for?",
+     "options": [
+      "Talking to the network devices",
+      "Letting users and scripts interact with the controller",
+      "Tracking AP performance",
+      "Routing traffic out of the network"
+     ],
+     "answer": "B",
+     "why": "the NBI is how you reach the controller, usually through a GUI or REST API.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?",
+     "sourceNumber": "Q2",
+     "q": "Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?",
+     "options": [],
+     "answer": null,
+     "why": "OpenFlow for OpenDaylight and OpFlex for ACI - the book's review questions 8 and 9.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which model sends detailed instructions: imperative or declarative?",
+     "sourceNumber": "Q3",
+     "q": "Which model sends detailed instructions: imperative or declarative?",
+     "options": [],
+     "answer": null,
+     "why": "Imperative (OpenFlow) - OpFlex is declarative and sends a summary policy.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. NETCONF uses which transport and default port?",
+     "sourceNumber": "Q4",
+     "q": "NETCONF uses which transport and default port?",
+     "options": [],
+     "answer": null,
+     "why": "SSH and TCP port 830 - Cisco IOS XE documentation. ADDED",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. Which Cisco SBI is legacy?",
+     "sourceNumber": "Q5",
+     "q": "Which Cisco SBI is legacy?",
+     "options": [],
+     "answer": null,
+     "why": "onePK - the book says it is legacy but may still be found.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What does SDN generally mean?",
+     "sourceNumber": "Q1",
+     "q": "What does SDN generally mean?",
+     "options": [],
+     "answer": null,
+     "why": "Separating the control plane from the data plane - the controller holds the intelligence.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Name one advantage and one disadvantage of the cloud-managed Meraki model.",
+     "sourceNumber": "Q2",
+     "q": "Name one advantage and one disadvantage of the cloud-managed Meraki model.",
+     "options": [],
+     "answer": "A",
+     "why": "dvantage: manage from anywhere. Disadvantage: devices must reach the cloud before you can manage them - the book's two points.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Name two advantages of controller-based networking.",
+     "sourceNumber": "Q1",
+     "q": "Name two advantages of controller-based networking.",
+     "options": [],
+     "answer": "A",
+     "why": "ny two of: central management, mass configuration, consistent configuration, central monitoring and scripting - the book lists these.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which layer of the campus architecture hosts the SVIs?",
+     "sourceNumber": "Q2",
+     "q": "Which layer of the campus architecture hosts the SVIs?",
+     "options": [
+      "Access",
+      "Distribution",
+      "Core",
+      "Spine"
+     ],
+     "answer": "B",
+     "why": "the distribution layer hosts SVIs, DHCP relay and the Layer 3 boundary.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. In spine/leaf, which devices does a leaf switch connect to?",
+     "sourceNumber": "Q3",
+     "q": "In spine/leaf, which devices does a leaf switch connect to?",
+     "options": [],
+     "answer": null,
+     "why": "Only spine switches - leaf switches do not connect to other leaf switches.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. How do you add more ports, and how do you add more bandwidth, in spine/leaf?",
+     "sourceNumber": "Q4",
+     "q": "How do you add more ports, and how do you add more bandwidth, in spine/leaf?",
+     "options": [],
+     "answer": "A",
+     "why": "dd a leaf for ports. Add a spine for bandwidth - the book's growth rule.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What load-balancing method does spine/leaf make easy?",
+     "sourceNumber": "Q5",
+     "q": "What load-balancing method does spine/leaf make easy?",
+     "options": [],
+     "answer": null,
+     "why": "ECMP (equal-cost multipath) - paths are equal length.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the underlay?",
+     "sourceNumber": "Q1",
+     "q": "What is the underlay?",
+     "options": [
+      "A layer where tunnels are built to provide services",
+      "A layer that provides connectivity throughout the fabric",
+      "A term for everything in the SDN network",
+      "The controller's GUI"
+     ],
+     "answer": "B",
+     "why": "the book's review question 2. Option A is the overlay, and option C is the fabric.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Why should the underlay use only Layer 3 interfaces?",
+     "sourceNumber": "Q2",
+     "q": "Why should the underlay use only Layer 3 interfaces?",
+     "options": [],
+     "answer": null,
+     "why": "So STP does not run and block uplinks, and ECMP can balance traffic - STP would waste the fast redundant links.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which OSPF network type removes the need for a DR on underlay links?",
+     "sourceNumber": "Q3",
+     "q": "Which OSPF network type removes the need for a DR on underlay links?",
+     "options": [],
+     "answer": null,
+     "why": "Point-to-point - ip ospf network point-to-point.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What does VXLAN do?",
+     "sourceNumber": "Q4",
+     "q": "What does VXLAN do?",
+     "options": [],
+     "answer": null,
+     "why": "Tunnels Layer 2 traffic over a Layer 3 network - it lets VLANs span routed networks.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What must match for an OSPF adjacency to form, and what can you use if it does not?",
+     "sourceNumber": "Q5",
+     "q": "What must match for an OSPF adjacency to form, and what can you use if it does not?",
+     "options": [],
+     "answer": null,
+     "why": "The MTU, and ip ospf mtu-ignore - a mismatch stops OSPF neighbours from working properly.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What was DNA Center renamed?",
+     "sourceNumber": "Q1",
+     "q": "What was DNA Center renamed?",
+     "options": [
+      "Cisco Catalyst Center",
+      "Cisco Prime Center",
+      "Cisco Meraki Center",
+      "Cisco ACI Center"
+     ],
+     "answer": "A",
+     "why": "Cisco's data sheet says Catalyst Center is formerly DNA Center.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which DNA Center feature is the \"time machine\"?",
+     "sourceNumber": "Q2",
+     "q": "Which DNA Center feature is the \"time machine\"?",
+     "options": [],
+     "answer": "A",
+     "why": "ssurance - it stores historical network data to look back at past issues.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which feature configures new switches automatically using Plug and Play?",
+     "sourceNumber": "Q3",
+     "q": "Which feature configures new switches automatically using Plug and Play?",
+     "options": [
+      "Path Trace",
+      "LAN Automation",
+      "EasyQoS",
+      "Command Runner"
+     ],
+     "answer": "B",
+     "why": "LAN Automation uses PnP with a DHCP server on the upstream device.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q4. Which feature shows ACLs that would block a path?",
+     "sourceNumber": "Q4",
+     "q": "Which feature shows ACLs that would block a path?",
+     "options": [],
+     "answer": null,
+     "why": "Path Trace - traceroute cannot show that.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. Can Command Runner push configuration?",
+     "sourceNumber": "Q5",
+     "q": "Can Command Runner push configuration?",
+     "options": [],
+     "answer": null,
+     "why": "No, only show commands - use Templates for configuration.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. Name the three EasyQoS application categories.",
+     "sourceNumber": "Q6",
+     "q": "Name the three EasyQoS application categories.",
+     "options": [],
+     "answer": "B",
+     "why": "usiness Relevant, Business Irrelevant, Default - applications can be moved between them.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. How do scripts talk to DNA Center?",
+     "sourceNumber": "Q7",
+     "q": "How do scripts talk to DNA Center?",
+     "options": [],
+     "answer": null,
+     "why": "Through its REST API - Code Preview can generate snippets.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What do users and scripts use to interact with an SDN controller?",
+     "sourceNumber": "Q1",
+     "q": "What do users and scripts use to interact with an SDN controller?",
+     "options": [
+      "The southbound interface",
+      "The northbound interface",
+      "The data plane",
+      "The underlay"
+     ],
+     "answer": "B",
+     "why": "the NBI, usually a GUI or REST API.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which interface does the controller use to configure network devices?",
+     "sourceNumber": "Q2",
+     "q": "Which interface does the controller use to configure network devices?",
+     "options": [],
+     "answer": null,
+     "why": "The southbound interface - examples: OpenFlow, NETCONF, OpFlex.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which statement describes the underlay?",
+     "sourceNumber": "Q3",
+     "q": "Which statement describes the underlay?",
+     "options": [
+      "Virtual tunnels that provide services",
+      "The physical Layer 3 network that gives connectivity",
+      "A name for all devices in the solution",
+      "The controller's database"
+     ],
+     "answer": "B",
+     "why": "the overlay is the tunnels. The fabric is the term for everything.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q4. Which statement describes the overlay?",
+     "sourceNumber": "Q4",
+     "q": "Which statement describes the overlay?",
+     "options": [],
+     "answer": "A",
+     "why": "virtual network tunnelled over the underlay, where services such as security and QoS are applied - VXLAN is the usual tunnel type.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What is a network fabric?",
+     "sourceNumber": "Q5",
+     "q": "What is a network fabric?",
+     "options": [],
+     "answer": "A",
+     "why": "term for all the network devices that use the SDN solution (the underlay and overlay together) - the controller abstracts the details.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. Which plane runs OSPF and ARP?",
+     "sourceNumber": "Q6",
+     "q": "Which plane runs OSPF and ARP?",
+     "options": [
+      "Management",
+      "Control",
+      "Data",
+      "Forwarding"
+     ],
+     "answer": "B",
+     "why": "the control plane runs protocols and builds forwarding information.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q7. Which plane includes SSH, SNMP, HTTPS and the console port?",
+     "sourceNumber": "Q7",
+     "q": "Which plane includes SSH, SNMP, HTTPS and the console port?",
+     "options": [],
+     "answer": null,
+     "why": "The management plane - it is how you reach and manage the device.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. Which plane forwards traffic and drops packets denied by an ACL?",
+     "sourceNumber": "Q8",
+     "q": "Which plane forwards traffic and drops packets denied by an ACL?",
+     "options": [],
+     "answer": null,
+     "why": "The data plane - it does not run protocols.",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. Which protocol does an NMS mainly use to poll devices?",
+     "sourceNumber": "Q9",
+     "q": "Which protocol does an NMS mainly use to poll devices?",
+     "options": [
+      "SNMP",
+      "NETCONF",
+      "OpenFlow",
+      "OpFlex"
+     ],
+     "answer": "A",
+     "why": "an NMS polls with SNMP.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q10. What is the difference between an SNMP poll and a trap?",
+     "sourceNumber": "Q10",
+     "q": "What is the difference between an SNMP poll and a trap?",
+     "options": [],
+     "answer": "A",
+     "why": "poll is a request from the NMS. A trap is sent by the device on its own when an event happens - traps often carry more detail than syslog.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. Which syslog severity number is \"warnings\", and which is \"debugging\"?",
+     "sourceNumber": "Q11",
+     "q": "Which syslog severity number is \"warnings\", and which is \"debugging\"?",
+     "options": [],
+     "answer": null,
+     "why": "4 and 7 - 0 is emergencies and 7 is debugging. A setting of N sends N and lower numbers.",
+     "kind": "open"
+    },
+    {
+     "source": "Q12. Which command points a router at a syslog server?",
+     "sourceNumber": "Q12",
+     "q": "Which command points a router at a syslog server?",
+     "options": [
+      "logging host 10.1.1.1",
+      "logging trap 10.1.1.1",
+      "snmp-server host 10.1.1.1",
+      "syslog 10.1.1.1"
+     ],
+     "answer": "A",
+     "why": "logging trap sets the severity.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q13. Name three things an NCM does.",
+     "sourceNumber": "Q13",
+     "q": "Name three things an NCM does.",
+     "options": [],
+     "answer": "B",
+     "why": "ack up, compare, search and push configurations (any three) - templates are another.",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. Which table does CEF build from the routing table, and which table is built from ARP?",
+     "sourceNumber": "Q14",
+     "q": "Which table does CEF build from the routing table, and which table is built from ARP?",
+     "options": [],
+     "answer": null,
+     "why": "The FIB, and the adjacency table - both are in the data plane.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?",
+     "sourceNumber": "Q15",
+     "q": "Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?",
+     "options": [],
+     "answer": null,
+     "why": "OpenFlow and OpFlex - OpenFlow is imperative. OpFlex is declarative.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. Which protocol uses XML over SSH, TCP port 830 by default?",
+     "sourceNumber": "Q16",
+     "q": "Which protocol uses XML over SSH, TCP port 830 by default?",
+     "options": [
+      "NETCONF",
+      "OpenFlow",
+      "SNMP",
+      "onePK"
+     ],
+     "answer": "A",
+     "why": "RFC 6241 (Cisco IOS XE documentation). It models data with YANG.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q17. In spine/leaf, which devices does a leaf connect to?",
+     "sourceNumber": "Q17",
+     "q": "In spine/leaf, which devices does a leaf connect to?",
+     "options": [],
+     "answer": null,
+     "why": "Every spine, and no other leaf - a leaf-to-leaf path is leaf, spine, leaf.",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. Why is STP a bad choice in an SDN underlay?",
+     "sourceNumber": "Q18",
+     "q": "Why is STP a bad choice in an SDN underlay?",
+     "options": [],
+     "answer": null,
+     "why": "It blocks redundant links, wasting fast uplinks. Layer 3 links with ECMP use them all - use routed ports and OSPF instead.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. Why use ip ospf network point-to-point on underlay links?",
+     "sourceNumber": "Q19",
+     "q": "Why use ip ospf network point-to-point on underlay links?",
+     "options": [],
+     "answer": null,
+     "why": "No DR/BDR election is needed - the neighbour state shows FULL with a dash instead of a DR role.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. OSPF neighbours will not form after you changed system mtu on one switch. What are two fixes?",
+     "sourceNumber": "Q20",
+     "q": "OSPF neighbours will not form after you changed system mtu on one switch. What are two fixes?",
+     "options": [],
+     "answer": "C",
+     "why": "hange the MTU on the neighbouring switches too, or use ip ospf mtu-ignore - OSPF needs matching MTUs.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. What does VXLAN do?",
+     "sourceNumber": "Q21",
+     "q": "What does VXLAN do?",
+     "options": [],
+     "answer": null,
+     "why": "Tunnels Layer 2 traffic over a Layer 3 network - it lets VLANs span routed networks.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. Which three technologies make up the SD-Access fabric?",
+     "sourceNumber": "Q22",
+     "q": "Which three technologies make up the SD-Access fabric?",
+     "options": [],
+     "answer": null,
+     "why": "LISP (control plane), VXLAN (data plane) and TrustSec (policy) - secondary Cisco sources. The book does not name them. CHECK",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. What is Cisco Catalyst Center's former name?",
+     "sourceNumber": "Q23",
+     "q": "What is Cisco Catalyst Center's former name?",
+     "options": [],
+     "answer": "C",
+     "why": "isco DNA Center - Cisco's data sheet says \"formerly Cisco DNA Center\".",
+     "kind": "open"
+    },
+    {
+     "source": "Q24. Which DNA Center feature uses Plug and Play to configure new switches?",
+     "sourceNumber": "Q24",
+     "q": "Which DNA Center feature uses Plug and Play to configure new switches?",
+     "options": [],
+     "answer": null,
+     "why": "LAN Automation - a DHCP server on the upstream device gives the new device its address and the PnP server details.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Can Command Runner push configuration commands?",
+     "sourceNumber": "Q25",
+     "q": "Can Command Runner push configuration commands?",
+     "options": [],
+     "answer": null,
+     "why": "No, only show commands - use Templates for configuration.",
+     "kind": "open"
+    },
+    {
+     "source": "Q26. Why is Path Trace better than traceroute?",
+     "sourceNumber": "Q26",
+     "q": "Why is Path Trace better than traceroute?",
+     "options": [],
+     "answer": null,
+     "why": "It shows the true path including tunnels, Layer 2 switches and ACLs that would block traffic - traceroute shows only Layer 3 hops.",
+     "kind": "open"
+    },
+    {
+     "source": "Q27. Name the three EasyQoS categories.",
+     "sourceNumber": "Q27",
+     "q": "Name the three EasyQoS categories.",
+     "options": [],
+     "answer": "B",
+     "why": "usiness Relevant, Business Irrelevant, Default - applications can be moved between them.",
+     "kind": "open"
+    },
+    {
+     "source": "Q28. What is the main risk of pushing configuration from a controller?",
+     "sourceNumber": "Q28",
+     "q": "What is the main risk of pushing configuration from a controller?",
+     "options": [],
+     "answer": "A",
+     "why": "mistake in a template is pushed to every device at once - review before applying.",
+     "kind": "open"
+    },
+    {
+     "source": "Q29. Which v2.0 objective covers network management approaches such as controller-based and cloud-based?",
+     "sourceNumber": "Q29",
+     "q": "Which v2.0 objective covers network management approaches such as controller-based and cloud-based?",
+     "options": [],
+     "answer": null,
+     "why": "5.3 - official v2.0 outline. Controller, underlay and overlay details are not listed.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 Which protocol does an NMS use to poll devices?"
+    },
+    {
+     "level": 0,
+     "text": "A. Telnet"
+    },
+    {
+     "level": 0,
+     "text": "B. SNMP"
+    },
+    {
+     "level": 0,
+     "text": "C. SMTP"
+    },
+    {
+     "level": 0,
+     "text": "D. RESTCONF"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the book says an NMS polls devices using SNMP."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What is the difference between an SNMP poll and an SNMP trap?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - poll is requested by the NMS. A trap is sent by the device on its own when something happens - traps usually carry more detail than syslog messages."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which syslog level number is \"debugging\", and is it more or less severe than \"errors\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Level 7, and it is the least severe - lower numbers are more severe. Errors is level 3."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which command sets the IP address of the syslog server?"
+    },
+    {
+     "level": 0,
+     "text": "A. logging trap 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "B. logging host 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "C. snmp-server host 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "D. syslog server 10.20.2.115"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - logging host sets the server. logging trap sets the severity level."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Why is a read-write SNMP community string risky?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - device that knows it can change the configuration, and community strings travel in plain text - use SNMPv3 and ACLs where possible. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Q1 Name three things an NCM does."
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ny three of: back up configs, search configs, compare versions, push configs, templates - these are the main NCM functions in the book."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What does the secret keyword do in username ncm secret ncmPass?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stores the password in a hashed form - it is safer than a plain password entry."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which is better for NCM login, Telnet or SSH, and why?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH, because Telnet sends everything in plain text - this is an update to the book's answer key. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which tool would you use to see what changed in a router's config last night?"
+    },
+    {
+     "level": 0,
+     "text": "A. NMS"
+    },
+    {
+     "level": 0,
+     "text": "B. NCM"
+    },
+    {
+     "level": 0,
+     "text": "C. A syslog filter"
+    },
+    {
+     "level": 0,
+     "text": "D. A ping"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - an NCM can compare saved configuration versions."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which plane does SSH belong to?"
+    },
+    {
+     "level": 0,
+     "text": "A. Management"
+    },
+    {
+     "level": 0,
+     "text": "B. Control"
+    },
+    {
+     "level": 0,
+     "text": "C. Data"
+    },
+    {
+     "level": 0,
+     "text": "D. None of them"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - SSH, Telnet, SNMP and HTTPS are management plane."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which plane runs OSPF?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The control plane - the control plane runs protocols and makes decisions."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which plane drops a packet that hits an ACL deny?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The data plane - the data plane enforces the rule on actual traffic."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What does CEF build from the routing table?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The Forwarding Information Base (FIB) - the adjacency table is built from ARP."
+    },
+    {
+     "level": 0,
+     "text": "Q5 What does the data plane do about protocols?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It does not run protocols; it forwards traffic - the book's answer to review question 7."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the northbound interface used for?"
+    },
+    {
+     "level": 0,
+     "text": "A. Talking to the network devices"
+    },
+    {
+     "level": 0,
+     "text": "B. Letting users and scripts interact with the controller"
+    },
+    {
+     "level": 0,
+     "text": "C. Tracking AP performance"
+    },
+    {
+     "level": 0,
+     "text": "D. Routing traffic out of the network"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the NBI is how you reach the controller, usually through a GUI or REST API."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OpenFlow for OpenDaylight and OpFlex for ACI - the book's review questions 8 and 9."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which model sends detailed instructions: imperative or declarative?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Imperative (OpenFlow) - OpFlex is declarative and sends a summary policy."
+    },
+    {
+     "level": 0,
+     "text": "Q4 NETCONF uses which transport and default port?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH and TCP port 830 - Cisco IOS XE documentation. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which Cisco SBI is legacy?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: onePK - the book says it is legacy but may still be found."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What does SDN generally mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Separating the control plane from the data plane - the controller holds the intelligence."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Name one advantage and one disadvantage of the cloud-managed Meraki model."
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - dvantage: manage from anywhere. Disadvantage: devices must reach the cloud before you can manage them - the book's two points."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Name two advantages of controller-based networking."
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ny two of: central management, mass configuration, consistent configuration, central monitoring and scripting - the book lists these."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which layer of the campus architecture hosts the SVIs?"
+    },
+    {
+     "level": 0,
+     "text": "A. Access"
+    },
+    {
+     "level": 0,
+     "text": "B. Distribution"
+    },
+    {
+     "level": 0,
+     "text": "C. Core"
+    },
+    {
+     "level": 0,
+     "text": "D. Spine"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the distribution layer hosts SVIs, DHCP relay and the Layer 3 boundary."
+    },
+    {
+     "level": 0,
+     "text": "Q3 In spine/leaf, which devices does a leaf switch connect to?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only spine switches - leaf switches do not connect to other leaf switches."
+    },
+    {
+     "level": 0,
+     "text": "Q4 How do you add more ports, and how do you add more bandwidth, in spine/leaf?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - dd a leaf for ports. Add a spine for bandwidth - the book's growth rule."
+    },
+    {
+     "level": 0,
+     "text": "Q5 What load-balancing method does spine/leaf make easy?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ECMP (equal-cost multipath) - paths are equal length."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the underlay?"
+    },
+    {
+     "level": 0,
+     "text": "A. A layer where tunnels are built to provide services"
+    },
+    {
+     "level": 0,
+     "text": "B. A layer that provides connectivity throughout the fabric"
+    },
+    {
+     "level": 0,
+     "text": "C. A term for everything in the SDN network"
+    },
+    {
+     "level": 0,
+     "text": "D. The controller's GUI"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the book's review question 2. Option A is the overlay, and option C is the fabric."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why should the underlay use only Layer 3 interfaces?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: So STP does not run and block uplinks, and ECMP can balance traffic - STP would waste the fast redundant links."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which OSPF network type removes the need for a DR on underlay links?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Point-to-point - ip ospf network point-to-point."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What does VXLAN do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Tunnels Layer 2 traffic over a Layer 3 network - it lets VLANs span routed networks."
+    },
+    {
+     "level": 0,
+     "text": "Q5 What must match for an OSPF adjacency to form, and what can you use if it does not?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The MTU, and ip ospf mtu-ignore - a mismatch stops OSPF neighbours from working properly."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What was DNA Center renamed?"
+    },
+    {
+     "level": 0,
+     "text": "A. Cisco Catalyst Center"
+    },
+    {
+     "level": 0,
+     "text": "B. Cisco Prime Center"
+    },
+    {
+     "level": 0,
+     "text": "C. Cisco Meraki Center"
+    },
+    {
+     "level": 0,
+     "text": "D. Cisco ACI Center"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - Cisco's data sheet says Catalyst Center is formerly DNA Center."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which DNA Center feature is the \"time machine\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ssurance - it stores historical network data to look back at past issues."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which feature configures new switches automatically using Plug and Play?"
+    },
+    {
+     "level": 0,
+     "text": "A. Path Trace"
+    },
+    {
+     "level": 0,
+     "text": "B. LAN Automation"
+    },
+    {
+     "level": 0,
+     "text": "C. EasyQoS"
+    },
+    {
+     "level": 0,
+     "text": "D. Command Runner"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - LAN Automation uses PnP with a DHCP server on the upstream device."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which feature shows ACLs that would block a path?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Path Trace - traceroute cannot show that."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Can Command Runner push configuration?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No, only show commands - use Templates for configuration."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Name the three EasyQoS application categories."
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - usiness Relevant, Business Irrelevant, Default - applications can be moved between them."
+    },
+    {
+     "level": 0,
+     "text": "Q7 How do scripts talk to DNA Center?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Through its REST API - Code Preview can generate snippets."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What do users and scripts use to interact with an SDN controller?"
+    },
+    {
+     "level": 0,
+     "text": "A. The southbound interface"
+    },
+    {
+     "level": 0,
+     "text": "B. The northbound interface"
+    },
+    {
+     "level": 0,
+     "text": "C. The data plane"
+    },
+    {
+     "level": 0,
+     "text": "D. The underlay"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the NBI, usually a GUI or REST API."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which interface does the controller use to configure network devices?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The southbound interface - examples: OpenFlow, NETCONF, OpFlex."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which statement describes the underlay?"
+    },
+    {
+     "level": 0,
+     "text": "A. Virtual tunnels that provide services"
+    },
+    {
+     "level": 0,
+     "text": "B. The physical Layer 3 network that gives connectivity"
+    },
+    {
+     "level": 0,
+     "text": "C. A name for all devices in the solution"
+    },
+    {
+     "level": 0,
+     "text": "D. The controller's database"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the overlay is the tunnels. The fabric is the term for everything."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which statement describes the overlay?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - virtual network tunnelled over the underlay, where services such as security and QoS are applied - VXLAN is the usual tunnel type."
+    },
+    {
+     "level": 0,
+     "text": "Q5 What is a network fabric?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - term for all the network devices that use the SDN solution (the underlay and overlay together) - the controller abstracts the details."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Which plane runs OSPF and ARP?"
+    },
+    {
+     "level": 0,
+     "text": "A. Management"
+    },
+    {
+     "level": 0,
+     "text": "B. Control"
+    },
+    {
+     "level": 0,
+     "text": "C. Data"
+    },
+    {
+     "level": 0,
+     "text": "D. Forwarding"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the control plane runs protocols and builds forwarding information."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Which plane includes SSH, SNMP, HTTPS and the console port?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The management plane - it is how you reach and manage the device."
+    },
+    {
+     "level": 0,
+     "text": "Q8 Which plane forwards traffic and drops packets denied by an ACL?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The data plane - it does not run protocols."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Which protocol does an NMS mainly use to poll devices?"
+    },
+    {
+     "level": 0,
+     "text": "A. SNMP"
+    },
+    {
+     "level": 0,
+     "text": "B. NETCONF"
+    },
+    {
+     "level": 0,
+     "text": "C. OpenFlow"
+    },
+    {
+     "level": 0,
+     "text": "D. OpFlex"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - an NMS polls with SNMP."
+    },
+    {
+     "level": 0,
+     "text": "Q10 What is the difference between an SNMP poll and a trap?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - poll is a request from the NMS. A trap is sent by the device on its own when an event happens - traps often carry more detail than syslog."
+    },
+    {
+     "level": 0,
+     "text": "Q11 Which syslog severity number is \"warnings\", and which is \"debugging\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 4 and 7 - 0 is emergencies and 7 is debugging. A setting of N sends N and lower numbers."
+    },
+    {
+     "level": 0,
+     "text": "Q12 Which command points a router at a syslog server?"
+    },
+    {
+     "level": 0,
+     "text": "A. logging host 10.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "B. logging trap 10.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "C. snmp-server host 10.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "D. syslog 10.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - logging trap sets the severity."
+    },
+    {
+     "level": 0,
+     "text": "Q13 Name three things an NCM does."
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - ack up, compare, search and push configurations (any three) - templates are another."
+    },
+    {
+     "level": 0,
+     "text": "Q14 Which table does CEF build from the routing table, and which table is built from ARP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The FIB, and the adjacency table - both are in the data plane."
+    },
+    {
+     "level": 0,
+     "text": "Q15 Which southbound protocol does OpenDaylight use, and which does Cisco ACI use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OpenFlow and OpFlex - OpenFlow is imperative. OpFlex is declarative."
+    },
+    {
+     "level": 0,
+     "text": "Q16 Which protocol uses XML over SSH, TCP port 830 by default?"
+    },
+    {
+     "level": 0,
+     "text": "A. NETCONF"
+    },
+    {
+     "level": 0,
+     "text": "B. OpenFlow"
+    },
+    {
+     "level": 0,
+     "text": "C. SNMP"
+    },
+    {
+     "level": 0,
+     "text": "D. onePK"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - RFC 6241 (Cisco IOS XE documentation). It models data with YANG."
+    },
+    {
+     "level": 0,
+     "text": "Q17 In spine/leaf, which devices does a leaf connect to?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Every spine, and no other leaf - a leaf-to-leaf path is leaf, spine, leaf."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Why is STP a bad choice in an SDN underlay?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It blocks redundant links, wasting fast uplinks. Layer 3 links with ECMP use them all - use routed ports and OSPF instead."
+    },
+    {
+     "level": 0,
+     "text": "Q19 Why use ip ospf network point-to-point on underlay links?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No DR/BDR election is needed - the neighbour state shows FULL with a dash instead of a DR role."
+    },
+    {
+     "level": 0,
+     "text": "Q20 OSPF neighbours will not form after you changed system mtu on one switch. What are two fixes?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - hange the MTU on the neighbouring switches too, or use ip ospf mtu-ignore - OSPF needs matching MTUs."
+    },
+    {
+     "level": 0,
+     "text": "Q21 What does VXLAN do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Tunnels Layer 2 traffic over a Layer 3 network - it lets VLANs span routed networks."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Which three technologies make up the SD-Access fabric?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: LISP (control plane), VXLAN (data plane) and TrustSec (policy) - secondary Cisco sources. The book does not name them. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Q23 What is Cisco Catalyst Center's former name?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - isco DNA Center - Cisco's data sheet says \"formerly Cisco DNA Center\"."
+    },
+    {
+     "level": 0,
+     "text": "Q24 Which DNA Center feature uses Plug and Play to configure new switches?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: LAN Automation - a DHCP server on the upstream device gives the new device its address and the PnP server details."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Can Command Runner push configuration commands?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No, only show commands - use Templates for configuration."
+    },
+    {
+     "level": 0,
+     "text": "Q26 Why is Path Trace better than traceroute?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It shows the true path including tunnels, Layer 2 switches and ACLs that would block traffic - traceroute shows only Layer 3 hops."
+    },
+    {
+     "level": 0,
+     "text": "Q27 Name the three EasyQoS categories."
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - usiness Relevant, Business Irrelevant, Default - applications can be moved between them."
+    },
+    {
+     "level": 0,
+     "text": "Q28 What is the main risk of pushing configuration from a controller?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - mistake in a template is pushed to every device at once - review before applying."
+    },
+    {
+     "level": 0,
+     "text": "Q29 Which v2.0 objective covers network management approaches such as controller-based and cloud-based?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 5.3 - official v2.0 outline. Controller, underlay and overlay details are not listed."
+    }
+   ],
+   "multipleChoice": 15,
+   "open": 52
+  }
+ ],
+ "generatedFrom": "CC22.docx",
+ "totalWords": 15358,
+ "wordBreakdown": {
+  "sections": 11251,
+  "labs": 1487,
+  "quizzes": 1710,
+  "currency": 676,
+  "sources": 234
+ },
+ "currency": [
+  {
+   "severity": "high",
+   "title": "Gap 1",
+   "found": "Exam topics 1.1.e, 6.2, 6.3, 6.3.a, 6.3.b, 6.4 (p. 689).",
+   "current": "Shows that v1.1 replaced 6.4 (AI and ML) and shortened 1.1.e, and that v2.0 has only 5.3 (plus 5.4 SNMP and 5.6 syslog) for this material. UPDATED",
+   "action": "",
+   "source": "v2.0: official Cisco PDF read this session. v1.1: secondary source. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "\"DNA Center\" throughout.",
+   "current": "Notes the new name Cisco Catalyst Center. UPDATED",
+   "action": "",
+   "source": "Cisco Catalyst Center data sheet (official).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "Prime Infrastructure called a full solution whose successor is DNA Center (p. 691).",
+   "current": "Adds end of sale (29 Sep 2023), end of support (30 Sep 2028) and Cisco's advice. UPDATED",
+   "action": "",
+   "source": "Cisco product page (official).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "SolarWinds screens (2019) and features (p. 691 to 699, 720 to 732).",
+   "current": "Keeps the ideas, flags the screens as dated. CHECK",
+   "action": "",
+   "source": "Not re-verified.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "SNMP config uses plain community strings, including read-write (p. 691).",
+   "current": "Adds SNMPv3 and ACL advice. ADDED",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "logging trap debugging (level 7) (p. 694).",
+   "current": "Explains levels and why production uses 5 or 6. ADDED",
+   "action": "",
+   "source": "Standard syslog levels. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "Syslog facilities and message format are not explained.",
+   "current": "Adds a short explanation because v2.0 5.6 names them. ADDED",
+   "action": "",
+   "source": "Official v2.0 outline. CHECK on details.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "NCM login with Telnet or SSH, example passwords (p. 700); answer key Q15 lists Telnet.",
+   "current": "Says use SSH and never reuse the example passwords. UPDATED",
+   "action": "",
+   "source": "General practice.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "CDP and LLDP are in the control plane (p. 703; Q6).",
+   "current": "Follows the book for the exam and flags the point. CHECK",
+   "action": "",
+   "source": "Book text.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "ACLs and NAT \"defined\" in the control plane but enforced in the data plane (p. 703 to 704).",
+   "current": "Explains define versus enforce. CHECK",
+   "action": "",
+   "source": "Book text.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "CEF, FIB and adjacency table said to be outside the CCNA (p. 705).",
+   "current": "Adds show commands. ADDED",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "OpenFlow: \"All configuration is done via NETCONF\" (p. 708).",
+   "current": "Flags that this mixes OpenFlow with OF-Config. CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "NETCONF described briefly (p. 708).",
+   "current": "Adds RFC 6241, SSH, port 830, YANG, and RESTCONF. ADDED",
+   "action": "",
+   "source": "Cisco IOS XE documents (official).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "Cisco SD-WAN named as a solution (p. 709).",
+   "current": "Notes that product names have changed. CHECK",
+   "action": "",
+   "source": "Not verified in this session.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "Meraki devices \"only provide the data plane\" (p. 709).",
+   "current": "Clarifies that only management is in the cloud. CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "Clos \"the guy's name\" and \"3 hops\" (p. 712).",
+   "current": "Names Charles Clos and says every leaf-to-leaf path crosses one spine. CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "Underlay uses a /24 for every point-to-point link (p. 715).",
+   "current": "Uses /31 links in the lab and shows the address saving. UPDATED",
+   "action": "",
+   "source": "Python script (1536, 24 and 12 addresses).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "system mtu range, reload, and its use (p. 714).",
+   "current": "Notes it is platform specific. CHECK",
+   "action": "",
+   "source": "Book text.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "network 0.0.0.0 0.0.0.0 area 0 (p. 715).",
+   "current": "Recommends the usual wildcard or the interface command. CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 20",
+   "found": "Overlay routing \"usually BGP or EIGRP\", link-state \"a bad idea\" (p. 717).",
+   "current": "Calls it oversimplified and adds LISP, VXLAN and TrustSec. UPDATED",
+   "action": "",
+   "source": "Cisco Live material (Cisco) and secondary sources. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 21",
+   "found": "Fabric is \"entirely Layer 3\" (p. 718; Q18).",
+   "current": "Explains underlay versus overlay services. UPDATED",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 22",
+   "found": "DNA Center licensing: each device has the licence installed locally (p. 720).",
+   "current": "Replaces it with subscription licensing. UPDATED",
+   "action": "",
+   "source": "Cisco data sheet (official).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 23",
+   "found": "Network Hierarchy \"pictured in Figure 22.26\" (p. 721).",
+   "current": "Corrects to Figure 22.27. CHECK",
+   "action": "",
+   "source": "Book text and figure order.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 24",
+   "found": "DNA Center \"doesn't yet support device configuration backups\" (p. 723).",
+   "current": "Says a Configuration Archive feature exists in later versions. UPDATED",
+   "action": "",
+   "source": "Cisco community answers (secondary). CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 25",
+   "found": "Assurance keeps data for one week (p. 730; Q12).",
+   "current": "Says retention depends on version; older docs said 14 days. UPDATED",
+   "action": "",
+   "source": "Cisco community (secondary). CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 26",
+   "found": "Templates use Apache Velocity (p. 723).",
+   "current": "Kept. Other template languages may exist now. CHECK",
+   "action": "",
+   "source": "Not verified.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 27",
+   "found": "Q10 lists Python as a protocol; Q20 says \"choose three\" but the key has one answer; Q18 oversimplified (p. 739 to 741; appendix).",
+   "current": "Flags them. CHECK",
+   "action": "",
+   "source": "Book text and appendix.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 28",
+   "found": "No labs, no troubleshooting, no SNMP versions or ports.",
+   "current": "Adds three labs, three paper labs, a troubleshooting table and SNMP basics. ADDED",
+   "action": "",
+   "source": "Not run. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 29",
+   "found": "Exam Essentials are short (p. 737).",
+   "current": "Adds plane, NBI and SBI, underlay steps and v2.0 objective details. ADDED",
+   "action": "",
+   "source": "Official v2.0 outline.",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Cisco CCNA 200-301 v2.0 exam topics PDF (learningcontent.cisco.com)",
+   "usedFor": "v2.0 objectives 5.3, 5.4, 5.6; absence of underlay, overlay, NBI and SBI lines",
+   "status": "Official. Read this session."
+  },
+  {
+   "source": "Search results quoting the v1.1 changes (lostintransit.se, Cisco-related course listings)",
+   "usedFor": "v1.1 changes to 1.1.e and 6.4; v1.0 wording; DNA Center renamed",
+   "status": "Secondary. Cisco's own v1.1 PDF not opened. CHECK"
+  },
+  {
+   "source": "Cisco Catalyst Center data sheet (cisco.com)",
+   "usedFor": "Catalyst Center formerly DNA Center; subscription licensing",
+   "status": "Official."
+  },
+  {
+   "source": "Cisco Prime Infrastructure product page and end-of-life notices (cisco.com)",
+   "usedFor": "End of sale 29 Sep 2023, end of support 30 Sep 2028, advice to move to Catalyst Center or Meraki",
+   "status": "Official."
+  },
+  {
+   "source": "Cisco IOS XE programmability guides (cisco.com, developer.cisco.com)",
+   "usedFor": "NETCONF RFC 6241, XML, RPC, SSH, port 830, YANG, RESTCONF RFC 8040",
+   "status": "Official."
+  },
+  {
+   "source": "Cisco Live sessions on SD-Access and secondary descriptions",
+   "usedFor": "LISP, VXLAN, TrustSec in SD-Access; node roles",
+   "status": "Cisco material and secondary. CHECK"
+  },
+  {
+   "source": "Cisco DevNet Catalyst Center sandbox pages",
+   "usedFor": "Always-On sandbox and API path prefixes",
+   "status": "Official docs. Availability from community posts. CHECK"
+  },
+  {
+   "source": "Cisco community posts",
+   "usedFor": "Configuration Archive in Catalyst Center; Assurance retention (14 days, newer versions longer)",
+   "status": "Secondary. CHECK"
+  },
+  {
+   "source": "Python 3 ipaddress script (verify22.py)",
+   "usedFor": "Link counts, address-space comparison, lab addressing",
+   "status": "Calculated this session."
+  },
+  {
+   "source": "General networking knowledge",
+   "usedFor": "SNMP versions and ports, syslog details, SNMPv3 commands, Clos history, OF-Config, VXLAN overhead, troubleshooting table",
+   "status": "Not verified against a source. CHECK"
+  },
+  {
+   "source": "The book itself (Lammle, 2020) and its Chapter 22 answer appendix",
+   "usedFor": "All BOOK content and the answer-key check",
+   "status": "Primary for this chapter."
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-5.4"
+  }
+ ],
+ "questionCount": 67,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A: Pre-check",
+  "Sources and Verification Status"
+ ]
+}

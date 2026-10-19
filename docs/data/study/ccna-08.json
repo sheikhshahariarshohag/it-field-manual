@@ -1,0 +1,4591 @@
+{
+ "id": "ccna-08",
+ "n": 8,
+ "sourceNumber": "CC08",
+ "kind": "chapter",
+ "title": "VLANs and Inter-VLAN Routing",
+ "display": "Chapter 8: VLANs and Inter-VLAN Routing",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 11799,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 8"
+    },
+    {
+     "level": 0,
+     "text": "VLANs and Inter-VLAN Routing"
+    },
+    {
+     "level": 0,
+     "text": "This manual replaces Chapter 8 of Todd Lammle, CCNA Certification Study Guide, Volume 2, Exam 200-301 (2020), book pages 219 to 250. It follows the book's order and numbering, keeps the book's learning objectives, and marks every place where this document differs from the book, so you always know what is from the book and what is not."
+    },
+    {
+     "level": 0,
+     "text": "Read it top to bottom: pre-check, sections 8.1 to 8.4, troubleshooting, labs, review questions, then the revision sheet and tracker table. Nothing here was run on real Cisco equipment. Where a command or output was not run, it is marked CHECK ."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 219 to 250 (chapter text 219 to 246, Summary and Exam Essentials p. 247, Review Questions pp. 248 to 250). PDF pages 277 to 308 (offset +58, checked). |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | 13 rows: Chapter 8 - VLANs and Inter-VLAN Routing; 8.1, 8.1.1, 8.1.2, 8.1.3; 8.2, 8.2.1, 8.2.2; 8.3; 8.4, 8.4.1, 8.4.2, 8.4.3.Seq range: not checked. The Notion tracker was not reachable in this chat CHECK . |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 7 to 10 hours in total. This is a suggestion, not a measured need: reading 2 to 3 h, labs 3 to 4 h, questions and revision 2 to 3 h. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | The book targets 200-301 v1.0. Current exam: v1.1 (retires 2 Feb 2027). Next: v2.0 (first test date 3 Feb 2027). Dates come from secondary sources CHECK . |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Nothing in this document records what you know. You fill in the self-assessment table at the end. |"
+    },
+    {
+     "level": 3,
+     "text": "Tag legend"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book chapter (page given where useful). |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is outdated, wrong or unclear here. The text says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the book chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified. Commands and outputs not run on real equipment, or facts not confirmed in a source. Verify before you rely on it. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives (from the book, p. 219)"
+    },
+    {
+     "level": 0,
+     "text": "2.0 Network Access (v1.0 numbering used by the book)"
+    },
+    {
+     "level": 0,
+     "text": "2.1 Configure and verify VLANs (normal range) spanning multiple switches: 2.1.a Access ports (data and voice); 2.1.b Default VLAN; 2.1.c Connectivity."
+    },
+    {
+     "level": 0,
+     "text": "2.2 Configure and verify interswitch connectivity: 2.2.a Trunk ports; 2.2.b 802.1Q; 2.2.c Native VLAN."
+    },
+    {
+     "level": 0,
+     "text": "The chapter also teaches how VLANs break up broadcast domains, how frame tagging works, and how to route between VLANs with a router on a stick and with a Layer 3 switch (SVIs)."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. Every subnet, mask, broadcast and host range in this chapter (the book's Figures 8.12 to 8.15, my lab addressing, and the review questions) was calculated with a Python ipaddress script. All four of the book's worked examples came out correct. The script and its output were run in this session."
+    },
+    {
+     "level": 0,
+     "text": "What was not done: no command in this document was run on a Cisco switch, router or simulator. Packet Tracer and real IOS behaviour can differ from what is written here."
+    }
+   ],
+   "words": 544
+  },
+  {
+   "title": "Where this chapter fits in the exam",
+   "content": [
+    {
+     "level": 0,
+     "text": "The book targets v1.0 objectives. The table maps each section to the current v1.1 outline and to the v2.0 outline that starts on 3 Feb 2027. The v2.0 numbers were read directly from Cisco's official v2.0 exam topics PDF. The v1.1 wording comes from secondary sources, because Cisco's own v1.1 PDF was not opened CHECK . Cisco states that related topics may still appear on any exam."
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.1 VLAN Basics (broadcast domains, benefits) | 2.1 (VLANs spanning multiple switches) | 2.2 (VLAN as a switch port attribute for edge hosts) | High: foundation |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2 Access ports, voice VLAN | 2.1.a Access ports (data and voice) | 2.2 and 2.2.c Voice over IP phone; 2.2.a hosts | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2 Trunk ports, 802.1Q | 2.2.a Trunk ports; 2.2.b 802.1Q | 2.1.b Layer 2 802.1Q trunk interfaces | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2.1 Native VLAN, default VLAN | 2.2.c Native VLAN; 2.1.b Default VLAN | No line item with these names. Native VLAN mismatch fits 2.4 (troubleshooting) and 2.3 (CDP). | High for v1.1. Medium for v2.0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2.2 ISL | Not named | Not named | Low: know it is Cisco-only and retired |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.3 Routing between VLANs (concepts) | 2.1.c InterVLAN connectivity | 2.1 (switch-to-switch and switch-to-router), 2.1.d SVI | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4 Create VLANs, show vlan | 2.1 | 2.2 and 2.4 (show commands) | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.1 Assign ports, voice VLAN | 2.1.a | 2.2, 2.2.c | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.2 Trunk config, allowed VLANs, native VLAN | 2.2.a, 2.2.b, 2.2.c | 2.1.b | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.2 DTP modes, VTP and extended VLANs | Not named | Not named in the official v2.0 PDF | Low to Medium: know the basics and the safe config |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.3 Router on a stick | 2.1.c | 2.1 (switch-to-router) with 2.1.b trunk. The phrase \"router on a stick\" is not used. | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.3 SVI and Layer 3 switch routing | 2.1.c | 2.1.d Switch virtual interface (SVI); 2.1.a Layer 3 physical interfaces | High |"
+    },
+    {
+     "level": 0,
+     "text": "| Subnet maths in the examples | 1.6 IPv4 addressing and subnetting CHECK | 1.3 Troubleshoot IPv4 address configuration, subnetting | Medium |"
+    }
+   ],
+   "words": 387
+  },
+  {
+   "title": "Step 0: Pre-check",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer these five questions before you read anything else. Write a short answer, then tag your confidence: K = I know this, U = I think so but I am not sure, G = I am guessing. Do not look anything up. The answers are in Answer Key A at the end. Use your K/U/G tags when you fill in the tracker table."
+    },
+    {
+     "level": 0,
+     "text": "| # | Question | Your answer | K / U / G |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | A switch has 10 hosts on it and no VLANs. How many broadcast domains does it have, and why? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | What is the difference between an access port and a trunk port? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | On an 802.1Q trunk, which VLAN's frames are sent without a tag by default? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Name two ways to let hosts in different VLANs talk to each other. |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Which command makes a port a permanent trunk on a switch that only supports 802.1Q? |  |  |"
+    }
+   ],
+   "words": 189
+  },
+  {
+   "title": "8.1 VLAN Basics",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 220 to 224. Tracker rows: 8.1, 8.1.1, 8.1.2, 8.1.3. v1.1 objective 2.1. v2.0 objective 2.2."
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. A switch sends a broadcast out of every port except the one it arrived on. So one switch with no VLANs is one big broadcast domain, however many hosts you plug in. A VLAN (virtual LAN) lets you cut one physical switch into several logical switches. Each VLAN is its own broadcast domain. A broadcast sent in VLAN 10 is never sent out of a port that belongs to VLAN 20. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Device | Collision domains | Broadcast domains |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Hub | 1 for all ports | 1 |"
+    },
+    {
+     "level": 0,
+     "text": "| Switch, no VLANs | 1 per port | 1 for the whole switch |"
+    },
+    {
+     "level": 0,
+     "text": "| Switch with VLANs | 1 per port | 1 per VLAN |"
+    },
+    {
+     "level": 0,
+     "text": "| Router | 1 per interface | 1 per interface (broadcasts are not forwarded by default) |"
+    },
+    {
+     "level": 0,
+     "text": "This table is my summary of the book's explanation on pp. 220 to 222 ADDED . The book says the same thing in words: switches break up collision domains, routers break up broadcast domains, and VLANs let a switch do the second job at layer 2."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "A switch separates collision domains. A VLAN (or a router) separates broadcast domains. Examiners like to swap these two."
+    },
+    {
+     "level": 0,
+     "text": "Figures 8.3 and 8.4 in plain words. Four hosts are plugged into one switch. With no VLANs (Figure 8.3) all four receive each other's broadcasts. If you configure Host A and Host B as Sales and Host C and Host D as Admin (Figure 8.4), you get two LANs, two subnets and two broadcast domains on the same physical switch, and you did not buy a second switch. The book says all of these mean the same thing: \"two LANs, two subnets, two broadcast domains, two VLANs\". BOOK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Think of it as a chain: one VLAN = one broadcast domain = (normally) one IP subnet. Strictly, a VLAN is layer 2 and a subnet is layer 3, but the book (p. 240) says to give every VLAN its own subnet. Do that. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "How VLANs make management easier (the book's list, p. 223). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Adds, moves and changes are easy: you just put the port in the right VLAN."
+    },
+    {
+     "level": 0,
+     "text": "- A group that needs more security can sit in its own VLAN, so outsiders cannot talk to it directly."
+    },
+    {
+     "level": 0,
+     "text": "- VLANs group users by function, not by where they sit."
+    },
+    {
+     "level": 0,
+     "text": "- VLANs greatly improve security if they are implemented correctly (see 8.1.2 for the warning)."
+    },
+    {
+     "level": 0,
+     "text": "- VLANs increase the number of broadcast domains and make each one smaller."
+    },
+    {
+     "level": 2,
+     "text": "8.1.1 Broadcast Control"
+    },
+    {
+     "level": 0,
+     "text": "Book p. 223. How many broadcasts a network sees depends on three things: the type of protocol, the applications running, and how those services are used. BOOK Multimedia applications use broadcasts and multicasts a lot. Faulty equipment, poor segmentation and badly designed firewalls make it worse. Common broadcasts you already know are ARP requests and DHCP Discover messages. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "By default a switch filters broadcasts from every port that is not in the same VLAN as the sender. You get the benefits of a switched network without every user sharing one huge broadcast domain. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "Every broadcast interrupts every host in the broadcast domain. Smaller broadcast domains mean less wasted bandwidth and less work for each host's CPU, and a problem in one segment is easier to isolate."
+    },
+    {
+     "level": 2,
+     "text": "8.1.2 Security"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 223 to 224. In a flat network the router was supposed to provide security, but that did not work well. Anyone who plugged into the LAN could reach its resources. Anyone could plug a network analyser into a hub and see all traffic. Anyone could join a workgroup just by plugging in. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "With VLANs you control each port and which VLAN it is in. Switches can also be set up to tell a network management station about unauthorised access, and you can place restrictions on the router that routes between VLANs. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "A VLAN is not a security wall on its own. The book says VLANs \"greatly enhance network security if implemented correctly\". The key words are if implemented correctly. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Two classic attacks are switch spoofing (an attacker's PC negotiates a trunk with the switch using DTP) and double tagging (works when the attacker's access VLAN is the same as the trunk's native VLAN). Defences: set every user port to switchport mode access yourself, do not let user ports negotiate, do not use VLAN 1 or the native VLAN for users, shut unused ports, and filter traffic between VLANs with ACLs or a firewall (Chapter 10)."
+    },
+    {
+     "level": 0,
+     "text": "Source status: general networking knowledge plus Cisco Community statements from Cisco staff. The Cisco VLAN security white paper itself was not opened. CHECK"
+    },
+    {
+     "level": 2,
+     "text": "8.1.3 Flexibility and Scalability"
+    },
+    {
+     "level": 0,
+     "text": "Book p. 224. A layer 2 switch only reads the frame, not the network layer, so by default it floods broadcasts. VLANs create smaller broadcast domains at layer 2. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A broadcast from a node in one VLAN is not forwarded to ports in a different VLAN. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- You can add users to a VLAN wherever they are, across one switch or many switches. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A broadcast storm from a faulty NIC stays inside the VLAN where it started. It can still hurt that VLAN. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- When a VLAN gets too big, create more VLANs so fewer users are hit by broadcasts. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The book's design tip: keep services local to users where you can, except email and Internet access that everyone needs. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 8.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. A switch has 12 active ports and no VLANs configured. How many broadcast domains does it have?"
+    },
+    {
+     "level": 0,
+     "text": "A. 12"
+    },
+    {
+     "level": 0,
+     "text": "B. 1"
+    },
+    {
+     "level": 0,
+     "text": "C. 2"
+    },
+    {
+     "level": 0,
+     "text": "D. 0"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - with no VLANs the whole switch is one broadcast domain. It has 12 collision domains, one per port."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Name two things that split a network into more than one broadcast domain."
+    },
+    {
+     "level": 0,
+     "text": "Answer: VLANs on a switch, and routers (each router interface is a separate broadcast domain) - a plain switch does not do it."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Host A in VLAN 10 sends an ARP request (a broadcast). Which ports receive it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only ports in VLAN 10 (access ports in VLAN 10, plus trunks that carry VLAN 10) - ports in other VLANs never see it."
+    },
+    {
+     "level": 0,
+     "text": "Q4. True or false: hosts in two different VLANs on the same switch can talk to each other without a router, because they share the same switch."
+    },
+    {
+     "level": 0,
+     "text": "A. True"
+    },
+    {
+     "level": 0,
+     "text": "B. False"
+    },
+    {
+     "level": 0,
+     "text": "Answer: False - separate VLANs are separate broadcast domains and subnets. You need a layer 3 device to route between them."
+    }
+   ],
+   "words": 1129
+  },
+  {
+   "title": "8.2 Identifying VLANs",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 224 to 229. Tracker rows: 8.2, 8.2.1, 8.2.2. v1.1 objectives 2.1.a, 2.2.a, 2.2.b, 2.2.c. v2.0 objectives 2.1.b, 2.2, 2.2.c."
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. Switch ports are layer 2 interfaces. In this chapter a port is one of two kinds. An access port belongs to one VLAN and talks to ordinary devices. A trunk port carries many VLANs at once and talks to other switches, routers or servers that understand VLAN tags. You choose one or the other for each port, not both. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | Access port | Trunk port |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Carries | One VLAN (plus an optional voice VLAN) | Many VLANs |"
+    },
+    {
+     "level": 0,
+     "text": "| Frames on the wire | Untagged (no VLAN information) | Tagged with the VLAN ID, except the native VLAN, which is untagged |"
+    },
+    {
+     "level": 0,
+     "text": "| Connects to | PCs, printers, servers, phones, access points | Switch to switch, switch to router, switch to server |"
+    },
+    {
+     "level": 0,
+     "text": "| Does the device know about VLANs? | No. It just thinks it is on a LAN. | Yes. Both ends must understand 802.1Q. |"
+    },
+    {
+     "level": 0,
+     "text": "This table is my summary of pp. 224 to 227 ADDED ."
+    },
+    {
+     "level": 3,
+     "text": "Access ports"
+    },
+    {
+     "level": 0,
+     "text": "- An access port belongs to and carries the traffic of only one VLAN. Traffic is sent and received in its normal form, with no VLAN tag at all. Anything arriving on the port is assumed to belong to the VLAN configured on the port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The VLAN set on the port is called the configured VLAN (or access VLAN) of the port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The attached device does not know which VLAN it is in. The switch removes any VLAN information before it sends a frame out of an access port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Devices on an access link cannot reach devices outside their VLAN unless the packet is routed. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- In the book's Figure 8.5, two switches are joined by one access link per VLAN (one for Sales, one for Admin). That works, but it uses one port per VLAN on both switches. Trunks fix this. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Voice access ports"
+    },
+    {
+     "level": 0,
+     "text": "The book (p. 226) says an access port can have a second VLAN for voice traffic, the voice VLAN (it used to be called the auxiliary VLAN). This lets you plug a phone into the switch and a PC into the phone, using one switch port, while keeping the phone and the PC in separate VLANs. It is still an access port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "How it works (the book does not explain this). The PC's frames pass through the phone untagged and land in the port's data VLAN. The phone tags its own voice frames with the voice VLAN ID. The switch tells the phone which voice VLAN to use, using CDP (Cisco phones) or LLDP-MED (many other phones). ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "| Traffic | Tagged on the wire? | VLAN |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| PC behind the phone (data) | No, untagged | The port's access (data) VLAN, for example VLAN 10 |"
+    },
+    {
+     "level": 0,
+     "text": "| IP phone (voice) | Yes, 802.1Q tag | The voice VLAN, for example VLAN 30 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "v2.0 names \"Voice over IP phone\" (2.2.c) as an edge-host connection you must configure. Know the three lines: switchport mode access, switchport access vlan <data>, switchport voice vlan <voice>. See 8.4.1."
+    },
+    {
+     "level": 3,
+     "text": "Trunk ports"
+    },
+    {
+     "level": 0,
+     "text": "- The word trunk comes from telephone trunks, which carry many calls at once. A trunk port can carry many VLANs at once. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A trunk link is a point-to-point link (100, 1,000, 10,000 Mbps or more) between two switches, a switch and a router, or a switch and a server. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- By default all VLANs are allowed on a trunk, unless you remove them by hand. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- If the link between two switches is not a trunk, only the access VLAN of that port crosses it. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A trunk to a server can put that server in several VLANs at once, so users do not have to cross a router to reach it. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "VLAN number ranges (clarified). The book says a trunk carries \"from 1 to 4,094 VLANs\" but \"the amount is really only up to 1,001 unless you're going with extended VLANs\". That is loosely worded. The real ranges are below. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN IDs | Name | Notes |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 0 and 4095 | Reserved by 802.1Q | 0 means \"priority tag only, no VLAN\". 4095 must not be used. |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Default VLAN | Every port starts here. It cannot be deleted or renamed. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 to 1001 | Normal range | Your everyday VLANs. This is the range the book means by \"1,001\". |"
+    },
+    {
+     "level": 0,
+     "text": "| 1002 to 1005 | Reserved | Old FDDI and Token Ring defaults. Cannot be used, deleted or changed. |"
+    },
+    {
+     "level": 0,
+     "text": "| 1006 to 4094 | Extended range | VTP versions 1 and 2 cannot carry them. On those versions the switch must be in VTP transparent mode to create them. VTP version 3 supports them. |"
+    },
+    {
+     "level": 0,
+     "text": "Status: checked against a Cisco IOS configuration document (official) and Cisco Community posts quoting Cisco documents (secondary). Exact behaviour varies by platform and IOS version CHECK ."
+    },
+    {
+     "level": 2,
+     "text": "8.2.1 Frame Tagging"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 227 to 228. The idea. When a frame crosses a trunk, the next switch needs to know which VLAN it belongs to. So the sending switch adds a VLAN ID to the frame. That is frame tagging. The book calls a group of switches that share the same VLAN information the switch fabric. Each switch reads the VLAN ID from the tag, looks in its filter (forward) table to decide what to do, and removes the tag when the frame leaves through an access port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Worked example (my addition). Host A (VLAN 10) is on SW1 port Fa0/1. Host B (VLAN 10) is on SW2 port Fa0/1. SW1 and SW2 are joined by an 802.1Q trunk. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "| Step | Where | Tag? | What happens |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | A to SW1 Fa0/1 (access port) | No tag | SW1 assigns the frame to VLAN 10 because of the port's configuration. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Inside SW1 | n/a | SW1 looks up B's MAC address in its VLAN 10 table. The exit port is the trunk. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | SW1 to SW2 (trunk) | 802.1Q tag, VLAN 10 | SW1 inserts the tag and recalculates the frame check sequence. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Inside SW2 | n/a | SW2 reads tag 10 and looks up B in its VLAN 10 table. The exit port is an access port. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | SW2 Fa0/1 to B (access port) | No tag | SW2 removes the tag. B receives a normal frame. |"
+    },
+    {
+     "level": 0,
+     "text": "Native VLAN and PVID. A trunk port has a default port VLAN ID (PVID). All untagged traffic on that trunk belongs to the PVID VLAN. This VLAN is the native VLAN. It is VLAN 1 by default but can be changed. A frame whose VLAN equals the native VLAN of the outgoing trunk port is sent untagged. All other VLANs are sent tagged. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Native VLAN = the VLAN whose frames cross an 802.1Q trunk untagged. Default is VLAN 1. Both ends of a trunk must use the same native VLAN. This is directly named in v1.1 (2.2.c)."
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Untagged frames arriving on a trunk are put into the native VLAN of that port. The book says in one place that untagged frames go to \"the management VLAN\" (p. 238). The management VLAN and the native VLAN are separate settings that happen to both be VLAN 1 by default. See 8.4.2. UPDATED"
+    },
+    {
+     "level": 2,
+     "text": "8.2.2 VLAN Identification Methods"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 228 to 229. There are two ways to tag frames on a trunk: ISL and 802.1Q."
+    },
+    {
+     "level": 0,
+     "text": "ISL (Inter-Switch Link). Cisco-proprietary. It wraps the whole original frame in a new header and adds a new CRC (frame check). It works at layer 2 and can be used on switch ports, router interfaces and server NICs. The book says Cisco has moved to 802.1Q only. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "IEEE 802.1Q. The open standard. It does not wrap the frame. It inserts a field (the tag) into the existing frame, so the CRC must be recalculated. If you trunk between Cisco and another brand, you must use 802.1Q. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Feature | ISL | IEEE 802.1Q |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Standard | Cisco proprietary | IEEE open standard |"
+    },
+    {
+     "level": 0,
+     "text": "| Method | Encapsulates the frame in a new header and a new CRC | Inserts a 4-byte tag into the frame; CRC recalculated |"
+    },
+    {
+     "level": 0,
+     "text": "| Added size | 30 bytes (26-byte header plus 4-byte CRC) CHECK | 4 bytes |"
+    },
+    {
+     "level": 0,
+     "text": "| Untagged native VLAN | No (every frame is wrapped) CHECK | Yes, one native VLAN per trunk |"
+    },
+    {
+     "level": 0,
+     "text": "| Works with other vendors | No | Yes |"
+    },
+    {
+     "level": 0,
+     "text": "| On current Cisco switches | Not supported on many (for example 2960, 3650, 9200 series) | Supported everywhere |"
+    },
+    {
+     "level": 0,
+     "text": "ISL status: Cisco Community posts quoting a Cisco Press article say the 2960, 3650 and 9200 series support only 802.1Q. This is secondary. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "The 802.1Q tag in detail. The tag is 4 bytes and sits between the source MAC address and the original Type/Length field. BOOK The book shows it in Figure 8.7."
+    },
+    {
+     "level": 0,
+     "text": "| Field | Size | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| TPID (Tag Protocol Identifier) | 16 bits | Fixed value 0x8100. It marks the frame as 802.1Q-tagged. Not shown in the book. ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| PCP (Priority Code Point) | 3 bits | Priority (802.1p, class of service). The book calls it the \"user priority field\". |"
+    },
+    {
+     "level": 0,
+     "text": "| DEI (Drop Eligible Indicator) | 1 bit | Marks frames that may be dropped first in congestion. The book calls it CFI (Canonical Format Identifier), the old name. UPDATED |"
+    },
+    {
+     "level": 0,
+     "text": "| VID (VLAN Identifier) | 12 bits | The VLAN number. This is the only field you need for the exam. BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "The VID is 12 bits, so there are 2^12 = 4,096 values. 0 and 4,095 are reserved, so an 802.1Q frame can identify 4,094 VLANs (1 to 4094). The book gets this right (p. 229). The arithmetic was checked in the Python script."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "A tagged frame can be up to 1,522 bytes instead of 1,518, because of the 4-byte tag (IEEE 802.3ac). Status: secondary source. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book (p. 229) says the purpose of ISL and 802.1Q tagging is inter-switch VLAN communication, and tags are used only inside the switch fabric and on trunks. They are removed when a frame leaves through an access link."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 8.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which kind of port removes the VLAN tag before it sends a frame to a PC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: An access port - the PC does not understand tags."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which statement about 802.1Q is true?"
+    },
+    {
+     "level": 0,
+     "text": "A. It is Cisco proprietary."
+    },
+    {
+     "level": 0,
+     "text": "B. It wraps the frame in a new header and a new CRC."
+    },
+    {
+     "level": 0,
+     "text": "C. It inserts a 4-byte tag and leaves the native VLAN untagged."
+    },
+    {
+     "level": 0,
+     "text": "D. It supports only VLANs 1 to 1005."
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 802.1Q is the IEEE standard. A is ISL, B describes ISL, and D confuses 802.1Q with the Cisco normal range."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is the default native VLAN on a Cisco switch trunk?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: VLAN 1 - it can be changed with switchport trunk native vlan."
+    },
+    {
+     "level": 0,
+     "text": "Q4. A PC is plugged into an IP phone, and the phone into a switch port with data VLAN 10 and voice VLAN 30. Which frames are tagged?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The phone's voice frames (VLAN 30). The PC's frames are untagged and go to VLAN 10 - this is why the port still counts as an access port."
+    }
+   ],
+   "words": 1999
+  },
+  {
+   "title": "8.3 Routing Between VLANs",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 229 to 231. Tracker row: 8.3. v1.1 objective 2.1.c InterVLAN connectivity. v2.0 objectives 2.1 and 2.1.d."
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. Each VLAN is a separate broadcast domain and a separate subnet. Hosts in the same VLAN talk freely. To send traffic from one VLAN to another you need a layer 3 device that routes between the subnets. BOOK The book shows three ways:"
+    },
+    {
+     "level": 0,
+     "text": "| Method | Links to the switch | Switch port | Host gateway | Good | Bad |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1. Router with one interface per VLAN (Fig. 8.8) | One per VLAN | Access, one per VLAN | IP of that router interface | Simple idea | Uses a switch port and a router port for every VLAN. Does not scale. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2. Router on a stick, ROAS (Figs. 8.9, 8.10) | One | Trunk | IP of the router subinterface for that VLAN | One cable. Cheap if you already have a router. | All inter-VLAN traffic crosses one link. Bottleneck and single point of failure. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3. Layer 3 switch with SVIs (Fig. 8.11) | None, it is inside the switch | Access and trunk as normal | IP of the SVI for that VLAN | Fast, built into the switch hardware | Needs a multilayer switch and ip routing. |"
+    },
+    {
+     "level": 0,
+     "text": "Router on a stick. One physical router interface is split into subinterfaces, one per VLAN. Each subinterface gets an encapsulation identifier that says which VLAN's tag it handles, and an IP address in that VLAN's subnet. Each subinterface IP becomes the default gateway of its VLAN. The switch port facing the router is a trunk. The book warns that this creates a bottleneck and a single point of failure. BOOK It is called \"on a stick\" because a packet from VLAN 10 to VLAN 20 goes up the one cable to the router and comes back down the same cable. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Layer 3 switch (SVI). Instead of an external router, you create logical interfaces inside a multilayer switch, one per VLAN. They are called switched virtual interfaces (SVIs). The routing happens on the switch backplane, which is faster and more efficient than an external router. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Exam wording. The book says router on a stick \"is what's used on the CCNA objectives for inter-VLAN routing\". In v1.1 the objective is 2.1.c \"InterVLAN connectivity\" (the book's v1.0 text says just \"Connectivity\"). In the official v2.0 PDF the phrase \"router on a stick\" does not appear. v2.0 lists switch-to-router connectivity (2.1), 802.1Q trunk interfaces (2.1.b) and the SVI (2.1.d). Learn both ROAS and SVI. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Dated hardware advice. On pp. 229 to 231 the book discusses 2600, 2800 and 3560 models, FastEthernet interfaces and the price of used equipment. Ignore the model advice. It is not exam content, and the 2600 and 2800 are end-of-life. What matters is the design idea. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 8.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which inter-VLAN routing method uses subinterfaces?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Router on a stick - one physical interface is split into one subinterface per VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why is router on a stick a single point of failure and a bottleneck?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: All inter-VLAN traffic goes through one router interface and one cable - if either fails, no VLAN can reach another VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q3. In a router-on-a-stick design, what is the default gateway of hosts in VLAN 20?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The IP address of the router subinterface that handles VLAN 20 - not the physical interface address."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which of these needs the ip routing command?"
+    },
+    {
+     "level": 0,
+     "text": "A. A router subinterface"
+    },
+    {
+     "level": 0,
+     "text": "B. A Layer 3 switch with SVIs"
+    },
+    {
+     "level": 0,
+     "text": "C. A Layer 2 switch trunk port"
+    },
+    {
+     "level": 0,
+     "text": "D. An access port"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - a multilayer switch only routes once ip routing is turned on. Routers route by default."
+    }
+   ],
+   "words": 647
+  },
+  {
+   "title": "8.4 Configuring VLANs",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 231 to 247. Tracker rows: 8.4, 8.4.1, 8.4.2, 8.4.3. v1.1 objectives 2.1 and 2.2. v2.0 objectives 2.1 and 2.2. The book reuses its Chapter 7 network (switches S1 and S3, a router named ISR). You will build a smaller network of your own in the labs. All outputs marked BOOK are copied in meaning from the book. They were not run by me."
+    },
+    {
+     "level": 3,
+     "text": "Creating VLANs"
+    },
+    {
+     "level": 0,
+     "text": "Use the global command vlan on a Catalyst switch. This is the book's example on S1, with four VLANs for departments (p. 232). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Create VLANs 2 to 5 (book p. 232) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# vlan 2"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# name Sales"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# vlan 3"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# name Marketing"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# vlan 4"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# name Accounting"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# vlan 5"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# name Voice"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# end"
+    },
+    {
+     "level": 0,
+     "text": "- vlan 2 creates VLAN 2 (or opens it if it exists) and enters VLAN configuration mode. Use IDs 2 to 1001 for everyday VLANs."
+    },
+    {
+     "level": 0,
+     "text": "- name Sales gives it a text label. The name is optional and does not change how frames are forwarded. Without it the name defaults to something like VLAN0002. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- end (or Ctrl+Z) leaves configuration mode. On classic IOS a VLAN change is applied when you leave VLAN configuration mode. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Save your work with copy running-config startup-config."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Extended VLANs (p. 232). The book tries vlan 4000 on a switch in VTP server mode (the default) and gets: \"Failed to create VLANs 4000. Extended VLAN(s) not allowed in current VTP mode.\""
+    },
+    {
+     "level": 0,
+     "text": "It says extended VLANs (above 1005) are not saved in the VLAN database unless the switch is in VTP transparent mode. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "That is true for VTP versions 1 and 2. VTP version 3 supports the full range 1 to 4094, including in server mode. Status: Cisco IOS document (official) and Cisco Community quoting Cisco documentation (secondary). UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Verifying VLANs: show vlan"
+    },
+    {
+     "level": 0,
+     "text": "Output from the book, p. 233 (shortened) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1# show vlan"
+    },
+    {
+     "level": 0,
+     "text": "VLAN Name Status Ports"
+    },
+    {
+     "level": 0,
+     "text": "---- --------- --------- -------------------------------"
+    },
+    {
+     "level": 0,
+     "text": "1 default active Fa0/1, Fa0/2, Fa0/3, Fa0/4"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/5, Fa0/6, Fa0/7, Fa0/8"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/9, Fa0/10, Fa0/11, Fa0/12"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/13, Fa0/14, Fa0/19, Fa0/20"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/21, Fa0/22, Fa0/23, Gi0/1"
+    },
+    {
+     "level": 0,
+     "text": "Gi0/2"
+    },
+    {
+     "level": 0,
+     "text": "2 Sales active"
+    },
+    {
+     "level": 0,
+     "text": "3 Marketing active"
+    },
+    {
+     "level": 0,
+     "text": "4 Accounting active"
+    },
+    {
+     "level": 0,
+     "text": "5 Voice active"
+    },
+    {
+     "level": 0,
+     "text": "[output cut]"
+    },
+    {
+     "level": 0,
+     "text": "What to notice:"
+    },
+    {
+     "level": 0,
+     "text": "- VLANs 2 to 5 exist but have no ports yet. A VLAN is unused until you assign ports to it. All ports are in VLAN 1 by default. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Ports Fa0/15 to Fa0/18 are missing from the list. show vlan shows access ports only, so those four ports must be trunks. Use show interfaces trunk to see trunks. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A port can be missing from show vlan for other reasons too, for example if it is a routed port. A missing port is a clue, not proof. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- show vlan brief is the short form most people use day to day. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Facts about VLAN 1 (p. 233). You cannot change, delete or rename VLAN 1. VLANs 1002 to 1005 are reserved. VLAN 1 is the default VLAN, the default native VLAN and the default management VLAN. Any port not assigned to another VLAN stays in VLAN 1."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Do not use VLAN 1 for management. The book says Cisco recommends using VLAN 1 as the management VLAN. Current Cisco security guidance says the opposite: use a separate dedicated VLAN for in-band management, keep user ports out of VLAN 1, and prune VLAN 1 from trunks where you can. Cisco Community posts by Cisco staff quote the Cisco VLAN security white paper for this. The white paper was not opened directly. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "How trunks appear automatically: DTP"
+    },
+    {
+     "level": 0,
+     "text": "The book (p. 233) explains the four missing ports like this: Cisco switches run Dynamic Trunking Protocol (DTP), and when a compatible switch is connected they start trunking by themselves. That is why Fa0/15 to Fa0/18 became trunks. BOOK Here is the book's show interfaces trunk output:"
+    },
+    {
+     "level": 0,
+     "text": "Output from the book, p. 233 (shortened) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1# show interfaces trunk"
+    },
+    {
+     "level": 0,
+     "text": "Port Mode Encapsulation Status Native vlan"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/15 desirable n-isl trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/16 desirable n-isl trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/17 desirable n-isl trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/18 desirable n-isl trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Port Vlans allowed on trunk"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/15 1-4094"
+    },
+    {
+     "level": 0,
+     "text": "..."
+    },
+    {
+     "level": 0,
+     "text": "[output cut]"
+    },
+    {
+     "level": 0,
+     "text": "- Mode is the DTP mode on this port. Here it is desirable."
+    },
+    {
+     "level": 0,
+     "text": "- Encapsulation n-isl means ISL was negotiated (the n means negotiated). On a modern 802.1Q-only switch you would see 802.1q or n-802.1q. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Native vlan is 1, the default."
+    },
+    {
+     "level": 0,
+     "text": "- Vlans allowed on trunk is 1-4094: every VLAN is allowed by default."
+    },
+    {
+     "level": 0,
+     "text": "- The book cut the output. A full show interfaces trunk has three more lists: VLANs allowed, VLANs allowed and active in the management domain, and VLANs in the spanning-tree forwarding state and not pruned. These are the first place to look when a VLAN does not cross a trunk. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Trunks only form automatically if the two ends negotiate one. In the book's lab, the trunks formed because the ports were in desirable mode. On modern switches the default is usually dynamic auto on both ends, and two auto ends never become a trunk. Details are in 8.4.2. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Verifying a port: show interfaces switchport"
+    },
+    {
+     "level": 0,
+     "text": "Output from the book, p. 234 BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1# show interfaces fastEthernet 0/15 switchport"
+    },
+    {
+     "level": 0,
+     "text": "Name: Fa0/15"
+    },
+    {
+     "level": 0,
+     "text": "Switchport: Enabled"
+    },
+    {
+     "level": 0,
+     "text": "Administrative Mode: dynamic desirable"
+    },
+    {
+     "level": 0,
+     "text": "Operational Mode: trunk"
+    },
+    {
+     "level": 0,
+     "text": "Administrative Trunking Encapsulation: negotiate"
+    },
+    {
+     "level": 0,
+     "text": "Operational Trunking Encapsulation: isl"
+    },
+    {
+     "level": 0,
+     "text": "Negotiation of Trunking: On"
+    },
+    {
+     "level": 0,
+     "text": "Access Mode VLAN: 1 (default)"
+    },
+    {
+     "level": 0,
+     "text": "Trunking Native Mode VLAN: 1 (default)"
+    },
+    {
+     "level": 0,
+     "text": "Administrative Native VLAN tagging: enabled"
+    },
+    {
+     "level": 0,
+     "text": "Voice VLAN: none"
+    },
+    {
+     "level": 0,
+     "text": "[output cut]"
+    },
+    {
+     "level": 0,
+     "text": "- Administrative Mode is what you configured (or the default). Operational Mode is what the port is actually doing now. They can be different, for example dynamic auto (administrative) and static access (operational)."
+    },
+    {
+     "level": 0,
+     "text": "- Operational Trunking Encapsulation tells you which tagging method is in use."
+    },
+    {
+     "level": 0,
+     "text": "- Access Mode VLAN and Trunking Native Mode VLAN show the VLAN used when the port acts as an access port and as a trunk."
+    },
+    {
+     "level": 0,
+     "text": "- Voice VLAN shows the voice VLAN if one is set."
+    },
+    {
+     "level": 0,
+     "text": "- The line \"Administrative Native VLAN tagging\" is not explained in the book. I did not verify what it means on every platform, so do not memorise it for the exam. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "The book says show interfaces <interface> switchport is part of the exam objectives (p. 234). Learn to read Administrative Mode, Operational Mode, Access Mode VLAN, Native VLAN and Voice VLAN."
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Looking for trunk ports in show vlan. They are not listed there. Use show interfaces trunk or show interfaces <int> switchport."
+    },
+    {
+     "level": 2,
+     "text": "8.4.1 Assigning Switch Ports to VLANs"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 234 to 236. v1.1 objective 2.1.a. v2.0 objectives 2.2 and 2.2.c."
+    },
+    {
+     "level": 0,
+     "text": "To put a port in a VLAN you give it a membership mode that says what kind of traffic the port carries and how many VLANs it can be in. For an end device, the mode is access. You can configure many ports at once with interface range. BOOK This is the book's example on S3 (the connection to a host). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Assign Fa0/3 to data VLAN 3 and voice VLAN 5 (book p. 235) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S3# configure terminal"
+    },
+    {
+     "level": 0,
+     "text": "S3(config)# interface fa0/3"
+    },
+    {
+     "level": 0,
+     "text": "S3(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "S3(config-if)# switchport access vlan 3"
+    },
+    {
+     "level": 0,
+     "text": "S3(config-if)# switchport voice vlan 5"
+    },
+    {
+     "level": 0,
+     "text": "- interface fa0/3 selects the port. To do several at once use interface range fa0/1 - 4."
+    },
+    {
+     "level": 0,
+     "text": "- switchport mode access makes it a permanent, non-trunking layer 2 port. The book calls this \"telling the switch this is a nontrunking layer 2 port\"."
+    },
+    {
+     "level": 0,
+     "text": "- switchport access vlan 3 puts the port in VLAN 3, the data VLAN."
+    },
+    {
+     "level": 0,
+     "text": "- switchport voice vlan 5 adds VLAN 5 as the voice VLAN. This lets you connect a phone to the switch and a laptop to the phone, with each in its own VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Expected result, from the book pp. 235 to 236 (shortened) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S3# show vlan"
+    },
+    {
+     "level": 0,
+     "text": "VLAN Name Status Ports"
+    },
+    {
+     "level": 0,
+     "text": "1 default active Fa0/4, Fa0/5, Fa0/6, Fa0/7 ..."
+    },
+    {
+     "level": 0,
+     "text": "2 Sales active"
+    },
+    {
+     "level": 0,
+     "text": "3 Marketing active Fa0/3"
+    },
+    {
+     "level": 0,
+     "text": "5 Voice active Fa0/3"
+    },
+    {
+     "level": 0,
+     "text": "S3# show interfaces fa0/3 switchport"
+    },
+    {
+     "level": 0,
+     "text": "Name: Fa0/3"
+    },
+    {
+     "level": 0,
+     "text": "Switchport: Enabled"
+    },
+    {
+     "level": 0,
+     "text": "Administrative Mode: static access"
+    },
+    {
+     "level": 0,
+     "text": "Operational Mode: static access"
+    },
+    {
+     "level": 0,
+     "text": "Negotiation of Trunking: Off"
+    },
+    {
+     "level": 0,
+     "text": "Access Mode VLAN: 3 (Marketing)"
+    },
+    {
+     "level": 0,
+     "text": "Voice VLAN: 5 (Voice)"
+    },
+    {
+     "level": 0,
+     "text": "- Fa0/3 is listed under both VLAN 3 and VLAN 5. That is the one case where one access port shows in two VLANs."
+    },
+    {
+     "level": 0,
+     "text": "- Ports Fa0/1 and Fa0/2 are not listed because they are trunks."
+    },
+    {
+     "level": 0,
+     "text": "- Administrative Mode static access and Negotiation of Trunking Off confirm the port will never become a trunk."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book's printed show vlan output on p. 236 has a stray ]]> in the Marketing line. That is a typesetting mistake in the book, not part of IOS output. Ignore it. Also, the text says \"setting an access port on S1\" but the example is on S3. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Always type switchport mode access yourself. If you only type switchport access vlan 3, the port keeps its default dynamic mode and can still negotiate a trunk if the other side asks. On user ports that is unwanted and is a known attack path. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Unused ports. Good practice is to shut unused ports down and put them in an unused VLAN that has no layer 3 interface, not in VLAN 1. Status: Cisco Community advice, secondary. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Handy checks: show vlan brief (which ports are in which VLAN) and show interfaces status (port state, VLAN, duplex, speed in one table). ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "The book's Exam Essentials (p. 247): when you plug a new host into a switch, check the VLAN membership of its port. If the port is in the wrong VLAN, the host cannot reach its servers or printers."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 8.4 and 8.4.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Write the commands to make Fa0/5 a static access port in VLAN 20."
+    },
+    {
+     "level": 0,
+     "text": "Answer: interface fa0/5, then switchport mode access, then switchport access vlan 20 - the VLAN must also exist (vlan 20), or be created for you on some platforms."
+    },
+    {
+     "level": 0,
+     "text": "Q2. You create VLAN 20 with vlan 20 and name Sales. Which hosts are in it now?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: None. A VLAN is unused until you assign ports to it - all ports stay in VLAN 1 until configured."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Why are trunk ports not listed in show vlan?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show vlan lists access ports only - use show interfaces trunk to see trunks."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which command adds VLAN 30 as a voice VLAN on an access port?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: switchport voice vlan 30 - the port stays an access port; the phone tags its own frames with VLAN 30."
+    },
+    {
+     "level": 2,
+     "text": "8.4.2 Configuring Trunk Ports"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 236 to 240. v1.1 objectives 2.2.a, 2.2.b, 2.2.c. v2.0 objective 2.1.b (Layer 2 802.1Q trunk interfaces)."
+    },
+    {
+     "level": 3,
+     "text": "Making a port a trunk"
+    },
+    {
+     "level": 0,
+     "text": "The book (p. 236) says the 2960 runs only 802.1Q, so you just use switchport mode trunk. The 3560 supports ISL and 802.1Q, so you must first choose the encapsulation. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Configure ports Fa0/15 to Fa0/18 as 802.1Q trunks (book p. 236) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface range f0/15 - 18"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if-range)# switchport trunk encapsulation dot1q"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if-range)# switchport mode trunk"
+    },
+    {
+     "level": 0,
+     "text": "- interface range f0/15 - 18 configures four ports at once."
+    },
+    {
+     "level": 0,
+     "text": "- switchport trunk encapsulation dot1q picks 802.1Q. Use it only on switches that support more than one method. On a 2960 the command does not exist, because 802.1Q is the only choice."
+    },
+    {
+     "level": 0,
+     "text": "- switchport mode trunk makes the port a permanent trunk. This is the line that matters on every switch."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "On a switch that supports both ISL and 802.1Q, switchport mode trunk can be rejected until you set the encapsulation first. The 3560 in the book is that kind of switch. Most current Catalysts only do 802.1Q, so the encapsulation command is absent there. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Expected result, from the book p. 237 (shortened) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1# show interfaces trunk"
+    },
+    {
+     "level": 0,
+     "text": "Port Mode Encapsulation Status Native vlan"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/15 on 802.1q trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/16 on 802.1q trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/17 on 802.1q trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/18 on 802.1q trunking 1"
+    },
+    {
+     "level": 0,
+     "text": "Mode is now on (a static trunk) and the encapsulation is 802.1q instead of the negotiated ISL. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Trunking modes and DTP"
+    },
+    {
+     "level": 0,
+     "text": "Dynamic Trunking Protocol (DTP) is a Cisco-proprietary protocol that negotiates whether a link becomes a trunk and which tagging method it uses. BOOK These are the options on a switch port:"
+    },
+    {
+     "level": 0,
+     "text": "| Command | What it does | Becomes a trunk when the other end is... |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| switchport mode access | Permanent access port. Never becomes a trunk. | Never |"
+    },
+    {
+     "level": 0,
+     "text": "| switchport mode dynamic auto | Passive. Will become a trunk if asked. | trunk or desirable |"
+    },
+    {
+     "level": 0,
+     "text": "| switchport mode dynamic desirable | Active. Asks the other end to trunk. | trunk, desirable or auto |"
+    },
+    {
+     "level": 0,
+     "text": "| switchport mode trunk | Permanent trunk. Also sends DTP frames. | Always a trunk on this end |"
+    },
+    {
+     "level": 0,
+     "text": "| switchport nonegotiate | Stops the port sending DTP frames. Only allowed when the mode is access or trunk. | You must configure the other end as a trunk yourself |"
+    },
+    {
+     "level": 0,
+     "text": "What happens when two ends meet (my summary table, ADDED CHECK ; test it in Lab 2):"
+    },
+    {
+     "level": 0,
+     "text": "| This end / other end | access | dynamic auto | dynamic desirable | trunk |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| access | access | access | access | mismatch, do not do this |"
+    },
+    {
+     "level": 0,
+     "text": "| dynamic auto | access | access | trunk | trunk |"
+    },
+    {
+     "level": 0,
+     "text": "| dynamic desirable | access | trunk | trunk | trunk |"
+    },
+    {
+     "level": 0,
+     "text": "| trunk | mismatch, do not do this | trunk | trunk | trunk |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "auto + auto = access, not a trunk. Both ends are waiting for the other to ask. This is a favourite exam and troubleshooting question."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book contradicts itself about the default (p. 237). It first says the default is dynamic auto on many switches, \"but that default trunk method is changing to dynamic desirable on most new models\". It then says desirable is \"now the default switch port mode for all Ethernet interfaces on all new Cisco switches\". That second statement is wrong. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Cisco Networking Academy course text says the default on Catalyst 2960 and 3560 is dynamic auto, and that dynamic desirable was the default on older 2950 and 3550 switches. Cisco Community posts say the 3650 and 3850 are also dynamic auto. The default depends on platform and IOS version, so check with show interfaces <int> switchport or show dtp interface. Status: secondary sources. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Safe, simple rule: configure trunks by hand with switchport mode trunk and switchport nonegotiate, and configure user ports with switchport mode access. Then DTP never surprises you. The book says it uses nonegotiate for dedicated trunk ports (p. 238), and Cisco's course text says to configure trunks statically whenever possible. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Loose wording in the book (p. 237): it says switchport mode access \"negotiates to convert the link into a nontrunk link\". The book's own show interfaces switchport output for an access port (p. 236) shows Negotiation of Trunking: Off. Treat access mode as \"never a trunk, does not negotiate\". CHECK"
+    },
+    {
+     "level": 0,
+     "text": "To turn trunking off on a port, set it back with switchport mode access. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Defining the allowed VLANs on a trunk"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 238 to 239. A trunk allows every VLAN by default. You can remove VLANs from the allowed list to stop their traffic crossing that link. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Control allowed VLANs (book pp. 238 to 239) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface f0/15"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport trunk allowed vlan 4,6,12,15"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport trunk allowed vlan remove 4-8"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport trunk allowed vlan all"
+    },
+    {
+     "level": 0,
+     "text": "- switchport trunk allowed vlan 4,6,12,15 makes the trunk carry only VLANs 4, 6, 12 and 15."
+    },
+    {
+     "level": 0,
+     "text": "- ... allowed vlan remove 4-8 takes a range out of the current list. Use a hyphen for a range."
+    },
+    {
+     "level": 0,
+     "text": "- ... allowed vlan all puts the trunk back to the default (all VLANs)."
+    },
+    {
+     "level": 0,
+     "text": "- Other keywords you will meet: add (add to the list), except and none. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Expected result after the first command, book p. 238 BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Port Vlans allowed on trunk"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/15 4,6,12,15"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/16 1-4094"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/17 1-4094"
+    },
+    {
+     "level": 0,
+     "text": "Fa0/18 1-4094"
+    },
+    {
+     "level": 0,
+     "text": "Only Fa0/15 changed. The other trunks still allow everything. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "allowed vlan 4,6,12,15 replaces the whole list. It does not add to it. The book's own output proves it: Fa0/15 changed from 1-4094 to 4,6,12,15. To add one VLAN to a working trunk use switchport trunk allowed vlan add 30. Typing the plain form on a live trunk is a classic way to knock out every other VLAN. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book says you can try to remove VLAN 1 from a trunk, but the trunk will still send and receive control traffic such as CDP, DTP and VTP, so there is little point (p. 238). Cisco Community posts quoting Cisco documentation agree. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says that on a trunk \"if a frame is untagged, it's sent to the management VLAN\" (p. 238). Untagged frames go to the native VLAN of that port, which is VLAN 1 by default. The management VLAN is a separate setting. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Changing or modifying the trunk native VLAN"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 239 to 240. You can change the native VLAN from VLAN 1, which many people do for security. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Change and restore the native VLAN (book pp. 239 to 240) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface f0/15"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport trunk native vlan 4"
+    },
+    {
+     "level": 0,
+     "text": "%CDP-4-NATIVE_VLAN_MISMATCH: Native VLAN mismatch discovered on"
+    },
+    {
+     "level": 0,
+     "text": "FastEthernet0/15 (4), with S3 FastEthernet0/1 (1)."
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# no switchport trunk native vlan"
+    },
+    {
+     "level": 0,
+     "text": "%SPANTREE-2-UNBLOCK_CONSIST_PORT: Unblocking FastEthernet0/15"
+    },
+    {
+     "level": 0,
+     "text": "on VLAN0004. Port consistency restored."
+    },
+    {
+     "level": 0,
+     "text": "- switchport trunk native vlan 4 sets VLAN 4 as the untagged VLAN on this end only."
+    },
+    {
+     "level": 0,
+     "text": "- The %CDP-4-NATIVE_VLAN_MISMATCH message appears at once because the other end (S3) still uses VLAN 1. CDP carries each side's native VLAN to its neighbour."
+    },
+    {
+     "level": 0,
+     "text": "- no switchport trunk native vlan puts it back to VLAN 1. The second message says spanning tree unblocked the port."
+    },
+    {
+     "level": 0,
+     "text": "- To fix a mismatch properly, make both ends the same."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book is wrong that a native VLAN mismatch only affects management traffic (p. 240). It says \"These issues won't affect user data, just management traffic between switches.\" UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Cisco's own troubleshooting document on PVID inconsistency says that under PVST+ a port that receives a BPDU on a different VLAN from the one it was sent on is put in a PVID-inconsistent state, which blocks traffic in the affected VLANs on that port. The book's own second log message (%SPANTREE-2-UNBLOCK_CONSIST_PORT) shows spanning tree had blocked the port. Also, frames sent untagged in VLAN 4 at one end are read as VLAN 1 at the other end, which leaks traffic between VLANs. Status: Cisco document (official) for the blocking; the leak is general knowledge. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Spot it with show interfaces trunk (compare the Native vlan column on both switches) and show spanning-tree inconsistentports."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Native VLAN best practice. Use a spare VLAN (for example 99) as the native VLAN on all trunks. Put no hosts in it and give it no IP address. Keep management in a different, tagged VLAN (for example 100). Make both ends of every trunk match. Status: Cisco Community advice, secondary. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Trunk verification commands"
+    },
+    {
+     "level": 0,
+     "text": "| Command | What it tells you |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| show interfaces trunk | Which ports are trunking, the mode, encapsulation, native VLAN, the allowed list, and the active and forwarding lists. |"
+    },
+    {
+     "level": 0,
+     "text": "| show interfaces <int> switchport | Administrative vs operational mode, native VLAN, access VLAN, voice VLAN, whether negotiation is on. |"
+    },
+    {
+     "level": 0,
+     "text": "| show vlan brief | Access ports per VLAN. Trunks are not listed. |"
+    },
+    {
+     "level": 0,
+     "text": "| show dtp interface <int> | DTP state of the port. Used in Cisco's course text. ADDED CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| show spanning-tree inconsistentports | Ports blocked for PVID or type inconsistency. Named in a Cisco document. ADDED |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 8.4.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Both ends of a link are dynamic auto. What is the result?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: An access port (no trunk) - neither end sends the first DTP request."
+    },
+    {
+     "level": 0,
+     "text": "Q2. A trunk allows VLANs 10, 20 and 30. You type switchport trunk allowed vlan 30. What does it allow now?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only VLAN 30 - the plain form replaces the list. Use add to add."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which log message tells you the native VLANs differ between two Cisco switches?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: %CDP-4-NATIVE_VLAN_MISMATCH - spanning tree may also log PVID inconsistency messages."
+    },
+    {
+     "level": 0,
+     "text": "Q4. switchport trunk encapsulation dot1q is not accepted on a 2960. Why? When do you need it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The 2960 supports only 802.1Q, so the command does not exist. You need it on switches that support both ISL and 802.1Q, such as the 3560 - check the platform before you type it."
+    },
+    {
+     "level": 2,
+     "text": "8.4.3 Configuring Inter-VLAN Routing"
+    },
+    {
+     "level": 0,
+     "text": "Book pp. 240 to 247. v1.1 objective 2.1.c. v2.0 objectives 2.1, 2.1.a, 2.1.b and 2.1.d."
+    },
+    {
+     "level": 3,
+     "text": "Router on a stick (ROAS)"
+    },
+    {
+     "level": 0,
+     "text": "By default only hosts in the same VLAN can communicate. A router or layer 3 switch fixes that. BOOK The router's physical interface is split into subinterfaces, one per VLAN. BOOK Here is a generic example in my own addressing (VLANs 10 and 20) ADDED :"
+    },
+    {
+     "level": 0,
+     "text": "Router on a stick for VLANs 10 and 20 CHECK"
+    },
+    {
+     "level": 0,
+     "text": "! ---- Switch: port facing the router ----"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface gi0/2"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport mode trunk"
+    },
+    {
+     "level": 0,
+     "text": "! ---- Router ----"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface gi0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# interface gi0/0.10"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-subif)# encapsulation dot1Q 10"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-subif)# ip address 192.168.10.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-subif)# interface gi0/0.20"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-subif)# encapsulation dot1Q 20"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-subif)# ip address 192.168.20.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "- switchport mode trunk on the switch makes the router-facing port a trunk. On a switch that supports ISL as well, add switchport trunk encapsulation dot1q first."
+    },
+    {
+     "level": 0,
+     "text": "- interface gi0/0 then no shutdown brings the physical interface up. Subinterfaces stay down while the physical interface is shut. The physical interface normally has no IP address in this design."
+    },
+    {
+     "level": 0,
+     "text": "- interface gi0/0.10 creates a subinterface. The number after the dot is only locally significant. Matching it to the VLAN ID is a habit that makes it easy to remember. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- encapsulation dot1Q 10 tells the subinterface to handle frames tagged with VLAN 10. Here 10 is the VLAN ID, not the subinterface number. This line is required before ip address."
+    },
+    {
+     "level": 0,
+     "text": "- ip address 192.168.10.1 255.255.255.0 gives the router an address in the VLAN 10 subnet. This is the default gateway for hosts in VLAN 10."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: show ip interface brief shows GigabitEthernet0/0 and both subinterfaces up/up, and show ip route shows both subnets as connected routes. A ping from a VLAN 10 host to a VLAN 20 host works. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Upstream routing (p. 240): the book uses this term for the router on a stick. It routes between VLANs and also forwards traffic out to the rest of the corporate network or the Internet. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book (p. 240) says every VLAN is a separate subnet. They do not have to be, but it is smart to configure them that way. Subinterface numbers are for administration only. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "The native VLAN on the router"
+    },
+    {
+     "level": 0,
+     "text": "The book (pp. 241, 243) puts the VLAN 1 address on the physical interface, with no tag. Frames sent from that address are untagged, so they belong to the native VLAN, which is VLAN 1 by default. It does not create a subinterface for VLAN 1, because with 802.1Q untagged frames are already in the native VLAN. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "That works. It is not wrong. Many guides do it differently: they create a subinterface for the native VLAN and add the native keyword, for example encapsulation dot1Q 99 native, so the router expects no tag on that VLAN. This is clearer, and it is needed if your native VLAN is not VLAN 1 and you want to route it. Status: secondary source. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Worked examples from the book (Figures 8.12 to 8.15)"
+    },
+    {
+     "level": 0,
+     "text": "The book gives four examples to practise reading a router and switch configuration and working out the host addresses (pp. 240 to 246). Below is each one worked step by step. Every number was calculated with a Python script and matches the book. Try each one on paper first. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Method. (1) Read each router interface address and mask and find its subnet. (2) Read the switch port settings to see which VLAN each host is in. (3) Pick a host address in that subnet, not the network or broadcast address. (4) The host's default gateway is the router subinterface address for its VLAN."
+    },
+    {
+     "level": 3,
+     "text": "Example 1 (Figure 8.12, p. 241)"
+    },
+    {
+     "level": 0,
+     "text": "Router: fastethernet 0/1 has 192.168.10.1/28 (no tag). fa0/1.2 uses encapsulation dot1q 2 with 192.168.1.65/26. fa0/1.10 uses encapsulation dot1q 10 with 192.168.1.129/27. Switch: port 1 is an 802.1Q trunk, ports 2 and 3 are VLAN 2, port 4 is VLAN 10. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Interface | Address / mask | Subnet | Usable hosts | Role |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| fa0/1 (physical) | 192.168.10.1/28 | 192.168.10.0/28 | 192.168.10.1 to .14 | Untagged native VLAN 1 |"
+    },
+    {
+     "level": 0,
+     "text": "| fa0/1.2 | 192.168.1.65/26 | 192.168.1.64/26 | 192.168.1.65 to .126 | VLAN 2 gateway |"
+    },
+    {
+     "level": 0,
+     "text": "| fa0/1.10 | 192.168.1.129/27 | 192.168.1.128/27 | 192.168.1.129 to .158 | VLAN 10 gateway |"
+    },
+    {
+     "level": 0,
+     "text": "| Host | VLAN | IP address and mask | Default gateway |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Host A | 2 | 192.168.1.66 / 255.255.255.192 | 192.168.1.65 |"
+    },
+    {
+     "level": 0,
+     "text": "| Host B | 2 | 192.168.1.67 / 255.255.255.192 | 192.168.1.65 |"
+    },
+    {
+     "level": 0,
+     "text": "| Host C | 10 | 192.168.1.130 / 255.255.255.224 | 192.168.1.129 |"
+    },
+    {
+     "level": 0,
+     "text": "Switch configuration for the trunk port (2960): interface fa0/1 then switchport mode trunk. BOOK The hosts can be any address in the range. The book just picked the first free one after the gateway."
+    },
+    {
+     "level": 3,
+     "text": "Example 2 (Figure 8.13, pp. 242 to 243)"
+    },
+    {
+     "level": 0,
+     "text": "A 2960 switch and a router named ISR. The router connects to switch port Fa0/1. Hosts: A and B in VLAN 2 (Fa0/2, Fa0/3), C and D in VLAN 3 (Fa0/4, Fa0/5), E and F in VLAN 4 (a hub on Fa0/6). The book designs four /28 subnets. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN | Subnet | Router address (gateway) | Switch ports |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 (native) | 192.168.10.0/28 | 192.168.10.1 on the physical fa0/0 | Untagged |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | 192.168.10.16/28 | 192.168.10.17 on fa0/0.2 | Fa0/2, Fa0/3 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 192.168.10.32/28 | 192.168.10.33 on fa0/0.3 | Fa0/4, Fa0/5 |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | 192.168.10.48/28 | 192.168.10.49 on fa0/0.4 | Fa0/6 |"
+    },
+    {
+     "level": 0,
+     "text": "The three things Cisco expects you to know here (book p. 242): the router connects to the switch through subinterfaces; the switch port to the router is a trunk; the switch ports to the clients and the hub are access ports, not trunks. All four subnets are separate (no overlap, calculated). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration, shortened (pp. 242 to 243) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "2960(config)# interface f0/1"
+    },
+    {
+     "level": 0,
+     "text": "2960(config-if)# switchport mode trunk"
+    },
+    {
+     "level": 0,
+     "text": "2960(config-if)# interface f0/2"
+    },
+    {
+     "level": 0,
+     "text": "2960(config-if)# switchport access vlan 2"
+    },
+    {
+     "level": 0,
+     "text": "... Fa0/3 = VLAN 2, Fa0/4 and Fa0/5 = VLAN 3, Fa0/6 = VLAN 4"
+    },
+    {
+     "level": 0,
+     "text": "ISR(config)# interface fa0/0"
+    },
+    {
+     "level": 0,
+     "text": "ISR(config-if)# ip address 192.168.10.1 255.255.255.240"
+    },
+    {
+     "level": 0,
+     "text": "ISR(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "ISR(config-if)# interface f0/0.2"
+    },
+    {
+     "level": 0,
+     "text": "ISR(config-subif)# encapsulation dot1q 2"
+    },
+    {
+     "level": 0,
+     "text": "ISR(config-subif)# ip address 192.168.10.17 255.255.255.240"
+    },
+    {
+     "level": 0,
+     "text": "... f0/0.3 uses dot1q 3 and .33; f0/0.4 uses dot1q 4 and .49"
+    },
+    {
+     "level": 0,
+     "text": "Note the book does not put switchport mode access on the access ports here. That is shortened for the exam diagram. In real work, add it. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Example 3 (Figure 8.14, pp. 243 to 245)"
+    },
+    {
+     "level": 0,
+     "text": "The hosts show no masks, so you work out the size from the host counts. VLAN 2 has 85 hosts and VLAN 3 has 115 hosts. Both need a /25 (126 usable hosts each). The two subnets are 172.16.10.0/25 and 172.16.10.128/25. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN | Subnet | Usable range | Router subinterface | Host |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | 172.16.10.0/25 | 172.16.10.1 to .126 | fa0/0.2: 172.16.10.1/25 | Host A 172.16.10.126 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 172.16.10.128/25 | 172.16.10.129 to .254 | fa0/0.3: 172.16.10.254/25 | Host B 172.16.10.129 |"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Host A is .126 and Host B is .129. They look close, but they are in different subnets (.126 is the last host in the first /25, .129 is the first host in the second). The script confirmed they are not in the same subnet. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "The router's physical interface uses 192.168.10.1/24 as the management (native VLAN 1) address. The book uses the first address in VLAN 2's range for the gateway and the last address in VLAN 3's range. Any address in the range works if the host gateway matches. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Setting the IP address on the switch"
+    },
+    {
+     "level": 0,
+     "text": "Management IP on a Layer 2 switch (book p. 245) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "2960(config)# interface vlan 1"
+    },
+    {
+     "level": 0,
+     "text": "2960(config-if)# ip address 192.168.10.2 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "2960(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "2960(config-if)# exit"
+    },
+    {
+     "level": 0,
+     "text": "2960(config)# ip default-gateway 192.168.10.1"
+    },
+    {
+     "level": 0,
+     "text": "- interface vlan 1 opens the SVI for VLAN 1, the logical interface used to manage the switch."
+    },
+    {
+     "level": 0,
+     "text": "- ip address ... gives the switch a management address in the VLAN 1 subnet."
+    },
+    {
+     "level": 0,
+     "text": "- no shutdown is needed because the VLAN 1 interface is shut down by default on Catalyst switches. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- ip default-gateway tells a Layer 2 switch where to send traffic for other subnets, so you can manage it from another network."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Two updates. (1) Use a dedicated management VLAN (for example VLAN 100) rather than VLAN 1, as explained in 8.4. (2) ip default-gateway is used by a switch that is not routing. If you turn on ip routing, the switch ignores it and needs a default route (ip route 0.0.0.0 0.0.0.0 <next hop>) instead. General knowledge, not verified in this session. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Example 4 (Figure 8.15, p. 245)"
+    },
+    {
+     "level": 0,
+     "text": "Router: fa0/0 is 192.168.10.1/28, fa0/0.2 (dot1q 2) is 192.168.10.129/28, fa0/0.3 (dot1q 3) is 192.168.10.46/28. Question: what are the IP address, mask and gateway of Host A in VLAN 2, using the last address in the range? BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Step | Working |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Mask | /28 = 255.255.255.240, block size 16 |"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN 2 subnet | 192.168.10.129 is in the 128 block, so the subnet is 192.168.10.128/28, broadcast .143, usable .129 to .142 |"
+    },
+    {
+     "level": 0,
+     "text": "| Host A | Last usable address: 192.168.10.142, mask 255.255.255.240, gateway 192.168.10.129 |"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN 3 (check) | 192.168.10.46/28 is in the 32 block: subnet 192.168.10.32/28, usable .33 to .46. The router took the last usable address. |"
+    },
+    {
+     "level": 0,
+     "text": "All four examples calculated by script: correct. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Inter-VLAN routing with a Layer 3 switch (SVI)"
+    },
+    {
+     "level": 0,
+     "text": "The book (pp. 245 to 246) uses a multilayer switch, called S1, with hosts in VLANs 10 and 20. Addressing: 192.168.x.0/24, where x is the VLAN number. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration (p. 246) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# ip routing"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface vlan 10"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# ip address 192.168.10.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# interface vlan 20"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# ip address 192.168.20.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "- ip routing switches on layer 3 forwarding. Without it, the switch behaves like a Layer 2 switch and does not route between VLANs. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- interface vlan 10 creates the switched virtual interface (SVI) for VLAN 10. It is a logical interface, not a physical port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- ip address 192.168.10.1 255.255.255.0 is the default gateway for hosts in VLAN 10. Hosts must be set to use it. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The same pattern repeats for VLAN 20. When you enable these SVIs, the switch has a connected route for each subnet and routes between them."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Book error: an SVI is not fa0/0. On p. 245 the book says it will configure IVR \"using interface fa0/0, which is often referred to as a switched virtual interface (SVI)\". fa0/0 is a router interface. The SVI is interface vlan <number>, as the book's own configuration on p. 246 shows. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "What the book leaves out. For the SVI to work you also need: (1) the VLANs created on the switch; (2) hosts in each VLAN on access ports; (3) hosts configured with the SVI address as their default gateway. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "SVI autostate. An SVI's line protocol only comes up if the VLAN exists and is active, and at least one layer 2 port (access or trunk) in that VLAN is up and in the spanning-tree forwarding state. A new SVI with no active port shows up/down. Status: a Cisco document on autostate (official, written for a Catalyst 6500) and a Catalyst 9300 configuration guide quoted in the Cisco Community (secondary). ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "no shutdown: a new SVI is normally not shut down (only VLAN 1 starts shut). Adding no shutdown is harmless and is used in the labs. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Routed ports. On a Layer 3 switch you can turn a physical port into a Layer 3 port with no switchport and give it an IP address, for example a /30 link to a router. v2.0 lists \"Layer 2/Layer 3 physical interfaces\" (2.1.a). Example: interface gi0/2, no switchport, ip address 10.0.0.1 255.255.255.252 (10.0.0.0/30, usable .1 and .2, calculated). ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Verifying inter-VLAN routing"
+    },
+    {
+     "level": 0,
+     "text": "| Command | What you expect |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| show vlan brief | Each VLAN exists and has ports. |"
+    },
+    {
+     "level": 0,
+     "text": "| show interfaces trunk | The router or switch uplink is trunking and allows the VLANs you route. |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip interface brief | Subinterfaces or SVIs are up/up with the right IP. SVI up/down points to autostate (see above). |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip route | A connected route (C) for each VLAN subnet. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| ping the gateway, then a host in another VLAN | Ping to the gateway works first. Then the cross-VLAN ping works. |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 8.4.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Write the router commands that make Gi0/0.30 the gateway 192.168.30.1/24 for VLAN 30 (the physical interface is already up)."
+    },
+    {
+     "level": 0,
+     "text": "Answer: interface gi0/0.30, then encapsulation dot1Q 30, then ip address 192.168.30.1 255.255.255.0 - the encapsulation line comes first."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Does interface fa0/0 on a router create an SVI?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No. An SVI is created with interface vlan <number> on a Layer 3 switch - the book's wording on p. 245 is wrong."
+    },
+    {
+     "level": 0,
+     "text": "Q3. An SVI for VLAN 20 shows up/down. Name two possible causes."
+    },
+    {
+     "level": 0,
+     "text": "Answer: VLAN 20 does not exist or is not active, or no port in VLAN 20 is up (autostate) - also check spanning tree is forwarding on that port."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Host 192.168.10.77/28: what are the subnet, broadcast and usable range?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Subnet 192.168.10.64, broadcast 192.168.10.79, usable 192.168.10.65 to 192.168.10.78 - block size 16; 77 falls in the 64 block. Calculated by script."
+    }
+   ],
+   "words": 5806
+  },
+  {
+   "title": "Troubleshooting VLANs, Trunks and Inter-VLAN Routing",
+   "content": [
+    {
+     "level": 0,
+     "text": "None of this was tested on hardware. Treat the \"first check\" column as a starting point. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Host cannot reach anything, not even its gateway | Port in the wrong VLAN, or the VLAN does not exist | show vlan brief, show interfaces <int> switchport |"
+    },
+    {
+     "level": 0,
+     "text": "| Hosts in the same VLAN on two switches cannot talk | Link is not a trunk, VLAN not allowed on the trunk, or VLAN missing on one switch | show interfaces trunk on both switches, show vlan brief on both |"
+    },
+    {
+     "level": 0,
+     "text": "| Trunk does not form | Both ends dynamic auto; one end access; encapsulation mismatch | show interfaces <int> switchport on both ends |"
+    },
+    {
+     "level": 0,
+     "text": "| Log: NATIVE_VLAN_MISMATCH | Native VLAN differs between the two ends | Compare the Native vlan column in show interfaces trunk; show spanning-tree inconsistentports |"
+    },
+    {
+     "level": 0,
+     "text": "| One VLAN stopped working after a trunk change | allowed vlan list was replaced and dropped that VLAN | show interfaces trunk; fix with allowed vlan add <id> |"
+    },
+    {
+     "level": 0,
+     "text": "| Works inside the VLAN, not between VLANs | Wrong or missing host gateway; no routing; wrong subinterface or SVI address | Ping the gateway first; show ip interface brief; show ip route |"
+    },
+    {
+     "level": 0,
+     "text": "| ROAS subinterface down | Physical interface shut, or encapsulation dot1Q ID wrong | show ip interface brief; show running-config interface gi0/0.10 |"
+    },
+    {
+     "level": 0,
+     "text": "| ROAS up, one VLAN fails | VLAN not allowed on the switch trunk, or wrong VLAN ID on subinterface | show interfaces trunk on the switch |"
+    },
+    {
+     "level": 0,
+     "text": "| SVI up/down | VLAN missing, or no active port in that VLAN (autostate) | show vlan brief, show ip interface brief |"
+    },
+    {
+     "level": 0,
+     "text": "| Layer 3 switch does not route | ip routing missing | show running-config \\| include ip routing |"
+    },
+    {
+     "level": 0,
+     "text": "| Phone gets an address in the data VLAN | Voice VLAN not set, or CDP or LLDP not working | show interfaces <int> switchport, show cdp neighbors |"
+    },
+    {
+     "level": 0,
+     "text": "| Host cannot reach gateway, IP looks fine | Wrong mask or host in a different subnet | Recalculate the subnet and compare host and gateway |"
+    }
+   ],
+   "words": 367
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN | One VLAN = one broadcast domain = (normally) one subnet. Switches split collision domains, VLANs and routers split broadcast domains. |"
+    },
+    {
+     "level": 0,
+     "text": "| Access port | One VLAN, untagged. Plus optional voice VLAN. Type switchport mode access and switchport access vlan N. |"
+    },
+    {
+     "level": 0,
+     "text": "| Voice VLAN | switchport voice vlan N. Phone tags voice, PC untagged. Switch tells the phone via CDP or LLDP-MED. |"
+    },
+    {
+     "level": 0,
+     "text": "| Trunk | Many VLANs, tagged. All VLANs allowed by default. switchport mode trunk. Add the encapsulation command only on switches that support ISL. |"
+    },
+    {
+     "level": 0,
+     "text": "| 802.1Q tag | 4 bytes: TPID 0x8100, PCP 3 bits, DEI 1 bit (book says CFI), VID 12 bits. 4,094 usable VLANs. |"
+    },
+    {
+     "level": 0,
+     "text": "| ISL | Cisco only, encapsulates, retired. Not on modern switches. |"
+    },
+    {
+     "level": 0,
+     "text": "| Native VLAN | Untagged VLAN on an 802.1Q trunk. Default 1. Must match both ends. Mismatch can block VLANs, not only management. |"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN ranges | Normal 1 to 1005 (1002 to 1005 reserved). Extended 1006 to 4094 (VTP v1/v2 need transparent mode; v3 supports it). |"
+    },
+    {
+     "level": 0,
+     "text": "| DTP | Auto + auto = access. Desirable + auto = trunk. Default is usually dynamic auto. Best practice: static trunk + nonegotiate; static access on user ports. |"
+    },
+    {
+     "level": 0,
+     "text": "| Allowed list | allowed vlan 4,6 replaces the list. Use add, remove, all. |"
+    },
+    {
+     "level": 0,
+     "text": "| Verify | show vlan brief (access ports only), show interfaces trunk, show interfaces <int> switchport. |"
+    },
+    {
+     "level": 0,
+     "text": "| Router on a stick | Trunk to router. Subinterface per VLAN: encapsulation dot1Q N, then ip address. Subinterface IP = host gateway. Bottleneck. |"
+    },
+    {
+     "level": 0,
+     "text": "| SVI / Layer 3 switch | ip routing, then interface vlan N and ip address. SVI is not fa0/0. VLAN must exist and have an active port. |"
+    },
+    {
+     "level": 0,
+     "text": "| New host | Check the port's VLAN first. |"
+    }
+   ],
+   "words": 313
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Statuses allowed in the tracker: Not assessed, Know, Partially understand, Need to learn, Needs revision. Every row starts as Not assessed. Know needs correct answers without help (quiz, review questions) or a finished lab with the result recorded. Fill in the columns below after you do the questions and labs. Status in this document is not changed for you."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Chapter 8 - VLANs and Inter-VLAN Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.1 VLAN Basics |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.1.1 Broadcast Control |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.1.2 Security |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.1.3 Flexibility and Scalability |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2 Identifying VLANs |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2.1 Frame Tagging |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.2.2 VLAN Identification Methods |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.3 Routing Between VLANs |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4 Configuring VLANs |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.1 Assigning Switch Ports to VLANs |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.2 Configuring Trunk Ports |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 8.4.3 Configuring Inter-VLAN Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "Suggested evidence: Pre-check results, Quick check scores, review questions, and which labs you finished. Notion tracker: update the rows yourself or in a chat with Notion connected. CHECK"
+    }
+   ],
+   "words": 268
+  },
+  {
+   "title": "Answer Key A (Step 0 Pre-check)",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | Answer |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | One broadcast domain. A switch forwards broadcasts out of every port except the one they arrived on, and with no VLANs all ports are in the same VLAN (VLAN 1). |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | An access port belongs to one VLAN (plus an optional voice VLAN) and sends untagged frames to an end device. A trunk port carries many VLANs between network devices, tagging frames with the VLAN ID (except the native VLAN). |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | The native VLAN, which is VLAN 1 by default. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Any two of: a router with one interface per VLAN; router on a stick (trunk and subinterfaces); a Layer 3 switch with SVIs. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | switchport mode trunk (the encapsulation command is not needed or not available on a switch that supports only 802.1Q). |"
+    }
+   ],
+   "words": 150
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "These 26 questions are original. Also do the book's own 10 review questions (book pp. 248 to 250) and check them in the book's Appendix (answers on p. 794). The book's answers to Chapter 8 matched its text when I read them. Do not look at my answers until you have tried each question. Subnet answers were calculated by script."
+    }
+   ],
+   "words": 60
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | p. 219: objective 2.1.c \"Connectivity\" | Notes that v1.1 calls it InterVLAN connectivity and v2.0 uses 2.1, 2.1.b, 2.1.d. UPDATED | v2.0: official Cisco PDF read. v1.1: secondary (Cisco Press preview, computingforgeeks). |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | p. 226: trunk carries 1 to 4,094 VLANs, \"only 1,001\" | Gives the real ranges (1-1005, reserved 1002-1005, extended 1006-4094). UPDATED | Cisco IOS document (official), Cisco Community (secondary). |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | pp. 226-227: voice VLAN, one paragraph | Adds how the phone is told the voice VLAN and what is tagged. ADDED | Secondary. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | p. 228: ISL, \"Cisco moved to 802.1q\" | States ISL is absent on many current Catalysts. UPDATED | Secondary (Cisco Community quoting Cisco Press). CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | p. 228, Fig. 8.7: CFI, \"user priority\" | Uses DEI and PCP; adds TPID 0x8100. UPDATED | Secondary (Wikipedia, OMNeT++ docs citing IEEE 802.1Q-2018). |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | pp. 229-231: ROAS \"used on the CCNA objectives\"; old hardware advice | Notes v1.1 and v2.0 wording; says ignore model advice. UPDATED | v2.0 official; v1.1 secondary. |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | p. 232: extended VLANs need VTP transparent | True only for VTP v1/v2; v3 supports them. UPDATED | Cisco IOS doc (official), Cisco Community. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | p. 233: Cisco recommends VLAN 1 for management | Reverses it: use a dedicated management VLAN. UPDATED | Secondary (Cisco staff on Cisco Community, quoting the white paper). CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | pp. 233, 237: DTP default; \"desirable on all new switches\" | Says default is usually dynamic auto (2960, 3560, 3650, 3850); desirable on older 2950/3550. UPDATED | Secondary (Cisco Networking Academy text, Cisco Community). CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | p. 236: stray ]]> in show vlan; p. 235: \"S1\" vs S3 | Ignored; noted as typesetting mistakes. | Read directly from the book. |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | p. 236: trunk encapsulation command | Adds that it is rejected or absent depending on platform. ADDED | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | p. 238: untagged frames go to the management VLAN | Corrects to the native VLAN of the port. UPDATED | Consistent with the book's own p. 227 text. |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | p. 240: native mismatch \"won't affect user data\" | Marks it wrong: PVID inconsistency can block VLANs. UPDATED | Cisco document on PVID inconsistency (official). |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | pp. 241, 243: IP on the physical interface for VLAN 1 | Says it works; shows the native keyword alternative. UPDATED | Secondary. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | p. 245: ip default-gateway on the switch | Adds that it is ignored when ip routing is on. ADDED | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | p. 245: SVI described as fa0/0 | Corrects: SVI is interface vlan N. UPDATED | The book's own p. 246 config. |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | p. 246: SVI config omits VLAN creation, active port, gateways, no shutdown | Adds them and explains autostate. ADDED | Cisco autostate document (official); Catalyst 9300 text via Cisco Community (secondary). |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | pp. 241-246: four worked examples | Re-worked with tables. | All numbers calculated by Python: the book is correct. |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | Not in the book | Adds VLAN hopping notes, routed ports (no switchport), unused-port practice, extra show commands. ADDED | General knowledge and secondary. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | Book Review Q6 and Q8 | Left as is. Q6 reasons that a port missing from show vlan is a trunk. It is a likely inference, not proof. CHECK | Book appendix p. 794 read. |"
+    },
+    {
+     "level": 0,
+     "text": "| 21 | DTP, ISL and VTP | Kept, but flagged as low priority. They are not named in the official v2.0 outline. UPDATED | v2.0 official PDF read. |"
+    }
+   ],
+   "words": 660
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware or in Packet Tracer. All outputs not copied from the book are expectations. Record what you actually see in the labs and update the tracker."
+    }
+   ],
+   "words": 36
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (or any lab tool). Packet Tracer can behave differently from real equipment, and I could not run it here. Every output below is what you should expect, not something I saw. CHECK After each lab, write down what you actually saw in the tracker table at the end. That record is the evidence for changing a status."
+    },
+    {
+     "level": 0,
+     "text": "| VLAN | Name | Subnet | Gateway |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | Sales | 192.168.10.0/24 | 192.168.10.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | Admin | 192.168.20.0/24 | 192.168.20.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 30 | Voice | 192.168.30.0/24 | 192.168.30.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 99 | Native (no hosts, no IP) | none | none |"
+    },
+    {
+     "level": 0,
+     "text": "| 100 | Management | 192.168.100.0/24 | 192.168.100.1 |"
+    },
+    {
+     "level": 0,
+     "text": "Hosts: PC1 192.168.10.11 and PC3 192.168.10.12 (Sales). PC2 192.168.20.11 and PC4 192.168.20.12 (Admin). Switch management: S1 192.168.100.11, S2 192.168.100.12. All /24. The four subnets do not overlap (calculated). ADDED"
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "VLANs and access ports on one switch",
+   "content": [
+    {
+     "level": 0,
+     "text": "Goal: create VLANs, assign ports, prove VLANs are isolated. Topology: switch S1 (2960), PC1 on Fa0/1, PC2 on Fa0/2. Set PC1 to 192.168.10.11/24 and PC2 to 192.168.20.11/24, no gateway."
+    },
+    {
+     "level": 0,
+     "text": "- Create the VLANs (below)."
+    },
+    {
+     "level": 0,
+     "text": "- Assign Fa0/1 to VLAN 10 and Fa0/2 to VLAN 20."
+    },
+    {
+     "level": 0,
+     "text": "- Verify with show vlan brief."
+    },
+    {
+     "level": 0,
+     "text": "- Ping PC2 from PC1. Then change PC2 to 192.168.10.13/24 and ping again."
+    },
+    {
+     "level": 0,
+     "text": "Lab 1 configuration CHECK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# vlan 10"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# name Sales"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# vlan 20"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# name Admin"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-vlan)# exit"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface fa0/1"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport access vlan 10"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# interface fa0/2"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport access vlan 20"
+    },
+    {
+     "level": 0,
+     "text": "- Each vlan block creates a VLAN and names it. Each interface block makes the port a static access port in that VLAN."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result. show vlan brief lists Fa0/1 under VLAN 10 and Fa0/2 under VLAN 20. The first ping (different subnets, different VLANs, no router) fails. Why: separate VLANs are separate broadcast domains and there is no layer 3 device. The second ping, with PC2 given an address in the 192.168.10.0/24 subnet, still fails because PC2's port is in VLAN 20, so the ARP broadcast never reaches PC1. This shows that the VLAN, not the IP address, decides who can talk. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Optional voice step. Add an IP phone in Packet Tracer on a new port, set switchport voice vlan 30, and check show interfaces <int> switchport. Packet Tracer phone behaviour may differ. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "Two switches, 802.1Q trunk, allowed VLANs, native VLAN",
+   "content": [
+    {
+     "level": 0,
+     "text": "Goal: span VLANs across switches, test DTP, break and fix the native VLAN. Topology: S1 and S2 (2960) joined by Gi0/1 on both. PC1 and PC2 on S1 (Fa0/1 VLAN 10, Fa0/2 VLAN 20). PC3 and PC4 on S2 (Fa0/1 VLAN 10, Fa0/2 VLAN 20). Create VLANs 10 and 20 on both switches and assign the ports as in Lab 1."
+    },
+    {
+     "level": 0,
+     "text": "- Before any trunk config, check the default: show interfaces gi0/1 switchport on both switches. Note the administrative mode. Ping PC3 from PC1."
+    },
+    {
+     "level": 0,
+     "text": "- Configure the trunk on both switches (below). Ping again."
+    },
+    {
+     "level": 0,
+     "text": "- Remove VLAN 20 from the trunk with switchport trunk allowed vlan remove 20 on S1 Gi0/1. Test PC2 to PC4."
+    },
+    {
+     "level": 0,
+     "text": "- Restore with switchport trunk allowed vlan all."
+    },
+    {
+     "level": 0,
+     "text": "- Change the native VLAN on S1 only to 99. Read the log message. Then make S2 match."
+    },
+    {
+     "level": 0,
+     "text": "Lab 2 trunk configuration CHECK"
+    },
+    {
+     "level": 0,
+     "text": "S1(config)# interface gi0/1"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport mode trunk"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport nonegotiate"
+    },
+    {
+     "level": 0,
+     "text": "S1(config-if)# switchport trunk native vlan 99"
+    },
+    {
+     "level": 0,
+     "text": "(repeat on S2)"
+    },
+    {
+     "level": 0,
+     "text": "- switchport mode trunk makes the link a permanent trunk. 2960 needs no encapsulation command."
+    },
+    {
+     "level": 0,
+     "text": "- switchport nonegotiate stops DTP frames. Do the same on both ends."
+    },
+    {
+     "level": 0,
+     "text": "- switchport trunk native vlan 99 sets the untagged VLAN. You must create VLAN 99 first on both switches (vlan 99)."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected results. Step 1: the default mode is probably dynamic auto (see 8.4.2), the link is not a trunk, and the ping fails CHECK . Step 2: after the trunk is up, PC1 reaches PC3 and PC2 reaches PC4. show interfaces trunk shows on, 802.1q, trunking. Step 3: PC2 cannot reach PC4 but PC1 still reaches PC3, because only VLAN 20 was removed. Step 5: with S1 native VLAN 99 and S2 still 1, expect a %CDP-4-NATIVE_VLAN_MISMATCH message and possibly spanning-tree PVID inconsistency messages. Check show spanning-tree inconsistentports. After S2 matches, they clear. CHECK Simulator note: Packet Tracer may not show every log message real IOS does."
+    },
+    {
+     "level": 0,
+     "text": "Extra test (DTP table). Try auto/auto, auto/desirable and trunk/auto on the link and compare with the matrix in 8.4.2. Record each result. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "Router on a stick",
+   "content": [
+    {
+     "level": 0,
+     "text": "Goal: route between VLAN 10 and VLAN 20. Topology: Lab 2 plus a router R1 connected to S1 Gi0/2 from R1 Gi0/0. Hosts need gateways: PC1 and PC3 use 192.168.10.1, PC2 and PC4 use 192.168.20.1."
+    },
+    {
+     "level": 0,
+     "text": "- On S1: interface gi0/2, switchport mode trunk."
+    },
+    {
+     "level": 0,
+     "text": "- On R1: bring up Gi0/0 and create subinterfaces .10 and .20 (code in 8.4.3)."
+    },
+    {
+     "level": 0,
+     "text": "- Ping the gateway from PC1, then ping PC2 from PC1, then PC4 from PC1."
+    },
+    {
+     "level": 0,
+     "text": "- Run traceroute (tracert on a PC) from PC1 to PC2."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result. Pings to the gateway work, then PC1 reaches PC2 and PC4. The trace shows 192.168.10.1 (the router) as the first hop. All inter-VLAN traffic goes up and down the one trunk. show ip route on R1 lists C routes for both subnets. If PC1 cannot reach PC2, use the troubleshooting table. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "4",
+   "title": "Layer 3 switch with SVIs",
+   "content": [
+    {
+     "level": 0,
+     "text": "Goal: replace the router with SVIs. Topology: a multilayer switch MLS1 (3560 in Packet Tracer) with PC1 on Fa0/1 (VLAN 10) and PC2 on Fa0/2 (VLAN 20). Hosts use gateways .1 in their subnet."
+    },
+    {
+     "level": 0,
+     "text": "Lab 4 configuration CHECK"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config)# vlan 10"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-vlan)# vlan 20"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-vlan)# exit"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config)# interface fa0/1"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# switchport access vlan 10"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# interface fa0/2"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# switchport access vlan 20"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# exit"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config)# ip routing"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config)# interface vlan 10"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# ip address 192.168.10.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# interface vlan 20"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# ip address 192.168.20.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "MLS1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "- ip routing turns on routing. Each interface vlan creates the SVI that acts as the gateway. The two VLANs exist and each has an active port, so the SVIs can come up."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result. show ip interface brief shows Vlan10 and Vlan20 up/up. PC1 pings PC2. Now remove PC2's port from VLAN 20 (shut Fa0/2) and watch Vlan20 go down (autostate), then bring it back. Then delete ip routing (no ip routing) and see the cross-VLAN ping fail. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "5",
+   "title": "Lab 5 (paper): Read a configuration, find the addresses",
+   "content": [
+    {
+     "level": 0,
+     "text": "A router has fa0/0.5 with encapsulation dot1q 5 and 10.5.5.33/27, and fa0/0.6 with encapsulation dot1q 6 and 10.5.6.1/24. Switch port 1 is a trunk, ports 2 and 3 are VLAN 5, port 4 is VLAN 6. Work out: the subnets, the usable range of each, and a valid address, mask and gateway for a host on port 2 and a host on port 4. Then write the switch commands for port 1."
+    },
+    {
+     "level": 0,
+     "text": "Answer (calculated by script): VLAN 5 subnet 10.5.5.32/27, usable 10.5.5.33 to 10.5.5.62, broadcast 10.5.5.63. A host on port 2 can use 10.5.5.34, mask 255.255.255.224, gateway 10.5.5.33. VLAN 6 subnet 10.5.6.0/24, usable 10.5.6.1 to 10.5.6.254. A host on port 4 can use 10.5.6.10, mask 255.255.255.0, gateway 10.5.6.1. Port 1: switchport mode trunk (add the encapsulation command only on a switch that supports ISL). CHECK"
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "VLANs and Inter-VLAN Routing — review questions",
+   "questions": [
+    {
+     "source": "Q1. A switch has 12 active ports and no VLANs configured. How many broadcast domains does it have?",
+     "sourceNumber": "Q1",
+     "q": "A switch has 12 active ports and no VLANs configured. How many broadcast domains does it have?",
+     "options": [
+      "12",
+      "1",
+      "2",
+      "0"
+     ],
+     "answer": "B",
+     "why": "with no VLANs the whole switch is one broadcast domain. It has 12 collision domains, one per port.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Name two things that split a network into more than one broadcast domain.",
+     "sourceNumber": "Q2",
+     "q": "Name two things that split a network into more than one broadcast domain.",
+     "options": [],
+     "answer": null,
+     "why": "VLANs on a switch, and routers (each router interface is a separate broadcast domain) - a plain switch does not do it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Host A in VLAN 10 sends an ARP request (a broadcast). Which ports receive it?",
+     "sourceNumber": "Q3",
+     "q": "Host A in VLAN 10 sends an ARP request (a broadcast). Which ports receive it?",
+     "options": [],
+     "answer": null,
+     "why": "Only ports in VLAN 10 (access ports in VLAN 10, plus trunks that carry VLAN 10) - ports in other VLANs never see it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. True or false: hosts in two different VLANs on the same switch can talk to each other without a router, because they share the same switch.",
+     "sourceNumber": "Q4",
+     "q": "True or false: hosts in two different VLANs on the same switch can talk to each other without a router, because they share the same switch.",
+     "options": [
+      "True",
+      "False"
+     ],
+     "answer": null,
+     "why": "False - separate VLANs are separate broadcast domains and subnets. You need a layer 3 device to route between them.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which kind of port removes the VLAN tag before it sends a frame to a PC?",
+     "sourceNumber": "Q1",
+     "q": "Which kind of port removes the VLAN tag before it sends a frame to a PC?",
+     "options": [],
+     "answer": "A",
+     "why": "n access port - the PC does not understand tags.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which statement about 802.1Q is true?",
+     "sourceNumber": "Q2",
+     "q": "Which statement about 802.1Q is true?",
+     "options": [
+      "It is Cisco proprietary.",
+      "It wraps the frame in a new header and a new CRC.",
+      "It inserts a 4-byte tag and leaves the native VLAN untagged.",
+      "It supports only VLANs 1 to 1005."
+     ],
+     "answer": "C",
+     "why": "802.1Q is the IEEE standard. A is ISL, B describes ISL, and D confuses 802.1Q with the Cisco normal range.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. What is the default native VLAN on a Cisco switch trunk?",
+     "sourceNumber": "Q3",
+     "q": "What is the default native VLAN on a Cisco switch trunk?",
+     "options": [],
+     "answer": null,
+     "why": "VLAN 1 - it can be changed with switchport trunk native vlan.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. A PC is plugged into an IP phone, and the phone into a switch port with data VLAN 10 and voice VLAN 30. Which frames are tagged?",
+     "sourceNumber": "Q4",
+     "q": "A PC is plugged into an IP phone, and the phone into a switch port with data VLAN 10 and voice VLAN 30. Which frames are tagged?",
+     "options": [],
+     "answer": null,
+     "why": "The phone's voice frames (VLAN 30). The PC's frames are untagged and go to VLAN 10 - this is why the port still counts as an access port.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which inter-VLAN routing method uses subinterfaces?",
+     "sourceNumber": "Q1",
+     "q": "Which inter-VLAN routing method uses subinterfaces?",
+     "options": [],
+     "answer": null,
+     "why": "Router on a stick - one physical interface is split into one subinterface per VLAN.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Why is router on a stick a single point of failure and a bottleneck?",
+     "sourceNumber": "Q2",
+     "q": "Why is router on a stick a single point of failure and a bottleneck?",
+     "options": [],
+     "answer": "A",
+     "why": "ll inter-VLAN traffic goes through one router interface and one cable - if either fails, no VLAN can reach another VLAN.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. In a router-on-a-stick design, what is the default gateway of hosts in VLAN 20?",
+     "sourceNumber": "Q3",
+     "q": "In a router-on-a-stick design, what is the default gateway of hosts in VLAN 20?",
+     "options": [],
+     "answer": null,
+     "why": "The IP address of the router subinterface that handles VLAN 20 - not the physical interface address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which of these needs the ip routing command?",
+     "sourceNumber": "Q4",
+     "q": "Which of these needs the ip routing command?",
+     "options": [
+      "A router subinterface",
+      "A Layer 3 switch with SVIs",
+      "A Layer 2 switch trunk port",
+      "An access port"
+     ],
+     "answer": "B",
+     "why": "a multilayer switch only routes once ip routing is turned on. Routers route by default.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q1. Write the commands to make Fa0/5 a static access port in VLAN 20.",
+     "sourceNumber": "Q1",
+     "q": "Write the commands to make Fa0/5 a static access port in VLAN 20.",
+     "options": [],
+     "answer": null,
+     "why": "interface fa0/5, then switchport mode access, then switchport access vlan 20 - the VLAN must also exist (vlan 20), or be created for you on some platforms.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. You create VLAN 20 with vlan 20 and name Sales. Which hosts are in it now?",
+     "sourceNumber": "Q2",
+     "q": "You create VLAN 20 with vlan 20 and name Sales. Which hosts are in it now?",
+     "options": [],
+     "answer": null,
+     "why": "None. A VLAN is unused until you assign ports to it - all ports stay in VLAN 1 until configured.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Why are trunk ports not listed in show vlan?",
+     "sourceNumber": "Q3",
+     "q": "Why are trunk ports not listed in show vlan?",
+     "options": [],
+     "answer": null,
+     "why": "show vlan lists access ports only - use show interfaces trunk to see trunks.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which command adds VLAN 30 as a voice VLAN on an access port?",
+     "sourceNumber": "Q4",
+     "q": "Which command adds VLAN 30 as a voice VLAN on an access port?",
+     "options": [],
+     "answer": null,
+     "why": "switchport voice vlan 30 - the port stays an access port; the phone tags its own frames with VLAN 30.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Both ends of a link are dynamic auto. What is the result?",
+     "sourceNumber": "Q1",
+     "q": "Both ends of a link are dynamic auto. What is the result?",
+     "options": [],
+     "answer": "A",
+     "why": "n access port (no trunk) - neither end sends the first DTP request.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. A trunk allows VLANs 10, 20 and 30. You type switchport trunk allowed vlan 30. What does it allow now?",
+     "sourceNumber": "Q2",
+     "q": "A trunk allows VLANs 10, 20 and 30. You type switchport trunk allowed vlan 30. What does it allow now?",
+     "options": [],
+     "answer": null,
+     "why": "Only VLAN 30 - the plain form replaces the list. Use add to add.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which log message tells you the native VLANs differ between two Cisco switches?",
+     "sourceNumber": "Q3",
+     "q": "Which log message tells you the native VLANs differ between two Cisco switches?",
+     "options": [],
+     "answer": null,
+     "why": "%CDP-4-NATIVE_VLAN_MISMATCH - spanning tree may also log PVID inconsistency messages.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. switchport trunk encapsulation dot1q is not accepted on a 2960. Why? When do you need it?",
+     "sourceNumber": "Q4",
+     "q": "switchport trunk encapsulation dot1q is not accepted on a 2960. Why? When do you need it?",
+     "options": [],
+     "answer": null,
+     "why": "The 2960 supports only 802.1Q, so the command does not exist. You need it on switches that support both ISL and 802.1Q, such as the 3560 - check the platform before you type it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Write the router commands that make Gi0/0.30 the gateway 192.168.30.1/24 for VLAN 30 (the physical interface is already up).",
+     "sourceNumber": "Q1",
+     "q": "Write the router commands that make Gi0/0.30 the gateway 192.168.30.1/24 for VLAN 30 (the physical interface is already up).",
+     "options": [],
+     "answer": null,
+     "why": "interface gi0/0.30, then encapsulation dot1Q 30, then ip address 192.168.30.1 255.255.255.0 - the encapsulation line comes first.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Does interface fa0/0 on a router create an SVI?",
+     "sourceNumber": "Q2",
+     "q": "Does interface fa0/0 on a router create an SVI?",
+     "options": [],
+     "answer": null,
+     "why": "No. An SVI is created with interface vlan <number> on a Layer 3 switch - the book's wording on p. 245 is wrong.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. An SVI for VLAN 20 shows up/down. Name two possible causes.",
+     "sourceNumber": "Q3",
+     "q": "An SVI for VLAN 20 shows up/down. Name two possible causes.",
+     "options": [],
+     "answer": null,
+     "why": "VLAN 20 does not exist or is not active, or no port in VLAN 20 is up (autostate) - also check spanning tree is forwarding on that port.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Host 192.168.10.77/28: what are the subnet, broadcast and usable range?",
+     "sourceNumber": "Q4",
+     "q": "Host 192.168.10.77/28: what are the subnet, broadcast and usable range?",
+     "options": [],
+     "answer": null,
+     "why": "Subnet 192.168.10.64, broadcast 192.168.10.79, usable 192.168.10.65 to 192.168.10.78 - block size 16; 77 falls in the 64 block. Calculated by script.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. A switch has 12 access ports in use, spread over 3 VLANs. How many collision domains and broadcast domains does it have?",
+     "sourceNumber": "Q1",
+     "q": "A switch has 12 access ports in use, spread over 3 VLANs. How many collision domains and broadcast domains does it have?",
+     "options": [],
+     "answer": null,
+     "why": "12 collision domains and 3 broadcast domains - one collision domain per port, one broadcast domain per VLAN.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which port type sends and receives frames without a VLAN tag?",
+     "sourceNumber": "Q2",
+     "q": "Which port type sends and receives frames without a VLAN tag?",
+     "options": [
+      "Trunk port (all frames)",
+      "Access port",
+      "Routed port only",
+      "None"
+     ],
+     "answer": "B",
+     "why": "an access port sends untagged frames.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. How many bytes does an 802.1Q tag add to a frame?",
+     "sourceNumber": "Q3",
+     "q": "How many bytes does an 802.1Q tag add to a frame?",
+     "options": [
+      "2",
+      "4",
+      "26",
+      "30"
+     ],
+     "answer": "B",
+     "why": "4 bytes. 26 and 30 relate to ISL.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q4. How many VLANs can the 802.1Q VLAN ID identify, and why?",
+     "sourceNumber": "Q4",
+     "q": "How many VLANs can the 802.1Q VLAN ID identify, and why?",
+     "options": [],
+     "answer": null,
+     "why": "4,094 (1 to 4094) - 12 bits gives 4,096 values; 0 and 4,095 are reserved.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. Which VLAN IDs are the normal range on Cisco switches, and which are reserved within it?",
+     "sourceNumber": "Q5",
+     "q": "Which VLAN IDs are the normal range on Cisco switches, and which are reserved within it?",
+     "options": [],
+     "answer": null,
+     "why": "1 to 1005, where 1002 to 1005 are reserved (and VLAN 1 is the default) - extended range is 1006 to 4094.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. Which VLAN carries untagged frames on an 802.1Q trunk by default?",
+     "sourceNumber": "Q6",
+     "q": "Which VLAN carries untagged frames on an 802.1Q trunk by default?",
+     "options": [
+      "VLAN 0",
+      "VLAN 1",
+      "VLAN 99",
+      "The voice VLAN"
+     ],
+     "answer": "B",
+     "why": "the native VLAN, VLAN 1 by default.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q7. A PC and a phone share one switch port. Which command gives the phone VLAN 30?",
+     "sourceNumber": "Q7",
+     "q": "A PC and a phone share one switch port. Which command gives the phone VLAN 30?",
+     "options": [],
+     "answer": null,
+     "why": "switchport voice vlan 30 - the PC stays in the access VLAN.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. Switch A has native VLAN 99 and switch B has native VLAN 1 on the same trunk. What can you see?",
+     "sourceNumber": "Q8",
+     "q": "Switch A has native VLAN 99 and switch B has native VLAN 1 on the same trunk. What can you see?",
+     "options": [],
+     "answer": "A",
+     "why": "%CDP-4-NATIVE_VLAN_MISMATCH log message, and possibly spanning-tree PVID inconsistency that blocks VLANs on the port - it is not only a management issue.",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. Which command shows allowed, active and forwarding VLANs on trunks?",
+     "sourceNumber": "Q9",
+     "q": "Which command shows allowed, active and forwarding VLANs on trunks?",
+     "options": [
+      "show vlan brief",
+      "show interfaces trunk",
+      "show ip route",
+      "show running-config vlan"
+     ],
+     "answer": "B",
+     "why": "show vlan brief does not list trunk ports.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q10. A trunk allows VLANs 10, 20 and 30. You enter switchport trunk allowed vlan 20. What is allowed now?",
+     "sourceNumber": "Q10",
+     "q": "A trunk allows VLANs 10, 20 and 30. You enter switchport trunk allowed vlan 20. What is allowed now?",
+     "options": [],
+     "answer": null,
+     "why": "Only VLAN 20 - the plain form replaces the list. Use add.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. Two ports are both dynamic auto. Do they trunk?",
+     "sourceNumber": "Q11",
+     "q": "Two ports are both dynamic auto. Do they trunk?",
+     "options": [
+      "Yes",
+      "No, they stay access"
+     ],
+     "answer": "B",
+     "why": "auto waits for the other end to ask.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q12. One end is dynamic desirable and the other dynamic auto. Result?",
+     "sourceNumber": "Q12",
+     "q": "One end is dynamic desirable and the other dynamic auto. Result?",
+     "options": [],
+     "answer": "A",
+     "why": "trunk - desirable actively asks, and auto accepts.",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. One end is switchport mode trunk with switchport nonegotiate; the other is dynamic auto. What happens?",
+     "sourceNumber": "Q13",
+     "q": "One end is switchport mode trunk with switchport nonegotiate; the other is dynamic auto. What happens?",
+     "options": [],
+     "answer": null,
+     "why": "The auto end never becomes a trunk, because no DTP frames arrive. The link is mismatched and does not work properly - set both ends to trunk.",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. What must be turned on before SVIs route between VLANs on a Layer 3 switch?",
+     "sourceNumber": "Q14",
+     "q": "What must be turned on before SVIs route between VLANs on a Layer 3 switch?",
+     "options": [
+      "no switchport",
+      "ip routing",
+      "ip default-gateway",
+      "vtp mode transparent"
+     ],
+     "answer": "B",
+     "why": "ip routing.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q15. In encapsulation dot1Q 20, what does 20 mean?",
+     "sourceNumber": "Q15",
+     "q": "In encapsulation dot1Q 20, what does 20 mean?",
+     "options": [],
+     "answer": null,
+     "why": "The VLAN ID whose tagged frames this subinterface handles - it is not the subinterface number.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. In router on a stick, what is the default gateway of hosts in VLAN 30?",
+     "sourceNumber": "Q16",
+     "q": "In router on a stick, what is the default gateway of hosts in VLAN 30?",
+     "options": [],
+     "answer": null,
+     "why": "The IP address of the router subinterface for VLAN 30 -",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. Why is router on a stick a bottleneck and a single point of failure?",
+     "sourceNumber": "Q17",
+     "q": "Why is router on a stick a bottleneck and a single point of failure?",
+     "options": [],
+     "answer": "A",
+     "why": "ll inter-VLAN traffic uses one router interface and one link - a Layer 3 switch avoids this.",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. Hosts in VLAN 10 can ping the router subinterface, but VLAN 30 cannot. The trunk on the switch allows 10 and 20 only. Fix?",
+     "sourceNumber": "Q18",
+     "q": "Hosts in VLAN 10 can ping the router subinterface, but VLAN 30 cannot. The trunk on the switch allows 10 and 20 only. Fix?",
+     "options": [],
+     "answer": null,
+     "why": "switchport trunk allowed vlan add 30 - do not retype the plain form or you may drop others.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. An SVI shows up/down. Give three conditions that must hold for it to come up.",
+     "sourceNumber": "Q19",
+     "q": "An SVI shows up/down. Give three conditions that must hold for it to come up.",
+     "options": [],
+     "answer": null,
+     "why": "The VLAN exists and is active; at least one layer 2 port in that VLAN is up; that port is in spanning-tree forwarding - this is SVI autostate.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. Host 172.16.5.200/26. Give the subnet, broadcast and usable range.",
+     "sourceNumber": "Q20",
+     "q": "Host 172.16.5.200/26. Give the subnet, broadcast and usable range.",
+     "options": [],
+     "answer": null,
+     "why": "Subnet 172.16.5.192, broadcast 172.16.5.255, usable 172.16.5.193 to 172.16.5.254 - calculated by script.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. What is the smallest mask for a VLAN with 45 hosts, and for one with 120 hosts?",
+     "sourceNumber": "Q21",
+     "q": "What is the smallest mask for a VLAN with 45 hosts, and for one with 120 hosts?",
+     "options": [],
+     "answer": null,
+     "why": "/26 (62 usable) and /25 (126 usable) - calculated by script.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. Host 10.1.40.77/27. What is the subnet and broadcast address?",
+     "sourceNumber": "Q22",
+     "q": "Host 10.1.40.77/27. What is the subnet and broadcast address?",
+     "options": [],
+     "answer": null,
+     "why": "Subnet 10.1.40.64, broadcast 10.1.40.95, usable .65 to .94 - calculated by script.",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. Are 192.168.10.20/28 and 192.168.10.30/28 in the same subnet?",
+     "sourceNumber": "Q23",
+     "q": "Are 192.168.10.20/28 and 192.168.10.30/28 in the same subnet?",
+     "options": [
+      "Yes",
+      "No"
+     ],
+     "answer": "A",
+     "why": "both are in 192.168.10.16/28 (usable .17 to .30). Calculated by script.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q24. When do you need switchport trunk encapsulation dot1q?",
+     "sourceNumber": "Q24",
+     "q": "When do you need switchport trunk encapsulation dot1q?",
+     "options": [],
+     "answer": null,
+     "why": "Only on switches that support both ISL and 802.1Q, such as a 3560 - a 2960 does not have the command.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. True or false: putting hosts in different VLANs makes a network secure by itself.",
+     "sourceNumber": "Q25",
+     "q": "True or false: putting hosts in different VLANs makes a network secure by itself.",
+     "options": [
+      "True",
+      "False"
+     ],
+     "answer": "B",
+     "why": "VLAN hopping attacks exist. Set ports to access explicitly, do not use VLAN 1 or native for users, and filter between VLANs.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q26. A host in VLAN 10 sends a broadcast. Does a host in VLAN 20 on the same switch receive it?",
+     "sourceNumber": "Q26",
+     "q": "A host in VLAN 10 sends a broadcast. Does a host in VLAN 20 on the same switch receive it?",
+     "options": [
+      "Yes",
+      "No"
+     ],
+     "answer": "B",
+     "why": "separate VLANs are separate broadcast domains.",
+     "kind": "multiple-choice"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 A switch has 12 active ports and no VLANs configured. How many broadcast domains does it have?"
+    },
+    {
+     "level": 0,
+     "text": "A. 12"
+    },
+    {
+     "level": 0,
+     "text": "B. 1"
+    },
+    {
+     "level": 0,
+     "text": "C. 2"
+    },
+    {
+     "level": 0,
+     "text": "D. 0"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - with no VLANs the whole switch is one broadcast domain. It has 12 collision domains, one per port."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Name two things that split a network into more than one broadcast domain."
+    },
+    {
+     "level": 0,
+     "text": "Answer: VLANs on a switch, and routers (each router interface is a separate broadcast domain) - a plain switch does not do it."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Host A in VLAN 10 sends an ARP request (a broadcast). Which ports receive it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only ports in VLAN 10 (access ports in VLAN 10, plus trunks that carry VLAN 10) - ports in other VLANs never see it."
+    },
+    {
+     "level": 0,
+     "text": "Q4 True or false: hosts in two different VLANs on the same switch can talk to each other without a router, because they share the same switch."
+    },
+    {
+     "level": 0,
+     "text": "A. True"
+    },
+    {
+     "level": 0,
+     "text": "B. False"
+    },
+    {
+     "level": 0,
+     "text": "Answer: False - separate VLANs are separate broadcast domains and subnets. You need a layer 3 device to route between them."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which kind of port removes the VLAN tag before it sends a frame to a PC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - n access port - the PC does not understand tags."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which statement about 802.1Q is true?"
+    },
+    {
+     "level": 0,
+     "text": "A. It is Cisco proprietary."
+    },
+    {
+     "level": 0,
+     "text": "B. It wraps the frame in a new header and a new CRC."
+    },
+    {
+     "level": 0,
+     "text": "C. It inserts a 4-byte tag and leaves the native VLAN untagged."
+    },
+    {
+     "level": 0,
+     "text": "D. It supports only VLANs 1 to 1005."
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 802.1Q is the IEEE standard. A is ISL, B describes ISL, and D confuses 802.1Q with the Cisco normal range."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What is the default native VLAN on a Cisco switch trunk?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: VLAN 1 - it can be changed with switchport trunk native vlan."
+    },
+    {
+     "level": 0,
+     "text": "Q4 A PC is plugged into an IP phone, and the phone into a switch port with data VLAN 10 and voice VLAN 30. Which frames are tagged?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The phone's voice frames (VLAN 30). The PC's frames are untagged and go to VLAN 10 - this is why the port still counts as an access port."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which inter-VLAN routing method uses subinterfaces?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Router on a stick - one physical interface is split into one subinterface per VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why is router on a stick a single point of failure and a bottleneck?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ll inter-VLAN traffic goes through one router interface and one cable - if either fails, no VLAN can reach another VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q3 In a router-on-a-stick design, what is the default gateway of hosts in VLAN 20?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The IP address of the router subinterface that handles VLAN 20 - not the physical interface address."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which of these needs the ip routing command?"
+    },
+    {
+     "level": 0,
+     "text": "A. A router subinterface"
+    },
+    {
+     "level": 0,
+     "text": "B. A Layer 3 switch with SVIs"
+    },
+    {
+     "level": 0,
+     "text": "C. A Layer 2 switch trunk port"
+    },
+    {
+     "level": 0,
+     "text": "D. An access port"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - a multilayer switch only routes once ip routing is turned on. Routers route by default."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Write the commands to make Fa0/5 a static access port in VLAN 20."
+    },
+    {
+     "level": 0,
+     "text": "Answer: interface fa0/5, then switchport mode access, then switchport access vlan 20 - the VLAN must also exist (vlan 20), or be created for you on some platforms."
+    },
+    {
+     "level": 0,
+     "text": "Q2 You create VLAN 20 with vlan 20 and name Sales. Which hosts are in it now?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: None. A VLAN is unused until you assign ports to it - all ports stay in VLAN 1 until configured."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Why are trunk ports not listed in show vlan?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show vlan lists access ports only - use show interfaces trunk to see trunks."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which command adds VLAN 30 as a voice VLAN on an access port?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: switchport voice vlan 30 - the port stays an access port; the phone tags its own frames with VLAN 30."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Both ends of a link are dynamic auto. What is the result?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - n access port (no trunk) - neither end sends the first DTP request."
+    },
+    {
+     "level": 0,
+     "text": "Q2 A trunk allows VLANs 10, 20 and 30. You type switchport trunk allowed vlan 30. What does it allow now?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only VLAN 30 - the plain form replaces the list. Use add to add."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which log message tells you the native VLANs differ between two Cisco switches?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: %CDP-4-NATIVE_VLAN_MISMATCH - spanning tree may also log PVID inconsistency messages."
+    },
+    {
+     "level": 0,
+     "text": "Q4 switchport trunk encapsulation dot1q is not accepted on a 2960. Why? When do you need it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The 2960 supports only 802.1Q, so the command does not exist. You need it on switches that support both ISL and 802.1Q, such as the 3560 - check the platform before you type it."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Write the router commands that make Gi0/0.30 the gateway 192.168.30.1/24 for VLAN 30 (the physical interface is already up)."
+    },
+    {
+     "level": 0,
+     "text": "Answer: interface gi0/0.30, then encapsulation dot1Q 30, then ip address 192.168.30.1 255.255.255.0 - the encapsulation line comes first."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Does interface fa0/0 on a router create an SVI?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No. An SVI is created with interface vlan <number> on a Layer 3 switch - the book's wording on p. 245 is wrong."
+    },
+    {
+     "level": 0,
+     "text": "Q3 An SVI for VLAN 20 shows up/down. Name two possible causes."
+    },
+    {
+     "level": 0,
+     "text": "Answer: VLAN 20 does not exist or is not active, or no port in VLAN 20 is up (autostate) - also check spanning tree is forwarding on that port."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Host 192.168.10.77/28: what are the subnet, broadcast and usable range?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Subnet 192.168.10.64, broadcast 192.168.10.79, usable 192.168.10.65 to 192.168.10.78 - block size 16; 77 falls in the 64 block. Calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q1 A switch has 12 access ports in use, spread over 3 VLANs. How many collision domains and broadcast domains does it have?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 12 collision domains and 3 broadcast domains - one collision domain per port, one broadcast domain per VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which port type sends and receives frames without a VLAN tag?"
+    },
+    {
+     "level": 0,
+     "text": "A. Trunk port (all frames)"
+    },
+    {
+     "level": 0,
+     "text": "B. Access port"
+    },
+    {
+     "level": 0,
+     "text": "C. Routed port only"
+    },
+    {
+     "level": 0,
+     "text": "D. None"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - an access port sends untagged frames."
+    },
+    {
+     "level": 0,
+     "text": "Q3 How many bytes does an 802.1Q tag add to a frame?"
+    },
+    {
+     "level": 0,
+     "text": "A. 2"
+    },
+    {
+     "level": 0,
+     "text": "B. 4"
+    },
+    {
+     "level": 0,
+     "text": "C. 26"
+    },
+    {
+     "level": 0,
+     "text": "D. 30"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 4 bytes. 26 and 30 relate to ISL."
+    },
+    {
+     "level": 0,
+     "text": "Q4 How many VLANs can the 802.1Q VLAN ID identify, and why?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 4,094 (1 to 4094) - 12 bits gives 4,096 values; 0 and 4,095 are reserved."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which VLAN IDs are the normal range on Cisco switches, and which are reserved within it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1 to 1005, where 1002 to 1005 are reserved (and VLAN 1 is the default) - extended range is 1006 to 4094."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Which VLAN carries untagged frames on an 802.1Q trunk by default?"
+    },
+    {
+     "level": 0,
+     "text": "A. VLAN 0"
+    },
+    {
+     "level": 0,
+     "text": "B. VLAN 1"
+    },
+    {
+     "level": 0,
+     "text": "C. VLAN 99"
+    },
+    {
+     "level": 0,
+     "text": "D. The voice VLAN"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the native VLAN, VLAN 1 by default."
+    },
+    {
+     "level": 0,
+     "text": "Q7 A PC and a phone share one switch port. Which command gives the phone VLAN 30?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: switchport voice vlan 30 - the PC stays in the access VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q8 Switch A has native VLAN 99 and switch B has native VLAN 1 on the same trunk. What can you see?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - %CDP-4-NATIVE_VLAN_MISMATCH log message, and possibly spanning-tree PVID inconsistency that blocks VLANs on the port - it is not only a management issue."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Which command shows allowed, active and forwarding VLANs on trunks?"
+    },
+    {
+     "level": 0,
+     "text": "A. show vlan brief"
+    },
+    {
+     "level": 0,
+     "text": "B. show interfaces trunk"
+    },
+    {
+     "level": 0,
+     "text": "C. show ip route"
+    },
+    {
+     "level": 0,
+     "text": "D. show running-config vlan"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - show vlan brief does not list trunk ports."
+    },
+    {
+     "level": 0,
+     "text": "Q10 A trunk allows VLANs 10, 20 and 30. You enter switchport trunk allowed vlan 20. What is allowed now?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only VLAN 20 - the plain form replaces the list. Use add."
+    },
+    {
+     "level": 0,
+     "text": "Q11 Two ports are both dynamic auto. Do they trunk?"
+    },
+    {
+     "level": 0,
+     "text": "A. Yes"
+    },
+    {
+     "level": 0,
+     "text": "B. No, they stay access"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - auto waits for the other end to ask."
+    },
+    {
+     "level": 0,
+     "text": "Q12 One end is dynamic desirable and the other dynamic auto. Result?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - trunk - desirable actively asks, and auto accepts."
+    },
+    {
+     "level": 0,
+     "text": "Q13 One end is switchport mode trunk with switchport nonegotiate; the other is dynamic auto. What happens?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The auto end never becomes a trunk, because no DTP frames arrive. The link is mismatched and does not work properly - set both ends to trunk."
+    },
+    {
+     "level": 0,
+     "text": "Q14 What must be turned on before SVIs route between VLANs on a Layer 3 switch?"
+    },
+    {
+     "level": 0,
+     "text": "A. no switchport"
+    },
+    {
+     "level": 0,
+     "text": "B. ip routing"
+    },
+    {
+     "level": 0,
+     "text": "C. ip default-gateway"
+    },
+    {
+     "level": 0,
+     "text": "D. vtp mode transparent"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - ip routing."
+    },
+    {
+     "level": 0,
+     "text": "Q15 In encapsulation dot1Q 20, what does 20 mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The VLAN ID whose tagged frames this subinterface handles - it is not the subinterface number."
+    },
+    {
+     "level": 0,
+     "text": "Q16 In router on a stick, what is the default gateway of hosts in VLAN 30?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The IP address of the router subinterface for VLAN 30 -"
+    },
+    {
+     "level": 0,
+     "text": "Q17 Why is router on a stick a bottleneck and a single point of failure?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ll inter-VLAN traffic uses one router interface and one link - a Layer 3 switch avoids this."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Hosts in VLAN 10 can ping the router subinterface, but VLAN 30 cannot. The trunk on the switch allows 10 and 20 only. Fix?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: switchport trunk allowed vlan add 30 - do not retype the plain form or you may drop others."
+    },
+    {
+     "level": 0,
+     "text": "Q19 An SVI shows up/down. Give three conditions that must hold for it to come up."
+    },
+    {
+     "level": 0,
+     "text": "Answer: The VLAN exists and is active; at least one layer 2 port in that VLAN is up; that port is in spanning-tree forwarding - this is SVI autostate."
+    },
+    {
+     "level": 0,
+     "text": "Q20 Host 172.16.5.200/26. Give the subnet, broadcast and usable range."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Subnet 172.16.5.192, broadcast 172.16.5.255, usable 172.16.5.193 to 172.16.5.254 - calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q21 What is the smallest mask for a VLAN with 45 hosts, and for one with 120 hosts?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /26 (62 usable) and /25 (126 usable) - calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Host 10.1.40.77/27. What is the subnet and broadcast address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Subnet 10.1.40.64, broadcast 10.1.40.95, usable .65 to .94 - calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q23 Are 192.168.10.20/28 and 192.168.10.30/28 in the same subnet?"
+    },
+    {
+     "level": 0,
+     "text": "A. Yes"
+    },
+    {
+     "level": 0,
+     "text": "B. No"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - both are in 192.168.10.16/28 (usable .17 to .30). Calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q24 When do you need switchport trunk encapsulation dot1q?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only on switches that support both ISL and 802.1Q, such as a 3560 - a 2960 does not have the command."
+    },
+    {
+     "level": 0,
+     "text": "Q25 True or false: putting hosts in different VLANs makes a network secure by itself."
+    },
+    {
+     "level": 0,
+     "text": "A. True"
+    },
+    {
+     "level": 0,
+     "text": "B. False"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - VLAN hopping attacks exist. Set ports to access explicitly, do not use VLAN 1 or native for users, and filter between VLANs."
+    },
+    {
+     "level": 0,
+     "text": "Q26 A host in VLAN 10 sends a broadcast. Does a host in VLAN 20 on the same switch receive it?"
+    },
+    {
+     "level": 0,
+     "text": "A. Yes"
+    },
+    {
+     "level": 0,
+     "text": "B. No"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - separate VLANs are separate broadcast domains."
+    }
+   ],
+   "multipleChoice": 12,
+   "open": 38
+  }
+ ],
+ "generatedFrom": "CC08.docx",
+ "totalWords": 15360,
+ "wordBreakdown": {
+  "sections": 11799,
+  "labs": 1202,
+  "quizzes": 1630,
+  "currency": 510,
+  "sources": 219
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "p. 219: objective 2.1.c \"Connectivity\"",
+   "current": "Notes that v1.1 calls it InterVLAN connectivity and v2.0 uses 2.1, 2.1.b, 2.1.d. UPDATED",
+   "action": "",
+   "source": "v2.0: official Cisco PDF read. v1.1: secondary (Cisco Press preview, computingforgeeks).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "p. 226: trunk carries 1 to 4,094 VLANs, \"only 1,001\"",
+   "current": "Gives the real ranges (1-1005, reserved 1002-1005, extended 1006-4094). UPDATED",
+   "action": "",
+   "source": "Cisco IOS document (official), Cisco Community (secondary).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "pp. 226-227: voice VLAN, one paragraph",
+   "current": "Adds how the phone is told the voice VLAN and what is tagged. ADDED",
+   "action": "",
+   "source": "Secondary. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "p. 228: ISL, \"Cisco moved to 802.1q\"",
+   "current": "States ISL is absent on many current Catalysts. UPDATED",
+   "action": "",
+   "source": "Secondary (Cisco Community quoting Cisco Press). CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "p. 228, Fig. 8.7: CFI, \"user priority\"",
+   "current": "Uses DEI and PCP; adds TPID 0x8100. UPDATED",
+   "action": "",
+   "source": "Secondary (Wikipedia, OMNeT++ docs citing IEEE 802.1Q-2018).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "pp. 229-231: ROAS \"used on the CCNA objectives\"; old hardware advice",
+   "current": "Notes v1.1 and v2.0 wording; says ignore model advice. UPDATED",
+   "action": "",
+   "source": "v2.0 official; v1.1 secondary.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "p. 232: extended VLANs need VTP transparent",
+   "current": "True only for VTP v1/v2; v3 supports them. UPDATED",
+   "action": "",
+   "source": "Cisco IOS doc (official), Cisco Community. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "p. 233: Cisco recommends VLAN 1 for management",
+   "current": "Reverses it: use a dedicated management VLAN. UPDATED",
+   "action": "",
+   "source": "Secondary (Cisco staff on Cisco Community, quoting the white paper). CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "pp. 233, 237: DTP default; \"desirable on all new switches\"",
+   "current": "Says default is usually dynamic auto (2960, 3560, 3650, 3850); desirable on older 2950/3550. UPDATED",
+   "action": "",
+   "source": "Secondary (Cisco Networking Academy text, Cisco Community). CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "p. 236: stray ]]> in show vlan; p. 235: \"S1\" vs S3",
+   "current": "Ignored; noted as typesetting mistakes.",
+   "action": "",
+   "source": "Read directly from the book.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "p. 236: trunk encapsulation command",
+   "current": "Adds that it is rejected or absent depending on platform. ADDED",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "p. 238: untagged frames go to the management VLAN",
+   "current": "Corrects to the native VLAN of the port. UPDATED",
+   "action": "",
+   "source": "Consistent with the book's own p. 227 text.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "p. 240: native mismatch \"won't affect user data\"",
+   "current": "Marks it wrong: PVID inconsistency can block VLANs. UPDATED",
+   "action": "",
+   "source": "Cisco document on PVID inconsistency (official).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "pp. 241, 243: IP on the physical interface for VLAN 1",
+   "current": "Says it works; shows the native keyword alternative. UPDATED",
+   "action": "",
+   "source": "Secondary. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "p. 245: ip default-gateway on the switch",
+   "current": "Adds that it is ignored when ip routing is on. ADDED",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "p. 245: SVI described as fa0/0",
+   "current": "Corrects: SVI is interface vlan N. UPDATED",
+   "action": "",
+   "source": "The book's own p. 246 config.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "p. 246: SVI config omits VLAN creation, active port, gateways, no shutdown",
+   "current": "Adds them and explains autostate. ADDED",
+   "action": "",
+   "source": "Cisco autostate document (official); Catalyst 9300 text via Cisco Community (secondary).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "pp. 241-246: four worked examples",
+   "current": "Re-worked with tables.",
+   "action": "",
+   "source": "All numbers calculated by Python: the book is correct.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "Not in the book",
+   "current": "Adds VLAN hopping notes, routed ports (no switchport), unused-port practice, extra show commands. ADDED",
+   "action": "",
+   "source": "General knowledge and secondary. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 20",
+   "found": "Book Review Q6 and Q8",
+   "current": "Left as is. Q6 reasons that a port missing from show vlan is a trunk. It is a likely inference, not proof. CHECK",
+   "action": "",
+   "source": "Book appendix p. 794 read.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 21",
+   "found": "DTP, ISL and VTP",
+   "current": "Kept, but flagged as low priority. They are not named in the official v2.0 outline. UPDATED",
+   "action": "",
+   "source": "v2.0 official PDF read.",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Lammle, CCNA Study Guide Vol. 2 (2020), Chapter 8, pp. 219-250 and Appendix p. 794 (the uploaded PDF)",
+   "usedFor": "All BOOK content",
+   "status": "Primary (the book)"
+  },
+  {
+   "source": "Cisco, CCNA 200-301 v2.0 exam topics PDF (learningcontent.cisco.com)",
+   "usedFor": "v2.0 objective numbers and wording",
+   "status": "Official, read directly"
+  },
+  {
+   "source": "Cisco CCNA v1.1 exam topics",
+   "usedFor": "v1.1 wording and retirement date (2 Feb 2027)",
+   "status": "Not opened. Secondary: computingforgeeks.com, Cisco Press 2024 Official Cert Guide Chapter 8 preview (O'Reilly). Dates not confirmed on Cisco's site. CHECK"
+  },
+  {
+   "source": "Cisco document on PVID and type inconsistency (cisco.com, ID 24063)",
+   "usedFor": "Native VLAN mismatch blocking",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco document on VLAN autostate (cisco.com)",
+   "usedFor": "SVI up/up conditions",
+   "status": "Official (older Catalyst 6500 text)"
+  },
+  {
+   "source": "Cisco IOS 12.4T extended VLAN document (cisco.com mirror)",
+   "usedFor": "VLAN ranges, VTP and extended VLANs",
+   "status": "Official (router document)"
+  },
+  {
+   "source": "Cisco Networking Academy course text (university mirrors)",
+   "usedFor": "DTP defaults and modes",
+   "status": "Secondary"
+  },
+  {
+   "source": "Cisco Community posts (several, some by Cisco staff)",
+   "usedFor": "VLAN 1 advice, ISL support, VTP v3, voice VLAN, native VLAN on subinterfaces",
+   "status": "Secondary. The Cisco VLAN security white paper was not opened."
+  },
+  {
+   "source": "Wikipedia (802.1Q), OMNeT++ docs citing IEEE 802.1Q-2018",
+   "usedFor": "802.1Q tag fields",
+   "status": "Secondary. The IEEE standard itself was not opened."
+  },
+  {
+   "source": "computingforgeeks.com router-on-a-stick guide",
+   "usedFor": "native keyword on subinterfaces",
+   "status": "Secondary"
+  },
+  {
+   "source": "Python ipaddress script run in this session",
+   "usedFor": "All subnet and host calculations",
+   "status": "Calculated"
+  },
+  {
+   "source": "General networking knowledge",
+   "usedFor": "VLAN hopping, ip default-gateway with ip routing, routed ports, trunk-encapsulation behaviour",
+   "status": "Not verified. CHECK"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-2.1"
+  },
+  {
+   "id": "CCNA-2.2"
+  }
+ ],
+ "questionCount": 50,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A (Step 0 Pre-check)",
+  "Sources and Verification Status"
+ ]
+}

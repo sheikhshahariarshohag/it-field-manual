@@ -1,0 +1,4915 @@
+{
+ "id": "ccna-21",
+ "n": 21,
+ "sourceNumber": "CC21",
+ "kind": "chapter",
+ "title": "Virtualization, Automation, and Programmability",
+ "display": "Chapter 21: Virtualization, Automation, and Programmability",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 9607,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 21"
+    },
+    {
+     "level": 0,
+     "text": "Virtualization, Automation, and Programmability"
+    },
+    {
+     "level": 0,
+     "text": "This document replaces Chapter 21 of Todd Lammle, CCNA Certification Study Guide, Volume 2 (2020), book pages 661 to 688. It follows the book's order and numbering, keeps the book's learning objectives, and marks every place where it adds to, corrects, or could not verify the book. It covers virtual machines and hypervisors, then automation: a Python script, JSON, YAML, and REST APIs. Cisco's exam outline also names containers (and, in one version, VRFs), which this chapter does not teach, so a short added section covers them."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 661 to 688 (PDF pages 719 to 746; the +58 page offset was re-checked and still holds). Book page 688 is blank. Chapter 22 starts on book page 689. |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 21 - Virtualization, Automation, and Programmability; 21.1 Virtual Machine Fundamentals; 21.2 Virtualization Components; 21.3 Virtualization Features (21.3.1 Hardware Abstraction, 21.3.2 Snapshots, 21.3.3 Clones, 21.3.4 Migrations); 21.4 Virtualization Types (21.4.1 Type 1, 21.4.2 Type 2, 21.4.3 Hardware Virtualized Machine, 21.4.4 Paravirtualization); 21.5 Virtualization Solutions (21.5.1 VMware ESXi, 21.5.2 Hyper-V, 21.5.3 Xen/KVM, 21.5.4 VMware Workstation/Fusion, 21.5.5 VirtualBox); 21.6 Automation Components (21.6.1 Python, 21.6.2 JSON, 21.6.3 YAML, 21.6.4 REST API). Seq numbers were not read: there was no Notion tool in this chat, and I could not confirm that rows for chapter 21 exist. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 4 to 5 hours including the labs. This is a suggestion, not a measured need. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | Book: 1.12 (virtual machines), 6.1, 6.5, 6.7. Cisco's v1.0 PDF (2021): 1.12 adds containers and VRFs. v2.0 (first exam 3 Feb 2027, per secondary sources): 1.2 hypervisors, virtual machines, and containers; 5.3 network management approaches (including automation-based and infrastructure as code); 5.5 Ansible. REST APIs and JSON are not listed as separate v2.0 objectives. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed |"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is outdated, wrong, or unclear. The text says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the book chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified. Commands and outputs marked this way were NOT run on real equipment. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives (from the book). The chapter lists four exam topics: 1.12 Explain virtualization fundamentals, 6.1 Explain how automation impacts network management, 6.5 Describe characteristics of REST-based APIs (CRUD, HTTP verbs, and data encoding), and 6.7 Interpret JSON encoded data."
+    },
+    {
+     "level": 0,
+     "text": "Chapter goal. Introduce virtualization basics, its components, features, types, and products, then explain why automation matters and the components you need to know: Python, JSON, YAML, and REST APIs. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. The book's JSON and YAML examples were parsed with Python, the REST address and status-code names were checked with Python, and the loopback-address logic was tested offline with a fake connection (the real Netmiko library and real routers were not used). The script is ch21_verify.py in the build folder."
+    },
+    {
+     "level": 0,
+     "text": "Facts that could have changed (vendor products, licences, product names, exam wording) were checked against Cisco, Netmiko, YAML, and other sources; the Sources table at the end says which were official. Nothing was run on a real router, hypervisor, or REST server. Outputs are illustrative and tagged CHECK ."
+    },
+    {
+     "level": 2,
+     "text": "Where this chapter fits in the exam"
+    },
+    {
+     "level": 0,
+     "text": "| Section | Book objective | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.1 Virtual Machine Fundamentals | 1.12 | 1.2 | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.2 Virtualization Components | 1.12 | 1.2 | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.3 Virtualization Features | 1.12 | 1.2 | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.4 Virtualization Types | 1.12 | 1.2 | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5 Virtualization Solutions | 1.12 (product names) | 1.2 (background) | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6 Automation Components (introduction) | 6.1 | 5.3 | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.1 Python | Background. The book says Python is not a focus of the exam. | 5.3 (automation-based) background | Low |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.2 JSON | 6.7 | Not listed (related topics may appear) | High for v1.x |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.3 YAML | Background for Ansible (Chapter 23) | 5.5 Ansible background | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.4 REST API | 6.5 | Not listed (related topics may appear) | High for v1.x |"
+    },
+    {
+     "level": 0,
+     "text": "| Added: Containers and VRFs | Gap: named in Cisco's v1.0 PDF | 1.2 names containers | High (gap in the book) |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book's objective for 1.12 says \"virtual machines\" only. Cisco's v1.0 PDF (2021) says \"server virtualization, containers, and VRFs\", and v2.0 objective 1.2 says \"hypervisors, virtual machines, and containers\". The chapter teaches no containers and no VRFs. See the added section. UPDATED Official Cisco sources (v1.0 and v2.0 PDFs)."
+    },
+    {
+     "level": 0,
+     "text": "v2.0 no longer lists REST API or JSON as separate objectives. Cisco says related topics may still appear on any exam, so learn them, but they are no longer named. The book's wording for 6.7 (\"Interpret JSON encoded data\") also differs from Cisco's later v1.0 PDF (\"Recognize components of JSON-encoded data\"). I could not open Cisco's own v1.1 PDF, so v1.1 wording is unverified. UPDATED CHECK"
+    }
+   ],
+   "words": 883
+  },
+  {
+   "title": "Step 0: Pre-check",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer these five questions before you read the chapter. Write your answer and one confidence tag: K (I know it), U (I think I understand), G (I am guessing). Answers are in Answer Key A at the end. The tracker stays Not assessed until you show understanding."
+    },
+    {
+     "level": 0,
+     "text": "| # | Question | Your answer | K / U / G |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | What is a hypervisor? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Which hypervisor type runs directly on the server hardware: Type 1 or Type 2? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Which HTTP verb reads data and is most like a show command? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Which quote characters does JSON allow around keys and strings? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | What does the HTTP status code 404 mean? |  |  |"
+    }
+   ],
+   "words": 148
+  },
+  {
+   "title": "21.1 Virtual Machine Fundamentals",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 662 to 664."
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. A virtual machine (VM) is a software computer that runs on a real server. One physical server can host many VMs, so you do not need a new physical server for every job. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "The book tells a story. To add one DHCP server the old way, you order a server, rack it, cable it, run it for a day to \"burn it in\", update its firmware, install the operating system, then set up its VLAN and IP address, patch it, join it to Active Directory, and install the DHCP role. A standard three-tier application (database, web, and application servers) needs three more servers and another week. Figure 21.1 ends up with five physical servers. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | Physical servers (Figure 21.1) | Virtual machines (Figure 21.2) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| New server | Order, rack, cable, burn in, firmware, install OS | Create a VM |"
+    },
+    {
+     "level": 0,
+     "text": "| Switch ports | One or more per server; more switches as you grow | A trunk (or several, with LACP) to the host |"
+    },
+    {
+     "level": 0,
+     "text": "| Redundancy or performance | Buy more servers | Add more virtualization hosts to share the load |"
+    },
+    {
+     "level": 0,
+     "text": "| Network inside the host | None (all cabling is outside) | A virtual switch on the host carries the VLANs |"
+    },
+    {
+     "level": 0,
+     "text": "In Figure 21.1, VLAN 11 (10.1.11.0/24) holds the AD/DNS server (.101) and the DHCP server (.102). VLAN 12 (10.1.12.0/24) holds the database (.101), web (.102), and app (.103) servers. In Figure 21.2 the same five servers run as VMs on one host, connected through a trunk to the host's virtual switch. The addresses were checked by script: all are valid hosts in their subnets. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "On page 662 the book jokes that \"Cisco isn't in the server market yet\". Four pages later the same chapter mentions Cisco's UCS servers and HyperFlex. Cisco has sold UCS servers for years. Treat the joke as wrong. UPDATED CHECK Date not verified."
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "For networking, the key idea is that part of the network now lives inside a server. VLANs, trunks, and switching exist in the host's virtual switch, so you must configure both the physical switch and the virtual switch."
+    },
+    {
+     "level": 2,
+     "text": "Quick check: 21.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is a virtual machine?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A software computer that runs on a real host - one host can run many VMs."
+    },
+    {
+     "level": 0,
+     "text": "Q2. In Figure 21.2, what connects the VMs to the physical network?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A trunk link to the host's virtual switch - the VLANs are carried to the vSwitch."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Name two advantages of VMs over one physical server per job."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Any two of: faster to deploy, fewer servers and switch ports, easier to add capacity, less hardware work - from the five-servers story in the book."
+    }
+   ],
+   "words": 474
+  },
+  {
+   "title": "21.2 Virtualization Components",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 665 to 666. The book lists six components. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Component | What it is |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Hypervisor (also host or virtualization host) | The server that runs the virtualization solution. It has lots of CPU, cores, and memory to run many VMs. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtualization guest | A VM that runs on a host. Depending on the product it can run almost any modern operating system. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual appliance | A virtual product provided by a vendor. Nearly every vendor offers a virtual version of its products. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual switch (vSwitch) | The switch each host uses to connect VMs. It acts like a normal switch but does not run STP. It lets you assign VLANs to VMs, trunk, and support features such as CDP, LLDP, SPAN, and private VLANs. |"
+    },
+    {
+     "level": 0,
+     "text": "| Shared storage | Storage that all hosts can reach (a SAN or NAS). It lets VMs move between hosts. VMware calls mounted storage paths datastores. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual storage | Each host's local disks are combined into one logical SAN. This is the hyperconverged idea: compute, network, and storage in one server. |"
+    },
+    {
+     "level": 3,
+     "text": "Cisco virtual appliances named in the book"
+    },
+    {
+     "level": 0,
+     "text": "| Appliance | What it is (book) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| CSR1000v (Cloud Services Router 1000v) | A virtual router that runs IOS XE. |"
+    },
+    {
+     "level": 0,
+     "text": "| ASAv | A virtual version of the Cisco ASA firewall. |"
+    },
+    {
+     "level": 0,
+     "text": "| Firepower Threat Defense Virtual | A virtual version of the Firepower firewall. |"
+    },
+    {
+     "level": 3,
+     "text": "Standard and distributed virtual switches"
+    },
+    {
+     "level": 0,
+     "text": "| Type | How it works |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Standard | The free, basic version. Every host has its own independent vSwitch. If you create VLAN 11 and VLAN 12 on one host, you must create the same VLANs on every new host that shares the workload, like adding a new switch without VTP. |"
+    },
+    {
+     "level": 0,
+     "text": "| Distributed | One logical vSwitch that runs on all hosts. It supports advanced features and shares configuration between hosts, like a switch stack with a single configuration. |"
+    },
+    {
+     "level": 3,
+     "text": "Virtual storage products named in the book"
+    },
+    {
+     "level": 0,
+     "text": "- Cisco HyperFlex: Cisco's main hyperconverged solution. It runs VMware or Hyper-V with virtual storage on Cisco UCS servers."
+    },
+    {
+     "level": 0,
+     "text": "- VMware Virtual SAN: a built-in VMware virtual SAN for VMware hosts."
+    },
+    {
+     "level": 0,
+     "text": "- Microsoft Storage Spaces: a Microsoft virtual storage solution."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "CSR1000v has been replaced. Cisco's end-of-sale notices say the CSR 1000v line transitioned to the Catalyst 8000V (C8000V). A Cisco community post gives the CSR end-of-sale as 16 Dec 2022 (secondary). The exam may still name CSR1000v, as book review question 7 does, but know that it is a virtual router and a virtual appliance. UPDATED Official Cisco end-of-sale documents."
+    },
+    {
+     "level": 0,
+     "text": "The book's \"Firepower Threat Defense Virtual\" name may have changed: Cisco has renamed its Firepower products to Secure Firewall. I did not verify the current name. HyperFlex also appears on third-party end-of-life lists. Check Cisco's site before relying on these product names. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says shared storage means \"a SAN or NAS through iSCSI or Fibre Channel\". That is loose. A SAN gives block storage over iSCSI or Fibre Channel. A NAS gives file storage, usually over NFS or SMB. UPDATED CHECK General knowledge."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Why does a vSwitch not need STP? A vSwitch does not forward frames from one physical uplink to another, so it cannot form a loop between its uplinks. This is the reasoning behind the book's statement. ADDED CHECK Not verified for every product."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 7: a CSR1000v virtual router is a virtual appliance (the book's answer B)."
+    },
+    {
+     "level": 0,
+     "text": "Know the difference: standard vSwitch = per host. Distributed vSwitch = one shared configuration across hosts."
+    },
+    {
+     "level": 0,
+     "text": "Know that shared storage is what makes live movement of VMs between hosts simple."
+    },
+    {
+     "level": 2,
+     "text": "Quick check: 21.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is another name for a hypervisor in the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The host (virtualization host) - it is the server that runs the VMs."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which kind of vSwitch keeps one shared configuration across all hosts?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Distributed - a standard vSwitch is configured on each host separately."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Does a vSwitch run STP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No (according to the book) - it is not used between uplinks the way a physical switch is."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What is hyperconverged infrastructure?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Compute, networking, and storage combined in one server, with local disks forming a shared virtual SAN - Cisco HyperFlex is an example."
+    }
+   ],
+   "words": 751
+  },
+  {
+   "title": "21.3 Virtualization Features",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 666 to 667."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says it lists \"three components\" (hardware abstraction, snapshots, migrations) and then covers four headings, because clones are missing from the list. The four features are: hardware abstraction, snapshots, clones, migrations. UPDATED"
+    },
+    {
+     "level": 2,
+     "text": "21.3.1 Hardware Abstraction"
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. A VM sees virtual hardware, so it looks the same no matter which host runs it. Real hardware needs drivers and changes as parts are upgraded. With VMs everything stays predictable, even if you move the VM across several hosts. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "21.3.2 Snapshots"
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. A snapshot is an \"undo button\" for a VM. It captures the state of the VM before a task, such as an upgrade. If the task fails, you revert to the snapshot. Backup products such as Veeam also use snapshots. Microsoft calls them checkpoints. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "The book warns that snapshots are not a magic fix. If the failed upgrade also changed a database on another VM, that VM needs its own snapshot to be fully reverted. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "A snapshot is not a backup. It usually lives with the VM on the same storage, so if that storage fails you lose both. Keeping old snapshots can also use a lot of space and slow the VM. ADDED CHECK General knowledge, depends on the product."
+    },
+    {
+     "level": 2,
+     "text": "21.3.3 Clones"
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. A clone is a quick copy of a VM. It is handy for creating many VMs from one \"golden\" image that is already patched and configured the way you want. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | Snapshot | Clone |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| What you get | A saved state of the same VM | A new, separate VM |"
+    },
+    {
+     "level": 0,
+     "text": "| Main use | Undo a change (revert) | Create several VMs from a golden image |"
+    },
+    {
+     "level": 0,
+     "text": "The table is my own comparison to help you answer exam questions. ADDED"
+    },
+    {
+     "level": 2,
+     "text": "21.3.4 Migrations"
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. VMs can be moved between hosts to balance load or to keep VMs running while a host is shut down for maintenance. With shared storage the VM can be moved while it is running, so there is no downtime. Otherwise it usually has to be powered off for the move. Migrations can be manual or automatic, based on performance or host availability. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Migration type | What moves |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual machine migration | A VM moves from one host to another |"
+    },
+    {
+     "level": 0,
+     "text": "| Storage migration | A VM's files move from one storage location to another, for example from internal storage to an iSCSI datastore |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book implies that live migration needs shared storage. Today several products can also move a running VM without shared storage, at the cost of copying the disk data. Shared storage still makes it simpler and faster. UPDATED CHECK General knowledge, product dependent."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 10: to revert a bad change in a VM, use a snapshot. Clones make copies. Migrations move VMs. Hardware abstraction makes hardware predictable."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which feature is the \"undo button\" for a VM?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Snapshot - Microsoft calls it a checkpoint."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which feature quickly creates many VMs from a golden image?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Clone - a clone is a new VM."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is needed to move a running VM without downtime, according to the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Shared storage - otherwise the VM usually has to be powered down."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Moving a VM's files from internal storage to an iSCSI datastore is which kind of migration?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Storage migration - the VM stays on the same host."
+    }
+   ],
+   "words": 617
+  },
+  {
+   "title": "21.4 Virtualization Types",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book page 668. There are two types of hypervisors, plus two ways a VM can work with the virtual hardware."
+    },
+    {
+     "level": 2,
+     "text": "21.4.1 Type 1"
+    },
+    {
+     "level": 0,
+     "text": "A Type 1 hypervisor is also called bare-metal. The whole server is dedicated to virtualization and the hypervisor accesses the hardware directly. It is the most common enterprise solution because it has the most features and the best performance. Book examples: VMware ESXi, Hyper-V, Xen. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "21.4.2 Type 2"
+    },
+    {
+     "level": 0,
+     "text": "A Type 2 hypervisor is also called desktop virtualization. It runs as an application on top of your desktop operating system. It is mostly for IT and developer testing, with fewer features and lower performance, but it is simple and cheap. Book examples: VMware Workstation/Fusion, VirtualBox, KVM. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | Type 1 (bare-metal) | Type 2 (hosted / desktop) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Runs on | Directly on the hardware | On top of a desktop operating system, as an application |"
+    },
+    {
+     "level": 0,
+     "text": "| Performance and features | Best | Less |"
+    },
+    {
+     "level": 0,
+     "text": "| Typical use | Enterprise servers | Testing, labs, developers |"
+    },
+    {
+     "level": 0,
+     "text": "| Book examples | ESXi, Hyper-V, Xen | Workstation/Fusion, VirtualBox, KVM (see warning) |"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "The book lists KVM as Type 2 on page 668 and then calls Xen and KVM \"two open source Type-1 hypervisors\" on page 669. The book contradicts itself. KVM is built into the Linux kernel, so it is usually described as Type 1, although some sources call it Type 2. Do not worry about KVM for the exam. UPDATED CHECK Classification varies by source."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 2: VMware Workstation is a Type 2 hypervisor. Anything that installs on a desktop OS like an app is Type 2."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Type 1 = bare metal (1 layer under the VMs). Type 2 = runs on an OS (2 layers)."
+    },
+    {
+     "level": 2,
+     "text": "21.4.3 Hardware Virtualized Machine"
+    },
+    {
+     "level": 0,
+     "text": "A Hardware Virtualized Machine (HVM) is a VM that is not aware it is virtual. The hypervisor presents hardware that the VM can use, such as an Intel e1000 network adapter, a widely supported NIC that works out of the box on most systems. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "21.4.4 Paravirtualization"
+    },
+    {
+     "level": 0,
+     "text": "Paravirtualization uses virtualization-aware operating systems. The guest is \"enlightened\": it knows it is a VM and talks directly to the hypervisor instead of using emulated hardware. This can give better performance, but the guest must support it, which often means installing drivers. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | HVM | Paravirtualization |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Does the guest know it is a VM? | No | Yes |"
+    },
+    {
+     "level": 0,
+     "text": "| How it reaches the hardware | Emulated hardware (for example an e1000 NIC) | Directly through the hypervisor |"
+    },
+    {
+     "level": 0,
+     "text": "| Performance | Good compatibility, lower speed | Better performance |"
+    },
+    {
+     "level": 0,
+     "text": "| Downside | Emulation overhead | Guest needs support or drivers |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which hypervisor type runs directly on the hardware?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Type 1 - it is also called bare-metal."
+    },
+    {
+     "level": 0,
+     "text": "Q2. VMware Workstation is which type?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Type 2 - it installs on a desktop OS."
+    },
+    {
+     "level": 0,
+     "text": "Q3. In which virtualization type does the guest know it is a VM and talk directly to the hypervisor?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Paravirtualization - the guest is \"enlightened\"."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What network adapter does the book mention as the typical emulated adapter in an HVM?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Intel e1000 - it is widely supported out of the box."
+    }
+   ],
+   "words": 561
+  },
+  {
+   "title": "21.5 Virtualization Solutions",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 669 to 670. The book compares products on the market \"as of this writing\" (2020). Several have changed since, so read the warnings. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "21.5.1 VMware ESXi"
+    },
+    {
+     "level": 0,
+     "text": "ESXi is VMware's Type 1, fully featured hypervisor. VMware is the market leader. Management is by ESXi's web interface or by vCenter. The book says ESXi is not free, but VMware gave a free licence for standalone hosts. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says ESXi is \"based on a custom Linux OS\". ESXi runs on VMware's own VMkernel and is not described by VMware as Linux. UPDATED CHECK General knowledge, not verified in this session."
+    },
+    {
+     "level": 0,
+     "text": "Licensing has changed. Broadcom completed its purchase of VMware in November 2023. Press reports say Broadcom stopped distributing free ESXi in February 2024. Check Broadcom's site for what is free now. UPDATED CHECK Secondary sources."
+    },
+    {
+     "level": 2,
+     "text": "21.5.2 Hyper-V"
+    },
+    {
+     "level": 0,
+     "text": "Hyper-V is Microsoft's virtualization solution. It is a Type 1 hypervisor. You can run it as its own OS or install it as a role on Windows Server or Windows. Because it gets full hardware access, it is still Type 1. Management is by the Hyper-V Management Tool or by System Center Virtual Machine Manager. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "The book warns that once Hyper-V is installed, you cannot use Type 2 products such as VMware Workstation on the same computer, \"because Hyper-V claims the hardware access\". BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "That warning is dated. Newer versions of products such as VMware Workstation and VirtualBox can run alongside Hyper-V by using Windows' hypervisor features, with some performance cost. UPDATED CHECK General knowledge."
+    },
+    {
+     "level": 0,
+     "text": "The book says you can test Hyper-V on Windows 10. Windows 10 reached end of support in October 2025, so use a current Windows edition. ADDED CHECK Not verified in this session."
+    },
+    {
+     "level": 2,
+     "text": "21.5.3 Xen/KVM"
+    },
+    {
+     "level": 0,
+     "text": "Xen and KVM are open-source hypervisors that the book calls Type 1. They are the hardest to use unless you are strong in Linux, and they are free, so they are good for labs. The book says they are out of scope for the CCNA. BOOK See the warning in 21.4 about KVM's type."
+    },
+    {
+     "level": 2,
+     "text": "21.5.4 VMware Workstation/Fusion"
+    },
+    {
+     "level": 0,
+     "text": "VMware Workstation is a paid Type 2 solution for Windows and Linux. Fusion is the Mac version. The book also mentions a free desktop product, Player, that runs one VM. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book calls Workstation a \"paid Tier-2 solution\". \"Tier-2\" is a typo for Type 2. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Press reports say Broadcom made Workstation Pro and Fusion Pro free for personal use in 2024 and replaced the Player products, and that they later became free for all users. Check Broadcom's site for the current terms. UPDATED CHECK Secondary sources."
+    },
+    {
+     "level": 2,
+     "text": "21.5.5 VirtualBox"
+    },
+    {
+     "level": 0,
+     "text": "VirtualBox is a free, open-source Type 2 solution from Oracle. It has fewer features than VMware Workstation, but the price is right for a simple lab. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Product | Type | Maker | Cost note (book) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| VMware ESXi | 1 | VMware | Not free; free licence for standalone hosts (changed, see above) |"
+    },
+    {
+     "level": 0,
+     "text": "| Hyper-V | 1 | Microsoft | Role in Windows |"
+    },
+    {
+     "level": 0,
+     "text": "| Xen / KVM | 1 (see warning) | Open source | Free, hard to use without Linux skills |"
+    },
+    {
+     "level": 0,
+     "text": "| VMware Workstation / Fusion | 2 | VMware | Paid (changed, see above) |"
+    },
+    {
+     "level": 0,
+     "text": "| VirtualBox | 2 | Oracle | Free, open source |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 4: Hyper-V is made by Microsoft. Review question 2: VMware Workstation is Type 2. Be ready to match a product to its maker and its hypervisor type."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.5"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which hypervisor is made by Microsoft?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Hyper-V - it is a Type 1 hypervisor."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which product is a free, open-source Type 2 solution from Oracle?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: VirtualBox - it is good for simple labs."
+    },
+    {
+     "level": 0,
+     "text": "Q3. How is ESXi managed, according to the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: By its web interface or by vCenter - vCenter is VMware's management solution."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which is Type 1: ESXi or VMware Fusion?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ESXi - Fusion is the Mac desktop product (Type 2)."
+    }
+   ],
+   "words": 686
+  },
+  {
+   "title": "21.6 Automation Components",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 670 to 683."
+    },
+    {
+     "level": 0,
+     "text": "The idea in plain words. Your boss asks you to add a new loopback interface on all 200 routers. Typing it on each router takes forever, and one typo or one wrong IP address can cause an outage. Automation means applying tasks in a predictable way, so a script does the work on all devices for you. The book says surveys put human error at the top of the causes of outages. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | Manual changes | Automated changes |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Speed on 200 devices | Hours or days of typing | A script loops over the devices |"
+    },
+    {
+     "level": 0,
+     "text": "| Consistency | Each router can end up a little different | Every device gets the same steps |"
+    },
+    {
+     "level": 0,
+     "text": "| Human error | Typos, wrong interface, wrong IP | Fewer typing errors, but a wrong script makes the same mistake everywhere |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracking addresses | Easy to lose track | The script computes the address for each device |"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "The book's disclaimer: knowing how to automate something is less important than understanding what you are automating. Automation does exactly what it is told. A broken OSPF configuration pushed to every router means a painful night."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says it will cover \"the three main ones\" that the exam asks about, and then covers four: Python, JSON, YAML, and REST API. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "The book says \"a whole bunch of surveys\" blame human error but names none. I did not verify this claim. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "In v2.0, objective 5.3 names \"automation-based\" and \"infrastructure as code\" as network management approaches. ADDED Official Cisco source (v2.0 PDF)."
+    },
+    {
+     "level": 2,
+     "text": "21.6.1 Python"
+    },
+    {
+     "level": 0,
+     "text": "Python is probably the most popular scripting language among network engineers: readable, easy, and extensible. The book says Python is not a focus of the exam, and you do not need to learn it for the CCNA. It is shown so you understand what automation looks like. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "What the book's script does"
+    },
+    {
+     "level": 0,
+     "text": "The book installs netmiko (a Python module that connects to devices by SSH) with pip, then writes configure-loopback.py to create Loopback 999 on three routers. The last number of each loopback address is the router number. Here is the logic, step by step: BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The first line (the shebang) tells the operating system to use Python 3."
+    },
+    {
+     "level": 0,
+     "text": "- from getpass import getpass and from netmiko import ConnectHandler import what the script needs. getpass lets you type the password without storing it in the script."
+    },
+    {
+     "level": 0,
+     "text": "- def main(): puts the code inside a function so it is easy to reuse and read."
+    },
+    {
+     "level": 0,
+     "text": "- Three dictionaries (csr01, csr02, csr03) store each router's login details as key-value pairs: device_type (cisco_ios), ip, username, secret, and port (22)."
+    },
+    {
+     "level": 0,
+     "text": "- password = getpass() asks for the password once."
+    },
+    {
+     "level": 0,
+     "text": "- ip = 1 starts the counter used for the last number of each loopback address."
+    },
+    {
+     "level": 0,
+     "text": "- A first for loop copies the password into every dictionary."
+    },
+    {
+     "level": 0,
+     "text": "- A second for loop connects to each router with ConnectHandler, sends the commands interface loopback 999 and ip address 192.168.255.<ip> 255.255.255.255 with send_config_set, and adds 1 to the counter."
+    },
+    {
+     "level": 0,
+     "text": "- if __name__ == \"__main__\": main() runs the function when you start the script."
+    },
+    {
+     "level": 0,
+     "text": "Running it with python3 configure-loopback.py and checking each router with show ip int br | in 999 shows Loopback999 with 192.168.255.1, .2, and .3. The book's point: it wrote about 60 lines of code to save typing 3 or 4 lines per device, so a script pays off only when you have many devices or will reuse it. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "A shorter version that scales (my own)"
+    },
+    {
+     "level": 0,
+     "text": "The book's script needs one dictionary per router. A list of addresses scales to 200 routers. The logic below was tested offline with a fake connection (the real Netmiko library and real routers were not used). ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Netmiko script with a list of routers ADDED CHECK not run against real Netmiko or routers"
+    },
+    {
+     "level": 0,
+     "text": "#!/usr/bin/env python3"
+    },
+    {
+     "level": 0,
+     "text": "from getpass import getpass"
+    },
+    {
+     "level": 0,
+     "text": "from netmiko import ConnectHandler"
+    },
+    {
+     "level": 0,
+     "text": "ROUTERS = [\"10.30.10.81\", \"10.30.10.82\", \"10.30.10.83\"]"
+    },
+    {
+     "level": 0,
+     "text": "def loopback_commands(number):"
+    },
+    {
+     "level": 0,
+     "text": "return [\"interface loopback 999\","
+    },
+    {
+     "level": 0,
+     "text": "f\"ip address 192.168.255.{number} 255.255.255.255\"]"
+    },
+    {
+     "level": 0,
+     "text": "def main():"
+    },
+    {
+     "level": 0,
+     "text": "password = getpass()"
+    },
+    {
+     "level": 0,
+     "text": "for number, address in enumerate(ROUTERS, start=1):"
+    },
+    {
+     "level": 0,
+     "text": "device = {\"device_type\": \"cisco_ios\", \"host\": address,"
+    },
+    {
+     "level": 0,
+     "text": "\"username\": \"admin\", \"password\": password, \"port\": 22}"
+    },
+    {
+     "level": 0,
+     "text": "with ConnectHandler(**device) as conn:"
+    },
+    {
+     "level": 0,
+     "text": "conn.send_config_set(loopback_commands(number))"
+    },
+    {
+     "level": 0,
+     "text": "conn.save_config()"
+    },
+    {
+     "level": 0,
+     "text": "print(f\"Loopback 999 created on {address}\")"
+    },
+    {
+     "level": 0,
+     "text": "if __name__ == \"__main__\":"
+    },
+    {
+     "level": 0,
+     "text": "main()"
+    },
+    {
+     "level": 0,
+     "text": "- ROUTERS = [...]: a list of device addresses. Add 200 addresses here instead of writing 200 dictionaries."
+    },
+    {
+     "level": 0,
+     "text": "- loopback_commands(number): a function that returns the two commands for one router."
+    },
+    {
+     "level": 0,
+     "text": "- enumerate(ROUTERS, start=1): counts the routers 1, 2, 3, and so on, so the loopback address follows the router number."
+    },
+    {
+     "level": 0,
+     "text": "- save_config(): saves the running configuration. The book's script does not save, so its loopbacks would disappear after a reload."
+    },
+    {
+     "level": 0,
+     "text": "A dry-run version that only prints the commands (no network needed) printed these results when I ran it:"
+    },
+    {
+     "level": 0,
+     "text": "Dry-run output (run in the build environment) ADDED"
+    },
+    {
+     "level": 0,
+     "text": "--- 10.30.10.81 ---"
+    },
+    {
+     "level": 0,
+     "text": "interface loopback 999"
+    },
+    {
+     "level": 0,
+     "text": "ip address 192.168.255.1 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "--- 10.30.10.82 ---"
+    },
+    {
+     "level": 0,
+     "text": "interface loopback 999"
+    },
+    {
+     "level": 0,
+     "text": "ip address 192.168.255.2 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "--- 10.30.10.83 ---"
+    },
+    {
+     "level": 0,
+     "text": "interface loopback 999"
+    },
+    {
+     "level": 0,
+     "text": "ip address 192.168.255.3 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "Address check (script): for 200 routers the addresses 192.168.255.1 to .200 are all inside 192.168.255.0/24 and unique. A /24 holds only 254 host addresses, so this numbering method breaks at router 255, which would get the subnet's broadcast address."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Python 2 is finished. The book says version 2 is \"on its way out\". It reached end of life on 1 January 2020. Use Python 3. UPDATED CHECK General knowledge, not verified in this session."
+    },
+    {
+     "level": 0,
+     "text": "secret is not the login password. The book says secret is \"normally the password\". In Netmiko, password is the login password and secret is the enable password (optional, default empty). In the book's script the password is added later under the password key, so it works, but the explanation is wrong. UPDATED Official Netmiko documentation."
+    },
+    {
+     "level": 0,
+     "text": "The book installs Netmiko 2.4.2 (2019) and says Windows users should use Anaconda or Windows 10's Linux shell to get pip. Python's Windows installer includes pip now, and Netmiko's options have changed (for example, the verbose key the book sets is a legacy option). UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "The full script on page 674 starts with #!/usr/bin/env python (no 3) although the text says to use Python 3. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book guidance: you do not need to write Python for the exam. Know the idea: a script loops over devices and sends the same commands, using a module such as netmiko, and a loop avoids manual repetition."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.6.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which Python module did the book use to connect to routers by SSH?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: netmiko - installed with pip."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why use getpass in the script?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: So the password is typed in and not stored in the script - storing passwords in scripts is a bad idea."
+    },
+    {
+     "level": 0,
+     "text": "Q3. In Netmiko, what does the secret key hold?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The enable password - the login password goes under password. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Q4. What does the script's loop do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Repeats the same commands on each device, changing the last number of the address - this is the main benefit of automation."
+    },
+    {
+     "level": 2,
+     "text": "21.6.2 JSON"
+    },
+    {
+     "level": 0,
+     "text": "JavaScript Object Notation (JSON) is a data exchange format that most systems have agreed to use. It writes data in a structured, human-readable way. Many REST APIs and software-defined solutions send and receive JSON. Other formats you will see are XML and YAML. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "JSON stores data as key/value pairs separated by a colon, inside curly braces. Both keys and values are required. The three syntax rules in the book are: BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Use double quotes, not single quotes."
+    },
+    {
+     "level": 0,
+     "text": "- Boolean values must be lowercase (true, false). Python wants capitals (True, False)."
+    },
+    {
+     "level": 0,
+     "text": "- No trailing commas. Python accepts a trailing comma in a dictionary, but JSON does not."
+    },
+    {
+     "level": 0,
+     "text": "A simple JSON object (my own example, same shape as the book's) ADDED"
+    },
+    {
+     "level": 0,
+     "text": "{"
+    },
+    {
+     "level": 0,
+     "text": "\"name\": \"Alex\","
+    },
+    {
+     "level": 0,
+     "text": "\"age\": \"40\","
+    },
+    {
+     "level": 0,
+     "text": "\"website\": \"example.com\""
+    },
+    {
+     "level": 0,
+     "text": "}"
+    },
+    {
+     "level": 0,
+     "text": "Values can also be grouped in square brackets, which makes a list (an array). The book's second example is an object called Creators that holds an array of two objects, each with a name, age, and website. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "JSON data from a Cisco device"
+    },
+    {
+     "level": 0,
+     "text": "Cisco Nexus devices can turn show output into JSON with a pipe. The book shows show ip interface brief | json-pretty native. The result is nested: dictionaries inside dictionaries, with a list in the middle. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Shortened from the book's Nexus output (some keys removed) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "{"
+    },
+    {
+     "level": 0,
+     "text": "\"TABLE_intf\": {"
+    },
+    {
+     "level": 0,
+     "text": "\"ROW_intf\": ["
+    },
+    {
+     "level": 0,
+     "text": "{ \"intf-name\": \"Lo0\", \"proto-state\": \"up\", \"iod\": 5, \"prefix\": \"192.168.255.11\" },"
+    },
+    {
+     "level": 0,
+     "text": "{ \"intf-name\": \"Eth1/1\", \"proto-state\": \"up\", \"iod\": 6, \"prefix\": \"10.1.11.254\" },"
+    },
+    {
+     "level": 0,
+     "text": "{ \"intf-name\": \"Eth1/2\", \"proto-state\": \"up\", \"iod\": 7, \"prefix\": \"10.1.12.254\" }"
+    },
+    {
+     "level": 0,
+     "text": "]"
+    },
+    {
+     "level": 0,
+     "text": "}"
+    },
+    {
+     "level": 0,
+     "text": "}"
+    },
+    {
+     "level": 0,
+     "text": "To read the Loopback0 address you walk down the structure one level at a time: BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Take the TABLE_intf dictionary."
+    },
+    {
+     "level": 0,
+     "text": "- Inside it, take ROW_intf (a list)."
+    },
+    {
+     "level": 0,
+     "text": "- Choose the list item you want. Lists start at 0, so item 0 is the first (Lo0)."
+    },
+    {
+     "level": 0,
+     "text": "- Take the value of the key prefix."
+    },
+    {
+     "level": 0,
+     "text": "Python path (checked by script) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "json_data[\"TABLE_intf\"][\"ROW_intf\"][0][\"prefix\"] # gives 192.168.255.11"
+    },
+    {
+     "level": 0,
+     "text": "| Path | Result (checked by script) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| [\"TABLE_intf\"][\"ROW_intf\"][0][\"prefix\"] | 192.168.255.11 |"
+    },
+    {
+     "level": 0,
+     "text": "| [\"TABLE_intf\"][\"ROW_intf\"][1][\"intf-name\"] | Eth1/1 |"
+    },
+    {
+     "level": 0,
+     "text": "| [\"TABLE_intf\"][\"ROW_intf\"][2][\"prefix\"] | 10.1.12.254 |"
+    },
+    {
+     "level": 0,
+     "text": "| Number of interfaces in ROW_intf | 3 |"
+    },
+    {
+     "level": 0,
+     "text": "| Type of iod | A number (no quotes) |"
+    },
+    {
+     "level": 3,
+     "text": "JSON compared with Python"
+    },
+    {
+     "level": 0,
+     "text": "|  | JSON | Python |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Quotes | Double quotes only | Single or double quotes |"
+    },
+    {
+     "level": 0,
+     "text": "| True / false | true, false | True, False |"
+    },
+    {
+     "level": 0,
+     "text": "| Empty value | null | None |"
+    },
+    {
+     "level": 0,
+     "text": "| Trailing comma | Not allowed | Allowed |"
+    },
+    {
+     "level": 0,
+     "text": "| Comments | Not allowed | Allowed (#) |"
+    },
+    {
+     "level": 0,
+     "text": "All the syntax errors above were confirmed by script: JSON with single quotes, with True, or with a trailing comma fails to parse, while the same data is valid in Python. A value in quotes, such as \"age\": \"40\", is a string even though it looks like a number. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "The JSON value types"
+    },
+    {
+     "level": 0,
+     "text": "| Type | Example |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| String | \"R1\" |"
+    },
+    {
+     "level": 0,
+     "text": "| Number | 42 (no quotes) |"
+    },
+    {
+     "level": 0,
+     "text": "| Boolean | true or false |"
+    },
+    {
+     "level": 0,
+     "text": "| Null | null |"
+    },
+    {
+     "level": 0,
+     "text": "| Object | { \"a\": 1 } |"
+    },
+    {
+     "level": 0,
+     "text": "| Array | [ 1, 2, 3 ] |"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "The list of value types is not in the book chapter, but you need it to interpret JSON, which is what objective 6.7 asks. ADDED General knowledge, consistent with the script results."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "The book's Nexus example uses the keyword native after json-pretty. I did not verify that keyword. On Nexus devices the common forms are | json and | json-pretty. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 3: the JSON rules are double quotes, lowercase booleans, no trailing commas (A, C, E)."
+    },
+    {
+     "level": 0,
+     "text": "Practise reading nested JSON: find the key, count the list position from 0, and note the value type."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.6.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which quote characters does JSON require?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Double quotes - single quotes are invalid JSON."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Is {\"ok\": True} valid JSON?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - booleans must be lowercase: true."
+    },
+    {
+     "level": 0,
+     "text": "Q3. In the Nexus example, what is [\"ROW_intf\"][1][\"intf-name\"]?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Eth1/1 - index 1 is the second list item."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Is \"age\": \"40\" a number or a string?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A string - the quotes make it a string."
+    },
+    {
+     "level": 2,
+     "text": "21.6.3 YAML"
+    },
+    {
+     "level": 0,
+     "text": "YAML is a data serialization language designed to be easy for people to read. It is used by a growing number of tools, such as Ansible. BOOK YAML has three main components: BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Mappings: simple key-value pairs, such as name: Todd."
+    },
+    {
+     "level": 0,
+     "text": "- Lists: like a bullet list. Each item is on its own line and starts with a dash (-)."
+    },
+    {
+     "level": 0,
+     "text": "- Scalars: a programming word for a single value. Every string, boolean, or number is a scalar. The key and the value in a mapping are scalars, and so is every list item."
+    },
+    {
+     "level": 0,
+     "text": "Whitespace matters: indentation shows which lines belong together. You must use spaces, not tabs, and there must be a space after the colon in a mapping. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "The book's example is printed wrongly"
+    },
+    {
+     "level": 0,
+     "text": "On page 679 the book's example shows the list items (CCNA, Sourcefire, and so on) with no dashes and no indentation. That contradicts the book's own rules, and the printed text does not parse: when I loaded it with a YAML parser it failed with a scanner error. UPDATED Checked by script. A correct version is:"
+    },
+    {
+     "level": 0,
+     "text": "Corrected YAML (my version of the book's example) UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "---"
+    },
+    {
+     "level": 0,
+     "text": "name: Alex"
+    },
+    {
+     "level": 0,
+     "text": "books:"
+    },
+    {
+     "level": 0,
+     "text": "- CCNA"
+    },
+    {
+     "level": 0,
+     "text": "- Sourcefire"
+    },
+    {
+     "level": 0,
+     "text": "- Network+"
+    },
+    {
+     "level": 0,
+     "text": "videos:"
+    },
+    {
+     "level": 0,
+     "text": "- CCNA"
+    },
+    {
+     "level": 0,
+     "text": "- Firepower"
+    },
+    {
+     "level": 0,
+     "text": "- ISE"
+    },
+    {
+     "level": 0,
+     "text": "The parser turned this into a mapping with name as a string and books and videos as lists of three strings each (checked by script). The same data as JSON would need braces, brackets, quotes, and commas, so YAML is shorter and easier to read. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "| Rule | Result (checked by script) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| List items with - and indentation | Parses as a list |"
+    },
+    {
+     "level": 0,
+     "text": "| Tab character for indentation | Error (scanner error) |"
+    },
+    {
+     "level": 0,
+     "text": "| name:Todd (no space after the colon) | Not a mapping. It is read as the single text name:Todd. |"
+    },
+    {
+     "level": 0,
+     "text": "| Leaving out the --- line | Same result. The marker is not required by the parser I used. |"
+    },
+    {
+     "level": 0,
+     "text": "| JSON text loaded as YAML | Parses fine. YAML can read JSON. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says \"All YAML files start with three dashes\". The --- line is a document start marker. Many files use it (Ansible playbooks usually do), but the parser I tested accepted the data without it. UPDATED CHECK Parser-dependent."
+    },
+    {
+     "level": 0,
+     "text": "YAML can also read JSON, because (in version 1.2) YAML is designed to cover JSON. This comes from a secondary source and my test. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review questions 8 and 9: YAML does not support tabs (use spaces), and a mapping is a simple key-value pair such as Name: Todd."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.6.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Does YAML allow tab characters for indentation?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - use spaces. The spec says YAML's indentation avoids the ambiguity of tabs."
+    },
+    {
+     "level": 0,
+     "text": "Q2. How do you write a list item in YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A dash and a space, then the value, on its own line (- CCNA) - indented under the key it belongs to."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is a mapping in YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A key-value pair, such as name: Alex - there must be a space after the colon."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which tool does the book say uses YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Ansible - covered again in Chapter 23."
+    },
+    {
+     "level": 2,
+     "text": "21.6.4 REST API"
+    },
+    {
+     "level": 0,
+     "text": "An Application Programming Interface (API) lets one program use another program's resource without rebuilding it. The book's example: an app that suggests restaurants near you can use a mapping company's APIs instead of building its own map data. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "REST (Representational State Transfer) is one of the most common ways to reach APIs. It is resource-based: URIs should name things (nouns), not actions (verbs). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Representational: a resource's state is transferred between client and server."
+    },
+    {
+     "level": 0,
+     "text": "- State Transfer: each request carries everything the server needs to finish the operation."
+    },
+    {
+     "level": 3,
+     "text": "The six REST constraints (book)"
+    },
+    {
+     "level": 0,
+     "text": "| Constraint | Meaning (book) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Client-server | A client always starts the connection by asking a server for something. |"
+    },
+    {
+     "level": 0,
+     "text": "| Stateless | The server does not store information from previous requests. |"
+    },
+    {
+     "level": 0,
+     "text": "| Cacheable | Responses tell the client whether it can reuse the information (the book says via a version number). |"
+    },
+    {
+     "level": 0,
+     "text": "| Uniform interface | A standard interface between client and server, with four parts: identify the resource (each has a unique URI); resource representation (usually JSON or XML); self-descriptive messages; and HATEOAS (you can discover other functions without much documentation). |"
+    },
+    {
+     "level": 0,
+     "text": "| Layered system | You can add layers, such as a firewall or load balancer, between the API and the data without changing how it works. |"
+    },
+    {
+     "level": 0,
+     "text": "| Code on demand | Optional. The server may send executable code back to the client. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "On page 680 the book says cacheability means \"the server response includes a version number\". In REST the point is that responses label themselves as cacheable or not, so clients and middle devices know whether they may reuse them. UPDATED CHECK General knowledge."
+    },
+    {
+     "level": 0,
+     "text": "The book says \"the REST API is a framework built on HTTP\". REST is an architectural style, not a framework. It is usually used over HTTP or HTTPS, with simple text messages. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Parts of a REST URI (Figure 21.3)"
+    },
+    {
+     "level": 0,
+     "text": "The book's example URI, with the missing equals sign added UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "https://sandboxdnac.cisco.com/dna/intent/api/v1/network-device?hostname=cat_9k_2.dcloud.cisco.com"
+    },
+    {
+     "level": 0,
+     "text": "| Part | Example | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Protocol | https | http is unencrypted, https is encrypted. Most REST calls use HTTPS. |"
+    },
+    {
+     "level": 0,
+     "text": "| Server / host (URL) | sandboxdnac.cisco.com | The server's fully qualified domain name. It may use a port other than 443. |"
+    },
+    {
+     "level": 0,
+     "text": "| Resource | /dna/intent/api/v1/network-device | The specific path to the resource you want. |"
+    },
+    {
+     "level": 0,
+     "text": "| Parameters | ?hostname=cat_9k_2.dcloud.cisco.com | Filters the results using fields the resource supports. |"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Figure 21.3 on page 681 prints the parameter as ?hostnamecat_9k_2.dcloud.cisco.com, with no equals sign. I parsed it: without = there is no hostname filter at all. The text on page 683 has it right (hostname=cat_9k_2...). Page 683 also writes dcloud.com where the host is dcloud.cisco.com. UPDATED Checked by script and by looking at the page."
+    },
+    {
+     "level": 3,
+     "text": "HTTP verbs and CRUD (Table 21.1)"
+    },
+    {
+     "level": 0,
+     "text": "| HTTP verb | CRUD action | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| POST | Create | Create a new resource |"
+    },
+    {
+     "level": 0,
+     "text": "| GET | Read | Read (retrieve) data. Most like a show command. |"
+    },
+    {
+     "level": 0,
+     "text": "| PUT | Update / replace | Replace a resource |"
+    },
+    {
+     "level": 0,
+     "text": "| PATCH | Update / modify | Change part of a resource |"
+    },
+    {
+     "level": 0,
+     "text": "| DELETE | Delete | Remove a resource |"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "PUT replaces the whole resource. PATCH changes part of it. POST is also used for actions such as logging in (the book's token request is a POST). ADDED CHECK General knowledge; the HTTP standard is RFC 9110, whose details I did not extract."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book's Exam Essentials list \"GET, PUT, POST, and DELETE\" and leave out PATCH, but Table 21.1 includes it. Learn all five. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "HTTP status codes (Table 21.2)"
+    },
+    {
+     "level": 0,
+     "text": "| Code | Message | Meaning (book) | Class |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 200 | OK | Everything worked | Success |"
+    },
+    {
+     "level": 0,
+     "text": "| 201 | Created | A new resource was created | Success |"
+    },
+    {
+     "level": 0,
+     "text": "| 400 | Bad Request | The request was invalid | Client error |"
+    },
+    {
+     "level": 0,
+     "text": "| 401 | Unauthorized | Authentication problem | Client error |"
+    },
+    {
+     "level": 0,
+     "text": "| 403 | Forbidden | The request was understood, but you do not have permission | Client error |"
+    },
+    {
+     "level": 0,
+     "text": "| 404 | Not Found | The resource was not found | Client error |"
+    },
+    {
+     "level": 0,
+     "text": "| 500 | Internal Server Error | A problem on the server | Server error |"
+    },
+    {
+     "level": 0,
+     "text": "| 503 | Service Unavailable | The server cannot complete the request | Server error |"
+    },
+    {
+     "level": 0,
+     "text": "The standard names for all eight codes were confirmed by script. The rule of thumb: 2xx = success, 4xx = the client's mistake, 5xx = the server's problem. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "401 = who are you? (not authenticated). 403 = I know who you are, but no. (authenticated, not allowed)."
+    },
+    {
+     "level": 0,
+     "text": "The last part of a request is the Content-Type. For most Cisco solutions it is application/json. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "The book's Catalyst Center lab, step by step"
+    },
+    {
+     "level": 0,
+     "text": "The book uses Postman and Cisco's always-online DNA Center sandbox. The steps are: BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Authenticate. Send a POST to https://sandboxdnac.cisco.com/dna/system/api/v1/auth/token, with the username and password in the Authorization tab."
+    },
+    {
+     "level": 0,
+     "text": "- The response body contains a token. Copy the value without the quotes."
+    },
+    {
+     "level": 0,
+     "text": "- Create a new request: GET https://sandboxdnac.cisco.com/dna/intent/api/v1/network-device?hostname=cat_9k_2.dcloud.cisco.com."
+    },
+    {
+     "level": 0,
+     "text": "- Set Content-Type to application/json."
+    },
+    {
+     "level": 0,
+     "text": "- Add the header X-Auth-Token and paste in the token."
+    },
+    {
+     "level": 0,
+     "text": "- Send. The response is JSON with information about that switch (Figure 21.5)."
+    },
+    {
+     "level": 0,
+     "text": "The book's note: the token is your only security. It gives full access to the server that issued it for as long as it lives, so do not share it with anyone you do not trust. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "DNA Center is now called Cisco Catalyst Center. Cisco's developer documentation uses the new name, still shows POST /dna/system/api/v1/auth/token with basic authentication, and says the token goes in the X-Auth-Token header of every later request. The always-on sandbox at sandboxdnac.cisco.com still appears in Cisco's documentation. UPDATED Official Cisco developer documentation."
+    },
+    {
+     "level": 0,
+     "text": "The book prints the public sandbox username and password. Look up the current sandbox credentials on Cisco's DevNet page and never reuse a real password in a lab. The sandbox can be unavailable at times. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Authentication types for REST APIs"
+    },
+    {
+     "level": 0,
+     "text": "| Type | How it works |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Basic authentication | Username and password sent with the request (as in the token request above) |"
+    },
+    {
+     "level": 0,
+     "text": "| Token (bearer) | You log in once, get a token, and send it with later requests (as with X-Auth-Token) |"
+    },
+    {
+     "level": 0,
+     "text": "| API key | A secret key sent in a header or parameter |"
+    },
+    {
+     "level": 0,
+     "text": "| OAuth 2.0 | A framework where a service issues access tokens with limited permissions |"
+    },
+    {
+     "level": 0,
+     "text": "The book covers only the token flow. I added this list because REST \"authentication\" is a common exam theme. I could not verify whether v1.1 lists \"authentication types\" in objective 6.5. ADDED CHECK General knowledge."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 13 says a token \"authenticates\" you and that \"Restful API does not support authorization\". The second part is wrong: REST APIs do support authorization, and a token usually carries both who you are and what you may do. Use the book's answer (D, authenticate) for the exam, but do not memorize the explanation. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 11: GET is like a show command. Question 12: POST (create) is the book's answer for a configuration change."
+    },
+    {
+     "level": 0,
+     "text": "Question 6: the Resource part of a URI is the specific path to the thing you want."
+    },
+    {
+     "level": 0,
+     "text": "Question 1: 404 = not found. The Content-Type for most Cisco APIs is application/json."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: 21.6.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What does REST stand for?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Representational State Transfer - book review question 5."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which HTTP verb maps to Create? To Read?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: POST creates. GET reads - Table 21.1."
+    },
+    {
+     "level": 0,
+     "text": "Q3. A request returns 401. What is the likely problem?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Authentication: a missing, bad, or expired token or login - 401 is an authentication problem."
+    },
+    {
+     "level": 0,
+     "text": "Q4. In the Catalyst Center example, which header carries the token?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: X-Auth-Token - it is sent with every request after the login."
+    },
+    {
+     "level": 0,
+     "text": "Q5. In https://host/api/v1/network-device?hostname=sw1, which part is the parameter?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ?hostname=sw1 - it filters the results."
+    },
+    {
+     "level": 0,
+     "text": "Q6. Is PUT or PATCH used to change only part of a resource?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: PATCH - PUT replaces the whole resource. CHECK"
+    }
+   ],
+   "words": 3863
+  },
+  {
+   "title": "Added: Containers and VRFs",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "This whole section is not in the book chapter. Cisco's v1.0 PDF names \"containers and VRFs\" under virtualization fundamentals, and v2.0 objective 1.2 names containers. The book's chapter teaches virtual machines only. Everything here is general knowledge and was not verified against a Cisco document in this session. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Containers compared with virtual machines"
+    },
+    {
+     "level": 0,
+     "text": "|  | Virtual machine | Container |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| What is virtualized | The hardware. Each VM has its own full operating system. | The operating system. Containers share the host's kernel. |"
+    },
+    {
+     "level": 0,
+     "text": "| Size and start-up | Larger and slower to start | Smaller and faster to start |"
+    },
+    {
+     "level": 0,
+     "text": "| Isolation | Stronger (separate operating systems) | Lighter (shared kernel) |"
+    },
+    {
+     "level": 0,
+     "text": "| What runs inside | A complete guest OS plus applications | An application and the libraries it needs |"
+    },
+    {
+     "level": 0,
+     "text": "| Needs a hypervisor | Yes | No. It uses a container engine on a host OS. |"
+    },
+    {
+     "level": 0,
+     "text": "The book mentions a Linux container only in passing in Chapter 23, where it uses a container called guestshell on a Cisco platform to run Puppet. BOOK Cisco platforms can run applications in containers; the exam wants you to describe the role of hypervisors, virtual machines, and containers (v2.0 1.2). ADDED"
+    },
+    {
+     "level": 3,
+     "text": "VRFs: virtual routers inside one router"
+    },
+    {
+     "level": 0,
+     "text": "A VRF (Virtual Routing and Forwarding) gives one physical router several separate routing tables. Each interface belongs to one VRF, and each VRF routes on its own, like a separate virtual router. Two VRFs can use the same IP addresses without conflict, which is useful for customers or departments that must stay separate. The book only shows VRF in some NX-OS outputs (\"VRF default\", the normal routing table). ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative VRF configuration (IOS XE style) ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# vrf definition CUSTOMER_A"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-vrf)# address-family ipv4"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-vrf-af)# exit-address-family"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-vrf)# exit"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface GigabitEthernet0/1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# vrf forwarding CUSTOMER_A"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ip address 10.0.0.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# end"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ip route vrf CUSTOMER_A"
+    },
+    {
+     "level": 0,
+     "text": "- vrf definition CUSTOMER_A: creates a VRF with that name."
+    },
+    {
+     "level": 0,
+     "text": "- vrf forwarding CUSTOMER_A: puts the interface into the VRF. This normally removes the interface's existing IP address, so you set the address after this command."
+    },
+    {
+     "level": 0,
+     "text": "- show ip route vrf CUSTOMER_A: shows that VRF's own routing table."
+    },
+    {
+     "level": 3,
+     "text": "Quick check: containers and VRFs"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What do containers share that virtual machines do not?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The host operating system's kernel - each VM has its own operating system."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What does a VRF give one physical router?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Several separate routing tables (virtual routers) - each interface belongs to one VRF."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Can two VRFs use the same IP addressing?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Yes - their routing tables are separate. CHECK"
+    }
+   ],
+   "words": 450
+  },
+  {
+   "title": "Troubleshooting Guide",
+   "content": [
+    {
+     "level": 0,
+     "text": "Symptom, likely cause, first check. All rows are CHECK : they come from the book, official sources, and general knowledge, and were not tested on real systems."
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| A VM has no network connection | Wrong VLAN on the vSwitch port group, or the VLAN is not allowed on the physical trunk | VM's VLAN setting; trunk allowed-VLAN list on the physical switch |"
+    },
+    {
+     "level": 0,
+     "text": "| VMs on a new host cannot reach the others | A standard vSwitch on the new host lacks the same VLANs | Compare the VLANs on each host's vSwitch |"
+    },
+    {
+     "level": 0,
+     "text": "| A VM migration fails | Storage not reachable by both hosts, incompatible host hardware, or no network path between hosts | Shared storage, host compatibility, management network |"
+    },
+    {
+     "level": 0,
+     "text": "| After reverting a snapshot the application is inconsistent | Other VMs (such as the database) were changed and not reverted | Which VMs the application depends on |"
+    },
+    {
+     "level": 0,
+     "text": "| Script cannot connect to a device | SSH not enabled, wrong credentials, wrong device_type, or no route to the device | Try SSH by hand; check device_type, address, and port |"
+    },
+    {
+     "level": 0,
+     "text": "| Script ran but the loopback is gone after a reload | The script did not save the configuration | show running-config versus show startup-config; add a save step |"
+    },
+    {
+     "level": 0,
+     "text": "| JSON will not parse | Single quotes, True or False, trailing comma, or missing comma | Run it through a JSON checker; look at the line it names |"
+    },
+    {
+     "level": 0,
+     "text": "| YAML will not parse | Tab used for indentation, no space after a colon, list items missing dashes, or wrong indentation | Use spaces only; check dashes and indentation |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call returns 401 | Missing, wrong, or expired token or login | Request a new token; check the X-Auth-Token header |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call returns 403 | Logged in but the account lacks permission | The account's role and permissions |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call returns 404 | Wrong URI, resource name, or API version | Check the path and v1 in the URI against the documentation |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call returns 400 | Bad parameters or a malformed body | Check the parameter names, the = signs, and the JSON body |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call returns 500 or 503 | A problem on the server side | Retry later; check the server or the sandbox status |"
+    }
+   ],
+   "words": 411
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Why virtualize | Many servers on one host. Faster to deploy, fewer servers and ports, easy to add capacity. |"
+    },
+    {
+     "level": 0,
+     "text": "| Components | Hypervisor (host), guest (VM), virtual appliance, vSwitch, shared storage, virtual storage. |"
+    },
+    {
+     "level": 0,
+     "text": "| vSwitch | No STP. Standard = per host. Distributed = one shared config. Carries VLANs and trunks to VMs. |"
+    },
+    {
+     "level": 0,
+     "text": "| Features | Hardware abstraction, snapshots (undo), clones (copies), migrations (VM or storage). |"
+    },
+    {
+     "level": 0,
+     "text": "| Hypervisor types | Type 1 bare-metal: ESXi, Hyper-V, Xen. Type 2 hosted: Workstation/Fusion, VirtualBox. HVM = guest unaware. Paravirtualization = guest aware. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual appliances | CSR1000v (virtual router, replaced by Catalyst 8000V), ASAv, Firepower Threat Defense Virtual. |"
+    },
+    {
+     "level": 0,
+     "text": "| Containers and VRFs | Containers share the host kernel. A VRF is a separate routing table inside one router. ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| Automation | Predictable, repeatable tasks. A script loops over devices. Understand what you automate. |"
+    },
+    {
+     "level": 0,
+     "text": "| Python / netmiko | Not tested as code. password = login, secret = enable. Save the config if you want it to stay. |"
+    },
+    {
+     "level": 0,
+     "text": "| JSON | Key/value pairs in braces, arrays in brackets. Double quotes, lowercase booleans, no trailing commas. Lists start at 0. |"
+    },
+    {
+     "level": 0,
+     "text": "| YAML | Mappings, lists with -, scalars. Spaces only, space after the colon, indentation matters. Used by Ansible. |"
+    },
+    {
+     "level": 0,
+     "text": "| REST | Client-server, stateless, cacheable, uniform interface, layered, code on demand (optional). Resources are nouns. |"
+    },
+    {
+     "level": 0,
+     "text": "| URI | Protocol, host, resource (path), parameters (?key=value). |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTP verbs / CRUD | POST create, GET read, PUT replace, PATCH modify, DELETE delete. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status codes | 200 OK, 201 Created, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 500 Server Error, 503 Unavailable. |"
+    },
+    {
+     "level": 0,
+     "text": "| Token | Get it with a POST login. Send it in X-Auth-Token. Keep it secret. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam objectives | Book: 1.12, 6.1, 6.5, 6.7. v2.0: 1.2 (hypervisors, VMs, containers), 5.3, 5.5. |"
+    }
+   ],
+   "words": 329
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Fill this in honestly after you study, answer the Quick checks and Review Questions, and finish the labs. Keep it as your evidence."
+    },
+    {
+     "level": 0,
+     "text": "Allowed statuses: Not assessed, Know, Partially understand, Need to learn, Needs revision. Know needs unaided correct answers or a finished lab. Reading the chapter is not enough."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Chapter 21 - Virtualization, Automation, and Programmability |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.1 Virtual Machine Fundamentals |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.2 Virtualization Components |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.3 Virtualization Features |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.3.1 Hardware Abstraction |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.3.2 Snapshots |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.3.3 Clones |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.3.4 Migrations |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.4 Virtualization Types |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.4.1 Type 1 |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.4.2 Type 2 |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.4.3 Hardware Virtualized Machine |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.4.4 Paravirtualization |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5 Virtualization Solutions |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5.1 VMware ESXi |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5.2 Hyper-V |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5.3 Xen/KVM |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5.4 VMware Workstation/Fusion |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.5.5 VirtualBox |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6 Automation Components |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.1 Python |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.2 JSON |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.3 YAML |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 21.6.4 REST API |  | Not assessed |  |  |"
+    }
+   ],
+   "words": 337
+  },
+  {
+   "title": "Answer Key A: Pre-Check",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | Answer | Why |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | The server (or software) that runs virtual machines; also called the host | Book page 665. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Type 1 | Type 1 is bare-metal. Type 2 runs on top of a desktop OS. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | GET | GET reads data, like a show command. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Double quotes | Single quotes are not valid in JSON. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Not Found: the resource was not found | A 4xx client error. |"
+    }
+   ],
+   "words": 97
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "These are 30 original questions. Do them without looking at the answers. Also do the book's own 13 review questions (page 685) and check them in the book's Appendix (page 806). I did not copy the book's questions. ADDED"
+    }
+   ],
+   "words": 39
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "Every difference from the book. \"Verification\" says how I checked it."
+    },
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Objective 1.12 reads \"virtual machines\" (p. 661). The chapter has no containers or VRFs. | Adds a containers and VRFs section. ADDED | Official: Cisco v1.0 PDF (2021) and v2.0 PDF. Content itself CHECK . |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | No mention that v2.0 changes the topics. | Maps to v2.0 1.2, 5.3, 5.5. Notes REST and JSON are not listed. UPDATED | Official: Cisco v2.0 PDF. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 6.7 wording \"Interpret JSON encoded data\" (p. 661). | Notes Cisco's later v1.0 PDF says \"Recognize components\". UPDATED | Official v1.0 PDF; v1.1 not opened. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | \"Cisco isn't in the server market yet\" (p. 662). | Marks it wrong. UPDATED | The book's own p. 666 mentions UCS. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | CSR1000v, ASAv, FTD Virtual named as current (pp. 665 to 666). | Notes CSR1000v transitioned to Catalyst 8000V. Other names flagged. UPDATED CHECK | Official: Cisco end-of-sale notices (CSR); others not verified. |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | Shared storage: \"SAN or NAS through iSCSI or Fibre Channel\" (p. 666). | Clarifies block versus file storage. UPDATED CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | \"Three components\" listed, four covered (pp. 666 to 667). | Lists four features. UPDATED | Compared with the headings. |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | Live migration requires shared storage (p. 667). | Notes it is not always required. UPDATED CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | KVM Type 2 (p. 668) and Type 1 (p. 669). | Flags the contradiction. UPDATED CHECK | Compared pages. |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | ESXi \"based on a custom Linux OS\"; free standalone licence (p. 669). | Marks the Linux claim as doubtful and licensing as changed. UPDATED CHECK | Licensing: press reports (secondary). Linux claim: general knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | Hyper-V prevents Type 2 products (p. 669). | Marks as dated. UPDATED CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | \"Tier-2\"; Player product (p. 669). | Corrects to Type 2. Notes Player was discontinued and licensing changed. UPDATED CHECK | Press reports (secondary). |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | \"Three main ones\", then four components (p. 670). Unnamed surveys on human error. | Notes both. UPDATED CHECK | Compared with the headings. |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | Python 2 \"on its way out\" (p. 671). | Notes it reached end of life in 2020. UPDATED CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | Windows pip advice and Netmiko 2.4.2 output (p. 671). | Marks as dated. UPDATED CHECK | Not verified. |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | secret is \"normally the password\" (p. 672). | Corrects: it is the enable password. UPDATED | Official: Netmiko project documentation. |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | Full script shebang lacks the 3; verbose key; no save; three dictionaries (pp. 673 to 676). | Adds a shorter list-based version with a save step. ADDED | Logic tested with a fake connection, not real Netmiko. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | JSON example \"age\": \"40\" (p. 677). | Explains it is a string. ADDED | Script. |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | json-pretty native (p. 677). | Keyword not verified. CHECK | Not verified. |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | YAML example printed with no dashes or indentation (p. 679). | Shows the corrected version. UPDATED | Script: the printed text fails to parse. |"
+    },
+    {
+     "level": 0,
+     "text": "| 21 | \"All YAML files start with three dashes\" (p. 679). | Notes the marker is optional in my test. UPDATED CHECK | Script; spec reading incomplete. |"
+    },
+    {
+     "level": 0,
+     "text": "| 22 | Cacheable explained as a version number (p. 680). | Corrects the idea. UPDATED CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 23 | REST \"is a framework built on HTTP\" (p. 680). | Says it is an architectural style. UPDATED | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 24 | Figure 21.3 has no = in the parameter (p. 681). | Corrects it. UPDATED | Looked at the page; script. |"
+    },
+    {
+     "level": 0,
+     "text": "| 25 | dcloud.com versus dcloud.cisco.com (p. 683). | Notes the typo. UPDATED | Compared pages. |"
+    },
+    {
+     "level": 0,
+     "text": "| 26 | DNA Center and the printed sandbox credentials (pp. 682 to 683). | Notes the rename to Catalyst Center and says to use current credentials. UPDATED CHECK | Official: Cisco developer documentation. |"
+    },
+    {
+     "level": 0,
+     "text": "| 27 | Exam Essentials omit PATCH, Python, and YAML (p. 684). | Adds a full revision sheet. ADDED | Compared with Table 21.1. |"
+    },
+    {
+     "level": 0,
+     "text": "| 28 | Review Q13 key: REST \"does not support authorization\" (p. 806). | Keeps the book's answer, corrects the explanation. UPDATED CHECK | General knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| 29 | No labs in the chapter; bonus labs are online (p. 662). | Adds Labs 0 to 5. ADDED | Labs 2 to 4 run in the build environment; others CHECK . |"
+    },
+    {
+     "level": 0,
+     "text": "| 30 | PUT versus PATCH detail and authentication types are not covered. | Adds them. ADDED CHECK | General knowledge. |"
+    }
+   ],
+   "words": 842
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on a real router, a real hypervisor, the real Netmiko library, or Cisco's sandbox. All commands, outputs, and product statements that were not directly confirmed from a vendor document are tagged CHECK . Tracker rows in Notion were not updated: there was no Notion tool in this chat."
+    }
+   ],
+   "words": 55
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The chapter points to bonus labs on the author's website (page 662) but has no labs in the chapter pages (661 to 688). The labs below are new. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Labs 2, 3, and 4 need only Python 3 on your own computer and no network. I ran the scripts in the build environment and the results shown are what they printed. Your computer may differ slightly. Labs 1 and 5 depend on software or services I did not run, so their results are CHECK ."
+    }
+   ]
+  },
+  {
+   "number": "0",
+   "title": "Paper lab, read the JSON",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use this JSON. Do not run anything. Answer the questions, then check below."
+    },
+    {
+     "level": 0,
+     "text": "Practice JSON (my own) ADDED"
+    },
+    {
+     "level": 0,
+     "text": "{"
+    },
+    {
+     "level": 0,
+     "text": "\"device\": {"
+    },
+    {
+     "level": 0,
+     "text": "\"hostname\": \"R1\","
+    },
+    {
+     "level": 0,
+     "text": "\"model\": \"C8000V\","
+    },
+    {
+     "level": 0,
+     "text": "\"uptime_days\": 42,"
+    },
+    {
+     "level": 0,
+     "text": "\"ntp\": null,"
+    },
+    {
+     "level": 0,
+     "text": "\"interfaces\": ["
+    },
+    {
+     "level": 0,
+     "text": "{ \"name\": \"Gi1\", \"ip\": \"10.0.0.1\", \"up\": true },"
+    },
+    {
+     "level": 0,
+     "text": "{ \"name\": \"Gi2\", \"ip\": \"10.0.1.1\", \"up\": false },"
+    },
+    {
+     "level": 0,
+     "text": "{ \"name\": \"Lo0\", \"ip\": \"192.168.255.1\", \"up\": true }"
+    },
+    {
+     "level": 0,
+     "text": "]"
+    },
+    {
+     "level": 0,
+     "text": "}"
+    },
+    {
+     "level": 0,
+     "text": "}"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the value of hostname, and what is the path to it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: \"R1\", at [\"device\"][\"hostname\"] - start at the outer key device, then take hostname."
+    },
+    {
+     "level": 0,
+     "text": "Q2. How many interfaces are listed?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 3 - the interfaces array has three objects (checked by script)."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is the path to the IP address of Lo0?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: [\"device\"][\"interfaces\"][2][\"ip\"], which is 192.168.255.1 - lists start at 0, so Lo0 is item 2."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What data type is the value of up? Of uptime_days? Of ntp?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Boolean; number; null - no quotes means it is not a string."
+    },
+    {
+     "level": 0,
+     "text": "Q5. Which interface is down?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Gi2 - its up value is false."
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "Lab 1 (optional): A VM, a snapshot, and a clone",
+   "content": [
+    {
+     "level": 0,
+     "text": "Install a free desktop hypervisor (VirtualBox, or VMware Workstation or Fusion if you accept the current Broadcom terms), then create a small Linux VM. CHECK Menu names differ by product."
+    },
+    {
+     "level": 0,
+     "text": "- Create and start a VM. Notice that it sees virtual hardware (for example a virtual network adapter): this is hardware abstraction."
+    },
+    {
+     "level": 0,
+     "text": "- Take a snapshot. Then make a change inside the VM (create a file, or change a setting)."
+    },
+    {
+     "level": 0,
+     "text": "- Revert to the snapshot. The change should be gone."
+    },
+    {
+     "level": 0,
+     "text": "- Make a clone of the VM. Start both. They should be two separate machines. Change the clone's hostname so they do not clash."
+    },
+    {
+     "level": 0,
+     "text": "- Look at the VM's network modes (for example NAT, bridged, host-only). Note which mode lets the VM reach your real LAN."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the revert undoes your change, and the clone is independent. Write in the tracker how this matched or differed from the book. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "JSON and YAML errors on your computer",
+   "content": [
+    {
+     "level": 0,
+     "text": "Install the YAML module (pip install pyyaml), save this as lab2.py, and run python3 lab2.py."
+    },
+    {
+     "level": 0,
+     "text": "lab2.py (run in the build environment) ADDED"
+    },
+    {
+     "level": 0,
+     "text": "import json"
+    },
+    {
+     "level": 0,
+     "text": "import yaml # pip install pyyaml"
+    },
+    {
+     "level": 0,
+     "text": "good = '{\"name\": \"Alex\", \"up\": true}'"
+    },
+    {
+     "level": 0,
+     "text": "print(json.loads(good))"
+    },
+    {
+     "level": 0,
+     "text": "for bad in [\"{'name': 'x'}\", '{\"up\": True}', '{\"a\": 1,}']:"
+    },
+    {
+     "level": 0,
+     "text": "try:"
+    },
+    {
+     "level": 0,
+     "text": "json.loads(bad)"
+    },
+    {
+     "level": 0,
+     "text": "except json.JSONDecodeError:"
+    },
+    {
+     "level": 0,
+     "text": "print(\"JSON error:\", bad)"
+    },
+    {
+     "level": 0,
+     "text": "yaml_text = \"\"\"books:"
+    },
+    {
+     "level": 0,
+     "text": "- CCNA"
+    },
+    {
+     "level": 0,
+     "text": "- Sourcefire"
+    },
+    {
+     "level": 0,
+     "text": "\"\"\""
+    },
+    {
+     "level": 0,
+     "text": "print(yaml.safe_load(yaml_text))"
+    },
+    {
+     "level": 0,
+     "text": "Output printed in the build environment ADDED"
+    },
+    {
+     "level": 0,
+     "text": "{'name': 'Alex', 'up': True}"
+    },
+    {
+     "level": 0,
+     "text": "JSON error: {'name': 'x'}"
+    },
+    {
+     "level": 0,
+     "text": "JSON error: {\"up\": True}"
+    },
+    {
+     "level": 0,
+     "text": "JSON error: {\"a\": 1,}"
+    },
+    {
+     "level": 0,
+     "text": "{'books': ['CCNA', 'Sourcefire']}"
+    },
+    {
+     "level": 0,
+     "text": "- The first line is valid JSON. true became Python's True when it was loaded."
+    },
+    {
+     "level": 0,
+     "text": "- The three bad strings each break one JSON rule: single quotes, True with a capital, and a trailing comma."
+    },
+    {
+     "level": 0,
+     "text": "- The last line shows the YAML list loaded as a Python list inside a dictionary."
+    },
+    {
+     "level": 0,
+     "text": "- Try it: change the YAML so a list item uses a tab for indentation, and watch the parser fail."
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "Dry run of the loopback automation",
+   "content": [
+    {
+     "level": 0,
+     "text": "This script prints the commands the book's idea would send, so you can test the logic with no routers. Save it as dryrun.py and run python3 dryrun.py."
+    },
+    {
+     "level": 0,
+     "text": "dryrun.py (run in the build environment) ADDED"
+    },
+    {
+     "level": 0,
+     "text": "#!/usr/bin/env python3"
+    },
+    {
+     "level": 0,
+     "text": "\"\"\"Dry run: print the commands instead of connecting to routers.\"\"\""
+    },
+    {
+     "level": 0,
+     "text": "ROUTERS = [\"10.30.10.81\", \"10.30.10.82\", \"10.30.10.83\"]"
+    },
+    {
+     "level": 0,
+     "text": "def loopback_commands(number):"
+    },
+    {
+     "level": 0,
+     "text": "return [\"interface loopback 999\","
+    },
+    {
+     "level": 0,
+     "text": "f\"ip address 192.168.255.{number} 255.255.255.255\"]"
+    },
+    {
+     "level": 0,
+     "text": "def main():"
+    },
+    {
+     "level": 0,
+     "text": "for number, address in enumerate(ROUTERS, start=1):"
+    },
+    {
+     "level": 0,
+     "text": "print(f\"--- {address} ---\")"
+    },
+    {
+     "level": 0,
+     "text": "for line in loopback_commands(number):"
+    },
+    {
+     "level": 0,
+     "text": "print(line)"
+    },
+    {
+     "level": 0,
+     "text": "if __name__ == \"__main__\":"
+    },
+    {
+     "level": 0,
+     "text": "main()"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: three blocks, one per address, each with interface loopback 999 and an ip address 192.168.255.N 255.255.255.255 line where N is 1, 2, and 3 (the same output shown in 21.6.1). Then try: add two more addresses to ROUTERS and confirm the numbering continues at 4 and 5. Later, replace the printing with the Netmiko version in 21.6.1 and test it on a lab router that you own. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "4",
+   "title": "Practise a REST API offline",
+   "content": [
+    {
+     "level": 0,
+     "text": "This tiny API runs on your own computer (standard library only). It checks an X-Auth-Token header, returns JSON, and answers with status codes. Save it as mini_api.py and start it with python3 mini_api.py. Leave it running and open a second terminal."
+    },
+    {
+     "level": 0,
+     "text": "mini_api.py (tested in the build environment) ADDED"
+    },
+    {
+     "level": 0,
+     "text": "#!/usr/bin/env python3"
+    },
+    {
+     "level": 0,
+     "text": "\"\"\"A tiny local REST API for practice. Standard library only.\"\"\""
+    },
+    {
+     "level": 0,
+     "text": "import json"
+    },
+    {
+     "level": 0,
+     "text": "from http.server import BaseHTTPRequestHandler, HTTPServer"
+    },
+    {
+     "level": 0,
+     "text": "TOKEN = \"lab-token\""
+    },
+    {
+     "level": 0,
+     "text": "DEVICES = {\"R1\": {\"hostname\": \"R1\", \"ip\": \"10.0.0.1\"}}"
+    },
+    {
+     "level": 0,
+     "text": "class Handler(BaseHTTPRequestHandler):"
+    },
+    {
+     "level": 0,
+     "text": "def send_json(self, code, body):"
+    },
+    {
+     "level": 0,
+     "text": "data = json.dumps(body).encode()"
+    },
+    {
+     "level": 0,
+     "text": "self.send_response(code)"
+    },
+    {
+     "level": 0,
+     "text": "self.send_header(\"Content-Type\", \"application/json\")"
+    },
+    {
+     "level": 0,
+     "text": "self.send_header(\"Content-Length\", str(len(data)))"
+    },
+    {
+     "level": 0,
+     "text": "self.end_headers()"
+    },
+    {
+     "level": 0,
+     "text": "self.wfile.write(data)"
+    },
+    {
+     "level": 0,
+     "text": "def allowed(self):"
+    },
+    {
+     "level": 0,
+     "text": "return self.headers.get(\"X-Auth-Token\") == TOKEN"
+    },
+    {
+     "level": 0,
+     "text": "def do_GET(self):"
+    },
+    {
+     "level": 0,
+     "text": "if not self.allowed():"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(401, {\"error\": \"unauthorized\"})"
+    },
+    {
+     "level": 0,
+     "text": "if self.path == \"/api/v1/devices\":"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(200, list(DEVICES.values()))"
+    },
+    {
+     "level": 0,
+     "text": "name = self.path.rsplit(\"/\", 1)[-1]"
+    },
+    {
+     "level": 0,
+     "text": "if self.path.startswith(\"/api/v1/devices/\") and name in DEVICES:"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(200, DEVICES[name])"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(404, {\"error\": \"not found\"})"
+    },
+    {
+     "level": 0,
+     "text": "def do_POST(self):"
+    },
+    {
+     "level": 0,
+     "text": "if not self.allowed():"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(401, {\"error\": \"unauthorized\"})"
+    },
+    {
+     "level": 0,
+     "text": "if self.path != \"/api/v1/devices\":"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(404, {\"error\": \"not found\"})"
+    },
+    {
+     "level": 0,
+     "text": "size = int(self.headers.get(\"Content-Length\", 0))"
+    },
+    {
+     "level": 0,
+     "text": "try:"
+    },
+    {
+     "level": 0,
+     "text": "body = json.loads(self.rfile.read(size))"
+    },
+    {
+     "level": 0,
+     "text": "except ValueError:"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(400, {\"error\": \"bad JSON\"})"
+    },
+    {
+     "level": 0,
+     "text": "if \"hostname\" not in body:"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(400, {\"error\": \"hostname required\"})"
+    },
+    {
+     "level": 0,
+     "text": "DEVICES[body[\"hostname\"]] = body"
+    },
+    {
+     "level": 0,
+     "text": "return self.send_json(201, body)"
+    },
+    {
+     "level": 0,
+     "text": "def log_message(self, *args):"
+    },
+    {
+     "level": 0,
+     "text": "pass"
+    },
+    {
+     "level": 0,
+     "text": "if __name__ == \"__main__\":"
+    },
+    {
+     "level": 0,
+     "text": "HTTPServer((\"127.0.0.1\", 8080), Handler).serve_forever()"
+    },
+    {
+     "level": 0,
+     "text": "Use curl or Postman. The token is lab-token. I tested the same requests with a Python test script. Results:"
+    },
+    {
+     "level": 0,
+     "text": "| Request | Result I got |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| GET /api/v1/devices with no token | 401 {\"error\": \"unauthorized\"} |"
+    },
+    {
+     "level": 0,
+     "text": "| GET /api/v1/devices with X-Auth-Token: lab-token | 200 a JSON list with R1 |"
+    },
+    {
+     "level": 0,
+     "text": "| GET /api/v1/devices/R1 | 200 one JSON object |"
+    },
+    {
+     "level": 0,
+     "text": "| GET /api/v1/devices/R9 | 404 not found |"
+    },
+    {
+     "level": 0,
+     "text": "| GET /api/v1/nothing | 404 not found |"
+    },
+    {
+     "level": 0,
+     "text": "| POST /api/v1/devices with {\"hostname\": \"R2\", \"ip\": \"10.0.0.2\"} | 201 the new object |"
+    },
+    {
+     "level": 0,
+     "text": "| POST with bad JSON (single quotes) | 400 bad JSON |"
+    },
+    {
+     "level": 0,
+     "text": "| POST without a hostname key | 400 hostname required |"
+    },
+    {
+     "level": 0,
+     "text": "| GET /api/v1/devices again | 200 a list with R1 and R2 |"
+    },
+    {
+     "level": 0,
+     "text": "Example curl commands (the requests were tested with Python, not with curl) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "curl -i -H \"X-Auth-Token: lab-token\" http://127.0.0.1:8080/api/v1/devices"
+    },
+    {
+     "level": 0,
+     "text": "curl -i -X POST -H \"X-Auth-Token: lab-token\" -H \"Content-Type: application/json\" -d '{\"hostname\": \"R3\", \"ip\": \"10.0.0.3\"}' http://127.0.0.1:8080/api/v1/devices"
+    },
+    {
+     "level": 0,
+     "text": "- -i shows the status line, so you can see 200, 201, 401, and so on."
+    },
+    {
+     "level": 0,
+     "text": "- -H adds a header. The token goes in X-Auth-Token, as in the Catalyst Center example."
+    },
+    {
+     "level": 0,
+     "text": "- -X POST and -d send a JSON body. On Windows, quoting in the command prompt differs; use Postman or PowerShell if curl complains. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Then try: remove the token and see 401; mistype the path and see 404; change a double quote to a single quote in the body and see 400. Match each result to Table 21.2."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Optional online version. Cisco's Catalyst Center Always-On sandbox (sandboxdnac.cisco.com) uses the same ideas as the book's lab: POST /dna/system/api/v1/auth/token with basic authentication, then GET /dna/intent/api/v1/network-device with the X-Auth-Token header. Get the current sandbox username and password from Cisco's DevNet page, not from the book. The sandbox may be unavailable. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Use curl -k or Postman's \"disable TLS verification\" only for a sandbox like this, never for real systems."
+    }
+   ]
+  },
+  {
+   "number": "5",
+   "title": "Break it and fix it",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Fault | Expected symptom | How to find it | Fix |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| JSON with True | Parse error | JSON checker or Python json.loads | Use true |"
+    },
+    {
+     "level": 0,
+     "text": "| JSON with a trailing comma | Parse error | Same | Remove the comma |"
+    },
+    {
+     "level": 0,
+     "text": "| YAML list with a tab | Scanner error | YAML parser message | Use spaces |"
+    },
+    {
+     "level": 0,
+     "text": "| YAML with name:Todd | Read as one text value, not a mapping | Print the loaded data | Add a space after the colon |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call with a missing or wrong token | 401 | Status line | Get a new token and send X-Auth-Token |"
+    },
+    {
+     "level": 0,
+     "text": "| REST call to the wrong path | 404 | Status line | Fix the path or version |"
+    },
+    {
+     "level": 0,
+     "text": "| URI with ?hostnamesw1 (no =) | No filter applied | Parse the URI | Use ?hostname=sw1 |"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Record what you actually saw in the tracker: Practical lab = Done, Needs redo, or Not done, and note any difference from this document."
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "Virtualization, Automation, and Programmability — review questions",
+   "questions": [
+    {
+     "source": "Q1. Which feature is the \"undo button\" for a VM?",
+     "sourceNumber": "Q1",
+     "q": "Which feature is the \"undo button\" for a VM?",
+     "options": [],
+     "answer": null,
+     "why": "Snapshot - Microsoft calls it a checkpoint.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which feature quickly creates many VMs from a golden image?",
+     "sourceNumber": "Q2",
+     "q": "Which feature quickly creates many VMs from a golden image?",
+     "options": [],
+     "answer": "C",
+     "why": "lone - a clone is a new VM.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What is needed to move a running VM without downtime, according to the book?",
+     "sourceNumber": "Q3",
+     "q": "What is needed to move a running VM without downtime, according to the book?",
+     "options": [],
+     "answer": null,
+     "why": "Shared storage - otherwise the VM usually has to be powered down.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Moving a VM's files from internal storage to an iSCSI datastore is which kind of migration?",
+     "sourceNumber": "Q4",
+     "q": "Moving a VM's files from internal storage to an iSCSI datastore is which kind of migration?",
+     "options": [],
+     "answer": null,
+     "why": "Storage migration - the VM stays on the same host.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which hypervisor type runs directly on the hardware?",
+     "sourceNumber": "Q1",
+     "q": "Which hypervisor type runs directly on the hardware?",
+     "options": [],
+     "answer": null,
+     "why": "Type 1 - it is also called bare-metal.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. VMware Workstation is which type?",
+     "sourceNumber": "Q2",
+     "q": "VMware Workstation is which type?",
+     "options": [],
+     "answer": null,
+     "why": "Type 2 - it installs on a desktop OS.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. In which virtualization type does the guest know it is a VM and talk directly to the hypervisor?",
+     "sourceNumber": "Q3",
+     "q": "In which virtualization type does the guest know it is a VM and talk directly to the hypervisor?",
+     "options": [],
+     "answer": null,
+     "why": "Paravirtualization - the guest is \"enlightened\".",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What network adapter does the book mention as the typical emulated adapter in an HVM?",
+     "sourceNumber": "Q4",
+     "q": "What network adapter does the book mention as the typical emulated adapter in an HVM?",
+     "options": [],
+     "answer": null,
+     "why": "Intel e1000 - it is widely supported out of the box.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which hypervisor is made by Microsoft?",
+     "sourceNumber": "Q1",
+     "q": "Which hypervisor is made by Microsoft?",
+     "options": [],
+     "answer": null,
+     "why": "Hyper-V - it is a Type 1 hypervisor.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which product is a free, open-source Type 2 solution from Oracle?",
+     "sourceNumber": "Q2",
+     "q": "Which product is a free, open-source Type 2 solution from Oracle?",
+     "options": [],
+     "answer": null,
+     "why": "VirtualBox - it is good for simple labs.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. How is ESXi managed, according to the book?",
+     "sourceNumber": "Q3",
+     "q": "How is ESXi managed, according to the book?",
+     "options": [],
+     "answer": "B",
+     "why": "y its web interface or by vCenter - vCenter is VMware's management solution.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which is Type 1: ESXi or VMware Fusion?",
+     "sourceNumber": "Q4",
+     "q": "Which is Type 1: ESXi or VMware Fusion?",
+     "options": [],
+     "answer": null,
+     "why": "ESXi - Fusion is the Mac desktop product (Type 2).",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which Python module did the book use to connect to routers by SSH?",
+     "sourceNumber": "Q1",
+     "q": "Which Python module did the book use to connect to routers by SSH?",
+     "options": [],
+     "answer": null,
+     "why": "netmiko - installed with pip.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Why use getpass in the script?",
+     "sourceNumber": "Q2",
+     "q": "Why use getpass in the script?",
+     "options": [],
+     "answer": null,
+     "why": "So the password is typed in and not stored in the script - storing passwords in scripts is a bad idea.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. In Netmiko, what does the secret key hold?",
+     "sourceNumber": "Q3",
+     "q": "In Netmiko, what does the secret key hold?",
+     "options": [],
+     "answer": null,
+     "why": "The enable password - the login password goes under password. UPDATED",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What does the script's loop do?",
+     "sourceNumber": "Q4",
+     "q": "What does the script's loop do?",
+     "options": [],
+     "answer": null,
+     "why": "Repeats the same commands on each device, changing the last number of the address - this is the main benefit of automation.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which quote characters does JSON require?",
+     "sourceNumber": "Q1",
+     "q": "Which quote characters does JSON require?",
+     "options": [],
+     "answer": "D",
+     "why": "ouble quotes - single quotes are invalid JSON.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Is {\"ok\": True} valid JSON?",
+     "sourceNumber": "Q2",
+     "q": "Is {\"ok\": True} valid JSON?",
+     "options": [],
+     "answer": null,
+     "why": "No - booleans must be lowercase: true.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. In the Nexus example, what is [\"ROW_intf\"][1][\"intf-name\"]?",
+     "sourceNumber": "Q3",
+     "q": "In the Nexus example, what is [\"ROW_intf\"][1][\"intf-name\"]?",
+     "options": [],
+     "answer": null,
+     "why": "Eth1/1 - index 1 is the second list item.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Is \"age\": \"40\" a number or a string?",
+     "sourceNumber": "Q4",
+     "q": "Is \"age\": \"40\" a number or a string?",
+     "options": [],
+     "answer": "A",
+     "why": "string - the quotes make it a string.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Does YAML allow tab characters for indentation?",
+     "sourceNumber": "Q1",
+     "q": "Does YAML allow tab characters for indentation?",
+     "options": [],
+     "answer": null,
+     "why": "No - use spaces. The spec says YAML's indentation avoids the ambiguity of tabs.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. How do you write a list item in YAML?",
+     "sourceNumber": "Q2",
+     "q": "How do you write a list item in YAML?",
+     "options": [],
+     "answer": "A",
+     "why": "dash and a space, then the value, on its own line (- CCNA) - indented under the key it belongs to.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What is a mapping in YAML?",
+     "sourceNumber": "Q3",
+     "q": "What is a mapping in YAML?",
+     "options": [],
+     "answer": "A",
+     "why": "key-value pair, such as name: Alex - there must be a space after the colon.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which tool does the book say uses YAML?",
+     "sourceNumber": "Q4",
+     "q": "Which tool does the book say uses YAML?",
+     "options": [],
+     "answer": "A",
+     "why": "nsible - covered again in Chapter 23.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What does REST stand for?",
+     "sourceNumber": "Q1",
+     "q": "What does REST stand for?",
+     "options": [],
+     "answer": null,
+     "why": "Representational State Transfer - book review question 5.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which HTTP verb maps to Create? To Read?",
+     "sourceNumber": "Q2",
+     "q": "Which HTTP verb maps to Create? To Read?",
+     "options": [],
+     "answer": null,
+     "why": "POST creates. GET reads - Table 21.1.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. A request returns 401. What is the likely problem?",
+     "sourceNumber": "Q3",
+     "q": "A request returns 401. What is the likely problem?",
+     "options": [],
+     "answer": "A",
+     "why": "uthentication: a missing, bad, or expired token or login - 401 is an authentication problem.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. In the Catalyst Center example, which header carries the token?",
+     "sourceNumber": "Q4",
+     "q": "In the Catalyst Center example, which header carries the token?",
+     "options": [],
+     "answer": null,
+     "why": "X-Auth-Token - it is sent with every request after the login.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. In https://host/api/v1/network-device?hostname=sw1, which part is the parameter?",
+     "sourceNumber": "Q5",
+     "q": "In https://host/api/v1/network-device?hostname=sw1, which part is the parameter?",
+     "options": [],
+     "answer": null,
+     "why": "?hostname=sw1 - it filters the results.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. Is PUT or PATCH used to change only part of a resource?",
+     "sourceNumber": "Q6",
+     "q": "Is PUT or PATCH used to change only part of a resource?",
+     "options": [],
+     "answer": null,
+     "why": "PATCH - PUT replaces the whole resource. CHECK",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What do containers share that virtual machines do not?",
+     "sourceNumber": "Q1",
+     "q": "What do containers share that virtual machines do not?",
+     "options": [],
+     "answer": null,
+     "why": "The host operating system's kernel - each VM has its own operating system.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What does a VRF give one physical router?",
+     "sourceNumber": "Q2",
+     "q": "What does a VRF give one physical router?",
+     "options": [],
+     "answer": null,
+     "why": "Several separate routing tables (virtual routers) - each interface belongs to one VRF.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Can two VRFs use the same IP addressing?",
+     "sourceNumber": "Q3",
+     "q": "Can two VRFs use the same IP addressing?",
+     "options": [],
+     "answer": null,
+     "why": "Yes - their routing tables are separate. CHECK",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which hypervisor type runs directly on the hardware?",
+     "sourceNumber": "Q1",
+     "q": "Which hypervisor type runs directly on the hardware?",
+     "options": [
+      "Type 1",
+      "Type 2",
+      "Type 3",
+      "Type 4"
+     ],
+     "answer": "A",
+     "why": "Type 1 is bare-metal.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which product is a Type 2 hypervisor?",
+     "sourceNumber": "Q2",
+     "q": "Which product is a Type 2 hypervisor?",
+     "options": [
+      "VMware ESXi",
+      "Hyper-V",
+      "VMware Workstation",
+      "Xen"
+     ],
+     "answer": "C",
+     "why": "Workstation installs on a desktop OS. (The book lists ESXi, Hyper-V, and Xen as Type 1.)",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Which company makes Hyper-V?",
+     "sourceNumber": "Q3",
+     "q": "Which company makes Hyper-V?",
+     "options": [],
+     "answer": null,
+     "why": "Microsoft - it is a Type 1 hypervisor.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which virtualization feature is the \"undo button\" for a VM?",
+     "sourceNumber": "Q4",
+     "q": "Which virtualization feature is the \"undo button\" for a VM?",
+     "options": [],
+     "answer": null,
+     "why": "Snapshot - Microsoft calls it a checkpoint.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. Which feature quickly creates many VMs from a golden image?",
+     "sourceNumber": "Q5",
+     "q": "Which feature quickly creates many VMs from a golden image?",
+     "options": [],
+     "answer": "C",
+     "why": "lone - a clone is a new VM.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. Moving a VM from one host to another is called what? Moving its files to other storage?",
+     "sourceNumber": "Q6",
+     "q": "Moving a VM from one host to another is called what? Moving its files to other storage?",
+     "options": [],
+     "answer": null,
+     "why": "Virtual machine migration; storage migration - from the book's two migration types.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. A Cisco CSR1000v virtual router is which kind of virtual resource?",
+     "sourceNumber": "Q7",
+     "q": "A Cisco CSR1000v virtual router is which kind of virtual resource?",
+     "options": [],
+     "answer": "A",
+     "why": "virtual appliance - a vendor's virtual product.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. What is the difference between a standard and a distributed vSwitch?",
+     "sourceNumber": "Q8",
+     "q": "What is the difference between a standard and a distributed vSwitch?",
+     "options": [],
+     "answer": "A",
+     "why": "standard vSwitch is configured per host. A distributed vSwitch is one shared switch across all hosts - the distributed type shares one configuration.",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. Why do hosts use shared storage?",
+     "sourceNumber": "Q9",
+     "q": "Why do hosts use shared storage?",
+     "options": [],
+     "answer": null,
+     "why": "So every host can reach the same VM files, which makes migrations and redundancy possible - internal disks cannot easily be reached by other hosts.",
+     "kind": "open"
+    },
+    {
+     "source": "Q10. What is hyperconverged infrastructure?",
+     "sourceNumber": "Q10",
+     "q": "What is hyperconverged infrastructure?",
+     "options": [],
+     "answer": "C",
+     "why": "ompute, network, and storage in one server, with local disks forming a shared virtual SAN - Cisco HyperFlex is an example.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. In which type of virtualization does the guest know it is a VM and talk straight to the hypervisor?",
+     "sourceNumber": "Q11",
+     "q": "In which type of virtualization does the guest know it is a VM and talk straight to the hypervisor?",
+     "options": [],
+     "answer": null,
+     "why": "Paravirtualization - an HVM guest is not aware.",
+     "kind": "open"
+    },
+    {
+     "source": "Q12. What do containers share that virtual machines do not?",
+     "sourceNumber": "Q12",
+     "q": "What do containers share that virtual machines do not?",
+     "options": [],
+     "answer": null,
+     "why": "The host's kernel - each VM has its own operating system. ADDED",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. What does a VRF provide? ADDED",
+     "sourceNumber": "Q13",
+     "q": "What does a VRF provide? ADDED",
+     "options": [],
+     "answer": null,
+     "why": "Several separate routing tables on one router - each interface belongs to one VRF. CHECK",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. In Netmiko, what does the secret key hold?",
+     "sourceNumber": "Q14",
+     "q": "In Netmiko, what does the secret key hold?",
+     "options": [],
+     "answer": null,
+     "why": "The enable password - the login password is password.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. A Python script has three routers in a list and a counter that adds 1 to the last number of each address. What does the loop save you?",
+     "sourceNumber": "Q15",
+     "q": "A Python script has three routers in a list and a counter that adds 1 to the last number of each address. What does the loop save you?",
+     "options": [],
+     "answer": null,
+     "why": "Typing the same commands on every device - that is the point of automation.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. Which JSON rules are correct? (Choose three.)",
+     "sourceNumber": "Q16",
+     "q": "Which JSON rules are correct? (Choose three.)",
+     "options": [
+      "Use double quotes",
+      "Use single quotes",
+      "Booleans are lowercase",
+      "Trailing commas are not allowed"
+     ],
+     "answer": "A",
+     "why": ", C, D - JSON needs double quotes, lowercase booleans, and no trailing commas.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q17. Which is valid JSON?",
+     "sourceNumber": "Q17",
+     "q": "Which is valid JSON?",
+     "options": [
+      "{'a': 1}",
+      "{\"a\": True}",
+      "{\"a\": 1,}",
+      "{\"a\": true}"
+     ],
+     "answer": "D",
+     "why": "the others break a rule.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q18. In {\"x\": [10, 20, 30]}, what is the path to the value 30?",
+     "sourceNumber": "Q18",
+     "q": "In {\"x\": [10, 20, 30]}, what is the path to the value 30?",
+     "options": [],
+     "answer": null,
+     "why": "[\"x\"][2] - lists start at 0.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. What JSON type is \"port\": \"22\"? And \"port\": 22?",
+     "sourceNumber": "Q19",
+     "q": "What JSON type is \"port\": \"22\"? And \"port\": 22?",
+     "options": [],
+     "answer": null,
+     "why": "String; number - quotes make a string.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. Does YAML allow tabs for indentation?",
+     "sourceNumber": "Q20",
+     "q": "Does YAML allow tabs for indentation?",
+     "options": [],
+     "answer": null,
+     "why": "No - use spaces.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. Write a YAML list of two items, CCNA and ISE, under the key books.",
+     "sourceNumber": "Q21",
+     "q": "Write a YAML list of two items, CCNA and ISE, under the key books.",
+     "options": [],
+     "answer": "B",
+     "why": "books: then - CCNA and - ISE on separate lines - each item starts with a dash and a space, and is indented.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. What is a mapping in YAML?",
+     "sourceNumber": "Q22",
+     "q": "What is a mapping in YAML?",
+     "options": [],
+     "answer": "A",
+     "why": "key-value pair, such as name: Alex - there must be a space after the colon.",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. What does REST stand for?",
+     "sourceNumber": "Q23",
+     "q": "What does REST stand for?",
+     "options": [],
+     "answer": null,
+     "why": "Representational State Transfer - an architectural style, usually used over HTTP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q24. Which HTTP verb is most like a show command?",
+     "sourceNumber": "Q24",
+     "q": "Which HTTP verb is most like a show command?",
+     "options": [],
+     "answer": null,
+     "why": "GET - it reads data.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Which verb creates a resource? Which replaces one? Which changes part of one?",
+     "sourceNumber": "Q25",
+     "q": "Which verb creates a resource? Which replaces one? Which changes part of one?",
+     "options": [],
+     "answer": null,
+     "why": "POST; PUT; PATCH - Table 21.1. CHECK on PUT versus PATCH.",
+     "kind": "open"
+    },
+    {
+     "source": "Q26. What does 401 mean? What does 403 mean?",
+     "sourceNumber": "Q26",
+     "q": "What does 401 mean? What does 403 mean?",
+     "options": [],
+     "answer": null,
+     "why": "401: authentication problem. 403: understood, but you do not have permission - who are you versus not allowed.",
+     "kind": "open"
+    },
+    {
+     "source": "Q27. What does 404 mean, and which class of status code is it?",
+     "sourceNumber": "Q27",
+     "q": "What does 404 mean, and which class of status code is it?",
+     "options": [],
+     "answer": null,
+     "why": "Not found; a client error (4xx) - the resource does not exist at that path.",
+     "kind": "open"
+    },
+    {
+     "source": "Q28. In a REST URI, which part is the resource?",
+     "sourceNumber": "Q28",
+     "q": "In a REST URI, which part is the resource?",
+     "options": [],
+     "answer": null,
+     "why": "The path, for example /dna/intent/api/v1/network-device - the part after ? is the parameters.",
+     "kind": "open"
+    },
+    {
+     "source": "Q29. In the Catalyst Center example, how do you send the token?",
+     "sourceNumber": "Q29",
+     "q": "In the Catalyst Center example, how do you send the token?",
+     "options": [],
+     "answer": null,
+     "why": "In the X-Auth-Token header of every request after the login - the token comes from a POST to the auth endpoint.",
+     "kind": "open"
+    },
+    {
+     "source": "Q30. Which v2.0 objective covers hypervisors, virtual machines, and containers?",
+     "sourceNumber": "Q30",
+     "q": "Which v2.0 objective covers hypervisors, virtual machines, and containers?",
+     "options": [],
+     "answer": null,
+     "why": "1.2 - read from Cisco's v2.0 outline.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 Which feature is the \"undo button\" for a VM?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Snapshot - Microsoft calls it a checkpoint."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which feature quickly creates many VMs from a golden image?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - lone - a clone is a new VM."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What is needed to move a running VM without downtime, according to the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Shared storage - otherwise the VM usually has to be powered down."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Moving a VM's files from internal storage to an iSCSI datastore is which kind of migration?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Storage migration - the VM stays on the same host."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which hypervisor type runs directly on the hardware?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Type 1 - it is also called bare-metal."
+    },
+    {
+     "level": 0,
+     "text": "Q2 VMware Workstation is which type?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Type 2 - it installs on a desktop OS."
+    },
+    {
+     "level": 0,
+     "text": "Q3 In which virtualization type does the guest know it is a VM and talk directly to the hypervisor?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Paravirtualization - the guest is \"enlightened\"."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What network adapter does the book mention as the typical emulated adapter in an HVM?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Intel e1000 - it is widely supported out of the box."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which hypervisor is made by Microsoft?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Hyper-V - it is a Type 1 hypervisor."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which product is a free, open-source Type 2 solution from Oracle?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: VirtualBox - it is good for simple labs."
+    },
+    {
+     "level": 0,
+     "text": "Q3 How is ESXi managed, according to the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - y its web interface or by vCenter - vCenter is VMware's management solution."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which is Type 1: ESXi or VMware Fusion?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ESXi - Fusion is the Mac desktop product (Type 2)."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which Python module did the book use to connect to routers by SSH?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: netmiko - installed with pip."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why use getpass in the script?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: So the password is typed in and not stored in the script - storing passwords in scripts is a bad idea."
+    },
+    {
+     "level": 0,
+     "text": "Q3 In Netmiko, what does the secret key hold?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The enable password - the login password goes under password. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Q4 What does the script's loop do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Repeats the same commands on each device, changing the last number of the address - this is the main benefit of automation."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which quote characters does JSON require?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - ouble quotes - single quotes are invalid JSON."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Is {\"ok\": True} valid JSON?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - booleans must be lowercase: true."
+    },
+    {
+     "level": 0,
+     "text": "Q3 In the Nexus example, what is [\"ROW_intf\"][1][\"intf-name\"]?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Eth1/1 - index 1 is the second list item."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Is \"age\": \"40\" a number or a string?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - string - the quotes make it a string."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Does YAML allow tab characters for indentation?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - use spaces. The spec says YAML's indentation avoids the ambiguity of tabs."
+    },
+    {
+     "level": 0,
+     "text": "Q2 How do you write a list item in YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - dash and a space, then the value, on its own line (- CCNA) - indented under the key it belongs to."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What is a mapping in YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - key-value pair, such as name: Alex - there must be a space after the colon."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which tool does the book say uses YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - nsible - covered again in Chapter 23."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What does REST stand for?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Representational State Transfer - book review question 5."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which HTTP verb maps to Create? To Read?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: POST creates. GET reads - Table 21.1."
+    },
+    {
+     "level": 0,
+     "text": "Q3 A request returns 401. What is the likely problem?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - uthentication: a missing, bad, or expired token or login - 401 is an authentication problem."
+    },
+    {
+     "level": 0,
+     "text": "Q4 In the Catalyst Center example, which header carries the token?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: X-Auth-Token - it is sent with every request after the login."
+    },
+    {
+     "level": 0,
+     "text": "Q5 In https://host/api/v1/network-device?hostname=sw1, which part is the parameter?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ?hostname=sw1 - it filters the results."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Is PUT or PATCH used to change only part of a resource?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: PATCH - PUT replaces the whole resource. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Q1 What do containers share that virtual machines do not?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The host operating system's kernel - each VM has its own operating system."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What does a VRF give one physical router?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Several separate routing tables (virtual routers) - each interface belongs to one VRF."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Can two VRFs use the same IP addressing?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Yes - their routing tables are separate. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which hypervisor type runs directly on the hardware?"
+    },
+    {
+     "level": 0,
+     "text": "A. Type 1"
+    },
+    {
+     "level": 0,
+     "text": "B. Type 2"
+    },
+    {
+     "level": 0,
+     "text": "C. Type 3"
+    },
+    {
+     "level": 0,
+     "text": "D. Type 4"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - Type 1 is bare-metal."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which product is a Type 2 hypervisor?"
+    },
+    {
+     "level": 0,
+     "text": "A. VMware ESXi"
+    },
+    {
+     "level": 0,
+     "text": "B. Hyper-V"
+    },
+    {
+     "level": 0,
+     "text": "C. VMware Workstation"
+    },
+    {
+     "level": 0,
+     "text": "D. Xen"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - Workstation installs on a desktop OS. (The book lists ESXi, Hyper-V, and Xen as Type 1.)"
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which company makes Hyper-V?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Microsoft - it is a Type 1 hypervisor."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which virtualization feature is the \"undo button\" for a VM?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Snapshot - Microsoft calls it a checkpoint."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which feature quickly creates many VMs from a golden image?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - lone - a clone is a new VM."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Moving a VM from one host to another is called what? Moving its files to other storage?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Virtual machine migration; storage migration - from the book's two migration types."
+    },
+    {
+     "level": 0,
+     "text": "Q7 A Cisco CSR1000v virtual router is which kind of virtual resource?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - virtual appliance - a vendor's virtual product."
+    },
+    {
+     "level": 0,
+     "text": "Q8 What is the difference between a standard and a distributed vSwitch?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - standard vSwitch is configured per host. A distributed vSwitch is one shared switch across all hosts - the distributed type shares one configuration."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Why do hosts use shared storage?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: So every host can reach the same VM files, which makes migrations and redundancy possible - internal disks cannot easily be reached by other hosts."
+    },
+    {
+     "level": 0,
+     "text": "Q10 What is hyperconverged infrastructure?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - ompute, network, and storage in one server, with local disks forming a shared virtual SAN - Cisco HyperFlex is an example."
+    },
+    {
+     "level": 0,
+     "text": "Q11 In which type of virtualization does the guest know it is a VM and talk straight to the hypervisor?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Paravirtualization - an HVM guest is not aware."
+    },
+    {
+     "level": 0,
+     "text": "Q12 What do containers share that virtual machines do not?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The host's kernel - each VM has its own operating system. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Q13 What does a VRF provide? ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Several separate routing tables on one router - each interface belongs to one VRF. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Q14 In Netmiko, what does the secret key hold?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The enable password - the login password is password."
+    },
+    {
+     "level": 0,
+     "text": "Q15 A Python script has three routers in a list and a counter that adds 1 to the last number of each address. What does the loop save you?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Typing the same commands on every device - that is the point of automation."
+    },
+    {
+     "level": 0,
+     "text": "Q16 Which JSON rules are correct? (Choose three.)"
+    },
+    {
+     "level": 0,
+     "text": "A. Use double quotes"
+    },
+    {
+     "level": 0,
+     "text": "B. Use single quotes"
+    },
+    {
+     "level": 0,
+     "text": "C. Booleans are lowercase"
+    },
+    {
+     "level": 0,
+     "text": "D. Trailing commas are not allowed"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - , C, D - JSON needs double quotes, lowercase booleans, and no trailing commas."
+    },
+    {
+     "level": 0,
+     "text": "Q17 Which is valid JSON?"
+    },
+    {
+     "level": 0,
+     "text": "A. {'a': 1}"
+    },
+    {
+     "level": 0,
+     "text": "B. {\"a\": True}"
+    },
+    {
+     "level": 0,
+     "text": "C. {\"a\": 1,}"
+    },
+    {
+     "level": 0,
+     "text": "D. {\"a\": true}"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - the others break a rule."
+    },
+    {
+     "level": 0,
+     "text": "Q18 In {\"x\": [10, 20, 30]}, what is the path to the value 30?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: [\"x\"][2] - lists start at 0."
+    },
+    {
+     "level": 0,
+     "text": "Q19 What JSON type is \"port\": \"22\"? And \"port\": 22?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: String; number - quotes make a string."
+    },
+    {
+     "level": 0,
+     "text": "Q20 Does YAML allow tabs for indentation?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - use spaces."
+    },
+    {
+     "level": 0,
+     "text": "Q21 Write a YAML list of two items, CCNA and ISE, under the key books."
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - books: then - CCNA and - ISE on separate lines - each item starts with a dash and a space, and is indented."
+    },
+    {
+     "level": 0,
+     "text": "Q22 What is a mapping in YAML?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - key-value pair, such as name: Alex - there must be a space after the colon."
+    },
+    {
+     "level": 0,
+     "text": "Q23 What does REST stand for?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Representational State Transfer - an architectural style, usually used over HTTP."
+    },
+    {
+     "level": 0,
+     "text": "Q24 Which HTTP verb is most like a show command?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: GET - it reads data."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Which verb creates a resource? Which replaces one? Which changes part of one?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: POST; PUT; PATCH - Table 21.1. CHECK on PUT versus PATCH."
+    },
+    {
+     "level": 0,
+     "text": "Q26 What does 401 mean? What does 403 mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 401: authentication problem. 403: understood, but you do not have permission - who are you versus not allowed."
+    },
+    {
+     "level": 0,
+     "text": "Q27 What does 404 mean, and which class of status code is it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Not found; a client error (4xx) - the resource does not exist at that path."
+    },
+    {
+     "level": 0,
+     "text": "Q28 In a REST URI, which part is the resource?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The path, for example /dna/intent/api/v1/network-device - the part after ? is the parameters."
+    },
+    {
+     "level": 0,
+     "text": "Q29 In the Catalyst Center example, how do you send the token?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: In the X-Auth-Token header of every request after the login - the token comes from a POST to the auth endpoint."
+    },
+    {
+     "level": 0,
+     "text": "Q30 Which v2.0 objective covers hypervisors, virtual machines, and containers?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1.2 - read from Cisco's v2.0 outline."
+    }
+   ],
+   "multipleChoice": 4,
+   "open": 59
+  }
+ ],
+ "generatedFrom": "CC21.docx",
+ "totalWords": 13255,
+ "wordBreakdown": {
+  "sections": 9607,
+  "labs": 1427,
+  "quizzes": 1333,
+  "currency": 627,
+  "sources": 261
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "Objective 1.12 reads \"virtual machines\" (p. 661). The chapter has no containers or VRFs.",
+   "current": "Adds a containers and VRFs section. ADDED",
+   "action": "",
+   "source": "Official: Cisco v1.0 PDF (2021) and v2.0 PDF. Content itself CHECK .",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "No mention that v2.0 changes the topics.",
+   "current": "Maps to v2.0 1.2, 5.3, 5.5. Notes REST and JSON are not listed. UPDATED",
+   "action": "",
+   "source": "Official: Cisco v2.0 PDF.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "6.7 wording \"Interpret JSON encoded data\" (p. 661).",
+   "current": "Notes Cisco's later v1.0 PDF says \"Recognize components\". UPDATED",
+   "action": "",
+   "source": "Official v1.0 PDF; v1.1 not opened. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "\"Cisco isn't in the server market yet\" (p. 662).",
+   "current": "Marks it wrong. UPDATED",
+   "action": "",
+   "source": "The book's own p. 666 mentions UCS. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "CSR1000v, ASAv, FTD Virtual named as current (pp. 665 to 666).",
+   "current": "Notes CSR1000v transitioned to Catalyst 8000V. Other names flagged. UPDATED CHECK",
+   "action": "",
+   "source": "Official: Cisco end-of-sale notices (CSR); others not verified.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "Shared storage: \"SAN or NAS through iSCSI or Fibre Channel\" (p. 666).",
+   "current": "Clarifies block versus file storage. UPDATED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "\"Three components\" listed, four covered (pp. 666 to 667).",
+   "current": "Lists four features. UPDATED",
+   "action": "",
+   "source": "Compared with the headings.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "Live migration requires shared storage (p. 667).",
+   "current": "Notes it is not always required. UPDATED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "KVM Type 2 (p. 668) and Type 1 (p. 669).",
+   "current": "Flags the contradiction. UPDATED CHECK",
+   "action": "",
+   "source": "Compared pages.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "ESXi \"based on a custom Linux OS\"; free standalone licence (p. 669).",
+   "current": "Marks the Linux claim as doubtful and licensing as changed. UPDATED CHECK",
+   "action": "",
+   "source": "Licensing: press reports (secondary). Linux claim: general knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "Hyper-V prevents Type 2 products (p. 669).",
+   "current": "Marks as dated. UPDATED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "\"Tier-2\"; Player product (p. 669).",
+   "current": "Corrects to Type 2. Notes Player was discontinued and licensing changed. UPDATED CHECK",
+   "action": "",
+   "source": "Press reports (secondary).",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "\"Three main ones\", then four components (p. 670). Unnamed surveys on human error.",
+   "current": "Notes both. UPDATED CHECK",
+   "action": "",
+   "source": "Compared with the headings.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "Python 2 \"on its way out\" (p. 671).",
+   "current": "Notes it reached end of life in 2020. UPDATED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "Windows pip advice and Netmiko 2.4.2 output (p. 671).",
+   "current": "Marks as dated. UPDATED CHECK",
+   "action": "",
+   "source": "Not verified.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "secret is \"normally the password\" (p. 672).",
+   "current": "Corrects: it is the enable password. UPDATED",
+   "action": "",
+   "source": "Official: Netmiko project documentation.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "Full script shebang lacks the 3; verbose key; no save; three dictionaries (pp. 673 to 676).",
+   "current": "Adds a shorter list-based version with a save step. ADDED",
+   "action": "",
+   "source": "Logic tested with a fake connection, not real Netmiko. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "JSON example \"age\": \"40\" (p. 677).",
+   "current": "Explains it is a string. ADDED",
+   "action": "",
+   "source": "Script.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "json-pretty native (p. 677).",
+   "current": "Keyword not verified. CHECK",
+   "action": "",
+   "source": "Not verified.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 20",
+   "found": "YAML example printed with no dashes or indentation (p. 679).",
+   "current": "Shows the corrected version. UPDATED",
+   "action": "",
+   "source": "Script: the printed text fails to parse.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 21",
+   "found": "\"All YAML files start with three dashes\" (p. 679).",
+   "current": "Notes the marker is optional in my test. UPDATED CHECK",
+   "action": "",
+   "source": "Script; spec reading incomplete.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 22",
+   "found": "Cacheable explained as a version number (p. 680).",
+   "current": "Corrects the idea. UPDATED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 23",
+   "found": "REST \"is a framework built on HTTP\" (p. 680).",
+   "current": "Says it is an architectural style. UPDATED",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 24",
+   "found": "Figure 21.3 has no = in the parameter (p. 681).",
+   "current": "Corrects it. UPDATED",
+   "action": "",
+   "source": "Looked at the page; script.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 25",
+   "found": "dcloud.com versus dcloud.cisco.com (p. 683).",
+   "current": "Notes the typo. UPDATED",
+   "action": "",
+   "source": "Compared pages.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 26",
+   "found": "DNA Center and the printed sandbox credentials (pp. 682 to 683).",
+   "current": "Notes the rename to Catalyst Center and says to use current credentials. UPDATED CHECK",
+   "action": "",
+   "source": "Official: Cisco developer documentation.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 27",
+   "found": "Exam Essentials omit PATCH, Python, and YAML (p. 684).",
+   "current": "Adds a full revision sheet. ADDED",
+   "action": "",
+   "source": "Compared with Table 21.1.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 28",
+   "found": "Review Q13 key: REST \"does not support authorization\" (p. 806).",
+   "current": "Keeps the book's answer, corrects the explanation. UPDATED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 29",
+   "found": "No labs in the chapter; bonus labs are online (p. 662).",
+   "current": "Adds Labs 0 to 5. ADDED",
+   "action": "",
+   "source": "Labs 2 to 4 run in the build environment; others CHECK .",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 30",
+   "found": "PUT versus PATCH detail and authentication types are not covered.",
+   "current": "Adds them. ADDED CHECK",
+   "action": "",
+   "source": "General knowledge.",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Lammle, CCNA Certification Study Guide Vol. 2 (2020), Chapter 21 and the answer appendix",
+   "usedFor": "All chapter content, book answers",
+   "status": "Book you supplied"
+  },
+  {
+   "source": "Cisco, 200-301 CCNA v2.0 exam topics PDF (learningcontent.cisco.com)",
+   "usedFor": "v2.0 objectives 1.2, 5.3, 5.5; absence of REST and JSON",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco, 200-301 CCNA v1.0 exam topics PDF (2021 copyright)",
+   "usedFor": "1.12 containers and VRFs; 6.5; 6.7 \"Recognize components\"",
+   "status": "Official"
+  },
+  {
+   "source": "Global Knowledge exam listing",
+   "usedFor": "Older v1.0 wording \"(virtual machines)\" and \"Interpret JSON\", matching the book. Cisco's own v1.1 PDF was not opened.",
+   "status": "Secondary"
+  },
+  {
+   "source": "Cisco end-of-sale documents for CSR 1000v and ISRv",
+   "usedFor": "Transition to Catalyst 8000V",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco Community post on CSR 1000v",
+   "usedFor": "End-of-sale date 16 Dec 2022",
+   "status": "Secondary (Cisco-hosted community)"
+  },
+  {
+   "source": "Technology press reports (ZDNet, Petri, Winaero, and others)",
+   "usedFor": "Broadcom purchase, end of free ESXi, free Workstation and Fusion Pro, Player discontinued",
+   "status": "Secondary"
+  },
+  {
+   "source": "Netmiko project documentation and examples",
+   "usedFor": "password versus secret (enable password), ConnectHandler, enable()",
+   "status": "Official (project)"
+  },
+  {
+   "source": "YAML 1.2 specification (yaml.org)",
+   "usedFor": "Indentation without tabs; JSON-compatible design",
+   "status": "Official"
+  },
+  {
+   "source": "Learn X in Y Minutes (YAML)",
+   "usedFor": "YAML as a superset of JSON",
+   "status": "Secondary"
+  },
+  {
+   "source": "RFC 9110 HTTP Semantics (June 2022)",
+   "usedFor": "Exists and defines status codes and methods. Details were not extracted.",
+   "status": "Official (existence only)"
+  },
+  {
+   "source": "Cisco developer documentation for Catalyst Center",
+   "usedFor": "Rename from DNA Center, auth endpoint, X-Auth-Token, always-on sandbox",
+   "status": "Official"
+  },
+  {
+   "source": "Python script (ch21_verify.py) and lab scripts",
+   "usedFor": "JSON and YAML parsing, status-code names, URI parsing, loopback logic with a fake connection, offline mini API results",
+   "status": "Own calculation and tests"
+  },
+  {
+   "source": "General knowledge",
+   "usedFor": "Python 2 end of life, SAN versus NAS, live migration, containers, VRFs, PUT versus PATCH, caching, authentication types, hypervisor classification of KVM",
+   "status": "Not verified in this session"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-5.4"
+  }
+ ],
+ "questionCount": 63,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A: Pre-Check",
+  "Sources and Verification Status"
+ ]
+}

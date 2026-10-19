@@ -2251,7 +2251,14 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   background: var(--ok-dim);
 }
 .pl-verify__tag {
-  display: inline-block; margin-bottom: 4px;
+  /*
+   * A block, not inline-block, because the tag is now the line's own label
+   * rather than the single fixed word "verify". Labels run to 45 characters
+   * - "Check the file's SELinux context with ls" - and inline-block pushed the
+   * body onto the same line, which turned a short instruction into a sentence
+   * you had to re-read to work out where the label stopped.
+   */
+  display: block; margin-bottom: 4px;
   font-size: .68rem; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase; color: var(--ok);
 }

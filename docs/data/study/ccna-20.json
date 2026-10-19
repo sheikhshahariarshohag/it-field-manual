@@ -1,0 +1,4426 @@
+{
+ "id": "ccna-20",
+ "n": 20,
+ "sourceNumber": "CC20",
+ "kind": "chapter",
+ "title": "Configuring Wireless",
+ "display": "Chapter 20: Configuring Wireless",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 8514,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 20"
+    },
+    {
+     "level": 0,
+     "text": "Configuring Wireless Technologies: WLC, APs and WLANs"
+    },
+    {
+     "level": 0,
+     "text": "A personalised study document built from Todd Lammle, CCNA Certification Study Guide, Volume 2, Exam 200-301 (2020), Chapter 20, book pages 595 to 660. Use it instead of the book. Every difference from the book is tagged, and nothing here was run on real Cisco equipment."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 595 to 660 (PDF pages 653 to 718; offset +58). The chapter is mostly screenshots, so this document describes each GUI path in words. |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 20 - Configuring Wireless Technologies, and rows 20.1 to 20.9 with sub-rows (see the Self-Assessment table).Seq range: not assigned yet. I could not reach Notion in this chat, and rows for chapters 12 to 23 did not exist at the first build. |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 5 to 7 hours including labs (a suggestion, not a measured need). Much of the chapter is memorisation of names, ports and modes. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | Original 200-301 (v1.0, the book), v1.1 (retires 2 Feb 2027), v2.0 (first exam 3 Feb 2027). Dates from a secondary source, checked 14 Oct 2026. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Nothing here assumes you know any of it. Chapter 19 (wireless principles) is assumed as background. |"
+    },
+    {
+     "level": 3,
+     "text": "Tag legend"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book as written. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is wrong, outdated or unclear. The note says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified on real equipment. Treat as illustrative until you test it. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives from the book (v1.0 numbering) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "1.1.e Controllers (Cisco DNA Center and WLC)."
+    },
+    {
+     "level": 0,
+     "text": "2.9 Configure the components of a wireless LAN access for client connectivity using GUI only, such as WLAN creation, security settings, QoS profiles and advanced WLAN settings."
+    },
+    {
+     "level": 0,
+     "text": "5.10 Configure WLAN using WPA2 PSK using the GUI."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. Addresses in the book's lab were checked with Python ipaddress; DHCP option 43 values were computed by script. I found two lab inconsistencies and one wrong answer-key entry (see the Changes and Gaps Log). WLC commands below are AireOS commands copied from the book and were not run. Items tagged CHECK are illustrative."
+    }
+   ],
+   "words": 409
+  },
+  {
+   "title": "Where this chapter fits in the exam",
+   "content": [
+    {
+     "level": 0,
+     "text": "The book targets v1.0. Cisco's v2.0 outline (read directly from Cisco on 14 Oct 2026) reshapes wireless. The v1.1 column comes from the book's numbering plus a secondary summary; I could not open Cisco's v1.1 PDF. The text I received for v2.0 ended at item 5.6, so there may be items I did not see. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.1 Deployment models, CAPWAP | 1.1.e controllers (DNA Center and WLC) | 5.3 management approaches (device, cloud, controller-based); 1.5 wireless principles | High (concepts) |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.2 to 20.3 WLC setup, joining APs | Not named (the book says joining APs is not a CCNA topic) | 2.2.b AP switchport attributes (standalone and controller-based) | Medium (switchport and VLAN parts) |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.4 to 20.6 WLC ports and interfaces | 1.1.e; 2.9 components | No explicit objective found CHECK | Medium for v1.1; low for v2.0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.7 AP modes | 2.9 (components) | No explicit objective found CHECK | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.8 Management access: Telnet, SSH, HTTPS, RADIUS, TACACS+ | 2.9; 5.8 AAA | 4.1 local usernames and AAA client (TACACS+ and RADIUS) | High (RADIUS and TACACS+ ports) |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.9 WLANs: WPA2 PSK, QoS, client connect | 2.9 WLAN creation, security, QoS (GUI); 5.10 WPA2 PSK GUI | 1.5.c wireless security protocols; 1.6 troubleshoot wireless client connectivity (IP, reachability, wireless security parameters on Windows, macOS, Linux) | High for v1.1; medium for v2.0 |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "What v2.0 changes for you. In the v2.0 text I read, I found no objective for clicking through the WLC GUI to create a WLAN. What is there instead: wireless principles (including security protocols), troubleshooting wireless clients on Windows, macOS and Linux, AP switchport attributes, and controller- and cloud-based management. So for v2.0 spend more time on concepts, AP modes, AAA ports and client checks, and less on screen-by-screen WLC clicks. Still do the WLC work if you sit v1.1. UPDATED CHECK"
+    }
+   ],
+   "words": 340
+  },
+  {
+   "title": "Step 0: Pre-check (answer before reading)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Write your answer and a confidence tag: K = I know it, U = unsure, G = guessing. Answers are in Answer Key A at the end."
+    },
+    {
+     "level": 0,
+     "text": "- Which two UDP ports does CAPWAP use, and for what? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- What is the default AP mode? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- Which WLC interface is like an SVI on a switch? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- Which DNS name do APs look up to find a WLC? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- Which transport and port does TACACS+ use? ____ (K / U / G)"
+    }
+   ],
+   "words": 106
+  },
+  {
+   "title": "20.1 WLAN Deployment Models",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 596 to 601. Cisco's Unified Wireless Network (CUWN) was built to fix the problems of managing many APs one at a time: inconsistent security, interference, and channel planning. There are three models: stand-alone (autonomous), lightweight (controller-based) and cloud. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | Stand-alone | Lightweight | Cloud (Meraki) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| AP type | Autonomous AP running IOS | Lightweight AP (CAPWAP) | Meraki AP |"
+    },
+    {
+     "level": 0,
+     "text": "| Management | Each AP configured on its own | Central, from the WLC | Central, from the cloud dashboard |"
+    },
+    {
+     "level": 0,
+     "text": "| Control plane | On each AP | On the WLC | In the cloud |"
+    },
+    {
+     "level": 0,
+     "text": "| Data plane | On the AP | Tunnelled to the WLC (local mode) | Stays on premises |"
+    },
+    {
+     "level": 0,
+     "text": "| CLI on AP | Yes | Limited | No CLI |"
+    },
+    {
+     "level": 0,
+     "text": "| Best for | Very small or legacy sites | Enterprise campus | Small sites, branches without IT staff |"
+    },
+    {
+     "level": 2,
+     "text": "20.1.1 Stand-Alone Model"
+    },
+    {
+     "level": 0,
+     "text": "- Only autonomous APs work in this model. They run IOS with extra wireless features, and you configure each one separately. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A static site survey is a snapshot of the RF environment. RF changes constantly (a new neighbour, a new metal object), so the snapshot goes out of date. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Wireless Domain Services (WDS) and the older Wireless LAN Solution Engine (WLSE) added a little central control. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "WDS and WLSE are legacy. The book mentions them in passing; you do not need them. UPDATED CHECK"
+    },
+    {
+     "level": 2,
+     "text": "20.1.2 Lightweight Model"
+    },
+    {
+     "level": 0,
+     "text": "- Needs a WLC. The WLC pushes configuration to APs and tunes the radio environment in real time. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- AP and WLC talk through CAPWAP (Control And Provisioning of Wireless Access Points). Control uses UDP 5246 and data uses UDP 5247. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Client data in the tunnel carries RSSI and SNR information. Traffic goes to the WLC, so one central firewall can protect all wireless traffic. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- AP and WLC exchange certificates and authenticate each other. An AP that is not CAPWAP-capable is classified as a rogue. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The AP configuration lives only in RAM while connected, so removing the AP does not leak the configuration. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- CUWN has five elements: client devices, APs, network unification, network management, mobility services. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Controller types named: WLC (AireOS), Mobility Express (runs on some APs or switches), and the Catalyst 9800 (built on IOS XE). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "CAPWAP encryption, corrected. The book says CAPWAP carries control information \"over an encrypted tunnel\" and the summary says APs register through an \"encrypted CAPWAP tunnel\". Per Cisco documentation, DTLS encrypts the control channel by default, but the data channel is not encrypted by default. Data encryption (DTLS on UDP 5247) is optional and needs support on the AP and WLC. For the exam: control = UDP 5246 (encrypted), data = UDP 5247. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "The book also lists the Wireless Control System (WCS) and the Wireless Location Appliance. These are older management products that were replaced by newer tools (Cisco Prime Infrastructure, then DNA Center). Treat them as history. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Cisco has been moving customers from AireOS controllers to the Catalyst 9800. The book's WLC commands are AireOS and look very different from IOS XE. I did not verify AireOS end-of-sale dates. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Split MAC"
+    },
+    {
+     "level": 0,
+     "text": "The lightweight model splits 802.11 MAC functions between the AP and the WLC. The AP does the time-sensitive work; the WLC does the rest. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Handled by the lightweight AP (real time) | Handled by the WLC (not time sensitive) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Frame exchange handshake with the client | 802.11 authentication |"
+    },
+    {
+     "level": 0,
+     "text": "| Beacon transmission | 802.11 association and reassociation (mobility) |"
+    },
+    {
+     "level": 0,
+     "text": "| Buffering and sending frames for power-save clients | 802.11 to 802.3 frame translation and bridging |"
+    },
+    {
+     "level": 0,
+     "text": "| Probe responses; relaying probe requests to the WLC | Termination of all 802.11 frames at the controller |"
+    },
+    {
+     "level": 0,
+     "text": "| Reporting signal quality for every received frame |  |"
+    },
+    {
+     "level": 0,
+     "text": "| RF channel monitoring: noise, interference, rogue APs |  |"
+    },
+    {
+     "level": 0,
+     "text": "| Layer 2 wireless encryption and decryption (except VPN and IPsec clients) |  |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Beacons, probe responses and encryption = AP. Authentication, association and roaming = WLC. Even though the WLC handles authentication, the WPA2 or EAP encryption keys remain in the AP and the client. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "20.1.3 Cloud Model"
+    },
+    {
+     "level": 0,
+     "text": "- Cisco Meraki APs are managed entirely from the cloud. The AP only needs Internet reachability. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A control plane goes to the cloud for management and monitoring; the data plane stays on premises, so user traffic is not affected by the cloud. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Downsides: no CLI on the APs, little local management, and if the Internet link is down you cannot change settings. Fewer features than controller-based Cisco gear. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Good fit for companies or branches with no skilled IT staff. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The sentence introducing Meraki in the book is garbled (\"by using Cisco's APs - Donald. Meraki is entirely managed by the cloud\"). It is a typo; Meraki is Cisco's cloud-managed product line. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which deployment model keeps the data plane on premises and the control plane in the cloud?"
+    },
+    {
+     "level": 0,
+     "text": "A. Stand-alone"
+    },
+    {
+     "level": 0,
+     "text": "B. Lightweight"
+    },
+    {
+     "level": 0,
+     "text": "C. Cloud (Meraki)"
+    },
+    {
+     "level": 0,
+     "text": "D. Mesh"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - the Meraki design."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which CAPWAP port carries control traffic?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: UDP 5246 - data uses UDP 5247."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which function stays on the AP in split MAC: beacons or 802.11 authentication?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Beacons - authentication is done by the WLC."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Is CAPWAP client data encrypted by default?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No (the control channel is; data DTLS is optional) - the book's wording is too broad."
+    }
+   ],
+   "words": 958
+  },
+  {
+   "title": "20.2 Setting Up a Wireless LAN Controller (WLC)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 602 to 606. The book builds a lab: a Catalyst 3750X switch, a WLC connected with three trunk links and one service-port link, and several VLANs. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "20.2.1 Configuring the Switch"
+    },
+    {
+     "level": 0,
+     "text": "| VLAN | Name | SVI address | Purpose BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 311 | Wireless-Controller | 10.30.11.1/24 | WLC management interface |"
+    },
+    {
+     "level": 0,
+     "text": "| 316 | Wireless-ServicePort | 10.10.16.1/24 | Out-of-band service port |"
+    },
+    {
+     "level": 0,
+     "text": "| 101, 102, 103 | WLAN101 to WLAN103 | 10.30.101.1, 10.30.102.1, 10.30.103.1 (/24) | Client VLANs (dynamic interfaces) |"
+    },
+    {
+     "level": 0,
+     "text": "| 320 | Wireless-AP | 10.30.20.11/24 (see correction) | Access points |"
+    },
+    {
+     "level": 0,
+     "text": "Shortened from the book; VLAN 316 and the client VLANs are configured the same way BOOK"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# vlan 311"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-vlan)# name Wireless-Controller"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# interface vlan 311"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# ip address 10.30.11.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# interface range g1/0/37 - 39"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if-range)# switchport trunk encapsulation dot1q"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if-range)# switchport mode trunk"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if-range)# spanning-tree portfast trunk"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# interface g1/0/40"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport access vlan 316"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# spanning-tree portfast"
+    },
+    {
+     "level": 0,
+     "text": "- vlan 311 and interface vlan 311: create the VLAN and an SVI that acts as the default gateway for the WLC."
+    },
+    {
+     "level": 0,
+     "text": "- switchport mode trunk on G1/0/37 to 39: the WLC ports carry several VLANs, so they are trunks."
+    },
+    {
+     "level": 0,
+     "text": "- spanning-tree portfast trunk: the WLC does not run STP, so the book says portfast is safe here."
+    },
+    {
+     "level": 0,
+     "text": "- switchport mode access + access vlan 316 on G1/0/40: the service port must be an access port (it does not support VLAN tags)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Two lab problems in the book's addressing (checked by script). UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "1. VLAN 320 (the AP VLAN) gets SVI address 10.30.20.11, but the DHCP pool gives APs the default router 10.30.20.1 (and the manual method also uses 10.30.20.1 as the gateway). No device owns 10.30.20.1. The SVI should be 10.30.20.1."
+    },
+    {
+     "level": 0,
+     "text": "2. The pool excludes 10.30.20.1 to 10.30.20.100, so DHCP hands out from 10.30.20.101 (154 usable addresses). The book's static AP address in the manual method is 10.30.20.101, which is inside the DHCP range and could clash."
+    },
+    {
+     "level": 0,
+     "text": "3. The book never shows DHCP pools or ip helper-address for the client VLANs 101 to 103, so clients would not get addresses in a real copy of this lab. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "The book prints spanning portfast trunk in two places; the command is spanning-tree portfast trunk."
+    },
+    {
+     "level": 2,
+     "text": "20.2.2 WLC Initial Setup"
+    },
+    {
+     "level": 0,
+     "text": "Connect to the console and the setup wizard starts. Answers used in the book's lab BOOK :"
+    },
+    {
+     "level": 0,
+     "text": "| Wizard prompt | Book answer | Notes |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| System name | WLC01 | Up to 31 characters. |"
+    },
+    {
+     "level": 0,
+     "text": "| Admin user and password | admin / (hidden) | Username up to 24 characters; password 3 to 24. |"
+    },
+    {
+     "level": 0,
+     "text": "| Service interface | static 10.10.16.220 255.255.255.0 | Must be a different subnet from the management interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| Link aggregation (LAG) | no | Enabled later in the chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| Management interface | 10.30.11.40/24, gateway 10.30.11.1, VLAN 311, port 1, DHCP server 10.30.11.1 | VLAN 0 means untagged. |"
+    },
+    {
+     "level": 0,
+     "text": "| High availability | no | Out of scope. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual gateway IP | 192.0.2.1 | Used for client redirection. |"
+    },
+    {
+     "level": 0,
+     "text": "| Mobility/RF group name | Testlab | Mandatory; used when WLCs work together. |"
+    },
+    {
+     "level": 0,
+     "text": "| SSID | Temp-SSID | The wizard forces one; delete it later. |"
+    },
+    {
+     "level": 0,
+     "text": "| RADIUS server now? | no | Done manually later. |"
+    },
+    {
+     "level": 0,
+     "text": "| Country code | CA | Regulatory domain, different per country. |"
+    },
+    {
+     "level": 0,
+     "text": "| Radios and Auto-RF | 802.11a/b/g and Auto-RF enabled | Defaults. |"
+    },
+    {
+     "level": 0,
+     "text": "| NTP server | 10.30.11.10, poll 3600 s | The WLC uses certificates, so the clock must be right. |"
+    },
+    {
+     "level": 0,
+     "text": "| IPv6 | no |  |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Remember: the wizard needs a management IP, VLAN and port, a service port IP in a different subnet, a virtual IP and a country code. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book calls the lab radios 802.11a, b and g. Modern deployments also use 802.11n, ac and ax; the wizard questions depend on the WLC model and version. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which switchport type connects the WLC service port?"
+    },
+    {
+     "level": 0,
+     "text": "A. Trunk"
+    },
+    {
+     "level": 0,
+     "text": "B. Access"
+    },
+    {
+     "level": 0,
+     "text": "C. EtherChannel"
+    },
+    {
+     "level": 0,
+     "text": "D. Routed"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - access port; the service port does not support tags."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why must the WLC have a correct clock?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It uses certificates, and APs register with them - so the book configures NTP in the wizard."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which two settings must be in different subnets in the wizard?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Service port and management interface - per the book."
+    }
+   ],
+   "words": 764
+  },
+  {
+   "title": "20.3 Joining Access Points (APs)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 607 to 610. The book says joining APs is not a CCNA topic, but you need it to understand the lab. There are three ways for an AP to find a WLC. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Method | How the AP learns the WLC address | Scales? |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Manual | Log into the AP and type capwap ap controller ip address <WLC IP> | No: every AP by hand |"
+    },
+    {
+     "level": 0,
+     "text": "| DNS | DNS A record for CISCO-CAPWAP-CONTROLLER pointing to the WLC; DHCP supplies the domain name and DNS server | Yes |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP option 43 | A hex string in DHCP option 43 holds the WLC IP address(es) | Yes |"
+    },
+    {
+     "level": 2,
+     "text": "20.3.1 Manual Method"
+    },
+    {
+     "level": 0,
+     "text": "Book commands BOOK"
+    },
+    {
+     "level": 0,
+     "text": "AP7c69.f6ef.6d5f> enable"
+    },
+    {
+     "level": 0,
+     "text": "Password: Cisco"
+    },
+    {
+     "level": 0,
+     "text": "AP7c69.f6ef.6d5f# capwap ap controller ip address 10.30.11.40"
+    },
+    {
+     "level": 0,
+     "text": "AP7c69.f6ef.6d5f# capwap ap ip address 10.30.20.101 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "AP7c69.f6ef.6d5f# capwap ap ip default-gateway 10.30.20.1"
+    },
+    {
+     "level": 0,
+     "text": "- Default AP login is Cisco / Cisco and the enable password is Cisco. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- capwap ap controller ip address: tells the AP where the WLC is."
+    },
+    {
+     "level": 0,
+     "text": "- capwap ap ip address and capwap ap ip default-gateway: give the AP a static address when there is no DHCP."
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Those defaults are well known. Change them on real APs, and never leave an AP on default credentials. ADDED"
+    },
+    {
+     "level": 2,
+     "text": "20.3.2 DNS Method"
+    },
+    {
+     "level": 0,
+     "text": "Create a DNS A record named CISCO-CAPWAP-CONTROLLER that points to the WLC management (AP-manager) address. Make sure DHCP gives the APs the right domain name so the lookup finds that record. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "20.3.3 DHCP Method (option 43)"
+    },
+    {
+     "level": 0,
+     "text": "Option 43 value = F1 + length + the WLC IP address(es) in hex. The length is 4 x number of WLCs: 04 for one, 08 for two. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| WLC address | Hex of each octet | Option 43 value (computed by script) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 10.30.11.40 | 0A 1E 0B 28 | F104 0A1E 0B28 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10.30.11.40 and 10.30.12.40 | 0A1E0B28 and 0A1E0C28 | F108 0A1E0B28 0A1E0C28 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.123.100 (review question 18) | C0 A8 7B 64 | F104 C0A8 7B64 |"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration BOOK"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# ip dhcp pool Wireless-AP"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(dhcp-config)# network 10.30.20.0 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(dhcp-config)# default-router 10.30.20.1"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(dhcp-config)# domain-name testlab.com"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(dhcp-config)# dns-server 10.30.11.10 10.20.2.10"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(dhcp-config)# option 43 hex f104.0a1e.0b28"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# ip dhcp excluded-address 10.30.20.1 10.30.20.100"
+    },
+    {
+     "level": 0,
+     "text": "- option 43 hex f104.0a1e.0b28: hands the AP the WLC address 10.30.11.40."
+    },
+    {
+     "level": 0,
+     "text": "- domain-name and dns-server: needed for the DNS method too."
+    },
+    {
+     "level": 0,
+     "text": "- ip dhcp excluded-address: keeps .1 to .100 out of the pool."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Review question 18: the book's answer key is wrong. The key says B, F102, and its working shows only \"A87B64\" (the leading C0 is missing). By the book's own rule (04 for one WLC) the value is F104C0A87B64, which is option A. Computed by script. Option B (F102C0A87B64) is not valid for one WLC. UPDATED"
+    },
+    {
+     "level": 2,
+     "text": "20.3.4 Configuring the VLAN and 20.3.5 the Switchport"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration: first block = AP in local mode (access); second block = FlexConnect AP (trunk) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# vlan 320"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-vlan)# name Wireless-AP"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# interface g1/0/7"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# description LAB-AP01"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport access vlan 320"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# spanning-tree portfast"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# interface g1/0/1"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport trunk encapsulation dot1q"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport trunk native vlan 320"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# switchport mode trunk"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if)# spanning-tree portfast trunk"
+    },
+    {
+     "level": 0,
+     "text": "- A local-mode AP needs only an access port in the AP VLAN. The SSID VLANs are carried inside CAPWAP to the WLC, so the AP does not need to know them. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A FlexConnect AP switches traffic locally, so its port must be a trunk. Setting the native VLAN to the AP VLAN lets the AP get online without tagging. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Portfast on AP ports so STP does not delay the AP when it gets an address and registers. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Local mode = access port. FlexConnect = trunk (native VLAN = AP VLAN). This is also the v2.0 objective 2.2.b idea: AP switchport attributes for controller-based APs. BOOK ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which DNS name do APs look up to find the WLC?"
+    },
+    {
+     "level": 0,
+     "text": "A. CISCO-WLC-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "B. CISCO-CAPWAP-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "C. CISCO-AP-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "D. WLC-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - an A record for CISCO-CAPWAP-CONTROLLER."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What is the option 43 value for one WLC at 192.168.123.100?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: F104C0A87B64 - F1, 04 (4 x 1 WLC), then C0 A8 7B 64."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which switchport type does a FlexConnect AP need?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A trunk - traffic is switched locally, so VLAN tags are needed."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which DHCP option carries the WLC address to the AP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Option 43 - in hex."
+    }
+   ],
+   "words": 759
+  },
+  {
+   "title": "20.4 Wireless LAN Controllers (WLC)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 610 to 611. A WLC is the central device of the lightweight model. All configuration is done on the WLC and downloaded to the APs. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Autonomous AP: configured and maintained in isolation. Lightweight AP: gets its configuration from the WLC and acts like an antenna. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A WLC comes in many sizes. The book says WLCs can support from about 6 up to 300 APs (depends on model). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A WLAN is defined on the WLC like a profile, with a WLAN ID and an SSID. Security and QoS are set per WLAN. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Clients on different SSIDs on the same AP share the same RF space and channel but are in different logical networks. An SSID is mapped to a VLAN (through a WLC interface). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "WLAN limits. The book says \"up to 16 WLANs for each AP\" and also that a WLAN ID can be 1 to 512. Both can be true on AireOS: you can create more WLAN profiles than an AP radio can broadcast. Treat 16 as the number an AP can serve at once, and 512 as the highest WLAN ID. Limits vary by model and version. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "The book also says clients in different SSIDs are \"still in the same collision domain\". In the RF space they share the channel, so airtime is shared; that is the point of that sentence. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The author adds that the WLC command line (AireOS) is very different from IOS. The book shows both GUI and CLI \"although not exactly required by the CCNA\". BOOK"
+    }
+   ],
+   "words": 273
+  },
+  {
+   "title": "20.5 WLC Port Types",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 611 to 614. Ports are the physical connections; interfaces (next section) are the logical addresses bound to them. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Port | What it does BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Console port | CLI access for first setup and when the network is down. Defaults: 9600 baud, 8 data bits, 1 stop bit, no parity, no flow control. |"
+    },
+    {
+     "level": 0,
+     "text": "| Service port | Out-of-band management. Uses its own routing table and cannot use a default gateway, so you must add static routes to reach management networks. |"
+    },
+    {
+     "level": 0,
+     "text": "| Redundancy port | Connects to a second WLC for high availability. |"
+    },
+    {
+     "level": 0,
+     "text": "| Distribution system port | The normal data ports (Ethernet or SFP). \"Ports\" for short. |"
+    },
+    {
+     "level": 0,
+     "text": "Book CLI (AireOS) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config serial baudrate 115200"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config route add 192.168.124.0 255.255.255.0 10.10.16.1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > show route summary"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > show port summary"
+    },
+    {
+     "level": 0,
+     "text": "- config serial baudrate 115200: change the console speed."
+    },
+    {
+     "level": 0,
+     "text": "- config route add <net> <mask> <gateway>: add a static route for the service port."
+    },
+    {
+     "level": 0,
+     "text": "- show port summary: ports 1 to 8, the redundancy port (RP) and the service port (SP), with link status."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book writes \"out of baud\" several times. It means out-of-band management. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Review question 2: using the service port needs (1) a switch connection, (2) an access switchport and (3) static routes on the WLC. The service port is not on the management subnet and is not a trunk. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.5"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What are the default console settings?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 9600 baud, 8 data bits, 1 stop bit, no parity, no flow control - 9600 8N1."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why does the service port need static routes?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It has its own routing table and cannot use a default gateway - per the book."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What does the book mean by a \"distribution system port\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A normal data port (Ethernet or SFP) - the book calls them just ports."
+    }
+   ],
+   "words": 329
+  },
+  {
+   "title": "20.6 WLC Interface Types",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 614 to 629. Interfaces are the logical addresses on the WLC. View them under Controller > Interfaces, or with show interface summary. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Interface | Role BOOK | Key points |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Management | Normal management traffic: web, SSH, RADIUS, SNMP, NTP, syslog, WLC-to-WLC. Terminates CAPWAP tunnels. | Has the Dynamic AP Manager role by default (lets APs register). Needs an IP, a VLAN tag if trunked, and a DHCP server or relay. |"
+    },
+    {
+     "level": 0,
+     "text": "| Service port | Bound to the service port, out-of-band management. | IPv4/IPv6 or DHCP. No VLAN tagging, so the switch port is untagged. |"
+    },
+    {
+     "level": 0,
+     "text": "| Redundancy management | Management address of the standby WLC in a high-availability pair. | Same subnet as the management interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| Virtual | Client-facing address used for DHCP relay, web authentication redirect and client mobility. | Use 192.0.2.1 (old habit was 1.1.1.1, which Cloudflare DNS now uses). |"
+    },
+    {
+     "level": 0,
+     "text": "| Dynamic | Connects a VLAN to a WLAN; like an SVI on a switch. | 16 to 4096 depending on model. Put the gateway on the switch. |"
+    },
+    {
+     "level": 0,
+     "text": "| Interface group | A group of dynamic (and optionally management) interfaces. | Add IP space without enlarging a subnet. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says the virtual interface address is \"the new and preferred 192.0.2.1\". That address is in the 192.0.2.0/24 block reserved for documentation examples (TEST-NET-1), so it will not collide with real Internet addresses. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "CLI for interfaces (AireOS)"
+    },
+    {
+     "level": 0,
+     "text": "Book commands, shortened BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > show interface summary"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface address management 10.30.11.40 255.255.255.0 10.30.11.1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface address service-port 10.10.16.220 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface address virtual 192.0.2.1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface create WLAN101 101"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface address dynamic-interface wlan101 10.30.101.220 255.255.255.0 10.30.101.1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface group create int-group"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config interface group interface add wlan-int-group wlan101"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > show interface group summary"
+    },
+    {
+     "level": 0,
+     "text": "- config interface address management ...: sets IP, mask and gateway of the management interface."
+    },
+    {
+     "level": 0,
+     "text": "- config interface create WLAN101 101: creates a dynamic interface named WLAN101 in VLAN 101."
+    },
+    {
+     "level": 0,
+     "text": "- config interface address dynamic-interface wlan101 ...: gives it an IP, mask and gateway."
+    },
+    {
+     "level": 0,
+     "text": "- config interface group ...: creates a group and adds interfaces to it."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Dynamic interface = SVI-like (review question 17). Virtual interface = redirect clients (question 13). Management = terminates CAPWAP and has the AP-manager role. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "The WLC does not run dynamic routing, and static routes apply only to the service port, so the book puts the gateway IP for client VLANs on the switch. Clients are mapped: SSID, then WLAN, then interface (or interface group), then VLAN. BOOK ADDED"
+    },
+    {
+     "level": 2,
+     "text": "Interface groups"
+    },
+    {
+     "level": 0,
+     "text": "If a WLAN is running out of addresses, do not change the subnet mask. Create more dynamic interfaces and put them in an interface group; clients are spread across the interfaces. The management interface can be in the group too. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Review question 6: DHCP addresses are running out on a WLAN. Best answer: create another dynamic interface and use an interface group. Not a bigger mask, not a second WLAN, not shorter session timeouts. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "Link Aggregation Group (LAG)"
+    },
+    {
+     "level": 0,
+     "text": "- On a WLC, all distribution system ports join the LAG. You cannot pick only some. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The (AireOS) WLC supports neither LACP nor PAgP, so the switch uses channel-group <n> mode on. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The WLC must be saved and rebooted for LAG to take effect, so do not do it during the working day. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Enabling LAG deletes dynamic AP-manager and untagged interfaces and moves WLANs to the management interface. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book commands, shortened BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config lag enable"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > save config"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > reset system"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config)# interface range g1/0/37 - 39"
+    },
+    {
+     "level": 0,
+     "text": "C3750X-SW01(config-if-range)# channel-group 11 mode on"
+    },
+    {
+     "level": 0,
+     "text": "- config lag enable: turns on LAG (warns that a reboot is required)."
+    },
+    {
+     "level": 0,
+     "text": "- save config and reset system: save and reboot."
+    },
+    {
+     "level": 0,
+     "text": "- channel-group 11 mode on: static EtherChannel on the switch (no negotiation protocol)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The \"mode on, no LACP\" rule belongs to the AireOS controllers the book describes. Newer Catalyst 9800 controllers use IOS XE and are expected to support LACP or PAgP. I did not verify this. For the book's questions (7), use mode on. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "A LAG on the WLC means the switch ports must be configured as one port channel; the earlier trunk configuration moves under the port-channel interface. ADDED CHECK"
+    },
+    {
+     "level": 2,
+     "text": "Configuring the AP on the WLC"
+    },
+    {
+     "level": 0,
+     "text": "- In the GUI go to Wireless > All APs, then select the AP. On the General page you set the AP name and can switch the AP to a static IP. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- You can set the DNS server and domain after applying the IP change. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- On the High Availability tab you list up to three WLCs (primary, secondary, tertiary). The AP tries the next one if the primary is lost. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.6"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which WLC interface is most like an SVI on a switch?"
+    },
+    {
+     "level": 0,
+     "text": "A. Management"
+    },
+    {
+     "level": 0,
+     "text": "B. Virtual"
+    },
+    {
+     "level": 0,
+     "text": "C. Dynamic"
+    },
+    {
+     "level": 0,
+     "text": "D. Service port"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - a dynamic interface terminates a VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which interface terminates CAPWAP tunnels?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The management interface - it has the AP-manager role by default."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Name three requirements of enabling LAG on the (AireOS) WLC."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Reboot; all distribution system ports in the LAG; switch uses channel-group mode on - no LACP or PAgP."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What is the virtual interface for?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Redirecting clients (web authentication), DHCP relay and mobility - recommended address 192.0.2.1."
+    },
+    {
+     "level": 0,
+     "text": "Q5. How many WLCs can an AP list on its High Availability tab?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Three - primary, secondary and tertiary."
+    }
+   ],
+   "words": 956
+  },
+  {
+   "title": "20.7 AP Modes",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 629 to 633. The book says nine AP modes exist, depending on AP model, and that Local is the most important for the CCNA. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Mode | Serves client traffic? | What it does BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Local (default) | Yes | All client traffic goes to the WLC through CAPWAP. Between transmissions the AP scans other channels for interference, noise, rogues and IDS events. Can run a wIPS submode. |"
+    },
+    {
+     "level": 0,
+     "text": "| Monitor | No | Dedicated sensor: checks noise, interference, rogues, and supports location services. Use if you have spare APs or are troubleshooting. |"
+    },
+    {
+     "level": 0,
+     "text": "| FlexConnect | Yes | Switches traffic locally instead of sending it to the WLC. Good for sites with their own Internet and firewall. Needs a trunk port. |"
+    },
+    {
+     "level": 0,
+     "text": "| Sniffer | No | Captures packets on a channel you choose and sends them to a Wireshark host. |"
+    },
+    {
+     "level": 0,
+     "text": "| Rogue Detector | No | Looks for APs that are not joined to the WLC (for example a cheap router brought in by staff). The WLC can notify or contain them. |"
+    },
+    {
+     "level": 0,
+     "text": "| SE-Connect | No | Connects the AP to a spectrum analyser to view the RF spectrum. |"
+    },
+    {
+     "level": 0,
+     "text": "| Sensor | No | Helps DNA Center Assurance with accuracy. Newer APs only. |"
+    },
+    {
+     "level": 0,
+     "text": "| Bridge (mesh) | Via mesh | AP links to another AP wirelessly. The top AP is the Root Access Point (RAP); traffic reaches the WLC through CAPWAP. |"
+    },
+    {
+     "level": 0,
+     "text": "| Flex+Bridge | Via mesh | FlexConnect on a mesh: traffic is locally switched at the RAP. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book names Cisco Spectrum Expert and says it is dated (last updated in 2012) and recommends MetaGeek Chanalyzer. Tools change; the point is that SE-Connect lets a spectrum analyser use the AP's radio. Also, containing rogue APs can be illegal in some places; check with legal before turning it on. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Which modes serve wireless clients? Local and FlexConnect (the book's answer to review question 20, from the options given). Default mode: Local. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Memory hook: Local = Lean on the WLC. FlexConnect = Flex at the branch (switch locally). Monitor, Sniffer, Rogue, SE-Connect, Sensor = the AP watches; it does not serve clients. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.7"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the default AP mode?"
+    },
+    {
+     "level": 0,
+     "text": "A. Local"
+    },
+    {
+     "level": 0,
+     "text": "B. Monitor"
+    },
+    {
+     "level": 0,
+     "text": "C. FlexConnect"
+    },
+    {
+     "level": 0,
+     "text": "D. Sniffer"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - Local."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which AP mode sends a packet capture to Wireshark?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Sniffer - it does not serve clients."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which mode suits a branch with its own Internet link and firewall?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FlexConnect - traffic is switched locally."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which mode detects APs that are not joined to your WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Rogue Detector - it can also contain them, subject to local law."
+    }
+   ],
+   "words": 468
+  },
+  {
+   "title": "20.8 AP and WLC Management Access Connections",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 633 to 645. Eight methods are covered. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Method | Default on WLC | Key points BOOK | AireOS CLI |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| CDP | Enabled (WLC and APs) | Not really management, but shows what the WLC and APs connect to on switches. show cdp neighbors works the same as on IOS. | config cdp enable |"
+    },
+    {
+     "level": 0,
+     "text": "| Telnet | Disabled | Plain text; keep off. Enable under Management > Telnet-SSH. | config network telnet enable |"
+    },
+    {
+     "level": 0,
+     "text": "| SSH | Enabled | Secure CLI. Think before disabling it if you are connected by SSH. | config network ssh enable |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTP | Disabled | Plain text; lab only. The CLI calls it webmode. | config network webmode enable |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTPS | Enabled (the main GUI method) | Can redirect HTTP to HTTPS. The CLI calls it secureweb. | config network secureweb enable |"
+    },
+    {
+     "level": 0,
+     "text": "| Console | Enabled | First setup and troubleshooting. | n/a |"
+    },
+    {
+     "level": 0,
+     "text": "| RADIUS | Not configured | 802.1X wireless users; up to 32 servers on the WLC; up to 6 per SSID. | config radius auth add ... |"
+    },
+    {
+     "level": 0,
+     "text": "| TACACS+ | Not configured | Management users only (not WLAN clients). Up to 3 servers. Authentication and authorization configured separately. | config tacacs auth add ... |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Telnet and HTTP are off by default; SSH and HTTPS are on by default. Review question 16 answer: Telnet is not enabled by default. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "RADIUS on the WLC"
+    },
+    {
+     "level": 0,
+     "text": "- Used when an SSID uses 802.1X. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Fields: Server Index (priority, unique), Server Address, Shared Secret Format (ASCII or hex), Shared Secret, Port Number, Support for CoA (Change of Authorization, optional). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- UDP 1812 for authentication on modern servers; UDP 1645 on legacy ones. UDP 1813 for accounting; UDP 1646 on legacy ones. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- You configure authentication and accounting servers. The book says Cisco does not make you configure a separate authorization section, because it follows authentication. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book commands BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config radius auth add 1 10.20.11.32 1812 ascii meowcatAAA"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config radius auth add 2 10.20.12.32 1812 ascii meowcatAAA"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config radius acct add 1 10.20.11.32 1813 ascii meowcatAAA"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config radius acct add 2 10.20.12.32 1813 ascii meowcatAAA"
+    },
+    {
+     "level": 0,
+     "text": "- config radius auth add <index> <IP> <port> ascii <secret>: adds an authentication server."
+    },
+    {
+     "level": 0,
+     "text": "- config radius acct add ...: the same for accounting. The book's lab secret is only an example, so use a strong one in real life."
+    },
+    {
+     "level": 2,
+     "text": "TACACS+ on the WLC"
+    },
+    {
+     "level": 0,
+     "text": "- TACACS+ suits device administration; the WLC supports it for management users but not in WLANs. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Uses TCP 49 for authentication, authorization and accounting. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- To use it for WLC logins: Security > Priority Order > Management User, move TACACS+ to the used list and set the order. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book commands BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config tacacs auth add 1 10.20.11.32 49 ascii meowcatAAA"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config tacacs acct add 1 10.20.11.32 49 ascii meowcatAAA"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "If you move LOCAL down the management-user order and the TACACS+ or RADIUS server is misconfigured, you can lock yourself out of the WLC. Keep LOCAL first or test before moving it. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | RADIUS | TACACS+ |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Transport and ports | UDP 1812 / 1813 (legacy 1645 / 1646) | TCP 49 |"
+    },
+    {
+     "level": 0,
+     "text": "| Used on WLC for | WLAN clients (802.1X) and management | Management users only |"
+    },
+    {
+     "level": 0,
+     "text": "| Servers on WLC | Up to 32; 6 per SSID | Up to 3 |"
+    },
+    {
+     "level": 0,
+     "text": "| Chapter 13 link | Combines authentication and authorization | Separates the three AAA functions |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The ports and the \"TACACS+ = management\" rule match Chapter 13 and v2.0 objective 4.1. The book's review question 10 (accounting port) answer is TCP 49 because TACACS+ uses one TCP port for everything. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.8"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which of Telnet and SSH is enabled by default on a WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH - Telnet is off."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which port does RADIUS use for authentication on modern servers?"
+    },
+    {
+     "level": 0,
+     "text": "A. UDP 1645"
+    },
+    {
+     "level": 0,
+     "text": "B. TCP 1645"
+    },
+    {
+     "level": 0,
+     "text": "C. UDP 1812"
+    },
+    {
+     "level": 0,
+     "text": "D. TCP 1812"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - legacy is UDP 1645."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which port does TACACS+ use for accounting?"
+    },
+    {
+     "level": 0,
+     "text": "A. UDP 49"
+    },
+    {
+     "level": 0,
+     "text": "B. UDP 1813"
+    },
+    {
+     "level": 0,
+     "text": "C. TCP 1813"
+    },
+    {
+     "level": 0,
+     "text": "D. TCP 49"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - TCP 49 for all functions."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Where can the WLC use TACACS+?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: For management users only, not for WLAN clients - per review question 9."
+    },
+    {
+     "level": 0,
+     "text": "Q5. What is the CLI keyword for HTTPS on the WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: secureweb - HTTP is webmode."
+    }
+   ],
+   "words": 775
+  },
+  {
+   "title": "20.9 Configuring WLANs",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Tracker note. The book has a \"Configuring WLANs\" heading on p. 646, but the sections I read after it (WLAN creation, general settings, Layer 2 security, AAA servers, QoS, policy mapping, advanced settings, connecting the client) were not all listed in the table of contents I read. I numbered them 20.9.1 to 20.9.8 so each gets its own row. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Book pages 646 to 654. This is the part that the v1.0 and v1.1 GUI objectives (2.9 and 5.10) point at. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "20.9.1 WLAN creation"
+    },
+    {
+     "level": 0,
+     "text": "- Go to the WLANs page, choose Create New and click Go."
+    },
+    {
+     "level": 0,
+     "text": "- Type: WLAN (the only option at CCNA level)."
+    },
+    {
+     "level": 0,
+     "text": "- Profile Name: a friendly name (up to 32 characters)."
+    },
+    {
+     "level": 0,
+     "text": "- SSID: the network name (up to 32 characters); usually the same as the profile."
+    },
+    {
+     "level": 0,
+     "text": "- ID: 1 to 512, unique; normally left at the default."
+    },
+    {
+     "level": 0,
+     "text": "Book CLI BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan create 1 test-wlan-wpa test-wlan-wpa"
+    },
+    {
+     "level": 2,
+     "text": "20.9.2 General settings"
+    },
+    {
+     "level": 0,
+     "text": "| Setting | Meaning BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Status | Enables or disables the WLAN (like shutdown on a router). |"
+    },
+    {
+     "level": 0,
+     "text": "| Interface / Interface Group | Binds the WLAN to a WLC interface or group, which decides the client VLAN and IP range. |"
+    },
+    {
+     "level": 0,
+     "text": "| Broadcast SSID | Whether the SSID is visible. Usually broadcast; 802.1X SSIDs for managed laptops are sometimes hidden. |"
+    },
+    {
+     "level": 0,
+     "text": "Book CLI BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan broadcast-ssid enable 1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan interface 1 wlan-int-group"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan enable 1"
+    },
+    {
+     "level": 0,
+     "text": "- In these commands the keyword for the feature comes first and the WLAN ID comes after."
+    },
+    {
+     "level": 0,
+     "text": "- config wlan interface 1 wlan-int-group: binds WLAN 1 to an interface group."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Hiding the SSID is not real security. The name still appears in probe and association frames, and a sniffer sees it. Treat it as cosmetic. ADDED"
+    },
+    {
+     "level": 2,
+     "text": "20.9.3 Security settings, Layer 2 (WPA2 PSK)"
+    },
+    {
+     "level": 0,
+     "text": "- A new WLAN defaults to WPA2 at Layer 2, so you rarely change the Layer 2 security type. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Under Authentication Key Management choose either 802.1X (needs a RADIUS server such as ISE) or PSK. For PSK, 802.1X must be turned off. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- PSK Format: ASCII or hex. The ASCII PSK must be at least 8 characters. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book CLI BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan security wpa akm psk enable 1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan security wpa akm psk set-key ascii meowcatPSK 1"
+    },
+    {
+     "level": 0,
+     "text": "- config wlan security wpa akm psk enable 1: turn on PSK key management for WLAN 1."
+    },
+    {
+     "level": 0,
+     "text": "- config wlan security wpa akm psk set-key ascii <passphrase> 1: set the passphrase for WLAN 1."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "PSK length details. A WPA2 passphrase is normally 8 to 63 ASCII characters, or a 64-digit hex key. Use a long passphrase; a short one can be guessed offline from a captured handshake. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WPA3. The book teaches WPA2 only. Newer deployments use WPA3 (SAE replaces the PSK exchange). Chapter 19 and v2.0 objective 1.5.c cover security protocols; check your wireless chapter for WPA, WPA2 and WPA3 differences. ADDED CHECK"
+    },
+    {
+     "level": 2,
+     "text": "20.9.4 Security settings, AAA servers (WPA2-Enterprise)"
+    },
+    {
+     "level": 0,
+     "text": "- For WPA2-Enterprise the WLAN needs RADIUS servers: choose authentication and accounting servers on the AAA Servers sub-tab and put them in order (server 1 before 2). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A WLAN supports up to 6 RADIUS servers. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- By default the WLC reaches the server through the management interface unless you tick RADIUS Server Override Interface. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- A PSK WLAN needs no AAA configuration. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book CLI (WLAN ID first, then server index) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan radius_server auth add 1 1"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan radius_server auth add 1 2"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > config wlan radius_server acct add 1 1"
+    },
+    {
+     "level": 2,
+     "text": "20.9.5 QoS profiles"
+    },
+    {
+     "level": 0,
+     "text": "| Profile | Also called | Use BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Platinum | Voice queue | Highest quality, voice over wireless |"
+    },
+    {
+     "level": 0,
+     "text": "| Gold | Video queue | High-bandwidth video |"
+    },
+    {
+     "level": 0,
+     "text": "| Silver | Best-effort queue (default) | Normal client traffic; effectively no QoS |"
+    },
+    {
+     "level": 0,
+     "text": "| Bronze | Background queue | Lowest bandwidth: guests and unimportant traffic |"
+    },
+    {
+     "level": 0,
+     "text": "- The QoS tab can also adjust bandwidth, WMM, Call Admission Control and Lync support. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- QoS policies can be created manually or with DNA Center (EasyQoS). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Order of quality: Platinum (voice) > Gold (video) > Silver (best effort, default) > Bronze (background). Memory hook: Put Good Service Before bulk. ADDED"
+    },
+    {
+     "level": 2,
+     "text": "20.9.6 Policy mapping"
+    },
+    {
+     "level": 0,
+     "text": "The book skips this tab. It lets the WLC treat different endpoint types (for example an iPad versus an Android phone) differently. Not a CCNA topic. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "20.9.7 Advanced WLAN settings"
+    },
+    {
+     "level": 0,
+     "text": "| Setting | What it does BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Allow AAA Override | The RADIUS server can tell the WLC the VLAN, QoS and ACLs to apply to a session. |"
+    },
+    {
+     "level": 0,
+     "text": "| Enable Session Timeout | Time before a client must re-authenticate. Off by default for PSK; 1800 s (30 min) for other Layer 2 security types. |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP Addr. Assignment | Required: clients must get an address by DHCP (static IPs are blocked). |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP / HTTP profiling | WLC guesses the client device type by looking at DHCP and HTTP packets. |"
+    },
+    {
+     "level": 2,
+     "text": "20.9.8 Connecting the client and verifying"
+    },
+    {
+     "level": 0,
+     "text": "- A WPA2-PSK client just enters the pre-shared key. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- With an interface group, the client address comes from one of the dynamic interfaces in the group (the book's client got an address from WLAN102). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- On the WLC, Monitor > Clients shows the session, including the CAPWAP tunnel and state. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book output, shortened BOOK"
+    },
+    {
+     "level": 0,
+     "text": "(WLC01) > show client detail a4:83:e7:c4:e8:b8"
+    },
+    {
+     "level": 0,
+     "text": "Client MAC Address............. a4:83:e7:c4:e8:b8"
+    },
+    {
+     "level": 0,
+     "text": "AP Name........................ LAB-AP02"
+    },
+    {
+     "level": 0,
+     "text": "Client State................... Associated"
+    },
+    {
+     "level": 0,
+     "text": "Wireless LAN Network Name (SSID) Test-SSID-WPA"
+    },
+    {
+     "level": 0,
+     "text": "Channel........................ 52"
+    },
+    {
+     "level": 0,
+     "text": "IP Address..................... 10.30.102.2"
+    },
+    {
+     "level": 0,
+     "text": "Gateway Address................ 10.30.102.1"
+    },
+    {
+     "level": 0,
+     "text": "- Client State: Associated means the client joined the AP."
+    },
+    {
+     "level": 0,
+     "text": "- AP Name and Channel show which AP and channel serve the client."
+    },
+    {
+     "level": 0,
+     "text": "- IP Address shows it received an address from the right VLAN (here the WLAN102 range, because of the interface group)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book's chapter summary and Exam Essentials describe endpoints, servers, and checking an IP address on Windows, Mac and Linux. None of that is taught in this chapter (it looks like left-over text from another version). Review questions 1 and 15 ask about it, so a client-side table is added below. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Verifying a client's IP address (not in the chapter)"
+    },
+    {
+     "level": 0,
+     "text": "| OS | Command | Note |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Windows (CMD) | ipconfig (or ipconfig /all) | Get-NetIPAddress is PowerShell, not CMD (review answer 1). |"
+    },
+    {
+     "level": 0,
+     "text": "| macOS | ifconfig | Review answer 15. Wi-Fi is usually en0. |"
+    },
+    {
+     "level": 0,
+     "text": "| Linux | ip addr (modern) or ifconfig (older net-tools) | ifconfig may not be installed by default. |"
+    },
+    {
+     "level": 0,
+     "text": "| Windows wireless status | netsh wlan show interfaces | Shows SSID, signal and authentication. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "Relevance: v2.0 objective 1.6 expects you to troubleshoot wired and wireless clients (IP configuration, reachability, wireless security parameters) on Windows, macOS and Linux. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 20.9"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the default QoS queue for a new WLAN?"
+    },
+    {
+     "level": 0,
+     "text": "A. Gold"
+    },
+    {
+     "level": 0,
+     "text": "B. Platinum"
+    },
+    {
+     "level": 0,
+     "text": "C. Bronze"
+    },
+    {
+     "level": 0,
+     "text": "D. Silver"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - Silver (best effort)."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which QoS queue is for video?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Gold - Platinum is voice."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What must be turned off on the WLAN for PSK to work?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 802.1X key management - choose either 802.1X or PSK."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What is the minimum ASCII PSK length in the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 8 characters - WPA2 passphrases are 8 to 63 characters."
+    },
+    {
+     "level": 0,
+     "text": "Q5. Which WLAN ID range does the book give?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1 to 512 - unique per WLAN."
+    }
+   ],
+   "words": 1289
+  },
+  {
+   "title": "Troubleshooting",
+   "content": [
+    {
+     "level": 0,
+     "text": "Symptom, likely cause, first check. Marked CHECK because not tested on hardware."
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| AP never joins the WLC | No route or no DHCP address; AP cannot find the WLC (no DNS record, no option 43, no manual entry); UDP 5246/5247 blocked; WLC clock wrong so certificates fail | AP IP and gateway; ping the WLC; DNS name CISCO-CAPWAP-CONTROLLER; option 43 hex; NTP on the WLC |"
+    },
+    {
+     "level": 0,
+     "text": "| AP gets an address but wrong gateway | SVI address does not match the DHCP default-router (the book's VLAN 320 problem) | show ip interface brief and show run \\| section dhcp |"
+    },
+    {
+     "level": 0,
+     "text": "| Cannot reach the WLC service port | Port not access, wrong VLAN, no static route to your management network | Switchport mode and VLAN; show route summary on the WLC |"
+    },
+    {
+     "level": 0,
+     "text": "| WLC management interface unreachable | VLAN tag mismatch with the trunk, wrong gateway, DHCP/helper missing | Trunk allows VLAN 311; show interface summary |"
+    },
+    {
+     "level": 0,
+     "text": "| Clients associate but get no IP address | No DHCP pool or helper on the client VLAN; interface group exhausted; DHCP address assignment settings | SVI helper or pool; show client detail |"
+    },
+    {
+     "level": 0,
+     "text": "| WLAN visible but PSK fails | Wrong passphrase; 802.1X still enabled; wrong security type on the client | WLAN > Security tab; re-enter the key |"
+    },
+    {
+     "level": 0,
+     "text": "| Intermittent connection failures, others fine | Client VLAN running out of IPs | Add dynamic interfaces and use an interface group |"
+    },
+    {
+     "level": 0,
+     "text": "| Cannot log into WLC with TACACS+ or RADIUS | Server unreachable, wrong key, order put LOCAL last | Server reachability; secret; priority order; console with local user |"
+    },
+    {
+     "level": 0,
+     "text": "| Cannot reach the WLC GUI by HTTP | HTTP is disabled by default | Use HTTPS (config network secureweb enable) |"
+    },
+    {
+     "level": 0,
+     "text": "| Lost network after enabling LAG | Switch ports not in a matching port channel; WLC not rebooted; untagged interfaces removed | channel-group n mode on; reboot; interface summary |"
+    },
+    {
+     "level": 0,
+     "text": "| Roaming clients drop traffic or voice is choppy | Wrong QoS profile (best effort for voice) | WLAN QoS tab: platinum for voice, gold for video |"
+    }
+   ],
+   "words": 367
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Deployment models | Stand-alone (autonomous, manual), lightweight (WLC, CAPWAP), cloud (Meraki; no CLI; control plane in cloud, data local). |"
+    },
+    {
+     "level": 0,
+     "text": "| CAPWAP | UDP 5246 control, UDP 5247 data. Control encrypted by DTLS; data encryption is optional (book overstates). AP and WLC authenticate with certificates. |"
+    },
+    {
+     "level": 0,
+     "text": "| Split MAC | AP: beacons, probe responses, frame handshake, encryption. WLC: authentication, association, roaming, 802.11 to 802.3. |"
+    },
+    {
+     "level": 0,
+     "text": "| WLC setup | Console wizard: management IP + VLAN + port, service port in different subnet, virtual IP 192.0.2.1, country code, NTP. |"
+    },
+    {
+     "level": 0,
+     "text": "| AP join | Manual (capwap ap controller ip address), DNS A record CISCO-CAPWAP-CONTROLLER, DHCP option 43 = F1 + 4n + hex IPs. |"
+    },
+    {
+     "level": 0,
+     "text": "| AP switchport | Local mode = access in AP VLAN. FlexConnect = trunk, native VLAN = AP VLAN. Portfast on both. |"
+    },
+    {
+     "level": 0,
+     "text": "| WLC ports | Console (9600 8N1), service (out of band, static routes, no gateway), redundancy, distribution system. |"
+    },
+    {
+     "level": 0,
+     "text": "| WLC interfaces | Management (terminates CAPWAP, AP-manager), service port, redundancy mgmt, virtual (192.0.2.1, redirects), dynamic (SVI-like), interface group (more addresses). |"
+    },
+    {
+     "level": 0,
+     "text": "| LAG | All ports, reboot required, AireOS has no LACP/PAgP, so channel-group n mode on. |"
+    },
+    {
+     "level": 0,
+     "text": "| AP modes | Local (default, serves clients), FlexConnect (serves, local switching), Monitor, Sniffer, Rogue Detector, SE-Connect, Sensor, Bridge (mesh, RAP), Flex+Bridge. |"
+    },
+    {
+     "level": 0,
+     "text": "| Management | Telnet and HTTP off; SSH and HTTPS on. RADIUS UDP 1812/1813 (legacy 1645/1646); TACACS+ TCP 49, management only. |"
+    },
+    {
+     "level": 0,
+     "text": "| WLAN | ID 1 to 512. WPA2 default. PSK needs 802.1X off, 8 or more characters. QoS: Platinum voice, Gold video, Silver best effort (default), Bronze background. |"
+    },
+    {
+     "level": 0,
+     "text": "| Book errors to avoid | Review answer 18 should be F104C0A87B64. CAPWAP data is not encrypted by default. VLAN 320 SVI should be .1 in the book's lab. |"
+    }
+   ],
+   "words": 310
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Allowed statuses: Not assessed, Know, Partially understand, Need to learn, Needs revision. Know needs unaided correct answers or a finished lab. Everything starts as Not assessed."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.1 WLAN Deployment Models |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.1.1 Stand-Alone Model |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.1.2 Lightweight Model (CAPWAP, split MAC) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.1.3 Cloud Model |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.2 Setting Up a WLC |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.2.1 Configuring the Switch |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.2.2 WLC Initial Setup |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.3 Joining Access Points |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.3.1 Manual Method |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.3.2 DNS Method |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.3.3 DHCP Method (option 43) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.3.4 Configuring the VLAN and Switchport |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.4 Wireless LAN Controllers (WLC) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.5 WLC Port Types |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.6 WLC Interface Types (incl. LAG, interface groups) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.7 AP Modes |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.8 AP and WLC Management Access (CDP, Telnet, SSH, HTTP, HTTPS, Console) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.8.1 RADIUS on the WLC |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.8.2 TACACS+ on the WLC |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.9 Configuring WLANs (creation, general, WPA2-PSK, AAA, QoS, advanced) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 20.9.8 Connecting the Client |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Tracker status. I could not update Notion in this chat. The Chapter 20 rows still need creating, with Doc status Built and Exam relevance Mixed (see doc). Use the row names above. CHECK"
+    }
+   ],
+   "words": 360
+  },
+  {
+   "title": "Answer Key A (Pre-check)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- UDP 5246 for CAPWAP control and UDP 5247 for CAPWAP data."
+    },
+    {
+     "level": 0,
+     "text": "- Local."
+    },
+    {
+     "level": 0,
+     "text": "- The dynamic interface (it terminates a VLAN like an SVI)."
+    },
+    {
+     "level": 0,
+     "text": "- CISCO-CAPWAP-CONTROLLER (an A record)."
+    },
+    {
+     "level": 0,
+     "text": "- TCP port 49."
+    },
+    {
+     "level": 0,
+     "text": "Tag your confidence honestly. A right answer tagged G is a gap to revise, not a pass."
+    }
+   ],
+   "words": 51
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Also do the book's own 20 review questions (book pages 657 to 660, answers on pages 805 to 806). Question 18's key is wrong (the correct choice is A, F104C0A87B64; the key says B). Question 8's key explains that CAPWAP is not supported on autonomous APs, which is right. The questions below are original. BOOK"
+    }
+   ],
+   "words": 59
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Objectives use v1.0 numbering (p. 595) | Mapped to v1.1 and v2.0 UPDATED | v2.0: Cisco PDF read directly (text ended at 5.6). v1.1: book numbering plus a secondary page CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | CAPWAP \"encrypted tunnel\" and \"encrypted CAPWAP tunnel\" (pp. 598, 656) | Control channel DTLS by default; data encryption optional UPDATED | Cisco documentation page and Cisco Community article |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Review answer 18 key says F102 (p. 806) | Correct value F104C0A87B64, option A UPDATED | Calculated by script; book's own 04 rule |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | VLAN 320 SVI .11 but DHCP default-router .1 (pp. 609 to 610) | Flagged; use .1 UPDATED | Checked by script |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Static AP address 10.30.20.101 inside the DHCP pool (p. 607) | Flagged UPDATED | Checked by script (pool starts at .101) |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | No DHCP pool or helper for client VLANs 101 to 103 (p. 603) | Added a note ADDED | Book omission |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | WLCs, WCS, WLSE, Mobility Express, Location Appliance (pp. 597 to 599) | Noted as legacy or changing UPDATED | General knowledge; AireOS end-of-sale not checked CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | Meraki sentence garbled (p. 600) | Noted as a typo UPDATED | Book text |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | \"up to 16 WLANs per AP\" versus WLAN ID 1 to 512 (pp. 610 to 611, 647) | Explained both UPDATED | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | \"out of baud\" for out-of-band (pp. 611 to 612) | Corrected UPDATED | Book text |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | spanning portfast trunk typed in the book (pp. 604, 610, 625) | Command is spanning-tree portfast trunk UPDATED | Book text |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | LAG: no LACP/PAgP (p. 623) | Kept; noted 9800 differs UPDATED | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | Virtual IP 192.0.2.1 (p. 618) | Explained as documentation block UPDATED | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | Summary and Exam Essentials mention endpoints, servers and IP verification not in the chapter (pp. 655 to 656) | Flagged; added a client IP table UPDATED | Book text |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | Spectrum Expert recommended / dated (p. 630) | Noted UPDATED | Book only |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | No WPA3, no PSK length details, no wireless troubleshooting | Added ADDED | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | v2.0 objectives 1.5, 1.6, 2.2.b, 5.3, 4.1 relate to this chapter | Mapped ADDED | Cisco v2.0 PDF |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | \"Configuring WLANs\" sub-sections not all in the TOC (p. 646) | Numbered 20.9.1 to 20.9.8 UPDATED | Book contents |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | WLC GUI clicks are screenshots only | Described each GUI path in words ADDED | Book figures |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | No labs, no troubleshooting | Added ADDED | Not run |"
+    }
+   ],
+   "words": 502
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware. All commands and outputs marked CHECK are illustrative. Record what you actually see in your labs."
+    }
+   ],
+   "words": 27
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Wireless is hard to lab. Record what you actually saw and what tool you used. Every expected result is CHECK ."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Tool limits (not tested by me). Cisco Packet Tracer includes a WLC and lightweight AP in some versions with a limited GUI (WLAN creation with WPA2-PSK). It will not show AireOS CLI output like the book, and CAPWAP is simulated. For a real WLC feel, use a virtual 9800 controller in Cisco CML or a lab WLC. If you have none, do Labs 1 and 2 (switch side and option 43) and read the GUI screens in the book. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "Switch side for a WLC and APs",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Create VLANs 311 (WLC management), 316 (service port), 320 (APs), and two client VLANs (for example 101 and 102)."
+    },
+    {
+     "level": 0,
+     "text": "- Create SVIs. Make the VLAN 320 SVI 10.30.20.1 (the book's .11 is wrong for its own DHCP pool). Add a DHCP pool or ip helper-address for the client VLANs."
+    },
+    {
+     "level": 0,
+     "text": "- Configure a trunk to the WLC with spanning-tree portfast trunk; make the service port an access port in VLAN 316."
+    },
+    {
+     "level": 0,
+     "text": "- Make an AP port an access port in VLAN 320 with portfast; make a second AP port a trunk with native VLAN 320 (FlexConnect case)."
+    },
+    {
+     "level": 0,
+     "text": "- Verify with show vlan brief, show interfaces trunk, show ip interface brief, and show cdp neighbors."
+    },
+    {
+     "level": 0,
+     "text": "Key commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config)# interface vlan 320"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# ip address 10.30.20.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config)# interface g1/0/7"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# switchport mode access"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# switchport access vlan 320"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# spanning-tree portfast"
+    },
+    {
+     "level": 0,
+     "text": "- interface vlan 320 + IP: the default gateway for APs; it must match the DHCP default-router."
+    },
+    {
+     "level": 0,
+     "text": "- switchport access vlan 320: puts the AP port in the AP VLAN (local-mode AP)."
+    },
+    {
+     "level": 0,
+     "text": "- spanning-tree portfast: the AP comes up quickly."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the SVI is up, the AP port is in VLAN 320, and show cdp neighbors lists the AP by name. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "Option 43 and DHCP for APs",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Choose a WLC address (for example 10.30.11.40) and convert each octet to hex by hand."
+    },
+    {
+     "level": 0,
+     "text": "- Build the option 43 string: F1, length (04 per WLC), then the hex. Check it against the table in Section 20.3.3."
+    },
+    {
+     "level": 0,
+     "text": "- Create the DHCP pool on the switch with option 43 hex <value>, a default router equal to the SVI, and exclude the router and static addresses."
+    },
+    {
+     "level": 0,
+     "text": "- Repeat for two WLCs (08) and for 192.168.123.100 (review question 18)."
+    },
+    {
+     "level": 0,
+     "text": "- Connect an AP (or a DHCP client) to VLAN 320 and check the lease with show ip dhcp binding."
+    },
+    {
+     "level": 0,
+     "text": "Key commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config)# ip dhcp excluded-address 10.30.20.1 10.30.20.100"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config)# ip dhcp pool Wireless-AP"
+    },
+    {
+     "level": 0,
+     "text": "SW1(dhcp-config)# network 10.30.20.0 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "SW1(dhcp-config)# default-router 10.30.20.1"
+    },
+    {
+     "level": 0,
+     "text": "SW1(dhcp-config)# option 43 hex f104.0a1e.0b28"
+    },
+    {
+     "level": 0,
+     "text": "- option 43 hex ...: the controller address list for the AP."
+    },
+    {
+     "level": 0,
+     "text": "- Check your static AP addresses are inside the excluded range."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the AP receives an address from 10.30.20.101 upward. Your hand-calculated hex equals the table. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "Create a WPA2-PSK WLAN in the controller GUI",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Log into the WLC GUI by HTTPS (HTTP is off by default)."
+    },
+    {
+     "level": 0,
+     "text": "- Create a dynamic interface for your client VLAN (Controller > Interfaces > New)."
+    },
+    {
+     "level": 0,
+     "text": "- WLANs > Create New > Go. Enter Profile Name, SSID and ID."
+    },
+    {
+     "level": 0,
+     "text": "- General tab: pick the interface (or interface group), set Status to Enabled."
+    },
+    {
+     "level": 0,
+     "text": "- Security > Layer 2: WPA2 policy, PSK key management on, 802.1X off, enter a passphrase of 8 or more characters."
+    },
+    {
+     "level": 0,
+     "text": "- QoS tab: leave Silver for data (try Platinum to see the difference)."
+    },
+    {
+     "level": 0,
+     "text": "- Apply and save the configuration."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the WLAN shows as enabled in the WLANs list, and the SSID is visible on the AP's radios. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "4",
+   "title": "Connect and verify a client",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Connect a laptop or phone to the SSID using the passphrase."
+    },
+    {
+     "level": 0,
+     "text": "- On the WLC open Monitor > Clients and note the AP, channel, VLAN and IP."
+    },
+    {
+     "level": 0,
+     "text": "- On the client check the IP: ipconfig (Windows), ifconfig (macOS), ip addr (Linux)."
+    },
+    {
+     "level": 0,
+     "text": "- Break it: give the WLAN a different interface with no DHCP, reconnect, and see what the client gets."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: an address from the interface's VLAN; after the break, the client stays with an APIPA (169.254.x.x) or no address. CHECK"
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "Configuring Wireless — review questions",
+   "questions": [
+    {
+     "source": "Q1. Which deployment model keeps the data plane on premises and the control plane in the cloud?",
+     "sourceNumber": "Q1",
+     "q": "Which deployment model keeps the data plane on premises and the control plane in the cloud?",
+     "options": [
+      "Stand-alone",
+      "Lightweight",
+      "Cloud (Meraki)",
+      "Mesh"
+     ],
+     "answer": "C",
+     "why": "the Meraki design.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which CAPWAP port carries control traffic?",
+     "sourceNumber": "Q2",
+     "q": "Which CAPWAP port carries control traffic?",
+     "options": [],
+     "answer": null,
+     "why": "UDP 5246 - data uses UDP 5247.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which function stays on the AP in split MAC: beacons or 802.11 authentication?",
+     "sourceNumber": "Q3",
+     "q": "Which function stays on the AP in split MAC: beacons or 802.11 authentication?",
+     "options": [],
+     "answer": "B",
+     "why": "eacons - authentication is done by the WLC.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Is CAPWAP client data encrypted by default?",
+     "sourceNumber": "Q4",
+     "q": "Is CAPWAP client data encrypted by default?",
+     "options": [],
+     "answer": null,
+     "why": "No (the control channel is; data DTLS is optional) - the book's wording is too broad.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which switchport type connects the WLC service port?",
+     "sourceNumber": "Q1",
+     "q": "Which switchport type connects the WLC service port?",
+     "options": [
+      "Trunk",
+      "Access",
+      "EtherChannel",
+      "Routed"
+     ],
+     "answer": "B",
+     "why": "access port; the service port does not support tags.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Why must the WLC have a correct clock?",
+     "sourceNumber": "Q2",
+     "q": "Why must the WLC have a correct clock?",
+     "options": [],
+     "answer": null,
+     "why": "It uses certificates, and APs register with them - so the book configures NTP in the wizard.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which two settings must be in different subnets in the wizard?",
+     "sourceNumber": "Q3",
+     "q": "Which two settings must be in different subnets in the wizard?",
+     "options": [],
+     "answer": null,
+     "why": "Service port and management interface - per the book.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which DNS name do APs look up to find the WLC?",
+     "sourceNumber": "Q1",
+     "q": "Which DNS name do APs look up to find the WLC?",
+     "options": [
+      "CISCO-WLC-CONTROLLER",
+      "CISCO-CAPWAP-CONTROLLER",
+      "CISCO-AP-CONTROLLER",
+      "WLC-CONTROLLER"
+     ],
+     "answer": "B",
+     "why": "an A record for CISCO-CAPWAP-CONTROLLER.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. What is the option 43 value for one WLC at 192.168.123.100?",
+     "sourceNumber": "Q2",
+     "q": "What is the option 43 value for one WLC at 192.168.123.100?",
+     "options": [],
+     "answer": null,
+     "why": "F104C0A87B64 - F1, 04 (4 x 1 WLC), then C0 A8 7B 64.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which switchport type does a FlexConnect AP need?",
+     "sourceNumber": "Q3",
+     "q": "Which switchport type does a FlexConnect AP need?",
+     "options": [],
+     "answer": "A",
+     "why": "trunk - traffic is switched locally, so VLAN tags are needed.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which DHCP option carries the WLC address to the AP?",
+     "sourceNumber": "Q4",
+     "q": "Which DHCP option carries the WLC address to the AP?",
+     "options": [],
+     "answer": null,
+     "why": "Option 43 - in hex.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What are the default console settings?",
+     "sourceNumber": "Q1",
+     "q": "What are the default console settings?",
+     "options": [],
+     "answer": null,
+     "why": "9600 baud, 8 data bits, 1 stop bit, no parity, no flow control - 9600 8N1.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Why does the service port need static routes?",
+     "sourceNumber": "Q2",
+     "q": "Why does the service port need static routes?",
+     "options": [],
+     "answer": null,
+     "why": "It has its own routing table and cannot use a default gateway - per the book.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What does the book mean by a \"distribution system port\"?",
+     "sourceNumber": "Q3",
+     "q": "What does the book mean by a \"distribution system port\"?",
+     "options": [],
+     "answer": "A",
+     "why": "normal data port (Ethernet or SFP) - the book calls them just ports.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which WLC interface is most like an SVI on a switch?",
+     "sourceNumber": "Q1",
+     "q": "Which WLC interface is most like an SVI on a switch?",
+     "options": [
+      "Management",
+      "Virtual",
+      "Dynamic",
+      "Service port"
+     ],
+     "answer": "C",
+     "why": "a dynamic interface terminates a VLAN.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which interface terminates CAPWAP tunnels?",
+     "sourceNumber": "Q2",
+     "q": "Which interface terminates CAPWAP tunnels?",
+     "options": [],
+     "answer": null,
+     "why": "The management interface - it has the AP-manager role by default.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Name three requirements of enabling LAG on the (AireOS) WLC.",
+     "sourceNumber": "Q3",
+     "q": "Name three requirements of enabling LAG on the (AireOS) WLC.",
+     "options": [],
+     "answer": null,
+     "why": "Reboot; all distribution system ports in the LAG; switch uses channel-group mode on - no LACP or PAgP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What is the virtual interface for?",
+     "sourceNumber": "Q4",
+     "q": "What is the virtual interface for?",
+     "options": [],
+     "answer": null,
+     "why": "Redirecting clients (web authentication), DHCP relay and mobility - recommended address 192.0.2.1.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. How many WLCs can an AP list on its High Availability tab?",
+     "sourceNumber": "Q5",
+     "q": "How many WLCs can an AP list on its High Availability tab?",
+     "options": [],
+     "answer": null,
+     "why": "Three - primary, secondary and tertiary.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the default AP mode?",
+     "sourceNumber": "Q1",
+     "q": "What is the default AP mode?",
+     "options": [
+      "Local",
+      "Monitor",
+      "FlexConnect",
+      "Sniffer"
+     ],
+     "answer": "A",
+     "why": "Local.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which AP mode sends a packet capture to Wireshark?",
+     "sourceNumber": "Q2",
+     "q": "Which AP mode sends a packet capture to Wireshark?",
+     "options": [],
+     "answer": null,
+     "why": "Sniffer - it does not serve clients.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which mode suits a branch with its own Internet link and firewall?",
+     "sourceNumber": "Q3",
+     "q": "Which mode suits a branch with its own Internet link and firewall?",
+     "options": [],
+     "answer": null,
+     "why": "FlexConnect - traffic is switched locally.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which mode detects APs that are not joined to your WLC?",
+     "sourceNumber": "Q4",
+     "q": "Which mode detects APs that are not joined to your WLC?",
+     "options": [],
+     "answer": null,
+     "why": "Rogue Detector - it can also contain them, subject to local law.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which of Telnet and SSH is enabled by default on a WLC?",
+     "sourceNumber": "Q1",
+     "q": "Which of Telnet and SSH is enabled by default on a WLC?",
+     "options": [],
+     "answer": null,
+     "why": "SSH - Telnet is off.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which port does RADIUS use for authentication on modern servers?",
+     "sourceNumber": "Q2",
+     "q": "Which port does RADIUS use for authentication on modern servers?",
+     "options": [
+      "UDP 1645",
+      "TCP 1645",
+      "UDP 1812",
+      "TCP 1812"
+     ],
+     "answer": "C",
+     "why": "legacy is UDP 1645.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Which port does TACACS+ use for accounting?",
+     "sourceNumber": "Q3",
+     "q": "Which port does TACACS+ use for accounting?",
+     "options": [
+      "UDP 49",
+      "UDP 1813",
+      "TCP 1813",
+      "TCP 49"
+     ],
+     "answer": "D",
+     "why": "TCP 49 for all functions.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q4. Where can the WLC use TACACS+?",
+     "sourceNumber": "Q4",
+     "q": "Where can the WLC use TACACS+?",
+     "options": [],
+     "answer": null,
+     "why": "For management users only, not for WLAN clients - per review question 9.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What is the CLI keyword for HTTPS on the WLC?",
+     "sourceNumber": "Q5",
+     "q": "What is the CLI keyword for HTTPS on the WLC?",
+     "options": [],
+     "answer": null,
+     "why": "secureweb - HTTP is webmode.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the default QoS queue for a new WLAN?",
+     "sourceNumber": "Q1",
+     "q": "What is the default QoS queue for a new WLAN?",
+     "options": [
+      "Gold",
+      "Platinum",
+      "Bronze",
+      "Silver"
+     ],
+     "answer": "D",
+     "why": "Silver (best effort).",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which QoS queue is for video?",
+     "sourceNumber": "Q2",
+     "q": "Which QoS queue is for video?",
+     "options": [],
+     "answer": null,
+     "why": "Gold - Platinum is voice.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What must be turned off on the WLAN for PSK to work?",
+     "sourceNumber": "Q3",
+     "q": "What must be turned off on the WLAN for PSK to work?",
+     "options": [],
+     "answer": null,
+     "why": "802.1X key management - choose either 802.1X or PSK.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What is the minimum ASCII PSK length in the book?",
+     "sourceNumber": "Q4",
+     "q": "What is the minimum ASCII PSK length in the book?",
+     "options": [],
+     "answer": null,
+     "why": "8 characters - WPA2 passphrases are 8 to 63 characters.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. Which WLAN ID range does the book give?",
+     "sourceNumber": "Q5",
+     "q": "Which WLAN ID range does the book give?",
+     "options": [],
+     "answer": null,
+     "why": "1 to 512 - unique per WLAN.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which two UDP ports does CAPWAP use, and for what?",
+     "sourceNumber": "Q1",
+     "q": "Which two UDP ports does CAPWAP use, and for what?",
+     "options": [],
+     "answer": null,
+     "why": "5246 control and 5247 data - the control channel is DTLS-encrypted by default.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which AP mode is the default?",
+     "sourceNumber": "Q2",
+     "q": "Which AP mode is the default?",
+     "options": [
+      "Local",
+      "FlexConnect",
+      "Monitor",
+      "Bridge"
+     ],
+     "answer": "A",
+     "why": "Local.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Which AP mode do you use for a branch that switches traffic locally?",
+     "sourceNumber": "Q3",
+     "q": "Which AP mode do you use for a branch that switches traffic locally?",
+     "options": [],
+     "answer": null,
+     "why": "FlexConnect - needs a trunk port.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which WLC interface is like an SVI on a switch?",
+     "sourceNumber": "Q4",
+     "q": "Which WLC interface is like an SVI on a switch?",
+     "options": [
+      "Management",
+      "Dynamic",
+      "Virtual",
+      "Service port"
+     ],
+     "answer": "B",
+     "why": "terminates a VLAN.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q5. Which interface redirects clients for web authentication?",
+     "sourceNumber": "Q5",
+     "q": "Which interface redirects clients for web authentication?",
+     "options": [],
+     "answer": null,
+     "why": "Virtual interface (192.0.2.1) - also used for DHCP relay and mobility.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. Which switchport type does the WLC service port need?",
+     "sourceNumber": "Q6",
+     "q": "Which switchport type does the WLC service port need?",
+     "options": [],
+     "answer": "A",
+     "why": "ccess - no VLAN tagging, plus static routes on the WLC.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. Which DNS name do APs look up to find a WLC?",
+     "sourceNumber": "Q7",
+     "q": "Which DNS name do APs look up to find a WLC?",
+     "options": [],
+     "answer": "C",
+     "why": "ISCO-CAPWAP-CONTROLLER - an A record.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. What is the option 43 value for one WLC at 10.30.11.40?",
+     "sourceNumber": "Q8",
+     "q": "What is the option 43 value for one WLC at 10.30.11.40?",
+     "options": [
+      "F1040A1E0B28",
+      "F1020A1E0B28",
+      "F1080A1E0B28",
+      "F104280B1E0A"
+     ],
+     "answer": "A",
+     "why": "F1, 04, 0A 1E 0B 28.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q9. A WLAN keeps running out of DHCP addresses. Best fix?",
+     "sourceNumber": "Q9",
+     "q": "A WLAN keeps running out of DHCP addresses. Best fix?",
+     "options": [],
+     "answer": "A",
+     "why": "dd dynamic interfaces and put them in an interface group - do not just change the mask.",
+     "kind": "open"
+    },
+    {
+     "source": "Q10. Which three things are required to enable LAG on an AireOS WLC?",
+     "sourceNumber": "Q10",
+     "q": "Which three things are required to enable LAG on an AireOS WLC?",
+     "options": [],
+     "answer": null,
+     "why": "Reboot, all ports in the LAG, switch uses channel-group mode on - no LACP or PAgP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. Which QoS queue is the default?",
+     "sourceNumber": "Q11",
+     "q": "Which QoS queue is the default?",
+     "options": [
+      "Platinum",
+      "Gold",
+      "Silver",
+      "Bronze"
+     ],
+     "answer": "C",
+     "why": "best effort.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q12. Which QoS queue carries voice?",
+     "sourceNumber": "Q12",
+     "q": "Which QoS queue carries voice?",
+     "options": [],
+     "answer": null,
+     "why": "Platinum - gold is video.",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. Which port does RADIUS use for modern authentication, and which for accounting?",
+     "sourceNumber": "Q13",
+     "q": "Which port does RADIUS use for modern authentication, and which for accounting?",
+     "options": [],
+     "answer": null,
+     "why": "UDP 1812 and UDP 1813 - legacy 1645 and 1646.",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. Which transport does TACACS+ use?",
+     "sourceNumber": "Q14",
+     "q": "Which transport does TACACS+ use?",
+     "options": [],
+     "answer": null,
+     "why": "TCP port 49 - for all AAA functions.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. Where can the WLC use TACACS+?",
+     "sourceNumber": "Q15",
+     "q": "Where can the WLC use TACACS+?",
+     "options": [],
+     "answer": null,
+     "why": "Management users, not WLAN clients - RADIUS is used for WLAN clients.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. Which two management methods are on by default on a WLC?",
+     "sourceNumber": "Q16",
+     "q": "Which two management methods are on by default on a WLC?",
+     "options": [],
+     "answer": null,
+     "why": "SSH and HTTPS - Telnet and HTTP are off.",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. Which AP modes serve client traffic?",
+     "sourceNumber": "Q17",
+     "q": "Which AP modes serve client traffic?",
+     "options": [
+      "Local and FlexConnect",
+      "Monitor and Sniffer",
+      "Rogue Detector and SE-Connect",
+      "Sensor and Monitor"
+     ],
+     "answer": "A",
+     "why": "the others only watch.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q18. Which function does the WLC (not the AP) perform in split MAC?",
+     "sourceNumber": "Q18",
+     "q": "Which function does the WLC (not the AP) perform in split MAC?",
+     "options": [
+      "Beacons",
+      "802.11 authentication",
+      "Probe responses",
+      "Encryption of frames"
+     ],
+     "answer": "B",
+     "why": "the AP does the real-time items.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q19. On a new WLAN, what must be disabled for WPA2-PSK to work?",
+     "sourceNumber": "Q19",
+     "q": "On a new WLAN, what must be disabled for WPA2-PSK to work?",
+     "options": [],
+     "answer": null,
+     "why": "802.1X key management - choose PSK.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. What is the minimum ASCII PSK length in the book?",
+     "sourceNumber": "Q20",
+     "q": "What is the minimum ASCII PSK length in the book?",
+     "options": [],
+     "answer": null,
+     "why": "8 characters - up to 63.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. Which model keeps the data plane on premises but manages the control plane from the cloud?",
+     "sourceNumber": "Q21",
+     "q": "Which model keeps the data plane on premises but manages the control plane from the cloud?",
+     "options": [],
+     "answer": "C",
+     "why": "loud (Meraki) - no CLI on the APs.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. Which command shows an IP address on Windows CMD?",
+     "sourceNumber": "Q22",
+     "q": "Which command shows an IP address on Windows CMD?",
+     "options": [
+      "ifconfig",
+      "ipconfig",
+      "ip addr",
+      "Get-NetIPAddress"
+     ],
+     "answer": "B",
+     "why": "Get-NetIPAddress is PowerShell.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q23. Which VLAN on the AP port is used for a local-mode AP, access or trunk?",
+     "sourceNumber": "Q23",
+     "q": "Which VLAN on the AP port is used for a local-mode AP, access or trunk?",
+     "options": [],
+     "answer": "A",
+     "why": "ccess (the AP VLAN) - FlexConnect needs a trunk.",
+     "kind": "open"
+    },
+    {
+     "source": "Q24. A service port is on VLAN 316 and the management interface on VLAN 311. Do they need to be in different subnets?",
+     "sourceNumber": "Q24",
+     "q": "A service port is on VLAN 316 and the management interface on VLAN 311. Do they need to be in different subnets?",
+     "options": [],
+     "answer": null,
+     "why": "Yes - the wizard requires it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Which device role is the root of a mesh in Bridge mode?",
+     "sourceNumber": "Q25",
+     "q": "Which device role is the root of a mesh in Bridge mode?",
+     "options": [],
+     "answer": null,
+     "why": "Root Access Point (RAP) - it connects to the WLC by CAPWAP.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 Which deployment model keeps the data plane on premises and the control plane in the cloud?"
+    },
+    {
+     "level": 0,
+     "text": "A. Stand-alone"
+    },
+    {
+     "level": 0,
+     "text": "B. Lightweight"
+    },
+    {
+     "level": 0,
+     "text": "C. Cloud (Meraki)"
+    },
+    {
+     "level": 0,
+     "text": "D. Mesh"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - the Meraki design."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which CAPWAP port carries control traffic?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: UDP 5246 - data uses UDP 5247."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which function stays on the AP in split MAC: beacons or 802.11 authentication?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - eacons - authentication is done by the WLC."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Is CAPWAP client data encrypted by default?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No (the control channel is; data DTLS is optional) - the book's wording is too broad."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which switchport type connects the WLC service port?"
+    },
+    {
+     "level": 0,
+     "text": "A. Trunk"
+    },
+    {
+     "level": 0,
+     "text": "B. Access"
+    },
+    {
+     "level": 0,
+     "text": "C. EtherChannel"
+    },
+    {
+     "level": 0,
+     "text": "D. Routed"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - access port; the service port does not support tags."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why must the WLC have a correct clock?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It uses certificates, and APs register with them - so the book configures NTP in the wizard."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which two settings must be in different subnets in the wizard?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Service port and management interface - per the book."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which DNS name do APs look up to find the WLC?"
+    },
+    {
+     "level": 0,
+     "text": "A. CISCO-WLC-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "B. CISCO-CAPWAP-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "C. CISCO-AP-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "D. WLC-CONTROLLER"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - an A record for CISCO-CAPWAP-CONTROLLER."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What is the option 43 value for one WLC at 192.168.123.100?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: F104C0A87B64 - F1, 04 (4 x 1 WLC), then C0 A8 7B 64."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which switchport type does a FlexConnect AP need?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - trunk - traffic is switched locally, so VLAN tags are needed."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which DHCP option carries the WLC address to the AP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Option 43 - in hex."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What are the default console settings?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 9600 baud, 8 data bits, 1 stop bit, no parity, no flow control - 9600 8N1."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why does the service port need static routes?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It has its own routing table and cannot use a default gateway - per the book."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What does the book mean by a \"distribution system port\"?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - normal data port (Ethernet or SFP) - the book calls them just ports."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which WLC interface is most like an SVI on a switch?"
+    },
+    {
+     "level": 0,
+     "text": "A. Management"
+    },
+    {
+     "level": 0,
+     "text": "B. Virtual"
+    },
+    {
+     "level": 0,
+     "text": "C. Dynamic"
+    },
+    {
+     "level": 0,
+     "text": "D. Service port"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - a dynamic interface terminates a VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which interface terminates CAPWAP tunnels?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The management interface - it has the AP-manager role by default."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Name three requirements of enabling LAG on the (AireOS) WLC."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Reboot; all distribution system ports in the LAG; switch uses channel-group mode on - no LACP or PAgP."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What is the virtual interface for?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Redirecting clients (web authentication), DHCP relay and mobility - recommended address 192.0.2.1."
+    },
+    {
+     "level": 0,
+     "text": "Q5 How many WLCs can an AP list on its High Availability tab?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Three - primary, secondary and tertiary."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the default AP mode?"
+    },
+    {
+     "level": 0,
+     "text": "A. Local"
+    },
+    {
+     "level": 0,
+     "text": "B. Monitor"
+    },
+    {
+     "level": 0,
+     "text": "C. FlexConnect"
+    },
+    {
+     "level": 0,
+     "text": "D. Sniffer"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - Local."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which AP mode sends a packet capture to Wireshark?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Sniffer - it does not serve clients."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which mode suits a branch with its own Internet link and firewall?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FlexConnect - traffic is switched locally."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which mode detects APs that are not joined to your WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Rogue Detector - it can also contain them, subject to local law."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which of Telnet and SSH is enabled by default on a WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH - Telnet is off."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which port does RADIUS use for authentication on modern servers?"
+    },
+    {
+     "level": 0,
+     "text": "A. UDP 1645"
+    },
+    {
+     "level": 0,
+     "text": "B. TCP 1645"
+    },
+    {
+     "level": 0,
+     "text": "C. UDP 1812"
+    },
+    {
+     "level": 0,
+     "text": "D. TCP 1812"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - legacy is UDP 1645."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which port does TACACS+ use for accounting?"
+    },
+    {
+     "level": 0,
+     "text": "A. UDP 49"
+    },
+    {
+     "level": 0,
+     "text": "B. UDP 1813"
+    },
+    {
+     "level": 0,
+     "text": "C. TCP 1813"
+    },
+    {
+     "level": 0,
+     "text": "D. TCP 49"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - TCP 49 for all functions."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Where can the WLC use TACACS+?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: For management users only, not for WLAN clients - per review question 9."
+    },
+    {
+     "level": 0,
+     "text": "Q5 What is the CLI keyword for HTTPS on the WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: secureweb - HTTP is webmode."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the default QoS queue for a new WLAN?"
+    },
+    {
+     "level": 0,
+     "text": "A. Gold"
+    },
+    {
+     "level": 0,
+     "text": "B. Platinum"
+    },
+    {
+     "level": 0,
+     "text": "C. Bronze"
+    },
+    {
+     "level": 0,
+     "text": "D. Silver"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - Silver (best effort)."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which QoS queue is for video?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Gold - Platinum is voice."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What must be turned off on the WLAN for PSK to work?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 802.1X key management - choose either 802.1X or PSK."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What is the minimum ASCII PSK length in the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 8 characters - WPA2 passphrases are 8 to 63 characters."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which WLAN ID range does the book give?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1 to 512 - unique per WLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which two UDP ports does CAPWAP use, and for what?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 5246 control and 5247 data - the control channel is DTLS-encrypted by default."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which AP mode is the default?"
+    },
+    {
+     "level": 0,
+     "text": "A. Local"
+    },
+    {
+     "level": 0,
+     "text": "B. FlexConnect"
+    },
+    {
+     "level": 0,
+     "text": "C. Monitor"
+    },
+    {
+     "level": 0,
+     "text": "D. Bridge"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - Local."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which AP mode do you use for a branch that switches traffic locally?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FlexConnect - needs a trunk port."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which WLC interface is like an SVI on a switch?"
+    },
+    {
+     "level": 0,
+     "text": "A. Management"
+    },
+    {
+     "level": 0,
+     "text": "B. Dynamic"
+    },
+    {
+     "level": 0,
+     "text": "C. Virtual"
+    },
+    {
+     "level": 0,
+     "text": "D. Service port"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - terminates a VLAN."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which interface redirects clients for web authentication?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Virtual interface (192.0.2.1) - also used for DHCP relay and mobility."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Which switchport type does the WLC service port need?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ccess - no VLAN tagging, plus static routes on the WLC."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Which DNS name do APs look up to find a WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - ISCO-CAPWAP-CONTROLLER - an A record."
+    },
+    {
+     "level": 0,
+     "text": "Q8 What is the option 43 value for one WLC at 10.30.11.40?"
+    },
+    {
+     "level": 0,
+     "text": "A. F1040A1E0B28"
+    },
+    {
+     "level": 0,
+     "text": "B. F1020A1E0B28"
+    },
+    {
+     "level": 0,
+     "text": "C. F1080A1E0B28"
+    },
+    {
+     "level": 0,
+     "text": "D. F104280B1E0A"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - F1, 04, 0A 1E 0B 28."
+    },
+    {
+     "level": 0,
+     "text": "Q9 A WLAN keeps running out of DHCP addresses. Best fix?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - dd dynamic interfaces and put them in an interface group - do not just change the mask."
+    },
+    {
+     "level": 0,
+     "text": "Q10 Which three things are required to enable LAG on an AireOS WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Reboot, all ports in the LAG, switch uses channel-group mode on - no LACP or PAgP."
+    },
+    {
+     "level": 0,
+     "text": "Q11 Which QoS queue is the default?"
+    },
+    {
+     "level": 0,
+     "text": "A. Platinum"
+    },
+    {
+     "level": 0,
+     "text": "B. Gold"
+    },
+    {
+     "level": 0,
+     "text": "C. Silver"
+    },
+    {
+     "level": 0,
+     "text": "D. Bronze"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - best effort."
+    },
+    {
+     "level": 0,
+     "text": "Q12 Which QoS queue carries voice?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Platinum - gold is video."
+    },
+    {
+     "level": 0,
+     "text": "Q13 Which port does RADIUS use for modern authentication, and which for accounting?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: UDP 1812 and UDP 1813 - legacy 1645 and 1646."
+    },
+    {
+     "level": 0,
+     "text": "Q14 Which transport does TACACS+ use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: TCP port 49 - for all AAA functions."
+    },
+    {
+     "level": 0,
+     "text": "Q15 Where can the WLC use TACACS+?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Management users, not WLAN clients - RADIUS is used for WLAN clients."
+    },
+    {
+     "level": 0,
+     "text": "Q16 Which two management methods are on by default on a WLC?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SSH and HTTPS - Telnet and HTTP are off."
+    },
+    {
+     "level": 0,
+     "text": "Q17 Which AP modes serve client traffic?"
+    },
+    {
+     "level": 0,
+     "text": "A. Local and FlexConnect"
+    },
+    {
+     "level": 0,
+     "text": "B. Monitor and Sniffer"
+    },
+    {
+     "level": 0,
+     "text": "C. Rogue Detector and SE-Connect"
+    },
+    {
+     "level": 0,
+     "text": "D. Sensor and Monitor"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - the others only watch."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Which function does the WLC (not the AP) perform in split MAC?"
+    },
+    {
+     "level": 0,
+     "text": "A. Beacons"
+    },
+    {
+     "level": 0,
+     "text": "B. 802.11 authentication"
+    },
+    {
+     "level": 0,
+     "text": "C. Probe responses"
+    },
+    {
+     "level": 0,
+     "text": "D. Encryption of frames"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the AP does the real-time items."
+    },
+    {
+     "level": 0,
+     "text": "Q19 On a new WLAN, what must be disabled for WPA2-PSK to work?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 802.1X key management - choose PSK."
+    },
+    {
+     "level": 0,
+     "text": "Q20 What is the minimum ASCII PSK length in the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 8 characters - up to 63."
+    },
+    {
+     "level": 0,
+     "text": "Q21 Which model keeps the data plane on premises but manages the control plane from the cloud?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - loud (Meraki) - no CLI on the APs."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Which command shows an IP address on Windows CMD?"
+    },
+    {
+     "level": 0,
+     "text": "A. ifconfig"
+    },
+    {
+     "level": 0,
+     "text": "B. ipconfig"
+    },
+    {
+     "level": 0,
+     "text": "C. ip addr"
+    },
+    {
+     "level": 0,
+     "text": "D. Get-NetIPAddress"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Get-NetIPAddress is PowerShell."
+    },
+    {
+     "level": 0,
+     "text": "Q23 Which VLAN on the AP port is used for a local-mode AP, access or trunk?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - ccess (the AP VLAN) - FlexConnect needs a trunk."
+    },
+    {
+     "level": 0,
+     "text": "Q24 A service port is on VLAN 316 and the management interface on VLAN 311. Do they need to be in different subnets?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Yes - the wizard requires it."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Which device role is the root of a mesh in Bridge mode?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Root Access Point (RAP) - it connects to the WLC by CAPWAP."
+    }
+   ],
+   "multipleChoice": 15,
+   "open": 43
+  }
+ ],
+ "generatedFrom": "CC20.docx",
+ "totalWords": 10805,
+ "wordBreakdown": {
+  "sections": 8514,
+  "labs": 669,
+  "quizzes": 1137,
+  "currency": 358,
+  "sources": 127
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "Objectives use v1.0 numbering (p. 595)",
+   "current": "Mapped to v1.1 and v2.0 UPDATED",
+   "action": "",
+   "source": "v2.0: Cisco PDF read directly (text ended at 5.6). v1.1: book numbering plus a secondary page CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "CAPWAP \"encrypted tunnel\" and \"encrypted CAPWAP tunnel\" (pp. 598, 656)",
+   "current": "Control channel DTLS by default; data encryption optional UPDATED",
+   "action": "",
+   "source": "Cisco documentation page and Cisco Community article",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "Review answer 18 key says F102 (p. 806)",
+   "current": "Correct value F104C0A87B64, option A UPDATED",
+   "action": "",
+   "source": "Calculated by script; book's own 04 rule",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "VLAN 320 SVI .11 but DHCP default-router .1 (pp. 609 to 610)",
+   "current": "Flagged; use .1 UPDATED",
+   "action": "",
+   "source": "Checked by script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "Static AP address 10.30.20.101 inside the DHCP pool (p. 607)",
+   "current": "Flagged UPDATED",
+   "action": "",
+   "source": "Checked by script (pool starts at .101)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "No DHCP pool or helper for client VLANs 101 to 103 (p. 603)",
+   "current": "Added a note ADDED",
+   "action": "",
+   "source": "Book omission",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "WLCs, WCS, WLSE, Mobility Express, Location Appliance (pp. 597 to 599)",
+   "current": "Noted as legacy or changing UPDATED",
+   "action": "",
+   "source": "General knowledge; AireOS end-of-sale not checked CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "Meraki sentence garbled (p. 600)",
+   "current": "Noted as a typo UPDATED",
+   "action": "",
+   "source": "Book text",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "\"up to 16 WLANs per AP\" versus WLAN ID 1 to 512 (pp. 610 to 611, 647)",
+   "current": "Explained both UPDATED",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "\"out of baud\" for out-of-band (pp. 611 to 612)",
+   "current": "Corrected UPDATED",
+   "action": "",
+   "source": "Book text",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "spanning portfast trunk typed in the book (pp. 604, 610, 625)",
+   "current": "Command is spanning-tree portfast trunk UPDATED",
+   "action": "",
+   "source": "Book text",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "LAG: no LACP/PAgP (p. 623)",
+   "current": "Kept; noted 9800 differs UPDATED",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "Virtual IP 192.0.2.1 (p. 618)",
+   "current": "Explained as documentation block UPDATED",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "Summary and Exam Essentials mention endpoints, servers and IP verification not in the chapter (pp. 655 to 656)",
+   "current": "Flagged; added a client IP table UPDATED",
+   "action": "",
+   "source": "Book text",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "Spectrum Expert recommended / dated (p. 630)",
+   "current": "Noted UPDATED",
+   "action": "",
+   "source": "Book only",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "No WPA3, no PSK length details, no wireless troubleshooting",
+   "current": "Added ADDED",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "v2.0 objectives 1.5, 1.6, 2.2.b, 5.3, 4.1 relate to this chapter",
+   "current": "Mapped ADDED",
+   "action": "",
+   "source": "Cisco v2.0 PDF",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "\"Configuring WLANs\" sub-sections not all in the TOC (p. 646)",
+   "current": "Numbered 20.9.1 to 20.9.8 UPDATED",
+   "action": "",
+   "source": "Book contents",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "WLC GUI clicks are screenshots only",
+   "current": "Described each GUI path in words ADDED",
+   "action": "",
+   "source": "Book figures",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 20",
+   "found": "No labs, no troubleshooting",
+   "current": "Added ADDED",
+   "action": "",
+   "source": "Not run",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Lammle, CCNA Study Guide Vol. 2, ch. 20 (pp. 595 to 660) and answer key (pp. 805 to 806)",
+   "usedFor": "All BOOK content, answer-key errors",
+   "status": "Primary (the book)"
+  },
+  {
+   "source": "Cisco, CCNA 200-301 v2.0 Exam Topics PDF",
+   "usedFor": "v2.0 objectives (text received ended at 5.6)",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco, IW9165E configuration guide page on CAPWAP",
+   "usedFor": "UDP 5246/5247, DTLS control default, data optional",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco Community, CAPWAP encryption using DTLS",
+   "usedFor": "Data DTLS optional; platform notes",
+   "status": "Secondary (Cisco forum)"
+  },
+  {
+   "source": "Purple.ai wireless port guide",
+   "usedFor": "CAPWAP, RADIUS ports",
+   "status": "Secondary"
+  },
+  {
+   "source": "Earlier chapters of this manual (13, 12)",
+   "usedFor": "RADIUS and TACACS+ ports, CDP, SSH",
+   "status": "See those chapters' sources"
+  },
+  {
+   "source": "General knowledge: AireOS vs Catalyst 9800 differences, TEST-NET-1, WPA2 and WPA3 details, legacy products",
+   "usedFor": "Tagged notes",
+   "status": "Not fetched CHECK"
+  },
+  {
+   "source": "Python ipaddress and arithmetic",
+   "usedFor": "Lab addressing, DHCP exclusions, option 43 hex",
+   "status": "Calculated"
+  }
+ ],
+ "questionCount": 58,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A (Pre-check)",
+  "Sources and Verification Status"
+ ]
+}

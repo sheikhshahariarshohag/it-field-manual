@@ -28,7 +28,7 @@ const src = readFileSync(new URL("docs/assets/prose.js", ROOT), "utf8")
     .replace(/^import \* as \w+ from ".*";$/gm, "")
     .replace(/^import \{ h[^}]*\} from ".*";$/gm, "const h=()=>({}); const copyText=async()=>true; const db={put:async()=>{},get:async()=>null,remove:async()=>{}};")
   .replace(/export /g, "");
-const api = new Function(`${src}\nreturn { classifyBlock };`)();
+const api = new Function(`${src}\nreturn { classifyBlock, verifyTag };`)();
 
 /* ------------------------------------------------------------ the corpus */
 
@@ -171,7 +171,17 @@ for (const { where, b } of blocks) {
     case "question":      shown = r.body; break;
     case "answer":        shown = r.body; break;
     case "analogy":       shown = r.body; break;
-    case "verify":        shown = r.body; break;
+    case "verify":
+      /*
+       * Label AND body, because the renderer shows both.
+       *
+       * This case used to read `r.body` alone, on the assumption that the
+       * marker was chrome. That was correct then and wrong once the tag was
+       * fixed to show the line's own label: the label is on screen now, so
+       * leaving it out of `shown` would hide the very words the fix restored.
+       */
+      shown = ((r.label || "") + " " + (r.body || "")).trim();
+      break;
     case "stepCandidate": shown = r.body; break;
     case "answersHeader": shown = src_; break;   // consumed, not rendered
     case "list":          shown = stripMarkers(src_); break;
@@ -192,10 +202,50 @@ for (const { where, b } of blocks) {
   // The corpus contains lines that are literally just a marker - "NOTE -" with
   // nothing after it. Those render as a bare "Note" label, which loses nothing,
   // so an empty body is correct there and only there.
-  const bareMarker = BARE_MARKER.test(src_.trim()) || BARE_VERIFY.test(src_.trim());
-  const ok = bareMarker
-    ? ((r.type === "callout" || r.type === "verify") && got === "")
-    : (got === want);
+  /*
+   * A verify block is compared word by word rather than as an exact string.
+   *
+   * The renderer shows the label as a chip and the body under it, with nothing
+   * between them - the source reads "Check the pool again: <body>" and the
+   * screen reads "CHECK THE POOL AGAIN" then the body. Exact equality cannot
+   * hold, and loosening the test to "body matches" is precisely what let the
+   * label be deleted without anybody noticing.
+   *
+   * So the test becomes the one that actually matters: does the rendered text
+   * contain every word the source did, and no word it did not. Losing the
+   * label - the original bug - still fails this, because those words are in
+   * the source and not on the screen.
+   */
+  const wordsOf = (t) => (String(t).toLowerCase().match(/[a-z0-9']+/g) || []).slice().sort();
+  const sameWords = (a, b) => {
+    const x = wordsOf(a);
+    const y = wordsOf(b);
+    return x.length === y.length && x.every((w, i) => w === y[i]);
+  };
+
+  /*
+   * Two different "bare line" cases, with two different correct answers.
+   *
+   *   "NOTE -"             -> a chip reading "Note", no body.  got === "".
+   *   "Verify the result:" -> a chip reading "Verify the result", no body.
+   *
+   * The second used to be tested the same way as the first, expecting an empty
+   * render. That was right while the tag was the fixed word "verify": the label
+   * went nowhere, so the only thing observable was the absent body. Once the
+   * tag showed the label, the correct render for a bare verify IS the label, and
+   * 39 RHEL blocks started reporting as lost for that reason alone.
+   */
+  const isBareCallout = BARE_MARKER.test(src_.trim());
+  const isBareVerify = !isBareCallout && BARE_VERIFY.test(src_.trim());
+  const bareMarker = isBareCallout || isBareVerify;
+
+  const ok = isBareCallout
+    ? (r.type === "callout" && got === "")
+    : isBareVerify
+      ? (r.type === "verify" && sameWords(got, r.label || ""))
+      : r.type === "verify"
+        ? sameWords(src_, api.verifyTag(r) + " " + (r.body || ""))
+        : (got === want);
 
   if (want && !got && !bareMarker) {
     fail(where, "block renders as empty text", `src="${src_.slice(0, 70)}"`);
@@ -215,6 +265,32 @@ for (const { where, t } of kmParas) {
   const got = t.replace(/^\s*[●•▪]\s*/, "").trim();
   if (!got && t.trim()) {
     fail(where, "a non-blank paragraph renders as empty", t.slice(0, 70));
+  }
+}
+
+/*
+ * The renderer must actually use verifyTag.
+ *
+ * Everything above compares the SOURCE against what verifyTag() returns, which
+ * proves the label survives classification and tagging. It says nothing about
+ * renderBlocks, which is a separate function - and the original bug lived
+ * exactly there, in a literal "verify" that no other check could reach.
+ *
+ * So this asserts the connection directly. It is a textual check and that is a
+ * limitation worth stating: it catches the literal coming back, and it catches
+ * renderBlocks dropping the call, but it is not a substitute for looking at
+ * the page.
+ */
+{
+  // Note: `src` has had every "export " removed at line 30 so it can be eval'd
+  // as a plain function body, so renderBlocks is matched without the keyword.
+  const body = src.slice(src.indexOf("function renderBlocks"));
+  const caseAt = body.indexOf('case "verify"');
+  const usesTag = caseAt >= 0 && body.slice(caseAt, caseAt + 400).includes("verifyTag(");
+  if (!usesTag) {
+    problems++;
+    console.log('  FAIL the "verify" case in renderBlocks does not call verifyTag();');
+    console.log('       the captured label would be dropped before it reaches the page');
   }
 }
 

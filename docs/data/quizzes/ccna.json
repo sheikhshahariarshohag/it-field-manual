@@ -1,0 +1,3153 @@
+[
+ {
+  "id": "ccna-01-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 1: Network Fundamentals — review questions",
+  "summary": "9 multiple-choice questions from chapter 1, with answers. 13 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-1"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-1.2"
+   },
+   {
+    "id": "CCNA-1.3"
+   }
+  ],
+  "questions": [
+   {
+    "q": "A switch receives a frame whose destination MAC address is not in its MAC address table. What does it do?",
+    "options": [
+     "Drops it",
+     "Sends it back out of the port it arrived on",
+     "Floods it out of all other ports",
+     "Sends it to the router"
+    ],
+    "answer": 2,
+    "why": "unknown unicast frames are flooded out of every port except the incoming one.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "Which feature lets an NGFW allow a company app but block a game running on the same port?",
+    "options": [
+     "NAT",
+     "Application Visibility and Control",
+     "VLAN trunking",
+     "Port security"
+    ],
+    "answer": 1,
+    "why": "AVC identifies the application, not only the port number.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "Which layer of the 3-tier model should avoid access lists and packet filtering, and why?",
+    "options": [
+     "Access",
+     "Distribution",
+     "Core",
+     "All of them"
+    ],
+    "answer": 2,
+    "why": "the core should switch traffic as fast as possible; policy belongs in the distribution layer.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "In a spine-leaf design, what do spine switches connect to?",
+    "options": [
+     "Servers",
+     "Leaf switches only",
+     "Other spine switches and servers",
+     "Firewalls only"
+    ],
+    "answer": 1,
+    "why": "spines connect only to leaves; every leaf connects to every spine.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "You must run 10 Gbps over copper for 90 metres in a new building. Which cable do you choose?",
+    "options": [
+     "Cat5e",
+     "Cat6",
+     "Cat6a",
+     "Cat3"
+    ],
+    "answer": 2,
+    "why": "Cat6a supports 10GBASE-T to 100 m. Cat6 only reaches about 55 m, and Cat5e is not supported.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "Which pins are crossed to make a 10/100 crossover cable?",
+    "options": [
+     "1\u001a4 and 2\u001a5",
+     "1\u001a3 and 2\u001a6",
+     "1\u001a6 and 2\u001a3",
+     "3\u001a6 only"
+    ],
+    "answer": 1,
+    "why": "pin 1 goes to pin 3 and pin 2 goes to pin 6. For gigabit you also cross 4\u001a7 and 5\u001a8.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "A company has a small campus and wants to save money while keeping most hierarchy benefits. Which design fits?",
+    "options": [
+     "Spine-leaf",
+     "Collapsed core (2-tier)",
+     "Full mesh WAN",
+     "Hub and spoke with hubs"
+    ],
+    "answer": 1,
+    "why": "a collapsed core merges the core and distribution layers into one set of switches.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "Which statement about a Layer 2 switch is TRUE?",
+    "options": [
+     "It creates one collision domain for all ports",
+     "It creates one broadcast domain per port",
+     "It builds its table from source MAC addresses",
+     "It forwards frames based on IP addresses"
+    ],
+    "answer": 2,
+    "why": "a switch learns from source MAC addresses. It makes one collision domain per port and does not split broadcast domains.",
+    "topic": "Chapter 1"
+   },
+   {
+    "q": "Which standard delivers up to 15.4 W at the port?",
+    "options": [
+     "802.3at",
+     "802.3af",
+     "802.3bt Type 3",
+     "802.3bt Type 4"
+    ],
+    "answer": 1,
+    "why": "802.3af (PoE) gives 15.4 W at the PSE.",
+    "topic": "Chapter 1"
+   }
+  ]
+ },
+ {
+  "id": "ccna-02-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 2: TCP/IP — review questions",
+  "summary": "9 multiple-choice questions from chapter 2, with answers. 22 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-2"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-1.2"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which protocol sends passwords in clear text and should not be used on production networks?",
+    "options": [
+     "SSH",
+     "Telnet",
+     "HTTPS",
+     "SNMPv3"
+    ],
+    "answer": 1,
+    "why": "Telnet has no encryption. SSH replaces it.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "Which two features does TCP have that UDP does not?",
+    "options": [
+     "Port numbers and checksums",
+     "Sequencing and acknowledgments",
+     "Source and destination ports",
+     "A length field"
+    ],
+    "answer": 1,
+    "why": "TCP adds sequencing, acknowledgments, windowing and connections. Both protocols use ports and checksums.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "Host A at 192.168.1.10/24 pings Host B on another subnet. What destination MAC address does Host A put on the first frame?",
+    "options": [
+     "Host B's MAC",
+     "The default gateway's MAC",
+     "ff:ff:ff:ff:ff:ff",
+     "00:00:00:00:00:00"
+    ],
+    "answer": 1,
+    "why": "for a remote destination the frame goes to the gateway. The IP packet inside still has Host B's address.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "What class is 191.255.1.1? What is its default mask?",
+    "options": [
+     "Class A, 255.0.0.0",
+     "Class B, 255.255.0.0",
+     "Class C, 255.255.255.0",
+     "Class D, none"
+    ],
+    "answer": 1,
+    "why": "128-191 is Class B.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "Which address is a Layer 2 broadcast?",
+    "options": [
+     "255.255.255.255",
+     "ff:ff:ff:ff:ff:ff",
+     "224.0.0.10",
+     "127.0.0.1"
+    ],
+    "answer": 1,
+    "why": "255.255.255.255 is a Layer 3 broadcast; 224.0.0.10 is multicast; 127.0.0.1 is loopback.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "What must happen after a DHCP IP conflict is detected?",
+    "options": [
+     "Proxy ARP fixes it",
+     "The client uses a gratuitous ARP to fix it",
+     "An administrator must resolve it by hand before the address is reused",
+     "The server gives both hosts new addresses"
+    ],
+    "answer": 2,
+    "why": "the conflicting address is removed from the pool until an administrator fixes the conflict.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "Which protocol sets up a secure session similar to Telnet?",
+    "options": [
+     "FTP",
+     "SSH",
+     "DNS",
+     "DHCP"
+    ],
+    "answer": 1,
+    "why": "SSH encrypts the session.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "Which mechanism does a DHCP client use to check for a duplicate address?",
+    "options": [
+     "Traceroute",
+     "Gratuitous ARP",
+     "Pathping",
+     "Source quench"
+    ],
+    "answer": 1,
+    "why": "the client broadcasts an ARP for its own new address.",
+    "topic": "Chapter 2"
+   },
+   {
+    "q": "Which two statements describe a DHCP Discover? (Choose two.)",
+    "options": [
+     "Layer 2 broadcast ff:ff:ff:ff:ff:ff",
+     "Uses UDP",
+     "Uses TCP",
+     "Has no Layer 2 destination"
+    ],
+    "answer": 0,
+    "why": "and B - it is a broadcast at Layers 2 and 3 and uses UDP.",
+    "topic": "Chapter 2"
+   }
+  ]
+ },
+ {
+  "id": "ccna-03-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 3: Easy Subnetting — review questions",
+  "summary": "9 multiple-choice questions from chapter 3, with answers. 13 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-3"
+  ],
+  "objectives": [],
+  "questions": [
+   {
+    "q": "How many subnets does a /26 give you from a Class C network (subnet-zero allowed)?",
+    "options": [
+     "2",
+     "4",
+     "6",
+     "8"
+    ],
+    "answer": 1,
+    "why": "2 borrowed bits give 2� = 4 subnets: 0, 64, 128, 192.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "What are the subnet and broadcast addresses of 192.168.20.133/27?",
+    "options": [
+     "192.168.20.128 and .159",
+     "192.168.20.132 and .163",
+     "192.168.20.96 and .127",
+     "192.168.20.128 and .255"
+    ],
+    "answer": 0,
+    "why": "block size 32: 128, 160 \u001a 133 is in the 128 subnet; broadcast = 160 - 1 = 159; hosts .129 - .158.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "What are the subnet and broadcast addresses of 172.20.45.130/20?",
+    "options": [
+     "172.20.32.0 and 172.20.47.255",
+     "172.20.45.128 and 172.20.45.255",
+     "172.20.40.0 and 172.20.47.255",
+     "172.20.44.0 and 172.20.45.255"
+    ],
+    "answer": 0,
+    "why": "/20 \u001a block 16 in the third octet: 32, 48 \u001a 45 is in 32; broadcast = 48.0 - 1 = 47.255.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "How many subnets and hosts per subnet does 172.16.0.0/19 give?",
+    "options": [
+     "8 subnets, 8,190 hosts",
+     "7 subnets, 8,190 hosts",
+     "8 subnets, 2,046 hosts",
+     "32 subnets, 2,046 hosts"
+    ],
+    "answer": 0,
+    "why": "3 bits borrowed = 8 subnets (subnet-zero allowed); 13 host bits = 8,190 hosts. If subnet-zero were disallowed you would count 6 or 7.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "How many usable host addresses does the 255.255.255.224 mask give per subnet?",
+    "options": [
+     "14",
+     "30",
+     "32",
+     "62"
+    ],
+    "answer": 1,
+    "why": "224 means 5 host bits: 25 - 2 = 30.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "You need 29 subnets and as many hosts per subnet as possible from a Class C network. How many bits do you borrow?",
+    "options": [
+     "3",
+     "4",
+     "5",
+     "6"
+    ],
+    "answer": 2,
+    "why": "24 = 16 is too few; 25 = 32 � 29, so borrow 5 bits (/29), giving 6 hosts per subnet.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "What subnet does 200.10.5.68/28 belong to?",
+    "options": [
+     "200.10.5.56",
+     "200.10.5.64",
+     "200.10.5.32",
+     "200.10.5.0"
+    ],
+    "answer": 1,
+    "why": "block 16: 64, 80 \u001a 68 is in 64.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "Which statement about subnet-zero is correct?",
+    "options": [
+     "It is off by default in modern IOS",
+     "It lets you use the first subnet",
+     "It removes the broadcast address",
+     "It adds two hosts per subnet"
+    ],
+    "answer": 1,
+    "why": "it allows the all-zeros subnet; it is on by default.",
+    "topic": "Chapter 3"
+   },
+   {
+    "q": "Which three subnets are valid for a /27 on 192.168.4.0?",
+    "options": [
+     "192.168.4.0, .32, .64",
+     "192.168.4.0, .27, .54",
+     "192.168.4.16, .48, .80",
+     "192.168.4.10, .20, .30"
+    ],
+    "answer": 0,
+    "why": "valid subnets are multiples of the block size 32.",
+    "topic": "Chapter 3"
+   }
+  ]
+ },
+ {
+  "id": "ccna-04-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 4: Troubleshooting IP Addressing — review questions",
+  "summary": "4 multiple-choice questions from chapter 4, with answers. 18 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-4"
+  ],
+  "objectives": [],
+  "questions": [
+   {
+    "q": "Step 2 (ping your own IP address) succeeds. What does that prove?",
+    "options": [
+     "The cable is plugged in",
+     "The NIC and driver work with the IP stack",
+     "The default gateway is reachable",
+     "DNS is working"
+    ],
+    "answer": 1,
+    "why": "it proves the IP stack can talk to the NIC. It does not prove the cable is connected.",
+    "topic": "Chapter 4"
+   },
+   {
+    "q": "Which command is the Windows version of traceroute?",
+    "options": [
+     "traceroute",
+     "tracert",
+     "show route",
+     "pathping -a"
+    ],
+    "answer": 1,
+    "why": "tracert is Windows. traceroute is Cisco, Mac and Linux.",
+    "topic": "Chapter 4"
+   },
+   {
+    "q": "A host cannot connect to a remote server. Which test shows whether the NIC is plugged into the network?",
+    "options": [
+     "ping 127.0.0.1",
+     "ping the host's own address",
+     "ping the default gateway",
+     "ping the remote server"
+    ],
+    "answer": 2,
+    "why": "only the gateway ping proves the local network link works.",
+    "topic": "Chapter 4"
+   },
+   {
+    "q": "Which address range is valid for hosts on 192.168.1.64/27?",
+    "options": [
+     "192.168.1.64 - .95",
+     "192.168.1.65 - .94",
+     "192.168.1.65 - .95",
+     "192.168.1.66 - .96"
+    ],
+    "answer": 1,
+    "why": "block 32: network 64, broadcast 95, hosts 65-94.",
+    "topic": "Chapter 4"
+   }
+  ]
+ },
+ {
+  "id": "ccna-05-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 5: IP Routing — review questions",
+  "summary": "4 multiple-choice questions from chapter 5, with answers. 30 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-5"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-3.1"
+   }
+  ],
+  "questions": [
+   {
+    "q": "A router has 10.0.0.0/8 via RIP and 10.1.1.0/24 via a static route. Which route does a packet for 10.1.1.9 use?",
+    "options": [
+     "10.0.0.0/8, because RIP is dynamic",
+     "10.1.1.0/24, because it is the longest match",
+     "Neither, it uses the default route",
+     "Both, load balanced"
+    ],
+    "answer": 1,
+    "why": "longest prefix match wins first, before administrative distance is even considered.",
+    "topic": "Chapter 5"
+   },
+   {
+    "q": "Host A sends to a server on another network. The source and destination MAC addresses of the frame leaving the router towards the server are:",
+    "options": [
+     "Host A and the server",
+     "Router interface on the server's LAN and the server",
+     "Router interface on Host A's LAN and the server",
+     "Switch and the server"
+    ],
+    "answer": 1,
+    "why": "the router builds a new frame: its own outgoing interface MAC as source, and the server's MAC as destination.",
+    "topic": "Chapter 5"
+   },
+   {
+    "q": "A router learns 172.16.50.0/24 from OSPF and from RIP. Which does it install?",
+    "options": [
+     "RIP, because it is simpler",
+     "OSPF, because 110 is lower than 120",
+     "Both, load balanced",
+     "Neither"
+    ],
+    "answer": 1,
+    "why": "lower administrative distance wins when the prefixes are the same.",
+    "topic": "Chapter 5"
+   },
+   {
+    "q": "Which command displays the routing table on a Cisco router?",
+    "options": [
+     "show routes",
+     "show ip route",
+     "show route table",
+     "show ip interface brief"
+    ],
+    "answer": 1,
+    "why": "show ip route.",
+    "topic": "Chapter 5"
+   }
+  ]
+ },
+ {
+  "id": "ccna-06-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 6: Open Shortest Path First (OSPF) — review questions",
+  "summary": "7 multiple-choice questions from chapter 6, with answers. 47 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-6"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-3.3"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which command starts OSPF process 10?",
+    "options": [
+     "router ospf 10",
+     "router ospf area 10",
+     "ospf process 10",
+     "network ospf 10"
+    ],
+    "answer": 0,
+    "why": "router ospf process-id is the command.",
+    "topic": "Chapter 6"
+   },
+   {
+    "q": "The OSPF process ID is:",
+    "options": [
+     "Globally significant",
+     "Locally significant",
+     "The same as the area ID",
+     "Required to match on neighbors"
+    ],
+    "answer": 1,
+    "why": "It is only a local label.",
+    "topic": "Chapter 6"
+   },
+   {
+    "q": "What is the wildcard mask for 192.168.5.128/27?",
+    "options": [
+     "0.0.0.15",
+     "0.0.0.31",
+     "0.0.0.63",
+     "0.0.0.32"
+    ],
+    "answer": 1,
+    "why": "Block size 32, wildcard 31 (script checked).",
+    "topic": "Chapter 6"
+   },
+   {
+    "q": "Hellos are sent to which address?",
+    "options": [
+     "224.0.0.5",
+     "224.0.0.6",
+     "224.0.0.9",
+     "224.0.0.10"
+    ],
+    "answer": 0,
+    "why": "224.0.0.5 is AllSPFRouters (IANA). 224.0.0.9 is RIPv2 and 224.0.0.10 is EIGRP.",
+    "topic": "Chapter 6"
+   },
+   {
+    "q": "On Ethernet, a DROther sends LSA updates to:",
+    "options": [
+     "224.0.0.5",
+     "224.0.0.6",
+     "The DR's unicast address only",
+     "255.255.255.255"
+    ],
+    "answer": 1,
+    "why": "224.0.0.6 (AllDRouters). The DR then floods to 224.0.0.5.",
+    "topic": "Chapter 6"
+   },
+   {
+    "q": "Default Hello and Dead intervals on an Ethernet link?",
+    "options": [
+     "5 and 20",
+     "10 and 40",
+     "30 and 120",
+     "10 and 30"
+    ],
+    "answer": 1,
+    "why": "Hello 10, Dead 40 (4 x Hello). 30/120 is NBMA.",
+    "topic": "Chapter 6"
+   },
+   {
+    "q": "Choose three settings that must match for two OSPF routers to become neighbors.",
+    "options": [
+     "Area ID",
+     "Hello and Dead intervals",
+     "Subnet and mask on the link",
+     "Process ID"
+    ],
+    "answer": 0,
+    "why": ", B, C - Process ID is local, router IDs must differ, priority can differ.",
+    "topic": "Chapter 6"
+   }
+  ]
+ },
+ {
+  "id": "ccna-07-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 7: Layer 2 Switching — review questions",
+  "summary": "3 multiple-choice questions from chapter 7, with answers. 35 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-7"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-2.3"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which address does a switch learn from?",
+    "options": [
+     "Source MAC",
+     "Destination MAC",
+     "Source IP",
+     "Destination IP"
+    ],
+    "answer": 0,
+    "why": "A Layer 2 switch ignores IP.",
+    "topic": "Chapter 7"
+   },
+   {
+    "q": "Which problem is NOT caused by switching loops?",
+    "options": [
+     "Broadcast storm",
+     "MAC table thrashing",
+     "Multiple frame copies",
+     "Duplicate IP addresses"
+    ],
+    "answer": 3,
+    "why": "Duplicate IPs come from addressing mistakes.",
+    "topic": "Chapter 7"
+   },
+   {
+    "q": "Which mode does not shut the port and sends no log or SNMP trap?",
+    "options": [
+     "protect",
+     "restrict",
+     "shutdown",
+     "err-disable"
+    ],
+    "answer": 0,
+    "why": "Restrict logs and traps; shutdown also disables the port.",
+    "topic": "Chapter 7"
+   }
+  ]
+ },
+ {
+  "id": "ccna-08-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 8: VLANs and Inter-VLAN Routing — review questions",
+  "summary": "12 multiple-choice questions from chapter 8, with answers. 38 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-8"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-2.1"
+   },
+   {
+    "id": "CCNA-2.2"
+   }
+  ],
+  "questions": [
+   {
+    "q": "A switch has 12 active ports and no VLANs configured. How many broadcast domains does it have?",
+    "options": [
+     "12",
+     "1",
+     "2",
+     "0"
+    ],
+    "answer": 1,
+    "why": "with no VLANs the whole switch is one broadcast domain. It has 12 collision domains, one per port.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Which statement about 802.1Q is true?",
+    "options": [
+     "It is Cisco proprietary.",
+     "It wraps the frame in a new header and a new CRC.",
+     "It inserts a 4-byte tag and leaves the native VLAN untagged.",
+     "It supports only VLANs 1 to 1005."
+    ],
+    "answer": 2,
+    "why": "802.1Q is the IEEE standard. A is ISL, B describes ISL, and D confuses 802.1Q with the Cisco normal range.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Which of these needs the ip routing command?",
+    "options": [
+     "A router subinterface",
+     "A Layer 3 switch with SVIs",
+     "A Layer 2 switch trunk port",
+     "An access port"
+    ],
+    "answer": 1,
+    "why": "a multilayer switch only routes once ip routing is turned on. Routers route by default.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Which port type sends and receives frames without a VLAN tag?",
+    "options": [
+     "Trunk port (all frames)",
+     "Access port",
+     "Routed port only",
+     "None"
+    ],
+    "answer": 1,
+    "why": "an access port sends untagged frames.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "How many bytes does an 802.1Q tag add to a frame?",
+    "options": [
+     "2",
+     "4",
+     "26",
+     "30"
+    ],
+    "answer": 1,
+    "why": "4 bytes. 26 and 30 relate to ISL.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Which VLAN carries untagged frames on an 802.1Q trunk by default?",
+    "options": [
+     "VLAN 0",
+     "VLAN 1",
+     "VLAN 99",
+     "The voice VLAN"
+    ],
+    "answer": 1,
+    "why": "the native VLAN, VLAN 1 by default.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Which command shows allowed, active and forwarding VLANs on trunks?",
+    "options": [
+     "show vlan brief",
+     "show interfaces trunk",
+     "show ip route",
+     "show running-config vlan"
+    ],
+    "answer": 1,
+    "why": "show vlan brief does not list trunk ports.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Two ports are both dynamic auto. Do they trunk?",
+    "options": [
+     "Yes",
+     "No, they stay access"
+    ],
+    "answer": 1,
+    "why": "auto waits for the other end to ask.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "What must be turned on before SVIs route between VLANs on a Layer 3 switch?",
+    "options": [
+     "no switchport",
+     "ip routing",
+     "ip default-gateway",
+     "vtp mode transparent"
+    ],
+    "answer": 1,
+    "why": "ip routing.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "Are 192.168.10.20/28 and 192.168.10.30/28 in the same subnet?",
+    "options": [
+     "Yes",
+     "No"
+    ],
+    "answer": 0,
+    "why": "both are in 192.168.10.16/28 (usable .17 to .30). Calculated by script.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "True or false: putting hosts in different VLANs makes a network secure by itself.",
+    "options": [
+     "True",
+     "False"
+    ],
+    "answer": 1,
+    "why": "VLAN hopping attacks exist. Set ports to access explicitly, do not use VLAN 1 or native for users, and filter between VLANs.",
+    "topic": "Chapter 8"
+   },
+   {
+    "q": "A host in VLAN 10 sends a broadcast. Does a host in VLAN 20 on the same switch receive it?",
+    "options": [
+     "Yes",
+     "No"
+    ],
+    "answer": 1,
+    "why": "separate VLANs are separate broadcast domains.",
+    "topic": "Chapter 8"
+   }
+  ]
+ },
+ {
+  "id": "ccna-09-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 9: Enhanced Switched Technologies — review questions",
+  "summary": "12 multiple-choice questions from chapter 9, with answers. 37 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-9"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-2.3"
+   },
+   {
+    "id": "CCNA-2.6"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which STP states let the switch learn MAC addresses?",
+    "options": [
+     "Blocking and listening",
+     "Learning and forwarding",
+     "Listening and learning",
+     "Forwarding only"
+    ],
+    "answer": 1,
+    "why": "MAC learning happens in learning and forwarding only.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which STP version is the Cisco IOS default?",
+    "options": [
+     "802.1w",
+     "PVST+ (802.1D per VLAN)",
+     "802.1s",
+     "Rapid PVST+"
+    ],
+    "answer": 1,
+    "why": "Book page 261. Rapid PVST+ must be turned on.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which command enables 802.1w on a Cisco switch?",
+    "options": [
+     "spanning-tree mode 802.1w",
+     "spanning-tree mode rapid-pvst",
+     "spanning-tree rapid enable",
+     "enable rstp"
+    ],
+    "answer": 1,
+    "why": "Global configuration mode.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "What happens when a BPDU arrives on a port with PortFast and BPDU Guard?",
+    "options": [
+     "The port keeps forwarding",
+     "The port goes err-disabled",
+     "The port becomes root",
+     "PortFast is disabled and the port keeps working"
+    ],
+    "answer": 1,
+    "why": "The port is shut down.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which LACP mode combination will not form a channel?",
+    "options": [
+     "active/active",
+     "active/passive",
+     "passive/passive",
+     "passive/active"
+    ],
+    "answer": 2,
+    "why": "Neither side starts negotiation.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Does the root bridge have a root port?",
+    "options": [
+     "Yes, one",
+     "Yes, two",
+     "No",
+     "Only in Rapid PVST+"
+    ],
+    "answer": 2,
+    "why": "The root bridge has none; every other switch has exactly one.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which is a valid bridge priority?",
+    "options": [
+     "5000",
+     "20480",
+     "40000",
+     "65536"
+    ],
+    "answer": 1,
+    "why": "Multiples of 4096 from 0 to 61440. 20480 = 5 x 4096.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "What is the default STP hello time?",
+    "options": [
+     "1 s",
+     "2 s",
+     "15 s",
+     "20 s"
+    ],
+    "answer": 1,
+    "why": "BPDUs go out every 2 seconds.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "What does protocol ieee mean in show spanning-tree output?",
+    "options": [
+     "Rapid PVST+",
+     "802.1D (PVST+)",
+     "MSTP",
+     "STP is off"
+    ],
+    "answer": 1,
+    "why": "In rapid-pvst mode it says rstp.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which feature protects against a new switch winning the root election on a port?",
+    "options": [
+     "BPDU Guard",
+     "Root guard",
+     "Loop guard",
+     "PortFast"
+    ],
+    "answer": 1,
+    "why": "Root guard blocks the port when a superior BPDU arrives.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which feature protects against BPDUs suddenly stopping on a non-designated port?",
+    "options": [
+     "Root guard",
+     "BPDU Guard",
+     "Loop guard",
+     "UDLD only"
+    ],
+    "answer": 2,
+    "why": "Loop guard puts the port in loop-inconsistent instead of letting it forward.",
+    "topic": "Chapter 9"
+   },
+   {
+    "q": "Which mode combination will NOT form an LACP channel?",
+    "options": [
+     "active/active",
+     "active/passive",
+     "passive/passive",
+     "none of these"
+    ],
+    "answer": 2,
+    "why": "Neither side initiates.",
+    "topic": "Chapter 9"
+   }
+  ]
+ },
+ {
+  "id": "ccna-10-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 10: Access Lists — review questions",
+  "summary": "16 multiple-choice questions from chapter 10, with answers. 46 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-10"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-4.6"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Where would you normally find the web and email servers that the Internet must reach?",
+    "options": [
+     "The trusted LAN",
+     "The DMZ",
+     "Inside the perimeter router",
+     "On the console port"
+    ],
+    "answer": 1,
+    "why": "the DMZ holds the Internet-facing servers.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which of these is an extended ACL number? 55, 150, 1400, 2800",
+    "options": [
+     "55",
+     "150",
+     "1400",
+     "2800"
+    ],
+    "answer": 1,
+    "why": "150 is in 100-199. 55 and 1400 are standard. 2800 is outside every range in this chapter.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "What wildcard mask matches the whole 172.16.0.0/12 private block?",
+    "options": [
+     "0.0.255.255",
+     "0.15.255.255",
+     "0.0.15.255",
+     "0.255.255.255"
+    ],
+    "answer": 1,
+    "why": "a /12 leaves 20 host bits, so the second octet wildcard is 15 and the last two are 255. Script-checked.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "What is the wildcard mask for a /26?",
+    "options": [
+     "0.0.0.31",
+     "0.0.0.63",
+     "0.0.0.127",
+     "0.0.0.255"
+    ],
+    "answer": 1,
+    "why": "a /26 mask ends in 192, so 255 - 192 = 63. Script-checked.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "What wildcard matches the Accounting subnet 192.168.10.128/27?",
+    "options": [
+     "0.0.0.7",
+     "0.0.0.15",
+     "0.0.0.31",
+     "0.0.0.63"
+    ],
+    "answer": 2,
+    "why": "a /27 has block size 32, so the wildcard is 31. Script-checked.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which command applies an ACL to the VTY lines?",
+    "options": [
+     "ip access-group 50 in",
+     "access-class 50 in",
+     "ip access-list 50 in",
+     "line access 50"
+    ],
+    "answer": 1,
+    "why": "access-class goes under the line, ip access-group goes under an interface.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which protocol keyword must you use to filter FTP?",
+    "options": [
+     "ip",
+     "udp",
+     "tcp",
+     "icmp"
+    ],
+    "answer": 2,
+    "why": "FTP uses TCP. With ip you cannot add a port test.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which command creates a named extended ACL called WEB-ONLY?",
+    "options": [
+     "access-list WEB-ONLY extended",
+     "ip access-list extended WEB-ONLY",
+     "ip access-group WEB-ONLY extended",
+     "named-acl extended WEB-ONLY"
+    ],
+    "answer": 1,
+    "why": "ip access-list extended <name> opens the named ACL mode.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which command tells you which interface an ACL is applied to?",
+    "options": [
+     "show access-list",
+     "show ip interface",
+     "show ip route",
+     "show access-list 110"
+    ],
+    "answer": 1,
+    "why": "show ip interface shows the in and out lists. show access-list shows the lines only.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which number creates a standard IP ACL?",
+    "options": [
+     "99",
+     "100",
+     "199",
+     "2700"
+    ],
+    "answer": 0,
+    "why": "standard is 1-99 and 1300-1999. 100-199 is extended. 2700 is outside the ranges.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which number creates an extended IP ACL?",
+    "options": [
+     "99",
+     "120",
+     "1450",
+     "2750"
+    ],
+    "answer": 1,
+    "why": "extended is 100-199 and 2000-2699. 99 and 1450 are standard. 2750 is outside the range.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "A standard ACL can match which part of a packet?",
+    "options": [
+     "Source address",
+     "Destination address",
+     "TCP port",
+     "Protocol"
+    ],
+    "answer": 0,
+    "why": "standard ACLs check the source IP address only.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which command applies ACL 5 to an interface for packets arriving?",
+    "options": [
+     "ip access-group 5 in",
+     "access-class 5 in",
+     "ip access-list 5 in",
+     "access-list 5 in"
+    ],
+    "answer": 0,
+    "why": "ip access-group is the interface command. access-class is for VTY lines.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "What is the wildcard mask for a /29?",
+    "options": [
+     "0.0.0.3",
+     "0.0.0.7",
+     "0.0.0.15",
+     "0.0.0.31"
+    ],
+    "answer": 1,
+    "why": "255 - 248 = 7. Script-checked.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "What is the wildcard mask for a /20?",
+    "options": [
+     "0.0.15.255",
+     "0.0.31.255",
+     "0.15.255.255",
+     "0.0.0.255"
+    ],
+    "answer": 0,
+    "why": "255 - 240 = 15 in the third octet. Script-checked.",
+    "topic": "Chapter 10"
+   },
+   {
+    "q": "Which command shows which interface has an ACL applied and in which direction?",
+    "options": [
+     "show access-list",
+     "show ip interface",
+     "show ip route",
+     "show running-config | include access"
+    ],
+    "answer": 1,
+    "why": "show ip interface has the in and out ACL lines. (The running-config also shows it, but is not the best single answer.)",
+    "topic": "Chapter 10"
+   }
+  ]
+ },
+ {
+  "id": "ccna-11-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 11: Network Address Translation (NAT) — review questions",
+  "summary": "2 multiple-choice questions from chapter 11, with answers. 36 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-11"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-4.3"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which RFC defines the private IPv4 address ranges?",
+    "options": [
+     "RFC 1918",
+     "RFC 2544",
+     "RFC 5737",
+     "RFC 791"
+    ],
+    "answer": 0,
+    "why": "RFC 1918 defines 10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16.",
+    "topic": "Chapter 11"
+   },
+   {
+    "q": "Which address is NOT private?",
+    "options": [
+     "10.200.1.1",
+     "172.31.255.254",
+     "172.32.0.1",
+     "192.168.100.5"
+    ],
+    "answer": 2,
+    "why": "the 172 private block ends at 172.31.255.255.",
+    "topic": "Chapter 11"
+   }
+  ]
+ },
+ {
+  "id": "ccna-12-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 12: IP Services — review questions",
+  "summary": "18 multiple-choice questions from chapter 12, with answers. 44 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-12"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-4.4"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which command stops CDP on one interface only?",
+    "options": [
+     "no cdp run",
+     "no cdp enable",
+     "cdp holdtime 0",
+     "no cdp timer"
+    ],
+    "answer": 1,
+    "why": "no cdp enable is per interface; no cdp run is global.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "In show cdp neighbors, which column is the neighbor's own interface?",
+    "options": [
+     "Local Intrfce",
+     "Port ID",
+     "Platform",
+     "Holdtme"
+    ],
+    "answer": 1,
+    "why": "Port ID is the remote port.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which discovery protocol works between Cisco and non-Cisco devices?",
+    "options": [
+     "CDP",
+     "LLDP",
+     "VTP",
+     "DTP"
+    ],
+    "answer": 1,
+    "why": "LLDP is the IEEE standard 802.1AB.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which command makes a router an NTP client of 10.1.1.5?",
+    "options": [
+     "ntp master 10.1.1.5",
+     "ntp server 10.1.1.5",
+     "clock sync 10.1.1.5",
+     "ntp client 10.1.1.5"
+    ],
+    "answer": 1,
+    "why": "ntp server points the device at a time source.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which SNMP message is acknowledged by the manager?",
+    "options": [
+     "TRAP",
+     "GET",
+     "INFORM",
+     "WALK"
+    ],
+    "answer": 2,
+    "why": "INFORM adds acknowledgement; a trap does not.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "How do you restrict which NMS can use a read-only community?",
+    "options": [
+     "ACL on the VTY line",
+     "ACL on the community string",
+     "ACL on every interface",
+     "ACL on the control plane"
+    ],
+    "answer": 1,
+    "why": "attach the ACL in the snmp-server community command.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "What is severity 4?",
+    "options": [
+     "Error",
+     "Warning",
+     "Notification",
+     "Critical"
+    ],
+    "answer": 1,
+    "why": "0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warning.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which VTY command allows only SSH?",
+    "options": [
+     "transport input all",
+     "transport input telnet",
+     "transport input ssh",
+     "login local"
+    ],
+    "answer": 2,
+    "why": "login local only picks the authentication source.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which protocol is Cisco proprietary?",
+    "options": [
+     "LLDP",
+     "CDP",
+     "NTP",
+     "SNMP"
+    ],
+    "answer": 1,
+    "why": "CDP only runs between Cisco devices.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which command lists the neighbor's IP address?",
+    "options": [
+     "show cdp",
+     "show cdp neighbors",
+     "show cdp neighbors detail",
+     "show lldp"
+    ],
+    "answer": 2,
+    "why": "detail includes the IP address.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Default CDP timer and holdtime?",
+    "options": [
+     "30/120",
+     "60/180",
+     "60/120",
+     "10/30"
+    ],
+    "answer": 1,
+    "why": "60 s and 180 s.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which command enables LLDP globally?",
+    "options": [
+     "lldp enable",
+     "lldp run",
+     "cdp run lldp",
+     "lldp start"
+    ],
+    "answer": 1,
+    "why": "lldp run.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which UDP port does NTP use?",
+    "options": [
+     "123",
+     "161",
+     "162",
+     "514"
+    ],
+    "answer": 0,
+    "why": "SNMP uses 161/162, syslog 514.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which SNMP message is sent by the agent without being asked and is not acknowledged?",
+    "options": [
+     "GET",
+     "SET",
+     "TRAP",
+     "INFORM"
+    ],
+    "answer": 2,
+    "why": "INFORM is acknowledged.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Which SNMP version first offers authentication and encryption?",
+    "options": [
+     "v1",
+     "v2c",
+     "v3",
+     "v2"
+    ],
+    "answer": 2,
+    "why": "authPriv in v3.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "What severity is Notification?",
+    "options": [
+     "4",
+     "5",
+     "6",
+     "7"
+    ],
+    "answer": 1,
+    "why": "0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warn, 5 Notif, 6 Info, 7 Debug.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "What is the default syslog facility on Cisco IOS?",
+    "options": [
+     "local0",
+     "local4",
+     "local7",
+     "kern"
+    ],
+    "answer": 2,
+    "why": "local7.",
+    "topic": "Chapter 12"
+   },
+   {
+    "q": "Minimum RSA key size for SSH version 2?",
+    "options": [
+     "512",
+     "768",
+     "1024",
+     "4096"
+    ],
+    "answer": 1,
+    "why": "768 bits, but use 2048 or more.",
+    "topic": "Chapter 12"
+   }
+  ]
+ },
+ {
+  "id": "ccna-13-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 13: Security — review questions",
+  "summary": "17 multiple-choice questions from chapter 13, with answers. 45 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-13"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-4.7"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which threat type is the hardest to stop, according to the book?",
+    "options": [
+     "Unstructured",
+     "Structured",
+     "External",
+     "Internal"
+    ],
+    "answer": 3,
+    "why": "internal users are already authorised.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which Cisco IOS feature protects TCP servers from SYN floods?",
+    "options": [
+     "Lock and Key",
+     "TCP intercept",
+     "CBAC",
+     "CHAP"
+    ],
+    "answer": 1,
+    "why": "the book's review answer 12.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which physical control uses two interlocking doors?",
+    "options": [
+     "Smart card",
+     "Mantrap",
+     "Badge reader",
+     "Door lock"
+    ],
+    "answer": 1,
+    "why": "a small room between two doors.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which feature must be running for DAI to build its IP-to-MAC checks?",
+    "options": [
+     "Port security",
+     "DHCP snooping",
+     "802.1X",
+     "Storm control"
+    ],
+    "answer": 1,
+    "why": "the binding database comes from DHCP snooping.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which command enables the AAA commands on a router or switch?",
+    "options": [
+     "aaa enable",
+     "enable aaa",
+     "new-model aaa",
+     "aaa new-model"
+    ],
+    "answer": 3,
+    "why": "the book's review answer 1.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which is the best way to handle an account when an employee leaves?",
+    "options": [
+     "Leave it",
+     "Delete it",
+     "Disable it",
+     "Rename it to Guest"
+    ],
+    "answer": 2,
+    "why": "keeps the ID and settings without allowing logins.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which command enables the AAA command set?",
+    "options": [
+     "aaa enable",
+     "aaa new-model",
+     "enable aaa",
+     "aaa on"
+    ],
+    "answer": 1,
+    "why": "aaa new-model.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which protocol uses TCP and separates authentication from authorization?",
+    "options": [
+     "RADIUS",
+     "TACACS+",
+     "LDAP",
+     "Kerberos"
+    ],
+    "answer": 1,
+    "why": "TACACS+.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which two statements about RADIUS are true?",
+    "options": [
+     "Uses UDP",
+     "Uses TCP",
+     "Combines authentication and authorization",
+     "Encrypts the entire packet"
+    ],
+    "answer": 0,
+    "why": "and C - UDP; combined A and A; only the password is encrypted.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which RADIUS reply asks the user for more information?",
+    "options": [
+     "Accept",
+     "Reject",
+     "Challenge",
+     "Change Password"
+    ],
+    "answer": 2,
+    "why": "Challenge.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which command gives local fallback for RADIUS logins?",
+    "options": [
+     "aaa authentication login default group G local",
+     "aaa authentication login local group G",
+     "aaa authentication fallback local",
+     "aaa new-model local"
+    ],
+    "answer": 0,
+    "why": "method list order matters.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which feature builds a table of MAC, IP, VLAN, interface and lease?",
+    "options": [
+     "DAI",
+     "Port security",
+     "DHCP snooping",
+     "802.1X"
+    ],
+    "answer": 2,
+    "why": "the DHCP snooping binding database.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which port-security violation mode drops frames without logging?",
+    "options": [
+     "protect",
+     "restrict",
+     "shutdown",
+     "sticky"
+    ],
+    "answer": 0,
+    "why": "restrict logs; shutdown err-disables.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which attack category is a port scan?",
+    "options": [
+     "Reconnaissance",
+     "Access",
+     "DoS",
+     "Repudiation"
+    ],
+    "answer": 0,
+    "why": "it discovers the network.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "In PKI, which key signs a message hash?",
+    "options": [
+     "Sender's public key",
+     "Sender's private key",
+     "Receiver's public key",
+     "Receiver's private key"
+    ],
+    "answer": 1,
+    "why": "the signer's private key.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "What is the default console exec-timeout?",
+    "options": [
+     "1 minute",
+     "5 minutes",
+     "10 minutes",
+     "Never"
+    ],
+    "answer": 2,
+    "why": "0 0 means never.",
+    "topic": "Chapter 13"
+   },
+   {
+    "q": "Which TCP port does LDAP over SSL use?",
+    "options": [
+     "389",
+     "636",
+     "88",
+     "49"
+    ],
+    "answer": 1,
+    "why": "636 (389 is plain LDAP, 88 Kerberos, 49 TACACS+).",
+    "topic": "Chapter 13"
+   }
+  ]
+ },
+ {
+  "id": "ccna-14-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 14: First Hop Redundancy Protocol (HSRP) — review questions",
+  "summary": "1 multiple-choice questions from chapter 14, with answers. 42 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-14"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-3.4"
+   }
+  ],
+  "questions": [
+   {
+    "q": "What is true about any FHRP?",
+    "options": [
+     "It is a routing protocol that sends routes to hosts",
+     "It provides default gateway redundancy",
+     "It replaces DHCP",
+     "It works only on Cisco devices"
+    ],
+    "answer": 1,
+    "why": "an FHRP gives hosts a redundant default gateway. VRRP is a standard.",
+    "topic": "Chapter 14"
+   }
+  ]
+ },
+ {
+  "id": "ccna-15-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 15: Virtual Private Networks (VPNs) — review questions",
+  "summary": "22 multiple-choice questions from chapter 15, with answers. 41 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-15"
+  ],
+  "objectives": [],
+  "questions": [
+   {
+    "q": "A host in another city must appear to be on the corporate server VLAN. Which technology fits?",
+    "options": [
+     "VLAN",
+     "VPN",
+     "Port security",
+     "STP"
+    ],
+    "answer": 1,
+    "why": "a VLAN works for physically local hosts. A VPN extends the local view over a WAN.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which is the current name of Cisco's VPN client that replaced AnyConnect?",
+    "options": [
+     "Cisco Secure Client",
+     "Cisco Packet Client",
+     "Cisco WebVPN Plus",
+     "Cisco Tunnel Manager"
+    ],
+    "answer": 0,
+    "why": "Cisco's own notice says the current version is now known as Cisco Secure Client.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which two are exam-outline VPN types?",
+    "options": [
+     "Remote access",
+     "Layer 3 MPLS",
+     "Site-to-site",
+     "VPLS"
+    ],
+    "answer": 0,
+    "why": "and C - remote access and site-to-site are named in the objective. MPLS VPNs are provider services.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "In a Layer 3 MPLS VPN, which router is yours?",
+    "options": [
+     "CE",
+     "PE",
+     "P",
+     "VPLS"
+    ],
+    "answer": 0,
+    "why": "CE is the customer edge router. PE and P belong to the provider.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "At which OSI layer does IPsec work?",
+    "options": [
+     "Layer 2",
+     "Layer 3",
+     "Layer 4",
+     "Layer 7"
+    ],
+    "answer": 1,
+    "why": "the book says IPsec works at the Network layer.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which mode is normally used between two sites?",
+    "options": [
+     "Transport mode",
+     "Tunnel mode",
+     "Console mode",
+     "Promiscuous mode"
+    ],
+    "answer": 1,
+    "why": "gateways protect traffic for the hosts behind them.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "How many bytes of overhead does GRE add at minimum?",
+    "options": [
+     "8",
+     "20",
+     "24",
+     "58"
+    ],
+    "answer": 2,
+    "why": "20 bytes of outer IP header plus 4 bytes of GRE header.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "What is the IP protocol number of GRE?",
+    "options": [
+     "6",
+     "17",
+     "47",
+     "50"
+    ],
+    "answer": 2,
+    "why": "IANA registry. 50 is ESP.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which technology lets the hub use one tunnel interface and one IPsec profile for all spokes?",
+    "options": [
+     "VTI",
+     "L2F",
+     "DMVPN",
+     "PPTP"
+    ],
+    "answer": 2,
+    "why": "DMVPN is the hub-and-spoke design with dynamic spoke-to-spoke tunnels.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which command shows the tunnel source, destination and protocol (GRE/IP)?",
+    "options": [
+     "show ip route",
+     "show interfaces tunnel 0",
+     "show running-config",
+     "show version"
+    ],
+    "answer": 1,
+    "why": "show interfaces tunnel 0 shows the settings and state.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which statement best describes a VPN?",
+    "options": [
+     "A leased private line from a provider",
+     "A private network created across a public network, using tunnelling and usually encryption",
+     "A VLAN across two switches",
+     "A wireless network for guests"
+    ],
+    "answer": 1,
+    "why": "a VPN makes private connectivity over a public network such as the Internet.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "A host in a remote office must appear local to a secure server VLAN. Which is the right tool?",
+    "options": [
+     "A second VLAN",
+     "A VPN",
+     "A bigger switch",
+     "Port security"
+    ],
+    "answer": 1,
+    "why": "VLANs are for physically local networks. A VPN extends the local view across a WAN.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which two are enterprise-managed VPN categories?",
+    "options": [
+     "Remote access",
+     "Layer 3 MPLS VPN",
+     "Site-to-site",
+     "VPWS"
+    ],
+    "answer": 0,
+    "why": "and C - MPLS VPNs and VPWS are provider-managed services.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "In a Layer 3 MPLS VPN, which router belongs to the customer?",
+    "options": [
+     "CE",
+     "PE",
+     "P",
+     "ASR"
+    ],
+    "answer": 0,
+    "why": "CE is the customer edge. PE and P belong to the provider.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which provider technology gives a multipoint, LAN-like Ethernet service?",
+    "options": [
+     "VPWS",
+     "VPLS",
+     "GRE",
+     "L2F"
+    ],
+    "answer": 1,
+    "why": "VPLS makes sites share one virtual Ethernet broadcast domain. VPWS is point to point.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "What IP protocol number does ESP use?",
+    "options": [
+     "47",
+     "50",
+     "51",
+     "115"
+    ],
+    "answer": 1,
+    "why": "IANA registry. 47 is GRE, 51 is AH, 115 is L2TP.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which IPsec protocol can provide encryption?",
+    "options": [
+     "AH",
+     "ESP",
+     "Both AH and ESP",
+     "Neither"
+    ],
+    "answer": 1,
+    "why": "AH authenticates only. ESP can encrypt.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which statement about plain IPsec (no GRE) is true according to the book?",
+    "options": [
+     "It carries IP multicast and routing protocols easily",
+     "It cannot carry IP broadcast, multicast or non-IP traffic",
+     "It carries non-IP traffic natively",
+     "It uses no encryption"
+    ],
+    "answer": 1,
+    "why": "that is why GRE is added to carry routing protocols.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which of these is asymmetric encryption?",
+    "options": [
+     "AES",
+     "DES",
+     "RSA",
+     "3DES"
+    ],
+    "answer": 2,
+    "why": "RSA uses a key pair. The others are symmetric.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "What is the IP protocol number of GRE?",
+    "options": [
+     "6",
+     "17",
+     "47",
+     "50"
+    ],
+    "answer": 2,
+    "why": "IANA registry. 50 is ESP.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which command creates a GRE tunnel interface numbered 5?",
+    "options": [
+     "tunnel 5 gre",
+     "interface tunnel 5",
+     "ip gre 5",
+     "interface gre 5"
+    ],
+    "answer": 1,
+    "why": "interface tunnel <number>. The number range is 0 to 2147483647.",
+    "topic": "Chapter 15"
+   },
+   {
+    "q": "Which technology uses one tunnel interface and one IPsec profile on the hub for all spokes, with dynamic spoke-to-spoke tunnels?",
+    "options": [
+     "IPsec VTI",
+     "DMVPN",
+     "L2TP",
+     "PPTP"
+    ],
+    "answer": 1,
+    "why": "DMVPN is built from mGRE, NHRP and IPsec. CHECK",
+    "topic": "Chapter 15"
+   }
+  ]
+ },
+ {
+  "id": "ccna-16-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 16: Quality of Service (QoS) — review questions",
+  "summary": "9 multiple-choice questions from chapter 16, with answers. 21 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-16"
+  ],
+  "objectives": [],
+  "questions": [
+   {
+    "q": "Which QoS problem is the variation in packet delay?",
+    "options": [
+     "Delay",
+     "Jitter",
+     "Error",
+     "Out-of-order delivery"
+    ],
+    "answer": 1,
+    "why": "jitter is the variation in delay, and it hurts real-time traffic most.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Where is the trust boundary in a typical enterprise campus?",
+    "options": [
+     "At the core router",
+     "At the edge (access) switch",
+     "At the ISP",
+     "At the DHCP server"
+    ],
+    "answer": 1,
+    "why": "traffic is classified and marked at the edge before entering the trusted domain.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Which is a Layer 2 QoS marking?",
+    "options": [
+     "DSCP",
+     "IP precedence",
+     "CoS",
+     "ToS"
+    ],
+    "answer": 2,
+    "why": "CoS is a 3-bit Layer 2 marking (PCP in a VLAN tag). DSCP, IP precedence and ToS are Layer 3.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Which advanced tool classifies applications by looking deep into the payload?",
+    "options": [
+     "NBAR",
+     "ACL",
+     "CoS",
+     "WRED"
+    ],
+    "answer": 0,
+    "why": "NBAR does Layer 4-7 deep-packet inspection.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Which QoS mechanism drops traffic if a session uses more than its allotted bandwidth?",
+    "options": [
+     "Congestion management",
+     "Shaping",
+     "Policing",
+     "Marking"
+    ],
+    "answer": 2,
+    "why": "policing drops (or re-marks) excess traffic. Shaping delays it.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Which queuing mechanism provides both bandwidth and latency guarantees for voice and data?",
+    "options": [
+     "FIFO",
+     "WFQ",
+     "CBWFQ",
+     "LLQ"
+    ],
+    "answer": 3,
+    "why": "LLQ adds a strict-priority queue to CBWFQ.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Which of these is a congestion-avoidance mechanism?",
+    "options": [
+     "LMI",
+     "WRED",
+     "QPM",
+     "NBAR"
+    ],
+    "answer": 1,
+    "why": "WRED drops packets early, weighted by priority.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "A user complains that voice calls break up only during large file transfers. Which change best helps?",
+    "options": [
+     "Use FIFO queuing",
+     "Add an LLQ priority queue for voice marked EF",
+     "Disable QoS",
+     "Use a policer on voice"
+    ],
+    "answer": 1,
+    "why": "LLQ gives voice a strict-priority queue with low latency.",
+    "topic": "Chapter 16"
+   },
+   {
+    "q": "Which statement is true? (Choose one.)",
+    "options": [
+     "Policers delay traffic, shapers drop it",
+     "Shapers delay traffic, policers drop or re-mark it",
+     "Both always delay traffic",
+     "Neither is a rate-limiter"
+    ],
+    "answer": 1,
+    "why": "both are rate-limiters. Shapers delay, policers drop or re-mark.",
+    "topic": "Chapter 16"
+   }
+  ]
+ },
+ {
+  "id": "ccna-17-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 17: Internet Protocol Version 6 (IPv6) — review questions",
+  "summary": "9 multiple-choice questions from chapter 17, with answers. 58 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-17"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-3.2"
+   }
+  ],
+  "questions": [
+   {
+    "q": "What replaces broadcast in IPv6?",
+    "options": [
+     "Unicast only",
+     "Multicast (and anycast is new)",
+     "ARP",
+     "Nothing replaces it"
+    ],
+    "answer": 1,
+    "why": "There is no broadcast in IPv6.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "Which prefix is global unicast?",
+    "options": [
+     "FE80::/10",
+     "FC00::/7",
+     "2000::/3",
+     "FF00::/8"
+    ],
+    "answer": 2,
+    "why": "2000::/3 (addresses starting with 2 or 3).",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "Which ICMPv6 type is a router advertisement?",
+    "options": [
+     "133",
+     "134",
+     "135",
+     "136"
+    ],
+    "answer": 1,
+    "why": "133 is RS, 135 NS, 136 NA.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "Which header field was removed completely?",
+    "options": [
+     "Hop Limit",
+     "Header checksum",
+     "Version",
+     "Source address"
+    ],
+    "answer": 1,
+    "why": "Upper layers and Layer 2 check for errors.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "Which address is valid?",
+    "options": [
+     "2001:db8::1::5",
+     "2001:db8:0:1::5",
+     "2001:db8:0:1:5",
+     "2001:db8:g::1"
+    ],
+    "answer": 1,
+    "why": "A has two ::, C has too few groups, D has an invalid hex digit g.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "A MAC starts with 3C. What does its EUI-64 interface ID start with?",
+    "options": [
+     "3C",
+     "3D",
+     "3E",
+     "3F"
+    ],
+    "answer": 2,
+    "why": "3C = 00111100, flip the 7th bit: 00111110 = 3E.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "Which prefix is link-local unicast?",
+    "options": [
+     "FC00::/7",
+     "FE80::/10",
+     "FF00::/8",
+     "2000::/3"
+    ],
+    "answer": 1,
+    "why": "FE80::/10 covers fe80:: to febf::.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "An anycast packet is delivered to...",
+    "options": [
+     "Every device with the address",
+     "The nearest device with the address",
+     "One random device",
+     "Only the router"
+    ],
+    "answer": 1,
+    "why": "One-to-nearest.",
+    "topic": "Chapter 17"
+   },
+   {
+    "q": "Which Next Header value identifies ICMPv6?",
+    "options": [
+     "6",
+     "17",
+     "58",
+     "89"
+    ],
+    "answer": 2,
+    "why": "6 = TCP, 17 = UDP, 58 = ICMPv6.",
+    "topic": "Chapter 17"
+   }
+  ]
+ },
+ {
+  "id": "ccna-18-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 18: Troubleshooting IP, IPv6, and VLANs — review questions",
+  "summary": "14 multiple-choice questions from chapter 18, with answers. 48 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-18"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-3.2"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which server role gives endpoints their IP address dynamically?",
+    "options": [
+     "DNS",
+     "DHCP",
+     "RADIUS",
+     "Hypervisor"
+    ],
+    "answer": 1,
+    "why": "DHCP.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which route print column shows the next-hop router for the default route?",
+    "options": [
+     "Network Destination",
+     "Netmask",
+     "Gateway",
+     "Interface"
+    ],
+    "answer": 2,
+    "why": "Gateway. The Interface column is the PC's own address.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which multicast address does a host send a router solicitation to?",
+    "options": [
+     "FF02::1",
+     "FF02::2",
+     "FF02::1:FF00:0",
+     "FF00::"
+    ],
+    "answer": 1,
+    "why": "FF02::2 (all routers). Routers answer with an RA.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which command shows the DTP status of an interface?",
+    "options": [
+     "show dtp status",
+     "show dtp interface <int>",
+     "show interface <int> dtp",
+     "show dtp status interface <int>"
+    ],
+    "answer": 1,
+    "why": "show dtp interface <int>.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which port mode generates no DTP frames?",
+    "options": [
+     "Auto",
+     "Desirable",
+     "Nonegotiate",
+     "Trunk (without nonegotiate)"
+    ],
+    "answer": 2,
+    "why": "Nonegotiate. It is allowed only when the port is manually set to trunk or access.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which host test first proves the cable and the switch port work?",
+    "options": [
+     "Ping 127.0.0.1",
+     "Ping the host's own address",
+     "Ping the default gateway",
+     "Ping a remote server"
+    ],
+    "answer": 2,
+    "why": "the gateway ping crosses the LAN.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which command shows which ACL is applied to an interface and in which direction?",
+    "options": [
+     "show ip route",
+     "show ip interface <int>",
+     "show interfaces <int>",
+     "show vlan brief"
+    ],
+    "answer": 1,
+    "why": "show ip interface <int> lists the inbound and outbound ACL.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Where should an extended ACL be placed?",
+    "options": [
+     "Closest to the destination",
+     "Closest to the source",
+     "On the core switch only",
+     "It does not matter"
+    ],
+    "answer": 1,
+    "why": "extended ACLs go closest to the source.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "A host is 192.168.30.77/27 with default gateway 192.168.30.65. Is the setup valid?",
+    "options": [
+     "Yes",
+     "No"
+    ],
+    "answer": 0,
+    "why": "the subnet is 192.168.30.64/27, usable .65 to .94, broadcast .95. The gateway is the first usable address. Calculated.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which Linux command shows IP addresses on a modern system where ifconfig is missing?",
+    "options": [
+     "ip addr",
+     "ipconfig",
+     "show ip int brief",
+     "netsh"
+    ],
+    "answer": 0,
+    "why": "ip addr from iproute2.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which counter rising constantly makes VoIP suffer?",
+    "options": [
+     "Input errors",
+     "Output queue drops",
+     "Runts",
+     "CRC"
+    ],
+    "answer": 1,
+    "why": "output queue drops mean congestion; consider QoS.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "An IPv6 neighbour entry is STALE and a packet is sent to it. What state is next?",
+    "options": [
+     "REACH",
+     "DELAY",
+     "INCMP",
+     "PROBE straight away"
+    ],
+    "answer": 1,
+    "why": "STALE then DELAY (about 5 seconds), then PROBE if no confirmation.",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "Which Next Header value identifies ICMPv6?",
+    "options": [
+     "6",
+     "17",
+     "58",
+     "89"
+    ],
+    "answer": 2,
+    "why": "58. It is an upper-layer protocol, not an extension header. CHECK",
+    "topic": "Chapter 18"
+   },
+   {
+    "q": "A router solicitation is sent to which address?",
+    "options": [
+     "FF02::1",
+     "FF02::2",
+     "FF02::1:FF00:0",
+     "FE80::1"
+    ],
+    "answer": 1,
+    "why": "FF02::2 (all routers).",
+    "topic": "Chapter 18"
+   }
+  ]
+ },
+ {
+  "id": "ccna-19-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 19: Wireless Technologies — review questions",
+  "summary": "10 multiple-choice questions from chapter 19, with answers. 49 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-19"
+  ],
+  "objectives": [],
+  "questions": [
+   {
+    "q": "Which 2.4 GHz channels are non-overlapping in the United States?",
+    "options": [
+     "1, 5, 9",
+     "1, 6, 11",
+     "1, 4, 8",
+     "2, 7, 12"
+    ],
+    "answer": 1,
+    "why": "Script check: only 1, 6, 11 fit in channels 1 to 11.",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "Which statement about the 5 GHz band is true compared with 2.4 GHz?",
+    "options": [
+     "Longer range and fewer channels",
+     "Shorter range and more non-overlapping channels",
+     "The same range and the same channels",
+     "Longer range and more channels"
+    ],
+    "answer": 1,
+    "why": "Higher frequency travels less far but gives more usable channels.",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "An AP is installed on the ceiling. At minimum, which parameter must be configured so a client can use it?",
+    "options": [
+     "AES",
+     "PSK",
+     "SSID",
+     "WEP"
+    ],
+    "answer": 2,
+    "why": "Open authentication needs only the SSID (book question 5).",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "Two laptops connect directly with no AP. What is it called?",
+    "options": [
+     "BSS",
+     "SSID",
+     "IBSS",
+     "ESS"
+    ],
+    "answer": 2,
+    "why": "Independent basic service set (ad hoc).",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "A signal bends around a building and leaves a dead spot. Which behavior is this?",
+    "options": [
+     "Refraction",
+     "Diffraction",
+     "Scattering",
+     "Absorption"
+    ],
+    "answer": 1,
+    "why": "Diffraction bends around; refraction bends through different media.",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "Which two encryption methods are based on RC4?",
+    "options": [
+     "WEP",
+     "TKIP",
+     "AES",
+     "CCMP"
+    ],
+    "answer": 0,
+    "why": ", B - AES-CCMP replaced RC4.",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "Which encryption does WPA2 use?",
+    "options": [
+     "TKIP/MIC",
+     "AES-CCMP",
+     "RC4",
+     "SAE"
+    ],
+    "answer": 1,
+    "why": "SAE is the WPA3-Personal handshake.",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "Which WPA3 feature gives built-in resistance to offline dictionary attacks?",
+    "options": [
+     "TKIP",
+     "AES",
+     "SAE",
+     "WEP"
+    ],
+    "answer": 2,
+    "why": "Simultaneous Authentication of Equals (Dragonfly).",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "Choose two statements that describe WPA.",
+    "options": [
+     "Dynamic encryption keys change during the connection",
+     "All devices must use the same static key",
+     "It can use PSK authentication",
+     "Static WEP keys are required"
+    ],
+    "answer": 0,
+    "why": ", C - Book question 17.",
+    "topic": "Chapter 19"
+   },
+   {
+    "q": "A client with a b/g card cannot join an 802.11b/g AP, and the AP lists no clients at all. What is a likely reason?",
+    "options": [
+     "Wrong channel set on the client",
+     "Wrong IP subnet",
+     "Wrong pre-shared key",
+     "Wrong SSID on the client"
+    ],
+    "answer": 3,
+    "why": "The AP only lists clients that associate. A wrong IP or key would still show an association attempt. A client usually scans all channels itself. CHECK",
+    "topic": "Chapter 19"
+   }
+  ]
+ },
+ {
+  "id": "ccna-20-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 20: Configuring Wireless — review questions",
+  "summary": "15 multiple-choice questions from chapter 20, with answers. 43 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-20"
+  ],
+  "objectives": [],
+  "questions": [
+   {
+    "q": "Which deployment model keeps the data plane on premises and the control plane in the cloud?",
+    "options": [
+     "Stand-alone",
+     "Lightweight",
+     "Cloud (Meraki)",
+     "Mesh"
+    ],
+    "answer": 2,
+    "why": "the Meraki design.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which switchport type connects the WLC service port?",
+    "options": [
+     "Trunk",
+     "Access",
+     "EtherChannel",
+     "Routed"
+    ],
+    "answer": 1,
+    "why": "access port; the service port does not support tags.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which DNS name do APs look up to find the WLC?",
+    "options": [
+     "CISCO-WLC-CONTROLLER",
+     "CISCO-CAPWAP-CONTROLLER",
+     "CISCO-AP-CONTROLLER",
+     "WLC-CONTROLLER"
+    ],
+    "answer": 1,
+    "why": "an A record for CISCO-CAPWAP-CONTROLLER.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which WLC interface is most like an SVI on a switch?",
+    "options": [
+     "Management",
+     "Virtual",
+     "Dynamic",
+     "Service port"
+    ],
+    "answer": 2,
+    "why": "a dynamic interface terminates a VLAN.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "What is the default AP mode?",
+    "options": [
+     "Local",
+     "Monitor",
+     "FlexConnect",
+     "Sniffer"
+    ],
+    "answer": 0,
+    "why": "Local.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which port does RADIUS use for authentication on modern servers?",
+    "options": [
+     "UDP 1645",
+     "TCP 1645",
+     "UDP 1812",
+     "TCP 1812"
+    ],
+    "answer": 2,
+    "why": "legacy is UDP 1645.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which port does TACACS+ use for accounting?",
+    "options": [
+     "UDP 49",
+     "UDP 1813",
+     "TCP 1813",
+     "TCP 49"
+    ],
+    "answer": 3,
+    "why": "TCP 49 for all functions.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "What is the default QoS queue for a new WLAN?",
+    "options": [
+     "Gold",
+     "Platinum",
+     "Bronze",
+     "Silver"
+    ],
+    "answer": 3,
+    "why": "Silver (best effort).",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which AP mode is the default?",
+    "options": [
+     "Local",
+     "FlexConnect",
+     "Monitor",
+     "Bridge"
+    ],
+    "answer": 0,
+    "why": "Local.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which WLC interface is like an SVI on a switch?",
+    "options": [
+     "Management",
+     "Dynamic",
+     "Virtual",
+     "Service port"
+    ],
+    "answer": 1,
+    "why": "terminates a VLAN.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "What is the option 43 value for one WLC at 10.30.11.40?",
+    "options": [
+     "F1040A1E0B28",
+     "F1020A1E0B28",
+     "F1080A1E0B28",
+     "F104280B1E0A"
+    ],
+    "answer": 0,
+    "why": "F1, 04, 0A 1E 0B 28.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which QoS queue is the default?",
+    "options": [
+     "Platinum",
+     "Gold",
+     "Silver",
+     "Bronze"
+    ],
+    "answer": 2,
+    "why": "best effort.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which AP modes serve client traffic?",
+    "options": [
+     "Local and FlexConnect",
+     "Monitor and Sniffer",
+     "Rogue Detector and SE-Connect",
+     "Sensor and Monitor"
+    ],
+    "answer": 0,
+    "why": "the others only watch.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which function does the WLC (not the AP) perform in split MAC?",
+    "options": [
+     "Beacons",
+     "802.11 authentication",
+     "Probe responses",
+     "Encryption of frames"
+    ],
+    "answer": 1,
+    "why": "the AP does the real-time items.",
+    "topic": "Chapter 20"
+   },
+   {
+    "q": "Which command shows an IP address on Windows CMD?",
+    "options": [
+     "ifconfig",
+     "ipconfig",
+     "ip addr",
+     "Get-NetIPAddress"
+    ],
+    "answer": 1,
+    "why": "Get-NetIPAddress is PowerShell.",
+    "topic": "Chapter 20"
+   }
+  ]
+ },
+ {
+  "id": "ccna-21-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 21: Virtualization, Automation, and Programmability — review questions",
+  "summary": "4 multiple-choice questions from chapter 21, with answers. 59 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-21"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-5.4"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which hypervisor type runs directly on the hardware?",
+    "options": [
+     "Type 1",
+     "Type 2",
+     "Type 3",
+     "Type 4"
+    ],
+    "answer": 0,
+    "why": "Type 1 is bare-metal.",
+    "topic": "Chapter 21"
+   },
+   {
+    "q": "Which product is a Type 2 hypervisor?",
+    "options": [
+     "VMware ESXi",
+     "Hyper-V",
+     "VMware Workstation",
+     "Xen"
+    ],
+    "answer": 2,
+    "why": "Workstation installs on a desktop OS. (The book lists ESXi, Hyper-V, and Xen as Type 1.)",
+    "topic": "Chapter 21"
+   },
+   {
+    "q": "Which JSON rules are correct? (Choose three.)",
+    "options": [
+     "Use double quotes",
+     "Use single quotes",
+     "Booleans are lowercase",
+     "Trailing commas are not allowed"
+    ],
+    "answer": 0,
+    "why": ", C, D - JSON needs double quotes, lowercase booleans, and no trailing commas.",
+    "topic": "Chapter 21"
+   },
+   {
+    "q": "Which is valid JSON?",
+    "options": [
+     "{'a': 1}",
+     "{\"a\": True}",
+     "{\"a\": 1,}",
+     "{\"a\": true}"
+    ],
+    "answer": 3,
+    "why": "the others break a rule.",
+    "topic": "Chapter 21"
+   }
+  ]
+ },
+ {
+  "id": "ccna-22-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 22: SDN Controllers — review questions",
+  "summary": "15 multiple-choice questions from chapter 22, with answers. 52 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-22"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-5.4"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which protocol does an NMS use to poll devices?",
+    "options": [
+     "Telnet",
+     "SNMP",
+     "SMTP",
+     "RESTCONF"
+    ],
+    "answer": 1,
+    "why": "the book says an NMS polls devices using SNMP.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which command sets the IP address of the syslog server?",
+    "options": [
+     "logging trap 10.20.2.115",
+     "logging host 10.20.2.115",
+     "snmp-server host 10.20.2.115",
+     "syslog server 10.20.2.115"
+    ],
+    "answer": 1,
+    "why": "logging host sets the server. logging trap sets the severity level.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which tool would you use to see what changed in a router's config last night?",
+    "options": [
+     "NMS",
+     "NCM",
+     "A syslog filter",
+     "A ping"
+    ],
+    "answer": 1,
+    "why": "an NCM can compare saved configuration versions.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which plane does SSH belong to?",
+    "options": [
+     "Management",
+     "Control",
+     "Data",
+     "None of them"
+    ],
+    "answer": 0,
+    "why": "SSH, Telnet, SNMP and HTTPS are management plane.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "What is the northbound interface used for?",
+    "options": [
+     "Talking to the network devices",
+     "Letting users and scripts interact with the controller",
+     "Tracking AP performance",
+     "Routing traffic out of the network"
+    ],
+    "answer": 1,
+    "why": "the NBI is how you reach the controller, usually through a GUI or REST API.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which layer of the campus architecture hosts the SVIs?",
+    "options": [
+     "Access",
+     "Distribution",
+     "Core",
+     "Spine"
+    ],
+    "answer": 1,
+    "why": "the distribution layer hosts SVIs, DHCP relay and the Layer 3 boundary.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "What is the underlay?",
+    "options": [
+     "A layer where tunnels are built to provide services",
+     "A layer that provides connectivity throughout the fabric",
+     "A term for everything in the SDN network",
+     "The controller's GUI"
+    ],
+    "answer": 1,
+    "why": "the book's review question 2. Option A is the overlay, and option C is the fabric.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "What was DNA Center renamed?",
+    "options": [
+     "Cisco Catalyst Center",
+     "Cisco Prime Center",
+     "Cisco Meraki Center",
+     "Cisco ACI Center"
+    ],
+    "answer": 0,
+    "why": "Cisco's data sheet says Catalyst Center is formerly DNA Center.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which feature configures new switches automatically using Plug and Play?",
+    "options": [
+     "Path Trace",
+     "LAN Automation",
+     "EasyQoS",
+     "Command Runner"
+    ],
+    "answer": 1,
+    "why": "LAN Automation uses PnP with a DHCP server on the upstream device.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "What do users and scripts use to interact with an SDN controller?",
+    "options": [
+     "The southbound interface",
+     "The northbound interface",
+     "The data plane",
+     "The underlay"
+    ],
+    "answer": 1,
+    "why": "the NBI, usually a GUI or REST API.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which statement describes the underlay?",
+    "options": [
+     "Virtual tunnels that provide services",
+     "The physical Layer 3 network that gives connectivity",
+     "A name for all devices in the solution",
+     "The controller's database"
+    ],
+    "answer": 1,
+    "why": "the overlay is the tunnels. The fabric is the term for everything.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which plane runs OSPF and ARP?",
+    "options": [
+     "Management",
+     "Control",
+     "Data",
+     "Forwarding"
+    ],
+    "answer": 1,
+    "why": "the control plane runs protocols and builds forwarding information.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which protocol does an NMS mainly use to poll devices?",
+    "options": [
+     "SNMP",
+     "NETCONF",
+     "OpenFlow",
+     "OpFlex"
+    ],
+    "answer": 0,
+    "why": "an NMS polls with SNMP.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which command points a router at a syslog server?",
+    "options": [
+     "logging host 10.1.1.1",
+     "logging trap 10.1.1.1",
+     "snmp-server host 10.1.1.1",
+     "syslog 10.1.1.1"
+    ],
+    "answer": 0,
+    "why": "logging trap sets the severity.",
+    "topic": "Chapter 22"
+   },
+   {
+    "q": "Which protocol uses XML over SSH, TCP port 830 by default?",
+    "options": [
+     "NETCONF",
+     "OpenFlow",
+     "SNMP",
+     "onePK"
+    ],
+    "answer": 0,
+    "why": "RFC 6241 (Cisco IOS XE documentation). It models data with YANG.",
+    "topic": "Chapter 22"
+   }
+  ]
+ },
+ {
+  "id": "ccna-23-review",
+  "kind": "quiz",
+  "tech": "cisco",
+  "exam": "CCNA 200-301",
+  "title": "Chapter 23: Configuration Management — review questions",
+  "summary": "7 multiple-choice questions from chapter 23, with answers. 27 further open questions are on the chapter page.",
+  "tags": [
+   "ccna",
+   "chapter-23"
+  ],
+  "objectives": [
+   {
+    "id": "CCNA-4.2"
+   },
+   {
+    "id": "CCNA-5.4"
+   }
+  ],
+  "questions": [
+   {
+    "q": "Which statement describes idempotence?",
+    "options": [
+     "The tool always makes a change when run",
+     "The tool makes a change only if the current state differs from the described state",
+     "The tool needs an agent",
+     "The tool only works once"
+    ],
+    "answer": 1,
+    "why": "running it again should produce no extra change.",
+    "topic": "Chapter 23"
+   },
+   {
+    "q": "Which connection method does Ansible mainly use to reach network devices?",
+    "options": [
+     "SNMP",
+     "SSH",
+     "Telnet",
+     "An installed agent"
+    ],
+    "answer": 1,
+    "why": "Ansible is agentless and uses SSH.",
+    "topic": "Chapter 23"
+   },
+   {
+    "q": "What is the Chef command-line tool called?",
+    "options": [
+     "Cookbook",
+     "Knife",
+     "Ohai",
+     "Manifest"
+    ],
+    "answer": 1,
+    "why": "knife manages Chef through the server API.",
+    "topic": "Chapter 23"
+   },
+   {
+    "q": "Which components belong to a Chef deployment? (Choose three.)",
+    "options": [
+     "Chef server",
+     "Chef workstation",
+     "Bookshelf",
+     "Inventory"
+    ],
+    "answer": 0,
+    "why": ", B and C - inventory belongs to Ansible.",
+    "topic": "Chapter 23"
+   },
+   {
+    "q": "Which two configuration management tools require an agent? (Choose two.)",
+    "options": [
+     "Ansible",
+     "Puppet",
+     "Chef",
+     "Terraform"
+    ],
+    "answer": 1,
+    "why": "and C - Puppet and Chef need agents. Ansible uses SSH.",
+    "topic": "Chapter 23"
+   },
+   {
+    "q": "What does Ansible call the file that holds the work to be applied to nodes?",
+    "options": [
+     "Cookbook",
+     "Manifest",
+     "Playbook",
+     "Inventory"
+    ],
+    "answer": 2,
+    "why": "Playbook. The inventory lists the nodes.",
+    "topic": "Chapter 23"
+   },
+   {
+    "q": "Which command runs an Ansible playbook?",
+    "options": [
+     "ansible-doc",
+     "ansible-execute",
+     "ansible-playbook",
+     "run-playbook"
+    ],
+    "answer": 2,
+    "why": "ansible-playbook. ansible-doc shows module help.",
+    "topic": "Chapter 23"
+   }
+  ]
+ }
+]

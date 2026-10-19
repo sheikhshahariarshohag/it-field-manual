@@ -1,0 +1,3933 @@
+{
+ "id": "ccna-06",
+ "n": 6,
+ "sourceNumber": "CC06",
+ "kind": "chapter",
+ "title": "Open Shortest Path First (OSPF)",
+ "display": "Chapter 6: Open Shortest Path First (OSPF)",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 7859,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 6"
+    },
+    {
+     "level": 0,
+     "text": "Open Shortest Path First (OSPF)"
+    },
+    {
+     "level": 0,
+     "text": "This document replaces Chapter 6 of Todd Lammle, CCNA Certification Study Guide, Volume 2, Exam 200-301 (2020), book pages 163 to 192 (PDF pages 221 to 250). It follows the book's order, keeps its learning objectives, and adds plain-English explanations, command breakdowns, labs and questions. Every difference from the book is tagged so you can see what is original and what is not."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 163 to 192 (PDF page = book page + 58, checked on this chapter) |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 6 - Open Shortest Path First (OSPF); topics 6.1 to 6.4; subtopics 6.1.1 to 6.4.5 (16 rows). Seq range: not checked, because the Notion tracker was not connected in this chat CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 6 to 8 hours in total: 2 h reading, 3 h labs, 1.5 h questions. This is a suggestion, not a measured need. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | v1.1 (retires 2 Feb 2027) and v2.0 (starts 3 Feb 2027). OSPF is v1.1 objective 3.4 and v2.0 objective 3.3. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Nothing here assumes you already know it. |"
+    },
+    {
+     "level": 3,
+     "text": "Tag legend"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book (page given where useful). |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is outdated, wrong or unclear. The text says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the chapter but helps the exam or real work. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified on real equipment or not confirmed in an official source. Treat with care. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives from the book (v1.0 numbers): 3.4 Configure and verify single area OSPFv2. 3.4.a Neighbor adjacencies. 3.4.b Point-to-point. 3.4.c Broadcast (DR/BDR selection). 3.4.d Router ID."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. All wildcard masks, subnets, router IDs, OSPF costs and DR/BDR election results in this document were calculated with a Python script (ipaddress module and integer maths) and compared with the manual method. No command or output was run on real Cisco equipment. Every output shown that I did not capture myself is marked CHECK ."
+    }
+   ],
+   "words": 379
+  },
+  {
+   "title": "Where this chapter fits in the exam",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Section | v1.1 | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.1 OSPF basics, terms, operation | 3.4, 3.4.a Neighbor adjacencies | 3.3, 3.3.a Neighbor adjacencies (excluding authentication) | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.1.1 DR / BDR, network types | 3.4.b Point-to-point, 3.4.c Broadcast (DR/BDR selection) | 3.3.b, 3.3.c | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.2 Configuring OSPF (network command, areas, wildcards) | 3.4 | 3.3. Also 3.1 (read OSPF routes, AD 110, metric) | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.3 Loopbacks and router ID | 3.4.d Router ID | 3.3.d Router ID | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4 Verifying OSPF (show commands) | 3.4 | 3.3, 3.1, 2.4 (show commands) | High |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPFv3 for IPv6 (not in the book) ADDED | Not listed (v1.1 says OSPFv2) | 3.3 now says OSPFv2 for IPv4 and OSPFv3 for IPv6 | High for v2.0 |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPF authentication | Not listed | Excluded: v2.0 says neighbor adjacencies (excluding authentication) | Low |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Cisco says related topics not on the list may still appear in the exam. The v2.0 outline was read directly from Cisco's PDF in this session. The v1.1 objective numbers come from the book's own map plus secondary sources, because Cisco's v1.1 PDF was not opened CHECK ."
+    }
+   ],
+   "words": 216
+  },
+  {
+   "title": "Step 0: Pre-check (answer before you read)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Write your answer on paper first. Then mark your confidence: K (I know it), U (unsure), G (I guessed). Answers are in Answer Key A at the end. Be honest: this is how the tracker stays honest."
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the default administrative distance of OSPF? (Confidence: K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "Q2. Two routers are in the same area, but one sends Hellos every 10 seconds and the other every 5 seconds. Will they become neighbors? (Confidence: K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is the wildcard mask for a /27 network? (Confidence: K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "Q4. A router has the command router-id 9.9.9.9 and also a loopback 0 with address 1.1.1.1. Which one is the router ID? (Confidence: K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "Q5. Three routers on one Ethernet segment have default priorities and router IDs 1.1.1.1, 2.2.2.2 and 3.3.3.3. All start together. Which router becomes the DR? (Confidence: K / U / G)"
+    }
+   ],
+   "words": 158
+  },
+  {
+   "title": "6.1 Open Shortest Path First (OSPF) Basics",
+   "content": [
+    {
+     "level": 0,
+     "text": "The idea in plain words. OSPF is a link-state routing protocol. Every router in an area learns the full map of that area (who is connected to whom). Each router then runs the SPF (Dijkstra) algorithm on that map to find the best path to every network, and puts those paths in its routing table. This is different from RIP, where routers only pass around distances and never see the map. BOOK p164"
+    },
+    {
+     "level": 3,
+     "text": "Why people like OSPF [BOOK]"
+    },
+    {
+     "level": 0,
+     "text": "- Open standard: works between vendors (but see the warning on cost later)."
+    },
+    {
+     "level": 0,
+     "text": "- Fast convergence, and it supports equal-cost multipath (several equal best routes)."
+    },
+    {
+     "level": 0,
+     "text": "- Supports VLSM / CIDR and has no hop-count limit."
+    },
+    {
+     "level": 0,
+     "text": "- Sends updates only when something changes (event-triggered) and uses areas to keep updates small."
+    },
+    {
+     "level": 0,
+     "text": "- Supports IPv4 (OSPFv2) and IPv6 (OSPFv3, a separate version of the protocol)."
+    },
+    {
+     "level": 3,
+     "text": "OSPF compared with RIP (book Table 6.1) [BOOK] p165"
+    },
+    {
+     "level": 0,
+     "text": "| Characteristic | OSPF | RIPv2 | RIPv1 |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Type of protocol | Link state | Distance vector | Distance vector |"
+    },
+    {
+     "level": 0,
+     "text": "| Classless / VLSM | Yes | Yes | No |"
+    },
+    {
+     "level": 0,
+     "text": "| Auto-summarization | No | Yes | Yes |"
+    },
+    {
+     "level": 0,
+     "text": "| Manual summarization | Yes | Yes | No |"
+    },
+    {
+     "level": 0,
+     "text": "| Route propagation | Multicast on change | Periodic multicast | Periodic broadcast |"
+    },
+    {
+     "level": 0,
+     "text": "| Path metric | Cost (based on bandwidth) | Hops | Hops |"
+    },
+    {
+     "level": 0,
+     "text": "| Hop count limit | None | 15 | 15 |"
+    },
+    {
+     "level": 0,
+     "text": "| Convergence | Fast | Slow | Slow |"
+    },
+    {
+     "level": 0,
+     "text": "| Hierarchy (areas) | Yes | No | No |"
+    },
+    {
+     "level": 0,
+     "text": "| Route computation | Dijkstra (SPF) | Bellman-Ford | Bellman-Ford |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book's text under the table says \"Table 4.1\". It means Table 6.1. This is a typo in the book. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Areas and the two special routers [BOOK] p166"
+    },
+    {
+     "level": 0,
+     "text": "- Area: a group of contiguous networks and routers that share the same map. Areas cut routing overhead, speed up convergence and keep a problem inside one area."
+    },
+    {
+     "level": 0,
+     "text": "- Area 0 (backbone): every other area must connect to area 0 (virtual links are outside this book)."
+    },
+    {
+     "level": 0,
+     "text": "- ABR (area border router): a router with interfaces in more than one area. At least one interface must be in area 0."
+    },
+    {
+     "level": 0,
+     "text": "- ASBR (autonomous system boundary router): a router that connects the OSPF network to an outside routing domain."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "The book says OSPF \"absolutely must have an area 0\". That is true for multi-area designs. A single-area OSPF network will work in any area number, but use area 0 anyway. The exam uses single-area OSPF, and area 0 is the safe habit. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which algorithm does OSPF use to calculate best paths?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SPF (Dijkstra) - RIP uses Bellman-Ford."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What is the name of a router that has interfaces in two different OSPF areas?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ABR - Area border router."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Does OSPF send periodic full routing-table updates like RIPv1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - OSPF sends event-triggered updates (LSAs) when the topology changes."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Why use areas?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: To reduce routing overhead, speed convergence, and contain instability - These are the three reasons the book gives."
+    },
+    {
+     "level": 2,
+     "text": "6.1.1 OSPF Terminology"
+    },
+    {
+     "level": 0,
+     "text": "You must know these terms before the commands make sense. Read the table slowly; then say each term out loud in your own words. BOOK pp167-169"
+    },
+    {
+     "level": 0,
+     "text": "| Term | Plain meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Link | An interface added to OSPF. It has an up/down state and IP address(es). |"
+    },
+    {
+     "level": 0,
+     "text": "| Router ID (RID) | A 32-bit number written like an IPv4 address. It is the \"name\" of the router in OSPF. Chosen as shown in section 6.3. |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbor | Another OSPF router on the same link that you have seen Hellos from, with matching settings. |"
+    },
+    {
+     "level": 0,
+     "text": "| Adjacency | A neighbor you have gone further with: you exchange full databases with it. Not every neighbor becomes adjacent. |"
+    },
+    {
+     "level": 0,
+     "text": "| DR (designated router) | Elected on broadcast links. Everyone else forms adjacency with the DR so the number of adjacencies stays small. |"
+    },
+    {
+     "level": 0,
+     "text": "| BDR (backup DR) | A hot standby for the DR on the same link. |"
+    },
+    {
+     "level": 0,
+     "text": "| Hello protocol | Finds neighbors and keeps the relationship alive. Hellos go to 224.0.0.5. |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbor table | List of routers you have seen Hellos from (show ip ospf neighbor). |"
+    },
+    {
+     "level": 0,
+     "text": "| Topology database (LSDB) | All LSAs received for the area. The input to SPF (show ip ospf database). |"
+    },
+    {
+     "level": 0,
+     "text": "| LSA | Link State Advertisement: a packet that describes links and routes. Only shared with adjacent routers. |"
+    },
+    {
+     "level": 0,
+     "text": "| Area | A group of routers and networks with the same area ID and the same map. |"
+    },
+    {
+     "level": 0,
+     "text": "| Broadcast (multi-access) | Ethernet-style link: many devices, broadcast works. DR and BDR are elected. |"
+    },
+    {
+     "level": 0,
+     "text": "| NBMA | Many devices, no broadcast (old Frame Relay, X.25, ATM). Needs special configuration. |"
+    },
+    {
+     "level": 0,
+     "text": "| Point-to-point | Exactly two routers on the link. No DR or BDR. |"
+    },
+    {
+     "level": 0,
+     "text": "| Point-to-multipoint | One interface to many routers, all on one subnet. Special OSPF configuration. |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Neighbors must match on: area ID, stub area flag, authentication (if used), and Hello and Dead intervals. BOOK p167"
+    },
+    {
+     "level": 0,
+     "text": "Also needed, but not in the book: the two interfaces must be in the same subnet with the same mask on broadcast links, the network types must be compatible, and the router IDs must be different. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "The book says Hello packets and LSAs \"build and maintain the topological database\". Only LSAs build the database. Hellos find and keep neighbors. UPDATED (RFC 2328 describes the Hello protocol for neighbor discovery and the LSAs for the database.)"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book's NBMA examples (Frame Relay, X.25, ATM) are old technology. On the exam, concentrate on broadcast (Ethernet) and point-to-point links. NBMA and point-to-multipoint are not named in the objectives. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "DR and BDR election: the rules [ADDED]"
+    },
+    {
+     "level": 0,
+     "text": "- Only on broadcast (and NBMA) links. Point-to-point links have no election."
+    },
+    {
+     "level": 0,
+     "text": "- Winner = highest interface priority (default 1, range 0 to 255). Tie = highest router ID. BOOK says this in one sentence; priority is set with ip ospf priority number."
+    },
+    {
+     "level": 0,
+     "text": "- Priority 0 means: never become DR or BDR on this link."
+    },
+    {
+     "level": 0,
+     "text": "- The election does not take over when a better router arrives later (it is not preemptive). The first routers up keep the jobs until the DR or BDR fails or OSPF is reset on the interface. CHECK (standard OSPF behaviour; not in the book)"
+    },
+    {
+     "level": 0,
+     "text": "- Routers that are neither DR nor BDR are DROther. DROther routers are adjacent (FULL) only with the DR and BDR. With each other they stay in the 2-WAY state, and that is normal."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP: Priority first, Router ID second. \"PR\" decides the DR."
+    },
+    {
+     "level": 3,
+     "text": "OSPF neighbor states [ADDED]"
+    },
+    {
+     "level": 0,
+     "text": "| State | Plain meaning | If stuck here |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Down | No Hello heard yet. | Interface down, passive, or wrong network statement. |"
+    },
+    {
+     "level": 0,
+     "text": "| Init | I heard your Hello, but you have not heard mine yet. | One-way traffic: ACL, or Hello settings problem. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2-Way | We both see each other. DR/BDR is elected here. | Normal between two DROther routers. |"
+    },
+    {
+     "level": 0,
+     "text": "| ExStart | Deciding who sends database descriptions first (master/slave). | Often an MTU mismatch. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exchange | Sending summaries of the database. | Often an MTU mismatch. |"
+    },
+    {
+     "level": 0,
+     "text": "| Loading | Asking for LSAs I am missing. | Lost LSAs, or very slow link. |"
+    },
+    {
+     "level": 0,
+     "text": "| Full | Databases are the same. Adjacency is complete. | This is the goal. |"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "The state list is from general OSPF knowledge, consistent with RFC 2328 but not re-read line by line in this session. The book only shows the words LOADING and FULL in log messages. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.1.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which table is the input to the SPF calculation?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The topology database (LSDB) - SPF runs on the LSAs stored there."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Priorities are all default. RIDs are 10.0.0.5 and 10.0.0.9 on the same Ethernet segment. Which is DR?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.0.0.9 - Priority ties, so the higher router ID wins."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which of these can differ between two OSPF neighbors: area ID, Hello interval, router ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Router ID (it must differ) - Area ID and Hello interval must match; a duplicate router ID is a problem."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Two DROther routers on one LAN show 2-WAY with each other. Is that a fault?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - DROther routers only become FULL with the DR and BDR."
+    },
+    {
+     "level": 2,
+     "text": "6.1.2 OSPF Operation"
+    },
+    {
+     "level": 0,
+     "text": "OSPF works in three steps. BOOK p169"
+    },
+    {
+     "level": 0,
+     "text": "- Neighbor and adjacency formation: send Hellos, find neighbors, build adjacencies."
+    },
+    {
+     "level": 0,
+     "text": "- LSA flooding: adjacent routers send LSAs so every router in the area has the same database."
+    },
+    {
+     "level": 0,
+     "text": "- SPF tree calculation: each router builds a shortest-path tree with itself as the root and installs the best routes."
+    },
+    {
+     "level": 3,
+     "text": "Hello and Dead timers"
+    },
+    {
+     "level": 0,
+     "text": "| Network type | Hello | Dead (4 x Hello) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Broadcast (Ethernet), point-to-point | 10 seconds | 40 seconds |"
+    },
+    {
+     "level": 0,
+     "text": "| Non-broadcast (NBMA), point-to-multipoint | 30 seconds | 120 seconds |"
+    },
+    {
+     "level": 0,
+     "text": "The book states the Hello times in the text and shows Hello 10, Dead 40 in a later output, but it never writes the Dead rule. The Dead interval is by default four times the Hello interval on Cisco IOS. ADDED These timers must match on both ends of a link. Sources for the defaults: secondary (see Sources table). CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Multicast addresses [BOOK] [UPDATED]"
+    },
+    {
+     "level": 0,
+     "text": "| Address | Name (IANA) | Used for |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 224.0.0.5 | AllSPFRouters | Hellos, and flooding between routers. All OSPF routers listen. |"
+    },
+    {
+     "level": 0,
+     "text": "| 224.0.0.6 | AllDRouters | Only the DR and BDR listen. A DROther sends its updates here. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Book Table 6.2 lists \"Broadcast = 224.0.0.6\" for updates. That is only half the story: on a broadcast link a DROther sends to 224.0.0.6 (the DR/BDR), and the DR then floods to 224.0.0.5. The two addresses were checked against the IANA registry (official). UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Cost: the OSPF metric [BOOK] p170"
+    },
+    {
+     "level": 0,
+     "text": "OSPF metric is cost. The cost of a path is the sum of the costs of the outgoing interfaces along the path. Cisco calculates the cost of an interface as reference bandwidth / interface bandwidth, where the default reference is 100 Mbps (10^8 bps). The result is at least 1. You can override it on an interface with ip ospf cost 1-65535."
+    },
+    {
+     "level": 0,
+     "text": "| Link speed | Cost, ref 100 Mbps (default) | Cost, ref 1,000 Mbps | Cost, ref 10,000 Mbps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 Mbps Ethernet | 10 | 100 | 1000 |"
+    },
+    {
+     "level": 0,
+     "text": "| T1 serial (1.544 Mbps) | 64 | 647 | 6476 |"
+    },
+    {
+     "level": 0,
+     "text": "| 100 Mbps FastEthernet | 1 | 10 | 100 |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 Gbps | 1 | 1 | 10 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 Gbps | 1 | 1 | 1 |"
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "Check with the book's own route. The book shows [110/65] for a route across a T1 serial link plus a FastEthernet LAN. Script check: serial cost 64 + FastEthernet cost 1 = 65. The numbers agree. BOOK p182"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "The book says cost \"is an arbitrary value as defined in RFC 2338\". RFC 2338 is VRRP (and is now obsolete). OSPFv2 is RFC 2328. Both were confirmed on rfc-editor.org (official). UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "With the default reference of 100 Mbps, 1 Gbps and 10 Gbps links both cost 1 (the same as FastEthernet). OSPF then cannot tell fast from very fast. The fix is auto-cost reference-bandwidth under the OSPF process, set to the same value on every router. The book does not teach this. ADDED (Cisco's OSPF FAQ confirms the 100 Mbps default and the command; official.)"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Warning from the book (p171, and the multi-vendor story on p186): other vendors may calculate cost differently. If two routers assign different costs to one link, adjacency can still form but routing may behave badly. Match the cost on both ends."
+    },
+    {
+     "level": 3,
+     "text": "Other things worth knowing [ADDED]"
+    },
+    {
+     "level": 0,
+     "text": "- OSPF has five packet types: Hello, Database Description, Link State Request, Link State Update and Link State Acknowledgment. It runs directly over IP (protocol number 89). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- LSA types (for later study): Type 1 Router, Type 2 Network, Type 3 Summary, Type 4 ASBR summary, Type 5 External. Single-area OSPF uses mainly types 1 and 2. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- OSPF routes show in the routing table as O (inside the area), O IA (other area), and O E1 / O E2 (external)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.1.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. A link is 100 Mbps and the reference bandwidth is the default. What is the OSPF cost?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1 - 100 / 100 = 1."
+    },
+    {
+     "level": 0,
+     "text": "Q2. A router has two paths to a network. Path A: costs 10 + 10. Path B: costs 15. Which is installed?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Path B (15) - Lowest total cost wins; A is 20."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Where does a DROther send its LSA updates on Ethernet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 224.0.0.6 - Then the DR floods them to 224.0.0.5."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What is the default Dead interval when Hello is 10 seconds?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 40 seconds - Four times Hello."
+    }
+   ],
+   "words": 2234
+  },
+  {
+   "title": "6.2 Configuring OSPF",
+   "content": [
+    {
+     "level": 0,
+     "text": "Single-area OSPFv2 needs only two commands: start the process, then tell it which interfaces to run on and in which area. BOOK p171"
+    },
+    {
+     "level": 2,
+     "text": "6.2.1 Enabling OSPF"
+    },
+    {
+     "level": 0,
+     "text": "Start the OSPF process CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-router)#"
+    },
+    {
+     "level": 0,
+     "text": "- router ospf - starts the OSPF routing process."
+    },
+    {
+     "level": 0,
+     "text": "- 1 - the process ID, a number from 1 to 65,535. It only separates OSPF processes on this one router. It is locally significant: it does not need to match on other routers."
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "The book says the process ID \"can't start at 0 because that's for the backbone\". That mixes up two different numbers. The process ID has a range of 1 to 65,535. The area ID is a separate number, and area 0 is the backbone. They are unrelated. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says a second OSPF process \"comes into play when you want OSPF to connect multiple ASs together\". This is misleading. A second process keeps a separate database and does not share routes with the first unless you redistribute between them. For the exam, run one process per router, as the book also says. UPDATED CHECK"
+    },
+    {
+     "level": 2,
+     "text": "6.2.2 Configuring OSPF Areas"
+    },
+    {
+     "level": 0,
+     "text": "Basic network command BOOK p172"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-router)# network 10.0.0.0 0.255.255.255 area 0"
+    },
+    {
+     "level": 0,
+     "text": "- network 10.0.0.0 - an address to compare with the IP address of each interface."
+    },
+    {
+     "level": 0,
+     "text": "- 0.255.255.255 - the wildcard mask. A 0 bit means: this bit must match. A 1 bit means: I do not care."
+    },
+    {
+     "level": 0,
+     "text": "- area 0 - any interface that matches is placed in area 0. The area can be a decimal number (0 to 4,294,967,295) or dotted form. Area 0 and area 0.0.0.0 are the same."
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "What the network command really does. It does not \"advertise the network you typed\". It selects interfaces whose IP address falls inside the range. OSPF then runs on those interfaces and advertises each interface's own subnet. So network 10.0.0.0 0.255.255.255 area 0 turns on every interface that has a 10.x.x.x address. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Wildcard rule: block size minus one"
+    },
+    {
+     "level": 0,
+     "text": "The wildcard is the inverse of the subnet mask. In the interesting octet it equals block size - 1. A /28 has block size 16, so the wildcard is 15. A /30 has block size 4, so the wildcard is 3. BOOK p173"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "All values in the next two tables were calculated with the Python ipaddress module and match the book's own answers. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "| Interface address | Subnet | Mask | Wildcard | Network statement |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.65/29 (Lab_A Fa0/0) | 192.168.10.64/29 | 255.255.255.248 | 0.0.0.7 | network 192.168.10.64 0.0.0.7 area 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10.255.255.81/30 (Lab_A G0/0) | 10.255.255.80/30 | 255.255.255.252 | 0.0.0.3 | network 10.255.255.80 0.0.0.3 area 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.49/29 (Lab_B Fa0/0) | 192.168.10.48/29 | 255.255.255.248 | 0.0.0.7 | network 192.168.10.48 0.0.0.7 area 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10.255.255.9/30 (Lab_B G0/0) | 10.255.255.8/30 | 255.255.255.252 | 0.0.0.3 | network 10.255.255.8 0.0.0.3 area 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.17/29 (Lab_C Fa0/0) | 192.168.10.16/29 | 255.255.255.248 | 0.0.0.7 | network 192.168.10.16 0.0.0.7 area 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| Subnet (book p173 example) | Block size | Wildcard |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.64/28 | 16 | 0.0.0.15 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.80/28 | 16 | 0.0.0.15 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.96/28 | 16 | 0.0.0.15 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.8/30 | 4 | 0.0.0.3 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "You must be able to look at an interface address and mask, work out the subnet and the wildcard, and write the network statement. The easy version network 192.168.10.0 0.0.0.255 area 0 also works in the book's example, but exam questions expect the exact-subnet version. BOOK pp173-175"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Another way (not in the book): turn OSPF on under the interface. Router(config-if)# ip ospf 1 area 0 places that one interface in area 0 without any network statement or wildcard. It is supported on current IOS, but confirm in your simulator version. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Book review question 3 shows network 10.0.0.0 255.0.0.0 area 0. That uses a subnet mask where a wildcard mask is needed. This is a classic error. The book's answer: the wildcard mask is incorrect. How a real IOS version reacts to this exact line was not tested. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.2.1 and 6.2.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Interface 172.16.4.9/22. Write the network statement that matches its whole subnet in area 0."
+    },
+    {
+     "level": 0,
+     "text": "Answer: network 172.16.4.0 0.0.3.255 area 0 - Subnet is 172.16.4.0/22. Mask 255.255.252.0, wildcard 0.0.3.255 (script checked)."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which statement matches only the interface with address 10.1.1.1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: network 10.1.1.1 0.0.0.0 area 0 - A wildcard of all zeros means every bit must match."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Do two OSPF neighbors need the same process ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - The process ID is only local to each router."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Wildcard for 192.168.5.128/27?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0.0.0.31 - Block size 32, so 32 - 1 = 31 (script checked)."
+    },
+    {
+     "level": 2,
+     "text": "6.2.3 Configuring Our Network with OSPF"
+    },
+    {
+     "level": 0,
+     "text": "The book now builds a four-router network (Corp, SF, LA, Boulder) in area 0. OSPF has an administrative distance of 110. Before it adds OSPF, the book removes RIP with no router rip so the two protocols do not both run. BOOK pp175-178"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Good habit from the book: run show ip interface brief first on every router, so you type the exact addresses and avoid typos."
+    },
+    {
+     "level": 0,
+     "text": "Book example, Corp router, with exact-address wildcards BOOK CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ip interface brief"
+    },
+    {
+     "level": 0,
+     "text": "Corp# configure terminal"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# no router rip"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# router ospf 132"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# network 10.10.10.1 0.0.0.0 area 0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# network 172.16.10.1 0.0.0.0 area 0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# network 172.16.10.5 0.0.0.0 area 0"
+    },
+    {
+     "level": 0,
+     "text": "- no router rip - removes the RIP process (never leave two routing protocols running by accident)."
+    },
+    {
+     "level": 0,
+     "text": "- router ospf 132 - process ID 132. The number means nothing outside this router."
+    },
+    {
+     "level": 0,
+     "text": "- network 10.10.10.1 0.0.0.0 area 0 - wildcard 0.0.0.0 means \"exactly this address\". Simple and safe, one line per interface."
+    },
+    {
+     "level": 0,
+     "text": "The book also shows SF using process 300 and LA using process 100, with different wildcard styles on each router (exact address, /24, and a very wide 172.16.0.0 0.0.255.255). All of them work. Different process IDs on different routers is fine. When OSPF starts, you see a log message such as %OSPF-5-ADJCHG ... from LOADING to FULL, Loading Done. That is the adjacency becoming complete."
+    },
+    {
+     "level": 3,
+     "text": "Passive interface [BOOK] p177"
+    },
+    {
+     "level": 0,
+     "text": "Stop OSPF Hellos on one interface CHECK"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# router ospf 100"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-router)# passive-interface fastEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "- passive-interface fastEthernet 0/1 - OSPF will not send Hellos out that interface, so no neighbor can form there. Use it on LAN ports facing users."
+    },
+    {
+     "level": 0,
+     "text": "- passive-interface default makes all interfaces passive; then no passive-interface name re-enables the ones you need. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- A passive interface that matches a network statement is still advertised as a network. It just forms no adjacency. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Advertising a default route [BOOK] p178"
+    },
+    {
+     "level": 0,
+     "text": "Book shows this with process 1 (see the error below) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip route 0.0.0.0 0.0.0.0 Fa0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# router ospf 132"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# default-information originate"
+    },
+    {
+     "level": 0,
+     "text": "- ip route 0.0.0.0 0.0.0.0 ... - a static default route on the router that connects to the Internet."
+    },
+    {
+     "level": 0,
+     "text": "- default-information originate - tells OSPF to give that default route to the other routers. It only works if this router already has a default route. Add always to advertise it regardless. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Book output on SF BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SF# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "O*E2 0.0.0.0/0 [110/1] via 172.16.10.1, 00:01:54, Serial0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "- O*E2 - O means learned by OSPF, the asterisk marks a candidate default route, E2 means external type 2."
+    },
+    {
+     "level": 0,
+     "text": "- [110/1] - administrative distance 110, metric 1. With E2, the metric stays the same as the route crosses the OSPF network (it does not add internal cost)."
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Book inconsistency 1: Corp is configured as router ospf 132, but the default-route step types router ospf 1, and later outputs show \"ospf 1\". On a real router, router ospf 1 would create a second, empty process. Use the same process ID you already created. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Book inconsistency 2: a static default route that names only an Ethernet interface (Fa0/0) is not best practice. Use the next-hop IP of the ISP router, for example ip route 0.0.0.0 0.0.0.0 192.0.2.1. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "The book adds the Boulder router quickly with no passwords and says not to do this in real networks. Agreed. Never leave a router without console, enable and remote-access protection. BOOK p179"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.2.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What does O*E2 at the start of a route line tell you?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OSPF external type 2, and it is a candidate default route - O = OSPF, * = candidate default, E2 = external type 2."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What does passive-interface do on an OSPF interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stops sending Hellos, so no neighbor forms on it - The subnet can still be advertised."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which command makes OSPF advertise a default route to neighbors?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: default-information originate - The router needs a default route first, unless you add always."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Administrative distance of OSPF, and of EIGRP (internal)?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 110 and 90 - Lower is better, so EIGRP wins if both offer the same route."
+    }
+   ],
+   "words": 1513
+  },
+  {
+   "title": "6.3 OSPF and Loopback Interfaces",
+   "content": [
+    {
+     "level": 0,
+     "text": "A loopback interface is a virtual interface. It is always up (as long as the router is running). The book recommends using it with OSPF for stability, as a management or test address, and for setting the router ID. BOOK p179"
+    },
+    {
+     "level": 3,
+     "text": "How the router ID is chosen [BOOK] [ADDED]"
+    },
+    {
+     "level": 0,
+     "text": "| Order | Rule |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 (strongest) | The router-id command under the OSPF process. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | The highest IP address on any loopback interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 (weakest) | The highest IP address on any active physical interface. |"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Checked against a Cisco technical note (official): the highest address is used, a loopback wins if present, and the ID does not change until OSPF restarts or the router-id is changed by hand. The book gets the same result. The book's check on its own routers: Corp has 10.10.10.1, 172.16.10.1 and 172.16.10.5, so the highest is 172.16.10.5, which matches the book's \"ID 172.16.10.5\" (script checked). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "The router ID is used for the OSPF name of the router, for advertising routes, and as the tie-breaker in the DR/BDR election. Make it unique on every router. A duplicate router ID causes serious trouble. ADDED"
+    },
+    {
+     "level": 2,
+     "text": "6.3.1 Configuring Loopback Interfaces"
+    },
+    {
+     "level": 0,
+     "text": "Create a loopback with a /32 host mask BOOK p180 CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# interface loopback 0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ip address 172.31.1.1 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "- interface loopback 0 - creates the virtual interface Loopback0."
+    },
+    {
+     "level": 0,
+     "text": "- ip address 172.31.1.1 255.255.255.255 - a /32 host mask. You can give every router its own /32 (172.31.1.1, .2, .3, .4) without using up a subnet per router."
+    },
+    {
+     "level": 0,
+     "text": "A trap the book shows: after adding the loopback, show ip ospf still showed the old router ID. The router ID is picked only when the OSPF process starts. Three ways to apply a new one: reload the router, delete and re-create OSPF, or set it by hand and restart the process. The book chose a reload, then did it the better way: BOOK pp181-182"
+    },
+    {
+     "level": 0,
+     "text": "Set the router ID by hand, then restart the process BOOK CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# router-id 223.255.255.254"
+    },
+    {
+     "level": 0,
+     "text": "Reload or use \"clear ip ospf process\" command, for this to take effect"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# do clear ip ospf process"
+    },
+    {
+     "level": 0,
+     "text": "Reset ALL OSPF processes? [no]: yes"
+    },
+    {
+     "level": 0,
+     "text": "- router-id 223.255.255.254 - sets the router ID by hand. It beats every loopback and physical address."
+    },
+    {
+     "level": 0,
+     "text": "- clear ip ospf process - restarts OSPF so the new ID is used. The book's log shows the neighbors going down and coming back up. This briefly breaks adjacencies. Do it in a maintenance window in a real network. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says 223.255.255.254 was chosen as \"the highest available IP address\". It is the highest address in the old class A, B and C ranges, but there is no OSPF rule that says to pick it. A router ID is just a 32-bit number that must be unique. The usual real-world choice is the loopback 0 address, or a planned number such as 1.1.1.1 in a lab. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Book errors in the loopback section (p182): the book's show ip route output lists the loopback as 172.131.1.1 and repeats one line, but the loopback was configured as 172.31.1.1. These are typing errors in the book. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Advertise the loopback or not? If you do not advertise it, other routers cannot ping it, but it does not use up real address space. The book suggests a private scheme (here 172.31.1.x). OSPF advertises a loopback as a /32 host route. BOOK CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. A router has Lo0 = 10.9.9.9, Gi0/0 = 192.168.1.1 (up) and no router-id command. Which is the router ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.9.9.9 - A loopback beats a higher physical address."
+    },
+    {
+     "level": 0,
+     "text": "Q2. You then add router-id 1.1.1.1. When does it take effect?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: After OSPF restarts (clear ip ospf process) or a reload - The ID is chosen when the process starts."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Why use a /32 mask on loopbacks?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It is a host address, so each router needs no separate subnet - It saves address space."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Name the three router ID rules in order of strength."
+    },
+    {
+     "level": 0,
+     "text": "Answer: router-id command, highest loopback, highest active physical interface - Strongest first."
+    }
+   ],
+   "words": 705
+  },
+  {
+   "title": "6.4 Verifying OSPF Configuration",
+   "content": [
+    {
+     "level": 0,
+     "text": "Five show commands are the toolbox. The outputs below come from my own lab design (three routers R1, R2, R3 in a line, all in area 0, built in Lab 1). They are illustrative, not captured from a real run, so they are marked CHECK . Compare the layout with the book's outputs on pages 182 to 188. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Command | What it tells you | Use it when |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip route (or show ip route ospf) | Which routes OSPF installed (O codes), with AD 110 and cost | Is the route there? |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip ospf | Process ID, router ID, areas, SPF run count | What is my router ID? |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip ospf database | The LSAs: which routers and DR networks exist | Does my router see the whole map? |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip ospf interface | Area, network type, cost, timers, DR/BDR, neighbor count | Why will this link not come up? |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip ospf neighbor | Neighbors, their state (FULL, 2WAY), role and dead time | Are adjacencies formed? |"
+    },
+    {
+     "level": 0,
+     "text": "| show ip protocols | Router ID, networks per area, neighbor sources, AD | What is OSPF configured to do? |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Read the routing table first. In [110/3], 110 is the administrative distance and 3 is the OSPF cost. This is exam objective v1.1 3.4 and v2.0 3.1 (interpret a routing table). ADDED"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output, R1 CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ip route ospf"
+    },
+    {
+     "level": 0,
+     "text": "O 10.0.23.0/30 [110/2] via 10.0.12.2, 00:04:10, GigabitEthernet0/1"
+    },
+    {
+     "level": 0,
+     "text": "O 192.168.3.0/24 [110/3] via 10.0.12.2, 00:03:50, GigabitEthernet0/1"
+    },
+    {
+     "level": 0,
+     "text": "- O - route learned by OSPF inside the area."
+    },
+    {
+     "level": 0,
+     "text": "- [110/3] - AD 110, total cost 3 (R1 Gi0/1 cost 1 + R2 Gi0/2 cost 1 + R3 LAN port cost 1, with the default reference bandwidth)."
+    },
+    {
+     "level": 0,
+     "text": "- via 10.0.12.2 - next hop, which is R2's address on the shared link."
+    },
+    {
+     "level": 2,
+     "text": "6.4.1 The show ip ospf Command"
+    },
+    {
+     "level": 0,
+     "text": "Shows information for each OSPF process: router ID, number of areas, SPF statistics and timers. BOOK p183"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output, cut down CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf"
+    },
+    {
+     "level": 0,
+     "text": "Routing Process \"ospf 1\" with ID 2.2.2.2"
+    },
+    {
+     "level": 0,
+     "text": "Number of areas in this router is 1. 1 normal 0 stub 0 nssa"
+    },
+    {
+     "level": 0,
+     "text": "Area BACKBONE(0)"
+    },
+    {
+     "level": 0,
+     "text": "Number of interfaces in this area is 3"
+    },
+    {
+     "level": 0,
+     "text": "SPF algorithm executed 5 times"
+    },
+    {
+     "level": 0,
+     "text": "- with ID 2.2.2.2 - the router ID. Check it first when two routers fight over a DR."
+    },
+    {
+     "level": 0,
+     "text": "- Area BACKBONE(0) - the router has an area 0 interface."
+    },
+    {
+     "level": 0,
+     "text": "- SPF algorithm executed 5 times - a high, climbing number points to an unstable link."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book's sample shows the router ID 223.255.255.254 and says it is \"the highest IP address configured on the router\". It is the router ID you set by hand with the router-id command, not a result of the highest-address rule. UPDATED"
+    },
+    {
+     "level": 2,
+     "text": "6.4.2 The show ip ospf database Command"
+    },
+    {
+     "level": 0,
+     "text": "Shows the topology database, grouped by area. The book says it lists the routers, not every link in the way EIGRP's topology table does. BOOK p184"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output. Age, Seq# and checksum values are made up CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf database"
+    },
+    {
+     "level": 0,
+     "text": "OSPF Router with ID (2.2.2.2) (Process ID 1)"
+    },
+    {
+     "level": 0,
+     "text": "Router Link States (Area 0)"
+    },
+    {
+     "level": 0,
+     "text": "Link ID ADV Router Age Seq# Checksum Link count"
+    },
+    {
+     "level": 0,
+     "text": "1.1.1.1 1.1.1.1 412 0x80000005 0x00A1B2 3"
+    },
+    {
+     "level": 0,
+     "text": "2.2.2.2 2.2.2.2 398 0x80000006 0x00C3D4 3"
+    },
+    {
+     "level": 0,
+     "text": "3.3.3.3 3.3.3.3 390 0x80000004 0x00E5F6 3"
+    },
+    {
+     "level": 0,
+     "text": "Net Link States (Area 0)"
+    },
+    {
+     "level": 0,
+     "text": "Link ID ADV Router Age Seq# Checksum"
+    },
+    {
+     "level": 0,
+     "text": "10.0.12.2 2.2.2.2 412 0x80000001 0x00AAAA"
+    },
+    {
+     "level": 0,
+     "text": "10.0.23.2 3.3.3.3 398 0x80000001 0x00BBBB"
+    },
+    {
+     "level": 0,
+     "text": "- Router Link States - one line per router (a Type 1 LSA). Link ID and ADV Router are the router ID."
+    },
+    {
+     "level": 0,
+     "text": "- Net Link States - one line per broadcast network that has a DR (a Type 2 LSA). The Link ID is the DR's interface address. The DR is the advertising router."
+    },
+    {
+     "level": 0,
+     "text": "- If a router is missing from this list, it is not in your area map (adjacency or area problem)."
+    },
+    {
+     "level": 2,
+     "text": "6.4.3 The show ip ospf interface Command"
+    },
+    {
+     "level": 0,
+     "text": "Shows everything OSPF knows about interfaces. Use show ip ospf interface fa0/0 for one interface. BOOK p185"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "GigabitEthernet0/1 is up, line protocol is up"
+    },
+    {
+     "level": 0,
+     "text": "Internet Address 10.0.12.2/30, Area 0"
+    },
+    {
+     "level": 0,
+     "text": "Process ID 1, Router ID 2.2.2.2, Network Type BROADCAST, Cost: 1"
+    },
+    {
+     "level": 0,
+     "text": "Transmit Delay is 1 sec, State DR, Priority 1"
+    },
+    {
+     "level": 0,
+     "text": "Designated Router (ID) 2.2.2.2, Interface address 10.0.12.2"
+    },
+    {
+     "level": 0,
+     "text": "Backup Designated router (ID) 1.1.1.1, Interface address 10.0.12.1"
+    },
+    {
+     "level": 0,
+     "text": "Timer intervals configured, Hello 10, Dead 40, Wait 40, Retransmit 5"
+    },
+    {
+     "level": 0,
+     "text": "Neighbor Count is 1, Adjacent neighbor count is 1"
+    },
+    {
+     "level": 0,
+     "text": "- Area 0 and Process ID 1 - where the interface lives."
+    },
+    {
+     "level": 0,
+     "text": "- Network Type BROADCAST, Cost: 1 - network type decides DR/BDR and timers."
+    },
+    {
+     "level": 0,
+     "text": "- State DR, Priority 1 - this router's role on the link and its priority."
+    },
+    {
+     "level": 0,
+     "text": "- Hello 10, Dead 40 - the timers that must match the neighbor. This is the answer to the book's question \"what are the Hello and Dead timers by default?\", which the book asks but never answers in words. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "If you see %OSPF: OSPF not enabled on FastEthernet0/0, OSPF is running on the router but this interface did not match any network statement. Fix the network statement. BOOK p186"
+    },
+    {
+     "level": 2,
+     "text": "6.4.4 The show ip ospf neighbor Command"
+    },
+    {
+     "level": 0,
+     "text": "The most useful command in a real network. It lists each neighbor, its state and role. BOOK p186"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf neighbor"
+    },
+    {
+     "level": 0,
+     "text": "Neighbor ID Pri State Dead Time Address Interface"
+    },
+    {
+     "level": 0,
+     "text": "1.1.1.1 1 FULL/BDR 00:00:33 10.0.12.1 GigabitEthernet0/1"
+    },
+    {
+     "level": 0,
+     "text": "3.3.3.3 1 FULL/DR 00:00:36 10.0.23.2 GigabitEthernet0/2"
+    },
+    {
+     "level": 0,
+     "text": "- Neighbor ID - the neighbor's router ID (not necessarily an interface address)."
+    },
+    {
+     "level": 0,
+     "text": "- Pri - the neighbor's priority."
+    },
+    {
+     "level": 0,
+     "text": "- FULL/BDR - state / the neighbor's role. FULL/DR, FULL/BDR, 2WAY/DROTHER, or FULL/ - (a dash means no DR/BDR on this link, for example point-to-point)."
+    },
+    {
+     "level": 0,
+     "text": "- Dead Time - counts down from 40 and resets with every Hello. If it reaches zero, the neighbor is dropped."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book shows serial links as FULL/ -. That is correct: serial point-to-point links do not elect a DR. The Ethernet link shows FULL/BDR or FULL/DR. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Multi-vendor story (p186-187): the admin fixed the Hello and Dead timers, but the link still failed, and the author then noticed the cost was different. In standard OSPF, a cost difference does not stop an adjacency from forming. Other causes (area, mask, MTU, network type, authentication) are more likely. Treat the cost part of the story as simplified. UPDATED CHECK"
+    },
+    {
+     "level": 2,
+     "text": "6.4.5 The show ip protocols Command"
+    },
+    {
+     "level": 0,
+     "text": "Works for any routing protocol. For OSPF it shows the process ID, router ID, area count, the networks you configured, and the sources of routes. BOOK p187"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip protocols"
+    },
+    {
+     "level": 0,
+     "text": "Routing Protocol is \"ospf 1\""
+    },
+    {
+     "level": 0,
+     "text": "Router ID 2.2.2.2"
+    },
+    {
+     "level": 0,
+     "text": "Number of areas in this router is 1. 1 normal 0 stub 0 nssa"
+    },
+    {
+     "level": 0,
+     "text": "Maximum path: 4"
+    },
+    {
+     "level": 0,
+     "text": "Routing for Networks:"
+    },
+    {
+     "level": 0,
+     "text": "10.0.12.0 0.0.0.3 area 0"
+    },
+    {
+     "level": 0,
+     "text": "10.0.23.0 0.0.0.3 area 0"
+    },
+    {
+     "level": 0,
+     "text": "2.2.2.2 0.0.0.0 area 0"
+    },
+    {
+     "level": 0,
+     "text": "Routing Information Sources:"
+    },
+    {
+     "level": 0,
+     "text": "Gateway Distance Last Update"
+    },
+    {
+     "level": 0,
+     "text": "1.1.1.1 110 00:05:12"
+    },
+    {
+     "level": 0,
+     "text": "3.3.3.3 110 00:05:12"
+    },
+    {
+     "level": 0,
+     "text": "Distance: (default is 110)"
+    },
+    {
+     "level": 0,
+     "text": "- Routing for Networks - your network statements (with wildcards) and their area. Check typos here."
+    },
+    {
+     "level": 0,
+     "text": "- Maximum path: 4 - OSPF can install up to 4 equal-cost routes by default. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Routing Information Sources - the router IDs of the other routers it hears from, with AD 110."
+    },
+    {
+     "level": 3,
+     "text": "Other useful commands [ADDED] [CHECK]"
+    },
+    {
+     "level": 0,
+     "text": "- show ip ospf interface brief - one line per OSPF interface: area, IP, cost, state, neighbors. Quick overview."
+    },
+    {
+     "level": 0,
+     "text": "- show running-config | section ospf - shows only the OSPF part of the configuration."
+    },
+    {
+     "level": 0,
+     "text": "- debug ip ospf adj and debug ip ospf hello - live view of adjacency problems. Use carefully on real routers (turn off with undebug all)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 6.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which command shows the router ID, area list and SPF run count?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip ospf - It is the process-level summary."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which command shows Hello/Dead timers, DR and network type for one interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip ospf interface - Add the interface name for a single interface."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What does FULL/ - mean in the neighbor table?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Fully adjacent, and there is no DR/BDR on that link - Typical on point-to-point links."
+    },
+    {
+     "level": 0,
+     "text": "Q4. A neighbor stays in 2WAY/DROTHER. Is it a problem?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Not if both routers are DROther on a broadcast link - Only the DR and BDR form FULL adjacencies with them."
+    }
+   ],
+   "words": 1409
+  },
+  {
+   "title": "OSPF Troubleshooting",
+   "content": [
+    {
+     "level": 0,
+     "text": "The book has no troubleshooting section for this chapter, so this whole section is added. Use it with the show commands above. ADDED CHECK (not tested on hardware)"
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| No neighbor at all | Interface down, passive interface, network statement does not match, ACL blocks OSPF | show ip ospf interface brief; show ip protocols |"
+    },
+    {
+     "level": 0,
+     "text": "| Stuck in INIT | Traffic works one way only (ACL, or the other side does not see my Hello) | show ip ospf neighbor on both routers; check ACLs |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbor never forms, no error | Hello/Dead timers differ, different area ID, different subnet or mask, authentication mismatch, stub flag mismatch | show ip ospf interface on both ends; compare |"
+    },
+    {
+     "level": 0,
+     "text": "| Stuck in EXSTART/EXCHANGE | MTU mismatch between the two ends | show interface and compare MTU on both ends |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbors flap up and down | Duplicate router ID, unstable link, timers too short | show ip ospf on both; look at log messages |"
+    },
+    {
+     "level": 0,
+     "text": "| Adjacency FULL but no route | Network statement missing for the far LAN, or the far router has the LAN on a passive interface that did not match | show ip protocols; show ip ospf database |"
+    },
+    {
+     "level": 0,
+     "text": "| Wrong path chosen | Costs differ, or all fast links show cost 1 with the default reference bandwidth | show ip ospf interface; consider auto-cost reference-bandwidth |"
+    },
+    {
+     "level": 0,
+     "text": "| Wrong router is DR | Election is not preemptive; priority or router ID is not what you expect | show ip ospf neighbor; reset OSPF on the segment |"
+    },
+    {
+     "level": 0,
+     "text": "| Default route missing on others | No default route on the origin router, or default-information originate was typed under the wrong process | show ip route 0.0.0.0 on the origin; show run \\| section ospf |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Debugging order: 1. Is the interface up/up? 2. Is OSPF enabled on it (show ip ospf interface brief)? 3. Do both ends agree on area, timers, subnet? 4. Is the neighbor FULL? 5. Is the route in the table?"
+    }
+   ],
+   "words": 356
+  },
+  {
+   "title": "OSPFv3 for IPv6 (v2.0 addition)",
+   "content": [
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book covers OSPFv2 only (IPv4). Cisco's v2.0 objective 3.3 reads \"Configure single area OSPFv2 for IPv4 and OSPFv3 for IPv6\" (official PDF, read in this session). So this short section is new for v2.0. Learn IPv6 addressing in Chapter 17 first, then come back. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "| Topic | OSPFv2 (IPv4) | OSPFv3 (IPv6) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Hello multicast | 224.0.0.5 (all OSPF routers), 224.0.0.6 (DR/BDR) | FF02::5 and FF02::6 (secondary source) CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| How OSPF is enabled | network command with wildcard (or ip ospf under the interface) | Under the interface only: ipv6 ospf process-id area area-id |"
+    },
+    {
+     "level": 0,
+     "text": "| Router ID | 32-bit, chosen as in section 6.3 | Still a 32-bit number in IPv4 format. If the router has no IPv4 address, you must set router-id by hand CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbors talk using | IPv4 interface addresses | IPv6 link-local addresses |"
+    },
+    {
+     "level": 0,
+     "text": "| DR/BDR, timers, cost, states, areas | As in this chapter | The same ideas |"
+    },
+    {
+     "level": 0,
+     "text": "OSPFv3 sketch, not tested on hardware CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-rtr)# router-id 1.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-rtr)# exit"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 address 2001:db8:12::1/64"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 ospf 1 area 0"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 unicast-routing - turns IPv6 routing on. Without it the router will not route IPv6."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 router ospf 1 - starts the OSPFv3 process (here process 1)."
+    },
+    {
+     "level": 0,
+     "text": "- router-id 1.1.1.1 - sets the 32-bit router ID by hand."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 ospf 1 area 0 - puts this interface into area 0 of process 1."
+    }
+   ],
+   "words": 263
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPF type | Link state. Open standard. Dijkstra SPF. AD 110. Metric = cost. |"
+    },
+    {
+     "level": 0,
+     "text": "| Cost | Reference bandwidth / bandwidth, default reference 100 Mbps, minimum 1. Path cost = sum of outgoing interface costs. ip ospf cost overrides. |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbors must match | Area ID, Hello and Dead, subnet/mask, stub flag, authentication. Router IDs must differ. |"
+    },
+    {
+     "level": 0,
+     "text": "| Timers | Broadcast and point-to-point: Hello 10, Dead 40. NBMA: 30 and 120. |"
+    },
+    {
+     "level": 0,
+     "text": "| Multicast | 224.0.0.5 all OSPF routers. 224.0.0.6 DR and BDR. |"
+    },
+    {
+     "level": 0,
+     "text": "| DR / BDR | Broadcast links only. Highest priority, then highest router ID. Priority 0 = never. Not preemptive. |"
+    },
+    {
+     "level": 0,
+     "text": "| Point-to-point | No DR/BDR. ip ospf network point-to-point on both ends. Shows FULL/ - . |"
+    },
+    {
+     "level": 0,
+     "text": "| Router ID | 1) router-id 2) highest loopback 3) highest active physical. Needs OSPF restart to change. |"
+    },
+    {
+     "level": 0,
+     "text": "| Minimum config | router ospf id and network address wildcard area x. |"
+    },
+    {
+     "level": 0,
+     "text": "| Wildcard | Inverse of mask. Block size - 1. 0.0.0.0 = exact address. |"
+    },
+    {
+     "level": 0,
+     "text": "| Process ID | 1 to 65,535. Local only. Area ID is a different number. |"
+    },
+    {
+     "level": 0,
+     "text": "| Passive interface | No Hellos on that interface. Use on LAN ports. |"
+    },
+    {
+     "level": 0,
+     "text": "| Default route | default-information originate on the router that has the default route. |"
+    },
+    {
+     "level": 0,
+     "text": "| Verify | show ip route, show ip ospf, show ip ospf database, show ip ospf interface, show ip ospf neighbor, show ip protocols. |"
+    },
+    {
+     "level": 0,
+     "text": "| v2.0 extra | OSPFv3 for IPv6. Authentication excluded. |"
+    }
+   ],
+   "words": 264
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Allowed statuses: Not assessed, Know, Partially understand, Need to learn, Needs revision. Know needs correct answers without notes or a finished lab. Everything starts as Not assessed. Fill this in honestly after the quick checks, the review questions and the labs."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Chapter 6 - Open Shortest Path First (OSPF) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.1 Open Shortest Path First (OSPF) Basics |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.1.1 OSPF Terminology |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.1.2 OSPF Operation |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.2 Configuring OSPF |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.2.1 Enabling OSPF |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.2.2 Configuring OSPF Areas |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.2.3 Configuring Our Network with OSPF |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.3 OSPF and Loopback Interfaces |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.3.1 Configuring Loopback Interfaces |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4 Verifying OSPF Configuration |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4.1 The show ip ospf Command |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4.2 The show ip ospf database Command |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4.3 The show ip ospf interface Command |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4.4 The show ip ospf neighbor Command |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 6.4.5 The show ip protocols Command |  | Not assessed |  |  |"
+    }
+   ],
+   "words": 279
+  },
+  {
+   "title": "Answer Key A (Pre-check)",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Q | Answer | Why |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | 110 | OSPF administrative distance (EIGRP 90, RIP 120). |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | No | Hello and Dead intervals must match. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 0.0.0.31 | A /27 has block size 32; wildcard 31 (script checked). |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | 9.9.9.9 | The router-id command beats any loopback. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | 3.3.3.3 | Priorities tie, so the highest router ID wins (script checked). |"
+    }
+   ],
+   "words": 83
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "These 26 questions are original. Also do the book's own 10 review questions (pages 189 to 191) and check them in the book's Appendix. Answer on paper first."
+    },
+    {
+     "level": 0,
+     "text": "undefined. Router ID"
+    },
+    {
+     "level": 0,
+     "text": "undefined. Interface priority"
+    }
+   ],
+   "words": 36
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | p165: text refers to \"Table 4.1\" for the OSPF/RIP comparison | Notes it means Table 6.1 | Read in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | p167-168: Hellos and LSAs both said to build the topology database | Clarifies: LSAs build it, Hellos find neighbors UPDATED | General knowledge; consistent with RFC 2328 (official, not read in full) |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | p168: NBMA examples are Frame Relay, X.25, ATM | Marks them as dated; focus on broadcast and point-to-point | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | p170: Table 6.2 lists 224.0.0.6 for broadcast updates | Explains DROther to 224.0.0.6, then DR to 224.0.0.5 | IANA registry (official) |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | p170: cost \"defined in RFC 2338\" | Corrects to RFC 2328; RFC 2338 is VRRP | rfc-editor.org (official) |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | p170-171: cost formula only; no reference bandwidth lesson | Adds cost table and auto-cost reference-bandwidth ADDED | Cisco OSPF FAQ and tech note (official); costs by script |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | p171: process ID can't be 0 \"because that's for the backbone\" | Separates process ID (1-65,535) from area ID | General knowledge; matches command help in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | p171: second process used to connect ASs | Clarifies separate databases, redistribution needed | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | p172-175: wildcard masks and block sizes | Recalculates every wildcard | Python script; matches the book |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | p176-178: Corp uses process 132, later router ospf 1 | Flags the inconsistency | Read in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | p178: static default points to Fa0/0 only | Recommends next-hop IP; notes default-information originate needs a default route ADDED | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | p180-182: RID rules and examples | Confirms rules; adds that 223.255.255.254 is not special | Cisco technical note (official); address check by script |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | p182: show ip route shows 172.131.1.1 and a repeated line | Marks as typing errors | Read in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | p183-184: show ip ospf says RID is \"highest IP address\" | Clarifies it was set by the router-id command | Read in the book |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | p185-186: asks default Hello/Dead timers but only shows them in output | States them in a table (10/40, 30/120) ADDED | Secondary sources and book output CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | p186-187: multi-vendor story blames cost mismatch for adjacency failure | Notes cost difference does not stop adjacency | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | Not covered: neighbor states, DR/BDR details, priority, network types, ip ospf network, passive-interface default, troubleshooting | Added in sections 6.1.1, 6.2.3, 6.4 and Troubleshooting | General knowledge, not tested CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | Not covered: OSPFv3 for IPv6 | Added a short section for v2.0 objective 3.3 | Cisco v2.0 PDF (official) for the objective; commands not tested CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | Objective numbers are v1.0 (3.4) | Maps to v1.1 (3.4) and v2.0 (3.3) | v2.0: official PDF. v1.1: secondary sources CHECK |"
+    }
+   ],
+   "words": 535
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware or in Packet Tracer. Every command and output not copied from the book is marked CHECK and should be tried in your own lab."
+    }
+   ],
+   "words": 35
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use Cisco Packet Tracer (routers such as the 2911, which has Gi0/0, Gi0/1 and Gi0/2). Interface names may differ for your model. Simulator output can differ from real equipment, so each lab has a CHECK note. Write down what you actually saw, including mistakes, in the self-assessment table at the end of this document and in your tracker (Practical lab: Done or Needs redo)."
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "Single-area OSPF on three routers, then point-to-point",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Device / interface | Address | Connects to |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 Lo0 | 1.1.1.1/32 | (loopback) |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 Gi0/0 | 192.168.1.1/24 | PC1 (192.168.1.10, gateway 192.168.1.1) |"
+    },
+    {
+     "level": 0,
+     "text": "| R1 Gi0/1 | 10.0.12.1/30 | R2 Gi0/1 |"
+    },
+    {
+     "level": 0,
+     "text": "| R2 Lo0 | 2.2.2.2/32 | (loopback) |"
+    },
+    {
+     "level": 0,
+     "text": "| R2 Gi0/1 | 10.0.12.2/30 | R1 Gi0/1 |"
+    },
+    {
+     "level": 0,
+     "text": "| R2 Gi0/2 | 10.0.23.1/30 | R3 Gi0/1 |"
+    },
+    {
+     "level": 0,
+     "text": "| R3 Lo0 | 3.3.3.3/32 | (loopback) |"
+    },
+    {
+     "level": 0,
+     "text": "| R3 Gi0/1 | 10.0.23.2/30 | R2 Gi0/2 |"
+    },
+    {
+     "level": 0,
+     "text": "| R3 Gi0/0 | 192.168.3.1/24 | PC3 (192.168.3.10, gateway 192.168.3.1) |"
+    },
+    {
+     "level": 0,
+     "text": "Subnets and usable hosts were calculated by script: 10.0.12.0/30 (hosts .1 and .2), 10.0.23.0/30 (hosts .1 and .2), 192.168.1.0/24 and 192.168.3.0/24. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Step 1: Addresses"
+    },
+    {
+     "level": 0,
+     "text": "R1 addressing. Repeat the same pattern on R2 and R3 using the table CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface loopback 0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ip address 1.1.1.1 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# interface gigabitEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ip address 192.168.1.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ip address 10.0.12.1 255.255.255.252"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "- interface loopback 0 and the /32 mask - the router ID source and a test address."
+    },
+    {
+     "level": 0,
+     "text": "- no shutdown - turns the interface on (router interfaces are off by default)."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: show ip interface brief shows every interface up/up. ping 10.0.12.2 from R1 works (the first ping may time out while ARP resolves). CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Step 2: OSPF on each router"
+    },
+    {
+     "level": 0,
+     "text": "R1 OSPF CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-router)# router-id 1.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-router)# network 192.168.1.0 0.0.0.255 area 0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-router)# network 10.0.12.0 0.0.0.3 area 0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-router)# network 1.1.1.1 0.0.0.0 area 0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-router)# passive-interface gigabitEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "- router-id 1.1.1.1 - fixes the ID by hand, so it is the same every time."
+    },
+    {
+     "level": 0,
+     "text": "- Three network lines - one per subnet, wildcard from the block size (/24 = 0.0.0.255, /30 = 0.0.0.3, /32 = 0.0.0.0)."
+    },
+    {
+     "level": 0,
+     "text": "- passive-interface gigabitEthernet 0/0 - no OSPF Hellos toward PC1, but the LAN is still advertised."
+    },
+    {
+     "level": 0,
+     "text": "R2: router-id 2.2.2.2, networks 10.0.12.0 0.0.0.3, 10.0.23.0 0.0.0.3, and 2.2.2.2 0.0.0.0, all area 0. R3: router-id 3.3.3.3, networks 10.0.23.0 0.0.0.3, 192.168.3.0 0.0.0.255, and 3.3.3.3 0.0.0.0, all area 0, with Gi0/0 passive."
+    },
+    {
+     "level": 0,
+     "text": "Expected result and why: the log shows %OSPF-5-ADJCHG ... from LOADING to FULL as each link forms. On R1, show ip route ospf shows O 192.168.3.0/24 [110/3]: three links of cost 1 (R1 Gi0/1, R2 Gi0/2, R3 Gi0/0). PC1 can ping PC3. CHECK Simulator route layout may differ."
+    },
+    {
+     "level": 3,
+     "text": "Step 3: Verify (use all five commands)"
+    },
+    {
+     "level": 0,
+     "text": "Verification commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf neighbor"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip protocols"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ip ospf database"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ip route ospf"
+    },
+    {
+     "level": 0,
+     "text": "Expected result and why: on the broadcast links R2 has the higher router ID than R1 (2.2.2.2 > 1.1.1.1), so R2 is DR and R1 is BDR on that link. On the R2-R3 link, R3 (3.3.3.3) is DR and R2 is BDR. (Election result checked by script, assuming equal priorities and routers starting together.) CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Step 4: Make the R1-R2 link point-to-point (objective 3.4.b / 3.3.b)"
+    },
+    {
+     "level": 0,
+     "text": "Same command on both ends CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ip ospf network point-to-point"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# ip ospf network point-to-point"
+    },
+    {
+     "level": 0,
+     "text": "- ip ospf network point-to-point - treats the Ethernet link as a two-router link. No DR/BDR election, faster adjacency."
+    },
+    {
+     "level": 0,
+     "text": "- Do it on both ends. A mismatch in network type on the two ends can cause odd behavior. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: show ip ospf neighbor on R2 now shows FULL/ - for R1. show ip ospf interface gigabitEthernet 0/1 shows Network Type POINT_TO_POINT. The R2-R3 link is unchanged. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "DR / BDR election and priority",
+   "content": [
+    {
+     "level": 0,
+     "text": "Three routers, each with Gi0/0 connected to one switch, all in subnet 10.0.100.0/24: R1 10.0.100.1, R2 10.0.100.2, R3 10.0.100.3. Use router-id 1.1.1.1, 2.2.2.2 and 3.3.3.3, and network 10.0.100.0 0.0.0.255 area 0."
+    },
+    {
+     "level": 0,
+     "text": "- Shut down Gi0/0 on all three routers. Configure OSPF. Then run no shutdown on all three at about the same time. (If one router starts earlier, it can win the election just by being first.)"
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip ospf neighbor on R1. Expected: R3 is DR, R2 is BDR, and R1 is DROTHER. Script result: all priorities 1, so the highest router IDs win (3.3.3.3 DR, 2.2.2.2 BDR). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- On R1 enter ip ospf priority 100 on Gi0/0. Check again. Expected: nothing changes yet, because the election is not preemptive. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Reset OSPF on all three (clear ip ospf process, or shut/no shut Gi0/0 together). Expected: R1 is now DR (priority 100), and R3 is BDR (router ID tie-break among priority-1 routers: 3.3.3.3 beats 2.2.2.2). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- On R3 enter ip ospf priority 0 and reset again. Expected: R3 is DROTHER and can never be DR or BDR; R1 is DR and R2 is BDR. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Optional extra: add a fourth router R4 on the same switch with a low priority. Two DROTHER routers should show 2WAY/DROTHER with each other and FULL only with the DR and BDR. ADDED CHECK"
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "Router ID, cost and reference bandwidth (use the Lab 1 network)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Router ID change. On R2: router ospf 1, then router-id 22.22.22.22. Run show ip ospf. Expected: the ID is still 2.2.2.2, and IOS prints a message saying a reload or clear ip ospf process is needed. Then run clear ip ospf process (answer yes). Expected: show ip ospf now shows 22.22.22.22, and the neighbors on R1 and R3 list 22.22.22.22. Put the ID back to 2.2.2.2 and reset again. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Cost. On R1 run show ip ospf interface gigabitEthernet 0/1 (Cost: 1). Enter ip ospf cost 50 on that interface. Expected: the route to 192.168.3.0/24 now has cost 52 (50 + 1 + 1). Remove it with no ip ospf cost. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Reference bandwidth. On all three routers enter auto-cost reference-bandwidth 10000 under router ospf 1. Expected: a message tells you to keep the value consistent on all routers. Each Gigabit link now costs 10, so R1 reaches 192.168.3.0/24 with cost 30 (script: 1 Gbps with a 10,000 Mbps reference gives 10). Simulator Gigabit bandwidth may differ. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- Default route (optional). On R3: ip route 0.0.0.0 0.0.0.0 Null0, then under OSPF default-information originate. Expected: R1 shows O*E2 0.0.0.0/0 [110/1]. (Null0 stands in for an Internet link in a lab.) CHECK"
+    }
+   ]
+  },
+  {
+   "number": "4",
+   "title": "Break and fix (use the Lab 1 network)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Break one thing at a time, find it using only show commands, fix it, and confirm all neighbors are FULL again."
+    },
+    {
+     "level": 0,
+     "text": "| Break it | What you should see | How to find and fix it |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| On R1 Gi0/1: ip ospf hello-interval 5 | R2 loses R1 after the Dead time. IOS also sets R1's Dead interval to 20, so the timers differ at both Hello and Dead. | show ip ospf interface on both ends. Fix: no ip ospf hello-interval. |"
+    },
+    {
+     "level": 0,
+     "text": "| On R3: change its 10.0.23.0 network statement to area 1 | R2 and R3 stop being neighbors (area mismatch). | show ip protocols shows the area. Fix the network statement. |"
+    },
+    {
+     "level": 0,
+     "text": "| On R3: network 192.168.3.0 0.0.0.0 area 0 | The R3 LAN is not advertised. No interface has exactly 192.168.3.0, so no interface matches. | show ip ospf interface brief has no Gi0/0. Fix: wildcard 0.0.0.255, or use 192.168.3.1 with 0.0.0.0. |"
+    },
+    {
+     "level": 0,
+     "text": "| On R3: passive-interface gigabitEthernet 0/1 | R3 sends no Hellos on the link to R2. The neighbor is lost. | show ip protocols lists passive interfaces. Fix: no passive-interface gigabitEthernet 0/1. |"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "These \"what you should see\" results come from how OSPF works, not from a run on equipment. Simulator behavior and timing may differ. CHECK"
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "Open Shortest Path First (OSPF) — review questions",
+   "questions": [
+    {
+     "source": "Q1. Which algorithm does OSPF use to calculate best paths?",
+     "sourceNumber": "Q1",
+     "q": "Which algorithm does OSPF use to calculate best paths?",
+     "options": [],
+     "answer": null,
+     "why": "SPF (Dijkstra) - RIP uses Bellman-Ford.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What is the name of a router that has interfaces in two different OSPF areas?",
+     "sourceNumber": "Q2",
+     "q": "What is the name of a router that has interfaces in two different OSPF areas?",
+     "options": [],
+     "answer": "A",
+     "why": "BR - Area border router.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Does OSPF send periodic full routing-table updates like RIPv1?",
+     "sourceNumber": "Q3",
+     "q": "Does OSPF send periodic full routing-table updates like RIPv1?",
+     "options": [],
+     "answer": null,
+     "why": "No - OSPF sends event-triggered updates (LSAs) when the topology changes.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Why use areas?",
+     "sourceNumber": "Q4",
+     "q": "Why use areas?",
+     "options": [],
+     "answer": null,
+     "why": "To reduce routing overhead, speed convergence, and contain instability - These are the three reasons the book gives.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which table is the input to the SPF calculation?",
+     "sourceNumber": "Q1",
+     "q": "Which table is the input to the SPF calculation?",
+     "options": [],
+     "answer": null,
+     "why": "The topology database (LSDB) - SPF runs on the LSAs stored there.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Priorities are all default. RIDs are 10.0.0.5 and 10.0.0.9 on the same Ethernet segment. Which is DR?",
+     "sourceNumber": "Q2",
+     "q": "Priorities are all default. RIDs are 10.0.0.5 and 10.0.0.9 on the same Ethernet segment. Which is DR?",
+     "options": [],
+     "answer": null,
+     "why": "10.0.0.9 - Priority ties, so the higher router ID wins.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which of these can differ between two OSPF neighbors: area ID, Hello interval, router ID?",
+     "sourceNumber": "Q3",
+     "q": "Which of these can differ between two OSPF neighbors: area ID, Hello interval, router ID?",
+     "options": [],
+     "answer": null,
+     "why": "Router ID (it must differ) - Area ID and Hello interval must match; a duplicate router ID is a problem.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Two DROther routers on one LAN show 2-WAY with each other. Is that a fault?",
+     "sourceNumber": "Q4",
+     "q": "Two DROther routers on one LAN show 2-WAY with each other. Is that a fault?",
+     "options": [],
+     "answer": null,
+     "why": "No - DROther routers only become FULL with the DR and BDR.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. A link is 100 Mbps and the reference bandwidth is the default. What is the OSPF cost?",
+     "sourceNumber": "Q1",
+     "q": "A link is 100 Mbps and the reference bandwidth is the default. What is the OSPF cost?",
+     "options": [],
+     "answer": null,
+     "why": "1 - 100 / 100 = 1.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. A router has two paths to a network. Path A: costs 10 + 10. Path B: costs 15. Which is installed?",
+     "sourceNumber": "Q2",
+     "q": "A router has two paths to a network. Path A: costs 10 + 10. Path B: costs 15. Which is installed?",
+     "options": [],
+     "answer": null,
+     "why": "Path B (15) - Lowest total cost wins; A is 20.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Where does a DROther send its LSA updates on Ethernet?",
+     "sourceNumber": "Q3",
+     "q": "Where does a DROther send its LSA updates on Ethernet?",
+     "options": [],
+     "answer": null,
+     "why": "224.0.0.6 - Then the DR floods them to 224.0.0.5.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What is the default Dead interval when Hello is 10 seconds?",
+     "sourceNumber": "Q4",
+     "q": "What is the default Dead interval when Hello is 10 seconds?",
+     "options": [],
+     "answer": null,
+     "why": "40 seconds - Four times Hello.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Interface 172.16.4.9/22. Write the network statement that matches its whole subnet in area 0.",
+     "sourceNumber": "Q1",
+     "q": "Interface 172.16.4.9/22. Write the network statement that matches its whole subnet in area 0.",
+     "options": [],
+     "answer": null,
+     "why": "network 172.16.4.0 0.0.3.255 area 0 - Subnet is 172.16.4.0/22. Mask 255.255.252.0, wildcard 0.0.3.255 (script checked).",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which statement matches only the interface with address 10.1.1.1?",
+     "sourceNumber": "Q2",
+     "q": "Which statement matches only the interface with address 10.1.1.1?",
+     "options": [],
+     "answer": null,
+     "why": "network 10.1.1.1 0.0.0.0 area 0 - A wildcard of all zeros means every bit must match.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Do two OSPF neighbors need the same process ID?",
+     "sourceNumber": "Q3",
+     "q": "Do two OSPF neighbors need the same process ID?",
+     "options": [],
+     "answer": null,
+     "why": "No - The process ID is only local to each router.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Wildcard for 192.168.5.128/27?",
+     "sourceNumber": "Q4",
+     "q": "Wildcard for 192.168.5.128/27?",
+     "options": [],
+     "answer": null,
+     "why": "0.0.0.31 - Block size 32, so 32 - 1 = 31 (script checked).",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What does O*E2 at the start of a route line tell you?",
+     "sourceNumber": "Q1",
+     "q": "What does O*E2 at the start of a route line tell you?",
+     "options": [],
+     "answer": null,
+     "why": "OSPF external type 2, and it is a candidate default route - O = OSPF, * = candidate default, E2 = external type 2.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What does passive-interface do on an OSPF interface?",
+     "sourceNumber": "Q2",
+     "q": "What does passive-interface do on an OSPF interface?",
+     "options": [],
+     "answer": null,
+     "why": "Stops sending Hellos, so no neighbor forms on it - The subnet can still be advertised.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which command makes OSPF advertise a default route to neighbors?",
+     "sourceNumber": "Q3",
+     "q": "Which command makes OSPF advertise a default route to neighbors?",
+     "options": [],
+     "answer": "D",
+     "why": "default-information originate - The router needs a default route first, unless you add always.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Administrative distance of OSPF, and of EIGRP (internal)?",
+     "sourceNumber": "Q4",
+     "q": "Administrative distance of OSPF, and of EIGRP (internal)?",
+     "options": [],
+     "answer": null,
+     "why": "110 and 90 - Lower is better, so EIGRP wins if both offer the same route.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. A router has Lo0 = 10.9.9.9, Gi0/0 = 192.168.1.1 (up) and no router-id command. Which is the router ID?",
+     "sourceNumber": "Q1",
+     "q": "A router has Lo0 = 10.9.9.9, Gi0/0 = 192.168.1.1 (up) and no router-id command. Which is the router ID?",
+     "options": [],
+     "answer": null,
+     "why": "10.9.9.9 - A loopback beats a higher physical address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. You then add router-id 1.1.1.1. When does it take effect?",
+     "sourceNumber": "Q2",
+     "q": "You then add router-id 1.1.1.1. When does it take effect?",
+     "options": [],
+     "answer": "A",
+     "why": "fter OSPF restarts (clear ip ospf process) or a reload - The ID is chosen when the process starts.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Why use a /32 mask on loopbacks?",
+     "sourceNumber": "Q3",
+     "q": "Why use a /32 mask on loopbacks?",
+     "options": [],
+     "answer": null,
+     "why": "It is a host address, so each router needs no separate subnet - It saves address space.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Name the three router ID rules in order of strength.",
+     "sourceNumber": "Q4",
+     "q": "Name the three router ID rules in order of strength.",
+     "options": [],
+     "answer": null,
+     "why": "router-id command, highest loopback, highest active physical interface - Strongest first.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which command shows the router ID, area list and SPF run count?",
+     "sourceNumber": "Q1",
+     "q": "Which command shows the router ID, area list and SPF run count?",
+     "options": [],
+     "answer": null,
+     "why": "show ip ospf - It is the process-level summary.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which command shows Hello/Dead timers, DR and network type for one interface?",
+     "sourceNumber": "Q2",
+     "q": "Which command shows Hello/Dead timers, DR and network type for one interface?",
+     "options": [],
+     "answer": null,
+     "why": "show ip ospf interface - Add the interface name for a single interface.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What does FULL/ - mean in the neighbor table?",
+     "sourceNumber": "Q3",
+     "q": "What does FULL/ - mean in the neighbor table?",
+     "options": [],
+     "answer": null,
+     "why": "Fully adjacent, and there is no DR/BDR on that link - Typical on point-to-point links.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. A neighbor stays in 2WAY/DROTHER. Is it a problem?",
+     "sourceNumber": "Q4",
+     "q": "A neighbor stays in 2WAY/DROTHER. Is it a problem?",
+     "options": [],
+     "answer": null,
+     "why": "Not if both routers are DROther on a broadcast link - Only the DR and BDR form FULL adjacencies with them.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which command starts OSPF process 10?",
+     "sourceNumber": "Q1",
+     "q": "Which command starts OSPF process 10?",
+     "options": [
+      "router ospf 10",
+      "router ospf area 10",
+      "ospf process 10",
+      "network ospf 10"
+     ],
+     "answer": "A",
+     "why": "router ospf process-id is the command.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. The OSPF process ID is:",
+     "sourceNumber": "Q2",
+     "q": "The OSPF process ID is:",
+     "options": [
+      "Globally significant",
+      "Locally significant",
+      "The same as the area ID",
+      "Required to match on neighbors"
+     ],
+     "answer": "B",
+     "why": "It is only a local label.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Which is the valid range for an OSPF process ID?",
+     "sourceNumber": "Q3",
+     "q": "Which is the valid range for an OSPF process ID?",
+     "options": [],
+     "answer": null,
+     "why": "1 to 65,535 - Area IDs go up to 4,294,967,295; do not mix them up.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What is the wildcard mask for 192.168.5.128/27?",
+     "sourceNumber": "Q4",
+     "q": "What is the wildcard mask for 192.168.5.128/27?",
+     "options": [
+      "0.0.0.15",
+      "0.0.0.31",
+      "0.0.0.63",
+      "0.0.0.32"
+     ],
+     "answer": "B",
+     "why": "Block size 32, wildcard 31 (script checked).",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q5. Write the network statement that enables OSPF only on the interface 10.1.1.1.",
+     "sourceNumber": "Q5",
+     "q": "Write the network statement that enables OSPF only on the interface 10.1.1.1.",
+     "options": [],
+     "answer": null,
+     "why": "network 10.1.1.1 0.0.0.0 area 0 - All-zero wildcard = exact match.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. An interface is 172.16.4.9/22. Write a network statement that matches its subnet in area 0.",
+     "sourceNumber": "Q6",
+     "q": "An interface is 172.16.4.9/22. Write a network statement that matches its subnet in area 0.",
+     "options": [],
+     "answer": null,
+     "why": "network 172.16.4.0 0.0.3.255 area 0 - Subnet 172.16.4.0/22, hostmask 0.0.3.255 (script checked).",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. Hellos are sent to which address?",
+     "sourceNumber": "Q7",
+     "q": "Hellos are sent to which address?",
+     "options": [
+      "224.0.0.5",
+      "224.0.0.6",
+      "224.0.0.9",
+      "224.0.0.10"
+     ],
+     "answer": "A",
+     "why": "224.0.0.5 is AllSPFRouters (IANA). 224.0.0.9 is RIPv2 and 224.0.0.10 is EIGRP.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q8. On Ethernet, a DROther sends LSA updates to:",
+     "sourceNumber": "Q8",
+     "q": "On Ethernet, a DROther sends LSA updates to:",
+     "options": [
+      "224.0.0.5",
+      "224.0.0.6",
+      "The DR's unicast address only",
+      "255.255.255.255"
+     ],
+     "answer": "B",
+     "why": "224.0.0.6 (AllDRouters). The DR then floods to 224.0.0.5.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q9. Default Hello and Dead intervals on an Ethernet link?",
+     "sourceNumber": "Q9",
+     "q": "Default Hello and Dead intervals on an Ethernet link?",
+     "options": [
+      "5 and 20",
+      "10 and 40",
+      "30 and 120",
+      "10 and 30"
+     ],
+     "answer": "B",
+     "why": "Hello 10, Dead 40 (4 x Hello). 30/120 is NBMA.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q10. Choose three settings that must match for two OSPF routers to become neighbors.",
+     "sourceNumber": "Q10",
+     "q": "Choose three settings that must match for two OSPF routers to become neighbors.",
+     "options": [
+      "Area ID",
+      "Hello and Dead intervals",
+      "Subnet and mask on the link",
+      "Process ID"
+     ],
+     "answer": "A",
+     "why": ", B, C - Process ID is local, router IDs must differ, priority can differ.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q11. R1 and R2 show 2WAY/DROTHER for each other on an Ethernet LAN. What does it mean?",
+     "sourceNumber": "Q11",
+     "q": "R1 and R2 show 2WAY/DROTHER for each other on an Ethernet LAN. What does it mean?",
+     "options": [],
+     "answer": null,
+     "why": "Normal: both are DROther and only become FULL with the DR and BDR - Not a fault.",
+     "kind": "open"
+    },
+    {
+     "source": "Q12. R1: priority 1, RID 10.0.0.1. R2: priority 1, RID 10.0.0.2. R3: priority 0, RID 10.0.0.3. All start together on one segment. Which is DR and which is BDR?",
+     "sourceNumber": "Q12",
+     "q": "R1: priority 1, RID 10.0.0.1. R2: priority 1, RID 10.0.0.2. R3: priority 0, RID 10.0.0.3. All start together on one segment. Which is DR and which is BDR?",
+     "options": [],
+     "answer": null,
+     "why": "R2 is DR, R1 is BDR - R3 has priority 0, so it is not a candidate. Highest RID wins between R1 and R2.",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. A router with a higher priority joins a LAN that already has a DR and BDR. Does it take over?",
+     "sourceNumber": "Q13",
+     "q": "A router with a higher priority joins a LAN that already has a DR and BDR. Does it take over?",
+     "options": [],
+     "answer": null,
+     "why": "No - The election is not preemptive. It only changes after a reset or failure. CHECK",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. A router has Lo0 10.9.9.9, Gi0/0 192.168.1.1, Gi0/1 172.16.1.1, all up, and no router-id command. What is the router ID?",
+     "sourceNumber": "Q14",
+     "q": "A router has Lo0 10.9.9.9, Gi0/0 192.168.1.1, Gi0/1 172.16.1.1, all up, and no router-id command. What is the router ID?",
+     "options": [],
+     "answer": null,
+     "why": "10.9.9.9 - A loopback beats a higher physical address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. You then type router-id 1.1.1.1. When will the router use it?",
+     "sourceNumber": "Q15",
+     "q": "You then type router-id 1.1.1.1. When will the router use it?",
+     "options": [],
+     "answer": "A",
+     "why": "fter OSPF restarts (clear ip ospf process) or after a reload - The ID is chosen at process start.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. What is the default OSPF cost of a FastEthernet link? Of a 10 Mbps Ethernet link? Of a T1 (1.544 Mbps) link?",
+     "sourceNumber": "Q16",
+     "q": "What is the default OSPF cost of a FastEthernet link? Of a 10 Mbps Ethernet link? Of a T1 (1.544 Mbps) link?",
+     "options": [],
+     "answer": null,
+     "why": "1, 10 and 64 - Reference 100 Mbps divided by bandwidth, minimum 1 (script checked).",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. After auto-cost reference-bandwidth 1000 on every router, what is the cost of FastEthernet?",
+     "sourceNumber": "Q17",
+     "q": "After auto-cost reference-bandwidth 1000 on every router, what is the cost of FastEthernet?",
+     "options": [],
+     "answer": null,
+     "why": "10 - 1000 / 100 = 10 (script checked). Set the same value on all routers.",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. Give the command to set the cost of an interface to 50.",
+     "sourceNumber": "Q18",
+     "q": "Give the command to set the cost of an interface to 50.",
+     "options": [],
+     "answer": null,
+     "why": "ip ospf cost 50 - Entered on that interface; it overrides the formula.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. What does O*E2 0.0.0.0/0 [110/1] mean?",
+     "sourceNumber": "Q19",
+     "q": "What does O*E2 0.0.0.0/0 [110/1] mean?",
+     "options": [],
+     "answer": "A",
+     "why": "n OSPF external type 2 default route, AD 110, metric 1 - It came from a router using default-information originate.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. What does FULL/ - mean in the neighbor table?",
+     "sourceNumber": "Q20",
+     "q": "What does FULL/ - mean in the neighbor table?",
+     "options": [],
+     "answer": null,
+     "why": "Fully adjacent, and the link has no DR/BDR - Typical on point-to-point links.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. Which command shows Hello/Dead timers, network type and DR for one interface?",
+     "sourceNumber": "Q21",
+     "q": "Which command shows Hello/Dead timers, network type and DR for one interface?",
+     "options": [],
+     "answer": null,
+     "why": "show ip ospf interface - Add the interface name.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. Which command shows the networks you configured under OSPF and the router IDs of the routers it hears from?",
+     "sourceNumber": "Q22",
+     "q": "Which command shows the networks you configured under OSPF and the router IDs of the routers it hears from?",
+     "options": [],
+     "answer": null,
+     "why": "show ip protocols - See \"Routing for Networks\" and \"Routing Information Sources\".",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. A router with passive-interface gigabitEthernet 0/0 matches a network statement for that interface. Will it form a neighbor there? Is the subnet advertised?",
+     "sourceNumber": "Q23",
+     "q": "A router with passive-interface gigabitEthernet 0/0 matches a network statement for that interface. Will it form a neighbor there? Is the subnet advertised?",
+     "options": [],
+     "answer": null,
+     "why": "No neighbor, but the subnet is still advertised - Passive stops Hellos only. CHECK",
+     "kind": "open"
+    },
+    {
+     "source": "Q24. Which command makes an Ethernet link behave as point-to-point, with no DR/BDR election?",
+     "sourceNumber": "Q24",
+     "q": "Which command makes an Ethernet link behave as point-to-point, with no DR/BDR election?",
+     "options": [],
+     "answer": null,
+     "why": "ip ospf network point-to-point (on both ends) - Objective 3.4.b / 3.3.b.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Which two commands are the minimum for single-area OSPFv2?",
+     "sourceNumber": "Q25",
+     "q": "Which two commands are the minimum for single-area OSPFv2?",
+     "options": [],
+     "answer": null,
+     "why": "router ospf process-id, and network address wildcard area id - The book's Exam Essentials say the same.",
+     "kind": "open"
+    },
+    {
+     "source": "Q26. (v2.0) How is OSPFv3 enabled on an interface?",
+     "sourceNumber": "Q26",
+     "q": "(v2.0) How is OSPFv3 enabled on an interface?",
+     "options": [],
+     "answer": null,
+     "why": "ipv6 ospf process-id area area-id on the interface - OSPFv3 uses interface commands, not network statements. CHECK",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 Which algorithm does OSPF use to calculate best paths?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SPF (Dijkstra) - RIP uses Bellman-Ford."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What is the name of a router that has interfaces in two different OSPF areas?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - BR - Area border router."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Does OSPF send periodic full routing-table updates like RIPv1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - OSPF sends event-triggered updates (LSAs) when the topology changes."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Why use areas?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: To reduce routing overhead, speed convergence, and contain instability - These are the three reasons the book gives."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which table is the input to the SPF calculation?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The topology database (LSDB) - SPF runs on the LSAs stored there."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Priorities are all default. RIDs are 10.0.0.5 and 10.0.0.9 on the same Ethernet segment. Which is DR?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.0.0.9 - Priority ties, so the higher router ID wins."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which of these can differ between two OSPF neighbors: area ID, Hello interval, router ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Router ID (it must differ) - Area ID and Hello interval must match; a duplicate router ID is a problem."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Two DROther routers on one LAN show 2-WAY with each other. Is that a fault?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - DROther routers only become FULL with the DR and BDR."
+    },
+    {
+     "level": 0,
+     "text": "Q1 A link is 100 Mbps and the reference bandwidth is the default. What is the OSPF cost?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1 - 100 / 100 = 1."
+    },
+    {
+     "level": 0,
+     "text": "Q2 A router has two paths to a network. Path A: costs 10 + 10. Path B: costs 15. Which is installed?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Path B (15) - Lowest total cost wins; A is 20."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Where does a DROther send its LSA updates on Ethernet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 224.0.0.6 - Then the DR floods them to 224.0.0.5."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What is the default Dead interval when Hello is 10 seconds?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 40 seconds - Four times Hello."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Interface 172.16.4.9/22. Write the network statement that matches its whole subnet in area 0."
+    },
+    {
+     "level": 0,
+     "text": "Answer: network 172.16.4.0 0.0.3.255 area 0 - Subnet is 172.16.4.0/22. Mask 255.255.252.0, wildcard 0.0.3.255 (script checked)."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which statement matches only the interface with address 10.1.1.1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: network 10.1.1.1 0.0.0.0 area 0 - A wildcard of all zeros means every bit must match."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Do two OSPF neighbors need the same process ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - The process ID is only local to each router."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Wildcard for 192.168.5.128/27?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0.0.0.31 - Block size 32, so 32 - 1 = 31 (script checked)."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What does O*E2 at the start of a route line tell you?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OSPF external type 2, and it is a candidate default route - O = OSPF, * = candidate default, E2 = external type 2."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What does passive-interface do on an OSPF interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stops sending Hellos, so no neighbor forms on it - The subnet can still be advertised."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which command makes OSPF advertise a default route to neighbors?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - default-information originate - The router needs a default route first, unless you add always."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Administrative distance of OSPF, and of EIGRP (internal)?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 110 and 90 - Lower is better, so EIGRP wins if both offer the same route."
+    },
+    {
+     "level": 0,
+     "text": "Q1 A router has Lo0 = 10.9.9.9, Gi0/0 = 192.168.1.1 (up) and no router-id command. Which is the router ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.9.9.9 - A loopback beats a higher physical address."
+    },
+    {
+     "level": 0,
+     "text": "Q2 You then add router-id 1.1.1.1. When does it take effect?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - fter OSPF restarts (clear ip ospf process) or a reload - The ID is chosen when the process starts."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Why use a /32 mask on loopbacks?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It is a host address, so each router needs no separate subnet - It saves address space."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Name the three router ID rules in order of strength."
+    },
+    {
+     "level": 0,
+     "text": "Answer: router-id command, highest loopback, highest active physical interface - Strongest first."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which command shows the router ID, area list and SPF run count?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip ospf - It is the process-level summary."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which command shows Hello/Dead timers, DR and network type for one interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip ospf interface - Add the interface name for a single interface."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What does FULL/ - mean in the neighbor table?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Fully adjacent, and there is no DR/BDR on that link - Typical on point-to-point links."
+    },
+    {
+     "level": 0,
+     "text": "Q4 A neighbor stays in 2WAY/DROTHER. Is it a problem?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Not if both routers are DROther on a broadcast link - Only the DR and BDR form FULL adjacencies with them."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which command starts OSPF process 10?"
+    },
+    {
+     "level": 0,
+     "text": "A. router ospf 10"
+    },
+    {
+     "level": 0,
+     "text": "B. router ospf area 10"
+    },
+    {
+     "level": 0,
+     "text": "C. ospf process 10"
+    },
+    {
+     "level": 0,
+     "text": "D. network ospf 10"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - router ospf process-id is the command."
+    },
+    {
+     "level": 0,
+     "text": "Q2 The OSPF process ID is:"
+    },
+    {
+     "level": 0,
+     "text": "A. Globally significant"
+    },
+    {
+     "level": 0,
+     "text": "B. Locally significant"
+    },
+    {
+     "level": 0,
+     "text": "C. The same as the area ID"
+    },
+    {
+     "level": 0,
+     "text": "D. Required to match on neighbors"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - It is only a local label."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which is the valid range for an OSPF process ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1 to 65,535 - Area IDs go up to 4,294,967,295; do not mix them up."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What is the wildcard mask for 192.168.5.128/27?"
+    },
+    {
+     "level": 0,
+     "text": "A. 0.0.0.15"
+    },
+    {
+     "level": 0,
+     "text": "B. 0.0.0.31"
+    },
+    {
+     "level": 0,
+     "text": "C. 0.0.0.63"
+    },
+    {
+     "level": 0,
+     "text": "D. 0.0.0.32"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Block size 32, wildcard 31 (script checked)."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Write the network statement that enables OSPF only on the interface 10.1.1.1."
+    },
+    {
+     "level": 0,
+     "text": "Answer: network 10.1.1.1 0.0.0.0 area 0 - All-zero wildcard = exact match."
+    },
+    {
+     "level": 0,
+     "text": "Q6 An interface is 172.16.4.9/22. Write a network statement that matches its subnet in area 0."
+    },
+    {
+     "level": 0,
+     "text": "Answer: network 172.16.4.0 0.0.3.255 area 0 - Subnet 172.16.4.0/22, hostmask 0.0.3.255 (script checked)."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Hellos are sent to which address?"
+    },
+    {
+     "level": 0,
+     "text": "A. 224.0.0.5"
+    },
+    {
+     "level": 0,
+     "text": "B. 224.0.0.6"
+    },
+    {
+     "level": 0,
+     "text": "C. 224.0.0.9"
+    },
+    {
+     "level": 0,
+     "text": "D. 224.0.0.10"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - 224.0.0.5 is AllSPFRouters (IANA). 224.0.0.9 is RIPv2 and 224.0.0.10 is EIGRP."
+    },
+    {
+     "level": 0,
+     "text": "Q8 On Ethernet, a DROther sends LSA updates to:"
+    },
+    {
+     "level": 0,
+     "text": "A. 224.0.0.5"
+    },
+    {
+     "level": 0,
+     "text": "B. 224.0.0.6"
+    },
+    {
+     "level": 0,
+     "text": "C. The DR's unicast address only"
+    },
+    {
+     "level": 0,
+     "text": "D. 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 224.0.0.6 (AllDRouters). The DR then floods to 224.0.0.5."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Default Hello and Dead intervals on an Ethernet link?"
+    },
+    {
+     "level": 0,
+     "text": "A. 5 and 20"
+    },
+    {
+     "level": 0,
+     "text": "B. 10 and 40"
+    },
+    {
+     "level": 0,
+     "text": "C. 30 and 120"
+    },
+    {
+     "level": 0,
+     "text": "D. 10 and 30"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Hello 10, Dead 40 (4 x Hello). 30/120 is NBMA."
+    },
+    {
+     "level": 0,
+     "text": "Q10 Choose three settings that must match for two OSPF routers to become neighbors."
+    },
+    {
+     "level": 0,
+     "text": "A. Area ID"
+    },
+    {
+     "level": 0,
+     "text": "B. Hello and Dead intervals"
+    },
+    {
+     "level": 0,
+     "text": "C. Subnet and mask on the link"
+    },
+    {
+     "level": 0,
+     "text": "D. Process ID"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - , B, C - Process ID is local, router IDs must differ, priority can differ."
+    },
+    {
+     "level": 0,
+     "text": "Q11 R1 and R2 show 2WAY/DROTHER for each other on an Ethernet LAN. What does it mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Normal: both are DROther and only become FULL with the DR and BDR - Not a fault."
+    },
+    {
+     "level": 0,
+     "text": "Q12 R1: priority 1, RID 10.0.0.1. R2: priority 1, RID 10.0.0.2. R3: priority 0, RID 10.0.0.3. All start together on one segment. Which is DR and which is BDR?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: R2 is DR, R1 is BDR - R3 has priority 0, so it is not a candidate. Highest RID wins between R1 and R2."
+    },
+    {
+     "level": 0,
+     "text": "Q13 A router with a higher priority joins a LAN that already has a DR and BDR. Does it take over?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - The election is not preemptive. It only changes after a reset or failure. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Q14 A router has Lo0 10.9.9.9, Gi0/0 192.168.1.1, Gi0/1 172.16.1.1, all up, and no router-id command. What is the router ID?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.9.9.9 - A loopback beats a higher physical address."
+    },
+    {
+     "level": 0,
+     "text": "Q15 You then type router-id 1.1.1.1. When will the router use it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - fter OSPF restarts (clear ip ospf process) or after a reload - The ID is chosen at process start."
+    },
+    {
+     "level": 0,
+     "text": "Q16 What is the default OSPF cost of a FastEthernet link? Of a 10 Mbps Ethernet link? Of a T1 (1.544 Mbps) link?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1, 10 and 64 - Reference 100 Mbps divided by bandwidth, minimum 1 (script checked)."
+    },
+    {
+     "level": 0,
+     "text": "Q17 After auto-cost reference-bandwidth 1000 on every router, what is the cost of FastEthernet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10 - 1000 / 100 = 10 (script checked). Set the same value on all routers."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Give the command to set the cost of an interface to 50."
+    },
+    {
+     "level": 0,
+     "text": "Answer: ip ospf cost 50 - Entered on that interface; it overrides the formula."
+    },
+    {
+     "level": 0,
+     "text": "Q19 What does O*E2 0.0.0.0/0 [110/1] mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - n OSPF external type 2 default route, AD 110, metric 1 - It came from a router using default-information originate."
+    },
+    {
+     "level": 0,
+     "text": "Q20 What does FULL/ - mean in the neighbor table?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Fully adjacent, and the link has no DR/BDR - Typical on point-to-point links."
+    },
+    {
+     "level": 0,
+     "text": "Q21 Which command shows Hello/Dead timers, network type and DR for one interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip ospf interface - Add the interface name."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Which command shows the networks you configured under OSPF and the router IDs of the routers it hears from?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip protocols - See \"Routing for Networks\" and \"Routing Information Sources\"."
+    },
+    {
+     "level": 0,
+     "text": "Q23 A router with passive-interface gigabitEthernet 0/0 matches a network statement for that interface. Will it form a neighbor there? Is the subnet advertised?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No neighbor, but the subnet is still advertised - Passive stops Hellos only. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Q24 Which command makes an Ethernet link behave as point-to-point, with no DR/BDR election?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ip ospf network point-to-point (on both ends) - Objective 3.4.b / 3.3.b."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Which two commands are the minimum for single-area OSPFv2?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: router ospf process-id, and network address wildcard area id - The book's Exam Essentials say the same."
+    },
+    {
+     "level": 0,
+     "text": "Q26 (v2.0) How is OSPFv3 enabled on an interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 ospf process-id area area-id on the interface - OSPFv3 uses interface commands, not network statements. CHECK"
+    }
+   ],
+   "multipleChoice": 7,
+   "open": 47
+  }
+ ],
+ "generatedFrom": "CC06.docx",
+ "totalWords": 11176,
+ "wordBreakdown": {
+  "sections": 7859,
+  "labs": 1314,
+  "quizzes": 1424,
+  "currency": 397,
+  "sources": 182
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "p165: text refers to \"Table 4.1\" for the OSPF/RIP comparison",
+   "current": "Notes it means Table 6.1",
+   "action": "",
+   "source": "Read in the book",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "p167-168: Hellos and LSAs both said to build the topology database",
+   "current": "Clarifies: LSAs build it, Hellos find neighbors UPDATED",
+   "action": "",
+   "source": "General knowledge; consistent with RFC 2328 (official, not read in full)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "p168: NBMA examples are Frame Relay, X.25, ATM",
+   "current": "Marks them as dated; focus on broadcast and point-to-point",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "p170: Table 6.2 lists 224.0.0.6 for broadcast updates",
+   "current": "Explains DROther to 224.0.0.6, then DR to 224.0.0.5",
+   "action": "",
+   "source": "IANA registry (official)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "p170: cost \"defined in RFC 2338\"",
+   "current": "Corrects to RFC 2328; RFC 2338 is VRRP",
+   "action": "",
+   "source": "rfc-editor.org (official)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "p170-171: cost formula only; no reference bandwidth lesson",
+   "current": "Adds cost table and auto-cost reference-bandwidth ADDED",
+   "action": "",
+   "source": "Cisco OSPF FAQ and tech note (official); costs by script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "p171: process ID can't be 0 \"because that's for the backbone\"",
+   "current": "Separates process ID (1-65,535) from area ID",
+   "action": "",
+   "source": "General knowledge; matches command help in the book",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "p171: second process used to connect ASs",
+   "current": "Clarifies separate databases, redistribution needed",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "p172-175: wildcard masks and block sizes",
+   "current": "Recalculates every wildcard",
+   "action": "",
+   "source": "Python script; matches the book",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "p176-178: Corp uses process 132, later router ospf 1",
+   "current": "Flags the inconsistency",
+   "action": "",
+   "source": "Read in the book",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "p178: static default points to Fa0/0 only",
+   "current": "Recommends next-hop IP; notes default-information originate needs a default route ADDED",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "p180-182: RID rules and examples",
+   "current": "Confirms rules; adds that 223.255.255.254 is not special",
+   "action": "",
+   "source": "Cisco technical note (official); address check by script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "p182: show ip route shows 172.131.1.1 and a repeated line",
+   "current": "Marks as typing errors",
+   "action": "",
+   "source": "Read in the book",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "p183-184: show ip ospf says RID is \"highest IP address\"",
+   "current": "Clarifies it was set by the router-id command",
+   "action": "",
+   "source": "Read in the book",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "p185-186: asks default Hello/Dead timers but only shows them in output",
+   "current": "States them in a table (10/40, 30/120) ADDED",
+   "action": "",
+   "source": "Secondary sources and book output CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "p186-187: multi-vendor story blames cost mismatch for adjacency failure",
+   "current": "Notes cost difference does not stop adjacency",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "Not covered: neighbor states, DR/BDR details, priority, network types, ip ospf network, passive-interface default, troubleshooting",
+   "current": "Added in sections 6.1.1, 6.2.3, 6.4 and Troubleshooting",
+   "action": "",
+   "source": "General knowledge, not tested CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "Not covered: OSPFv3 for IPv6",
+   "current": "Added a short section for v2.0 objective 3.3",
+   "action": "",
+   "source": "Cisco v2.0 PDF (official) for the objective; commands not tested CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "Objective numbers are v1.0 (3.4)",
+   "current": "Maps to v1.1 (3.4) and v2.0 (3.3)",
+   "action": "",
+   "source": "v2.0: official PDF. v1.1: secondary sources CHECK",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Lammle, CCNA Study Guide Vol 2 (2020), pp163-192 (provided PDF)",
+   "usedFor": "All BOOK content",
+   "status": "Primary source supplied"
+  },
+  {
+   "source": "Cisco, CCNA 200-301 v2.0 exam topics PDF (learningcontent.cisco.com)",
+   "usedFor": "v2.0 objective numbers (3.3, 3.1, 2.4)",
+   "status": "Official"
+  },
+  {
+   "source": "Secondary sites (computingforgeeks.com, simeononsecurity.com)",
+   "usedFor": "v1.1 retirement 2 Feb 2027 and v2.0 start 3 Feb 2027",
+   "status": "Secondary. Cisco v1.1 PDF not opened CHECK"
+  },
+  {
+   "source": "Global Knowledge, Pearson exam cross-reference",
+   "usedFor": "v1.1 objective numbers (3.4, 1.13, 5.7)",
+   "status": "Secondary CHECK"
+  },
+  {
+   "source": "IETF RFC 2328 (OSPFv2) and RFC 2338 / RFC 3768 (VRRP), rfc-editor.org",
+   "usedFor": "Correct RFC for OSPF; VRRP is 2338",
+   "status": "Official"
+  },
+  {
+   "source": "IANA IPv4 multicast address registry",
+   "usedFor": "224.0.0.5 and 224.0.0.6",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco technical note on show ip ospf interface",
+   "usedFor": "Router ID rules, cost formula, DR priority",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco OSPF FAQ (cisco.com)",
+   "usedFor": "Reference bandwidth default 100 Mbps, auto-cost",
+   "status": "Official"
+  },
+  {
+   "source": "oneuptime.com, networklessons.com, Juniper OSPF docs",
+   "usedFor": "Default Hello/Dead values (10/40, 30/120)",
+   "status": "Secondary; consistent with book output CHECK"
+  },
+  {
+   "source": "Python ipaddress scripts (run in my sandbox)",
+   "usedFor": "Wildcards, subnets, costs, election results",
+   "status": "Calculated, not copied"
+  },
+  {
+   "source": "General knowledge (not looked up)",
+   "usedFor": "Neighbor states, packet types, protocol 89, LSA types, passive-interface behavior, ip ospf under interface, OSPFv3 commands, DR non-preemption",
+   "status": "Not verified in this session CHECK"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-3.3"
+  }
+ ],
+ "questionCount": 54,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A (Pre-check)",
+  "Sources and Verification Status"
+ ]
+}

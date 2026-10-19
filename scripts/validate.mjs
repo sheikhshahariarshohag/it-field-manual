@@ -41,7 +41,7 @@ const APP_GROUPS = {
   commands: ["commands/index", "commands/cisco", "commands/windows", "commands/mikrotik"],
   lessons: ["lessons/index", "lessons/services", "lessons/networking", "lessons/windows"],
   scenarios: ["scenarios/index"],
-  quizzes: ["quizzes/index"],
+  quizzes: ["quizzes/index", "quizzes/ccna"],
   projects: ["projects/index"],
 };
 
@@ -458,16 +458,35 @@ const ROUTES = {
       fail(`data/knowledge-map.json is not valid JSON: ${e.message}`);
     }
 
-    if (km) {
+    /*
+ * Sessions retired on purpose when the CCNA corpus was rebuilt.
+ *
+ * The CCNA subject used to carry its own commands, lessons, one quiz, one
+ * project and seven knowledge-map sessions. Those went, and twelve map
+ * sessions went with them: the seven CCNA-tagged ones, plus four whose entire
+ * content was a reference to a Cisco command or project that no longer exists
+ * (km-034 STP, km-037 NAT, km-038 ACL, km-042 ICMP), plus km-110.
+ *
+ * The numbers are written down rather than derived from the file on purpose.
+ * The check below exists to catch a SILENT loss - the TOC parse quietly
+ * dropping half a chapter - and it can only do that if every gap is accounted
+ * for. Listing them means a NEW gap still fails the build, while these twelve,
+ * which somebody chose, do not.
+ */
+const KM_RETIRED_NUMS = new Set([27, 28, 29, 30, 31, 33, 34, 37, 38, 41, 42, 110]);
+const KM_SESSION_COUNT = 146 - KM_RETIRED_NUMS.size;
+
+if (km) {
       const sessions = km.sessions || [];
 
       if (!Array.isArray(sessions) || !sessions.length) {
         fail("knowledge-map.json has no sessions");
       } else {
-        // The document claims 146 sessions; a short list means the TOC parse
-        // silently regressed.
-        if (sessions.length !== 146) {
-          fail(`knowledge map has ${sessions.length} sessions, expected 146 — the extraction is incomplete`);
+        // The document claims this many sessions; a short list means either the
+        // TOC parse regressed or something was deleted without being recorded
+        // in KM_RETIRED_NUMS above.
+        if (sessions.length !== KM_SESSION_COUNT) {
+          fail(`knowledge map has ${sessions.length} sessions, expected ${KM_SESSION_COUNT} — the extraction is incomplete, or a session was removed without adding it to KM_RETIRED_NUMS`);
         }
         // Every session must carry a hand-written summary, not just a title.
         for (const s of sessions) {
@@ -475,14 +494,22 @@ const ROUTES = {
             fail(`knowledge map ${s.id} ("${s.title}") has no summary — run scripts/tag-knowledge-map.mjs`);
           }
         }
-        // Numbers must be contiguous 1..N with no gaps or duplicates.
+        // Numbers must be 1..146 with no gaps or duplicates, minus the retired
+        // ones. Anything else is an unrecorded loss - which is the failure this
+        // check exists for, so it must not be "fixed" by loosening it.
         const nums = sessions.map((s) => s.n).sort((a, b) => a - b);
         const dupes = nums.filter((n, i, a) => a.indexOf(n) !== i);
         if (dupes.length) fail(`knowledge map has duplicate session numbers: ${[...new Set(dupes)].join(", ")}`);
-        for (let i = 0; i < nums.length; i++) {
-          if (nums[i] !== i + 1) {
-            fail(`knowledge map session numbering has a gap: expected ${i + 1}, found ${nums[i]}`);
-            break;
+        {
+          const expected = [];
+          for (let n = 1; n <= 146; n++) if (!KM_RETIRED_NUMS.has(n)) expected.push(n);
+          const missing = expected.filter((n) => !nums.includes(n));
+          const unexpected = nums.filter((n) => !expected.includes(n));
+          if (missing.length) {
+            fail(`knowledge map is missing session numbers: ${missing.join(", ")} — add them to KM_RETIRED_NUMS if the removal was deliberate`);
+          }
+          if (unexpected.length) {
+            fail(`knowledge map has session numbers outside 1..146: ${unexpected.join(", ")}`);
           }
         }
         // Every manual link must resolve to a real document.
@@ -593,7 +620,43 @@ const ROUTES = {
             }
           }
         }
-        for (const f of onDisk) if (!inIndex.has(f)) fail(`data/study/${f}.json is orphaned — not listed in the index`);
+        /*
+         * Files on disk that no unit claims.
+         *
+         * The provenance manifest is the one deliberate exception: it is not a
+         * chapter, it is the record of which .docx each chapter was built from,
+         * written by scripts/build-ccna-study.mjs so that
+         * scripts/check-ccna-content.mjs can verify the chapters in CI where
+         * the private .docx sources do not exist.
+         *
+         * It is allowed through only if it is real - every id it names must be
+         * a unit the index also lists - so it cannot be used to smuggle in a
+         * genuinely orphaned file.
+         */
+        let provenance = null;
+        if (onDisk.has("ccna-provenance")) {
+          const pp = join(dir, "ccna-provenance.json");
+          try {
+            provenance = JSON.parse(readFileSync(pp, "utf8"));
+            const chs = (provenance.chapters || []);
+            if (!chs.length) fail("data/study/ccna-provenance.json records no chapters");
+            for (const c of chs) {
+              if (!inIndex.has(c.id)) {
+                fail(`data/study/ccna-provenance.json names "${c.id}", which the study-manual index does not list`);
+              }
+              if (!c.sourceSha256 || !/^[0-9a-f]{64}$/.test(c.sourceSha256)) {
+                fail(`data/study/ccna-provenance.json entry "${c.id}" has no valid sha256 of its source`);
+              }
+            }
+          } catch (e) {
+            fail(`data/study/ccna-provenance.json is not valid JSON: ${e.message}`);
+          }
+        }
+        for (const f of onDisk) {
+          if (inIndex.has(f)) continue;
+          if (f === "ccna-provenance" && provenance) continue;
+          fail(`data/study/${f}.json is orphaned — not listed in the index`);
+        }
         const total = (m.books || []).reduce((a, b) => a + b.units.length, 0);
         console.log(`  study manual   ${m.books.length} courses, ${total} units, ${(words / 1000).toFixed(0)}k words`);
 

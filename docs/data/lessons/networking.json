@@ -1,551 +1,123 @@
 [
-  {
-    "id": "ccna-longest-prefix-match",
-    "kind": "lesson",
-    "tech": "cisco",
-    "title": "Longest prefix match, and why your 'best' route is not used",
-    "summary": "The single rule that decides which of several routes a packet takes. Get this wrong and correct configuration still sends traffic somewhere useless.",
-    "analogy": "Choosing a road home. A motorway is the obvious choice, but if your street is on the route table, the router will always use it — because your street is the more specific instruction, even though the motorway looks 'better'.",
-    "time": "10 min",
-    "verification": "source-checked",
-    "prerequisites": [
-      {
-        "id": "cisco-show-ip-route",
-        "label": "show ip route"
-      }
+ {
+  "id": "mikrotik-firewall-chains",
+  "kind": "lesson",
+  "tech": "mikrotik",
+  "title": "input, forward, output — which chain am I in?",
+  "summary": "The three chains, what each one actually filters, and why a correct-looking rule does nothing.",
+  "analogy": "A building with three security desks. The front desk filters people arriving at the building. The inner security desk filters people walking around inside. The desk at the manager's own office filters what leaves the building from there. A rule at the wrong desk checks nothing relevant.",
+  "time": "11 min",
+  "verification": "source-checked",
+  "prerequisites": [
+   {
+    "id": "mikrotik-ip-firewall-filter",
+    "label": "Add and read firewall rules"
+   }
+  ],
+  "related": [
+   {
+    "id": "mikrotik-ip-firewall-nat",
+    "label": "NAT is a separate mechanism"
+   },
+   {
+    "id": "scn-dhcp-client-no-lease",
+    "label": "Worked example of the wrong-chain fault"
+   }
+  ],
+  "tags": [
+   "mikrotik",
+   "routeros",
+   "firewall",
+   "security",
+   "mtcna"
+  ],
+  "sections": [
+   {
+    "h": "The three chains",
+    "list": [
+     "**`input`** — traffic arriving **to the router itself**. Pings to its own address, SSH to the router, DNS to the router.",
+     "**`forward`** — traffic **passing through** the router. A client on VLAN 10 reaching the internet, or reaching a server on VLAN 20.",
+     "**`output`** — traffic **originating from the router**. Router updates, pings it sends."
     ],
-    "related": [
-      {
-        "id": "ccna-subnetting-that-sticks",
-        "label": "The arithmetic behind it"
-      },
-      {
-        "id": "ccna-switch-learns-mac",
-        "label": "The Layer 2 equivalent"
-      }
+    "p2": []
+   },
+   {
+    "h": "Why this trips people up",
+    "p": [
+     "A rule to stop a client reaching the internet is a **`forward`** rule, not an `input` rule. Putting it in `input` is the single most common RouterOS error, and it fails silently — the rule exists, it just never sees the traffic.",
+     "Rule order is evaluated top to bottom and the **first match wins**. An `accept` rule above your `drop` rule makes the drop unreachable."
     ],
-    "tags": [
-      "cisco",
-      "routing",
-      "subnetting",
-      "ccna",
-      "fundamentals"
-    ],
-    "sections": [
-      {
-        "h": "The rule",
-        "p": [
-          "When a packet arrives, the router looks at the routing table and finds **every** entry whose network matches the destination. It then picks the one with the **longest mask** — the most specific one. Metrics, administrative distance and 'route preference' are only consulted between routes of the **same** length.",
-          "This is counter-intuitive because every routing protocol teaches a preference order, and that order genuinely matters — but only within one prefix length."
-        ],
-        "code": "show ip route 10.1.2.3",
-        "where": "Cisco IOS privileged EXEC"
-      },
-      {
-        "h": "Worked example",
-        "p": [
-          "Three routes exist. A packet for 10.1.2.3 goes out eth2, even though the /8 is up, shorter, and looks like the 'simplest' answer."
-        ],
-        "list": [
-          "`S 10.0.0.0/8 via 192.0.2.1` — covers it, mask is 8 bits",
-          "`O 10.1.0.0/16 via 192.0.2.2` — covers it, mask is 16 bits",
-          "`C 10.1.2.0/24 directly connected, GigabitEthernet0/1` — covers it, mask is 24 bits ← **this one wins**"
-        ],
-        "p2": []
-      },
-      {
-        "h": "Where this actually bites",
-        "list": [
-          "A default route `0.0.0.0/0` is a prefix length of **zero**. It is the last resort, never a first choice. Any other match beats it.",
-          "A summary route `10.0.0.0/8` will never win over any more specific route inside it — which is exactly why summarisation is safe.",
-          "A host route `/32` always wins for that address. This is how loopbacks give management addresses stability.",
-          "It explains a fault people find confusing: adding a specific route can *break* something that worked through a less specific route, because the new route takes precedence."
-        ]
-      },
-      {
-        "h": "Common mistake",
-        "p": [
-          "People compare metrics across routes of different lengths and conclude the router is misbehaving. It is not — it is following the rule correctly. The fix is to make the table say what you actually mean, not to fiddle with metrics that will not be consulted."
-        ]
-      }
-    ],
-    "lab": [
-      {
-        "text": "Build a router with three interfaces and give it the three routes from the example.",
-        "cmd": "interface GigabitEthernet0/1\n ip address 10.1.2.1 255.255.255.0\nexit\ninterface GigabitEthernet1/1\n ip address 10.1.0.1 255.255.0.0\nexit\ninterface GigabitEthernet2/1\n ip address 10.0.0.1 255.0.0.0\nexit\nip route 10.0.0.0 255.0.0.0 192.0.2.1",
-        "where": "router"
-      },
-      {
-        "text": "Look at the table and confirm all three entries exist.",
-        "cmd": "show ip route 10.1.2.3",
-        "expect": "The /24 connected route is marked first with `*`."
-      },
-      {
-        "text": "Remove the most specific route and watch the next one take over.",
-        "cmd": "no interface GigabitEthernet0/1\nshow ip route 10.1.2.3",
-        "expect": "Now the /16 wins. Same destination, different answer, purely because of mask length. Put the interface back when finished."
-      }
-    ],
-    "failures": [
-      {
-        "why": "Traffic goes somewhere you did not expect.",
-        "fix": "List every matching route with `show ip route <destination>` and check the mask lengths. The longest one wins — that is not a bug."
-      },
-      {
-        "why": "A ping from the router works but from a client does not.",
-        "fix": "The router picks its source address from the outgoing interface, which may not be what the destination expects. Use an extended ping with `source`."
-      }
-    ],
-    "objectives": [
-      {
-        "id": "CCNA-3.1",
-        "note": "Reading a routing table; prefix length beats metric"
-      },
-      {
-        "id": "CCNA-3.2",
-        "note": "Static routing behaviour"
-      }
+    "code": "/ip/firewall/filter/print\n/ip/firewall/filter/print stats",
+    "where": "RouterOS"
+   },
+   {
+    "h": "Filtering without NAT is a mistake",
+    "p": [
+     "Forwarded traffic needs **two** things: a filter rule that permits it, and a `srcnat` masquerade rule. Filtering alone allows the request out but the reply cannot come back, because the reply's source address is internal and unroutable.",
+     "That presents as `ping: timeout` on an otherwise healthy setup. **Check `/ip/firewall/nat/print` before you start adding filter rules.**"
     ]
-  },
-  {
-    "id": "ccna-subnetting-that-sticks",
-    "kind": "lesson",
-    "tech": "cisco",
-    "title": "Subnetting that sticks",
-    "summary": "Borrow bits, convert to binary once, and learn to read a mask both ways. Built on longest-prefix match rather than on memorising a table.",
-    "analogy": "Postal codes. 90210 is more precise than 902, and the post office always uses the most precise code it has. A subnet is the same idea for IP addresses.",
-    "time": "14 min",
-    "verification": "source-checked",
-    "prerequisites": [
-      {
-        "id": "ccna-longest-prefix-match",
-        "label": "Why the most specific mask wins"
-      }
+   },
+   {
+    "h": "Building an ordered ruleset",
+    "p": [
+     "Use `place-before=` to insert rather than append. Appending a drop rule below an existing accept does nothing, and the instinct to \"just move things\" without checking the counters wastes hours."
     ],
-    "related": [
-      {
-        "id": "cisco-ip-route",
-        "label": "Static routes need the full mask"
-      },
-      {
-        "id": "mikrotik-ip-dhcp-server-network",
-        "label": "DHCP needs the network address"
-      }
-    ],
-    "tags": [
-      "cisco",
-      "subnetting",
-      "binary",
-      "ccna",
-      "fundamentals"
-    ],
-    "sections": [
-      {
-        "h": "Convert the mask, do not memorise the table",
-        "p": [
-          "A subnet mask is just a binary number. Convert it once and every question becomes arithmetic you can do in your head.",
-          "`255.255.255.0` → `11111111.11111111.11111111.00000000` → **24** ones, 8 zeros."
-        ],
-        "code": "255.0.0.0     = 8\n255.255.0.0   = 16\n255.255.255.0 = 24\n255.255.255.252 = 30\n255.255.255.255 = 32",
-        "where": "reference"
-      },
-      {
-        "h": "The three facts you actually need",
-        "list": [
-          "**Number of addresses** = 2^(32 − prefix). /24 → 256 addresses.",
-          "**Usable hosts** = addresses − 2. The two subtracted are the network address (all host bits zero) and the broadcast address (all host bits one).",
-          "**Block size** = 256 − the last non-255 octet. For /24 it is 1; for /26 (255.255.255.192) it is **64**, so networks start at .0, .64, .128, .192."
-        ]
-      },
-      {
-        "h": "Worked example — /26",
-        "p": [
-          "Given `192.168.10.0/26`, work out the network, the range, and the next network. The block size tells you everything."
-        ],
-        "list": [
-          "Mask 255.255.255.192, prefix /26, so 2^(32−26) = **64 addresses**.",
-          "Block size 64 → this network starts at .**0** and the next starts at .**64**.",
-          "Network address: `192.168.10.0`",
-          "Broadcast address: `192.168.10.63` (0 + 63)",
-          "Usable hosts: **62**",
-          "Next network: `192.168.10.64/26`"
-        ]
-      },
-      {
-        "h": "The mistake that costs the most marks",
-        "p": [
-          "Writing a prefix length where a mask is required. `ip route 10.20.30.0/24 ...` is wrong; Cisco wants `ip route 10.20.30.0 255.255.255.0 ...`.",
-          "The reverse catches people in PowerShell and RouterOS, which *do* use `/24`. **Learn both forms and know which is expected where.**"
-        ]
-      }
-    ],
-    "lab": [
-      {
-        "text": "Write down five /26 networks inside 192.168.10.0/24 from memory, then check them.",
-        "expect": ".0, .64, .128, .192 — and only four fit in a /24. This is the check people skip and it is where the errors are."
-      },
-      {
-        "text": "Configure two subnets on one router and prove they are isolated.",
-        "cmd": "interface GigabitEthernet0/1\n ip address 192.168.10.1 255.255.255.192\nexit\ninterface GigabitEthernet0/2\n ip address 192.168.10.65 255.255.255.192\nexit\nshow ip interface brief",
-        "where": "router",
-        "expect": "Both addresses appear as connected routes — and the second one is *not* a subnet of the first."
-      },
-      {
-        "text": "Add a host on each subnet and try to reach the other without routing.",
-        "expect": "They fail, because they are different subnets and the router will not route between them without either a static route or an ACL permitting it."
-      }
-    ],
-    "failures": [
-      {
-        "why": "A router refuses an IP address.",
-        "fix": "The address is the network address of the subnet or is duplicated on another interface. `/24` gives 256 addresses; `.0` and `.255` are not usable host addresses."
-      },
-      {
-        "why": "A host cannot reach its own gateway.",
-        "fix": "Wrong mask. The host computes the gateway's address as being outside its own subnet and sends it to the wrong interface."
-      }
-    ],
-    "objectives": [
-      {
-        "id": "CCNA-1.3",
-        "note": "Network design and addressing"
-      },
-      {
-        "id": "CCNA-3.1",
-        "note": "Prefix length is what makes a route specific"
-      }
-    ]
-  },
-  {
-    "id": "ccna-switch-learns-mac",
-    "kind": "lesson",
-    "tech": "cisco",
-    "title": "How a switch actually learns",
-    "summary": "The forwarding table, unknown unicast flooding, and why a port that has just been moved to a new VLAN goes quiet for half a minute.",
-    "analogy": "A receptionist who writes down the extension number of everyone who calls, then stops asking who the caller is. If someone calls from a new number, the receptionist has to ask the whole room.",
-    "time": "9 min",
-    "verification": "source-checked",
-    "prerequisites": [
-      {
-        "id": "cisco-show-mac-address-table",
-        "label": "Read the MAC address table"
-      }
-    ],
-    "related": [
-      {
-        "id": "ccna-longest-prefix-match",
-        "label": "The Layer 3 equivalent"
-      },
-      {
-        "id": "mikrotik-bridge-port-print",
-        "label": "The same idea on MikroTik"
-      }
-    ],
-    "tags": [
-      "cisco",
-      "switching",
-      "mac",
-      "layer2",
-      "ccna",
-      "fundamentals"
-    ],
-    "sections": [
-      {
-        "h": "The three rules, in order",
-        "list": [
-          "**Learn from the source.** A frame arrives on Gi0/5 from MAC AAAA. The switch records AAAA → Gi0/5 → the VLAN the port is in. Learning happens whether or not anyone asked.",
-          "**Forward if the destination is known.** If MAC BBBB is already known on Gi0/2, send the frame there and nowhere else.",
-          "**Flood if the destination is unknown.** If BBBB is not in the table, send the frame out **every port in that VLAN except the one it arrived on**. This is *unknown unicast flooding*."
-        ]
-      },
-      {
-        "h": "What flooding actually does for you",
-        "p": [
-          "It is not purely wasteful. The first frame from a new device reaches everyone, which is how the reply gets back and how the switch learns. Flooding is how a switch bootstraps knowledge of its own network.",
-          "It is also a security concern: an attacker sending thousands of unknown-source MACs causes **MAC flooding**, and a table that overflows starts behaving like a hub. That is one reason port security and DHCP snooping exist."
-        ]
-      },
-      {
-        "h": "Aging, and the 30-second pause",
-        "p": [
-          "Entries age out after roughly five minutes of silence, so the table always reflects recent traffic. A powered-on but idle device legitimately has no entry.",
-          "When a port goes into a new VLAN, spanning tree runs its listening and learning phases first. **Without `spanning-tree portfast`, a client waits about 30 seconds before getting a DHCP offer.** If one machine is slow to get an address and the rest are fine, this is the first thing to check."
-        ]
-      }
-    ],
-    "lab": [
-      {
-        "text": "Ping from PC1 to PC2 on the same switch.",
-        "cmd": "show mac address-table",
-        "where": "switch",
-        "expect": "Both MACs appear, each on its own port, in the same VLAN."
-      },
-      {
-        "text": "Ping from PC1 to a machine on another switch, across the trunk.",
-        "cmd": "show mac address-table vlan 20",
-        "expect": "The remote MAC is learned **on the trunk port** — which is how the switch knows where the far side is."
-      },
-      {
-        "text": "Disconnect PC1, wait, and watch the entry age out.",
-        "expect": "After ~5 minutes the entry disappears. Nothing is broken; that is aging working."
-      },
-      {
-        "text": "Remove `spanning-tree portfast` from a port and reboot the client.",
-        "cmd": "interface gi0/5\n no spanning-tree portfast",
-        "expect": "The client takes ~30 seconds to get a DHCP lease. Put portfast back afterwards."
-      }
-    ],
-    "failures": [
-      {
-        "why": "A MAC keeps moving between two ports.",
-        "fix": "Duplicate MAC address or a Layer-2 loop. Check for a switch plugged into itself or two unmanaged switches bridging one segment."
-      },
-      {
-        "why": "One machine gets a DHCP address 30 seconds late.",
-        "fix": "Portfast is missing on that access port. `show spanning-tree interface gi0/5` confirms it."
-      }
-    ],
-    "objectives": [
-      {
-        "id": "CCNA-2.3",
-        "note": "STP listening/learning delay; portfast"
-      },
-      {
-        "id": "CCNA-2.6",
-        "note": "MAC flooding and why controls exist"
-      }
-    ]
-  },
-  {
-    "id": "mikrotik-bridge-broadcast-domains",
-    "kind": "lesson",
-    "tech": "mikrotik",
-    "title": "Bridge ports and broadcast domains",
-    "summary": "Why a port that is physically up and correctly configured still fails, and how to find it in one command.",
-    "analogy": "A bridge is a room. Everything in the room can hear everything else. Take a cable out of that room and plug it into the corridor, and that device is now alone and can hear nobody — including the router that is handing out addresses.",
-    "time": "10 min",
-    "verification": "source-checked",
-    "prerequisites": [
-      {
-        "id": "mikrotik-bridge-port-print",
-        "label": "See bridge membership"
-      }
-    ],
-    "related": [
-      {
-        "id": "ccna-switch-learns-mac",
-        "label": "The Cisco equivalent"
-      },
-      {
-        "id": "mikrotik-ip-dhcp-server-network",
-        "label": "Where this shows up as a DHCP fault"
-      }
-    ],
-    "tags": [
-      "mikrotik",
-      "routeros",
-      "bridge",
-      "layer2",
-      "mtcna",
-      "troubleshooting"
-    ],
-    "sections": [
-      {
-        "h": "The idea",
-        "p": [
-          "A MikroTik bridge turns several physical ports into **one Layer-2 segment**. Devices in that segment can see each other's ARP, DHCP and discovery traffic.",
-          "The consequence people miss: **a port not in the bridge is its own segment.** It is physically up, it has a link light, it may even have an IP address — and it is completely alone."
-        ]
-      },
-      {
-        "h": "Why this matters more on MikroTik than on a switch",
-        "p": [
-          "On a switch, ports belong to VLANs and the VLAN concept is visible in the configuration. On a MikroTik, the bridge is easy to forget: add an IP to the bridge, enable the port, and move on. Then the port is up and useless.",
-          "The symptom is distinctive: **the client works everywhere except on that one port**, and it self-assigns `169.254.x.x`, which means it asked for an address and nobody answered."
-        ]
-      },
-      {
-        "h": "Order of operations when building",
-        "list": [
-          "Create the bridge.",
-          "**Give the bridge its IP address.**",
-          "Create the DHCP server or confirm the scope.",
-          "**Then** add the physical ports.",
-          "Only then connect the client.",
-          "Adding ports before the bridge has an address can drop your own management session."
-        ]
-      },
-      {
-        "h": "Trunking and PVID",
-        "p": [
-          "When a port carries more than one VLAN it is a trunk, and `pvid` decides which VLAN untagged traffic belongs to. A port that should be an access port but has a wrong PVID puts the client in the wrong VLAN — a different fault with a similar symptom.",
-          "On a mixed setup the honest answer is: do not use a router as a trunk switch. Bridge ports for access, and if you must, understand that the PVID is what untagged traffic becomes."
-        ]
-      }
-    ],
-    "lab": [
-      {
-        "text": "Build a bridge with an address and no ports.",
-        "cmd": "/interface/bridge/add name=bridge-lan\n/ip/address/add address=10.10.20.1/24 interface=bridge-lan",
-        "where": "RouterOS"
-      },
-      {
-        "text": "Deliberately leave a client port out of the bridge.",
-        "cmd": "/interface/bridge/port/print",
-        "expect": "That port is simply absent. This is the whole bug — nothing in the output is flagged as wrong."
-      },
-      {
-        "text": "On the client, renew the lease and watch it fail.",
-        "cmd": "ipconfig /renew",
-        "where": "Windows client",
-        "expect": "APIPA address 169.254.x.x — it asked, and the offer never reached a segment it was on."
-      },
-      {
-        "text": "Add the port and re-test.",
-        "cmd": "/interface/bridge/port/add bridge=bridge-lan interface=ether5\n/interface/bridge/port/print",
-        "where": "RouterOS",
-        "expect": "The port now appears, and the client gets a lease within seconds."
-      }
-    ],
-    "failures": [
-      {
-        "why": "Client gets 169.254.x.x.",
-        "fix": "Check bridge membership first, then DHCP configuration, in that order. Nine times in ten it is bridge membership."
-      },
-      {
-        "why": "The interface shows running but no traffic passes.",
-        "fix": "`running` means enabled in the bridge, not that it has a cable. Check `/interface/ethernet/print` for the physical state."
-      },
-      {
-        "why": "You lose your WinBox session when adding ports.",
-        "fix": "You connected through the port you are adding and the bridge has no address yet. Set the address first, or connect from another port."
-      }
-    ],
-    "objectives": [
-      {
-        "id": "MTCNA-M3.1"
-      }
-    ]
-  },
-  {
-    "id": "mikrotik-firewall-chains",
-    "kind": "lesson",
-    "tech": "mikrotik",
-    "title": "input, forward, output — which chain am I in?",
-    "summary": "The three chains, what each one actually filters, and why a correct-looking rule does nothing.",
-    "analogy": "A building with three security desks. The front desk filters people arriving at the building. The inner security desk filters people walking around inside. The desk at the manager's own office filters what leaves the building from there. A rule at the wrong desk checks nothing relevant.",
-    "time": "11 min",
-    "verification": "source-checked",
-    "prerequisites": [
-      {
-        "id": "mikrotik-ip-firewall-filter",
-        "label": "Add and read firewall rules"
-      }
-    ],
-    "related": [
-      {
-        "id": "mikrotik-ip-firewall-nat",
-        "label": "NAT is a separate mechanism"
-      },
-      {
-        "id": "scn-dhcp-client-no-lease",
-        "label": "Worked example of the wrong-chain fault"
-      }
-    ],
-    "tags": [
-      "mikrotik",
-      "routeros",
-      "firewall",
-      "security",
-      "mtcna"
-    ],
-    "sections": [
-      {
-        "h": "The three chains",
-        "list": [
-          "**`input`** — traffic arriving **to the router itself**. Pings to its own address, SSH to the router, DNS to the router.",
-          "**`forward`** — traffic **passing through** the router. A client on VLAN 10 reaching the internet, or reaching a server on VLAN 20.",
-          "**`output`** — traffic **originating from the router**. Router updates, pings it sends."
-        ],
-        "p2": []
-      },
-      {
-        "h": "Why this trips people up",
-        "p": [
-          "A rule to stop a client reaching the internet is a **`forward`** rule, not an `input` rule. Putting it in `input` is the single most common RouterOS error, and it fails silently — the rule exists, it just never sees the traffic.",
-          "Rule order is evaluated top to bottom and the **first match wins**. An `accept` rule above your `drop` rule makes the drop unreachable."
-        ],
-        "code": "/ip/firewall/filter/print\n/ip/firewall/filter/print stats",
-        "where": "RouterOS"
-      },
-      {
-        "h": "Filtering without NAT is a mistake",
-        "p": [
-          "Forwarded traffic needs **two** things: a filter rule that permits it, and a `srcnat` masquerade rule. Filtering alone allows the request out but the reply cannot come back, because the reply's source address is internal and unroutable.",
-          "That presents as `ping: timeout` on an otherwise healthy setup. **Check `/ip/firewall/nat/print` before you start adding filter rules.**"
-        ]
-      },
-      {
-        "h": "Building an ordered ruleset",
-        "p": [
-          "Use `place-before=` to insert rather than append. Appending a drop rule below an existing accept does nothing, and the instinct to \"just move things\" without checking the counters wastes hours."
-        ],
-        "code": "/ip/firewall/filter/add chain=forward action=accept connection-state=established,related comment=\"accept established\"\n/ip/firewall/filter/add chain=forward action=drop in-interface=bridge-lan src-address=10.10.30.0/24 out-interface=!bridge-lan place-before=0 comment=\"guest isolated\"\n/ip/firewall/filter/print stats",
-        "where": "RouterOS",
-        "risk": "caution"
-      }
-    ],
-    "lab": [
-      {
-        "text": "Write an accept-established rule at the top of the forward chain.",
-        "cmd": "/ip/firewall/filter/add chain=forward action=accept connection-state=established,related comment=\"established first\"",
-        "where": "RouterOS",
-        "expect": "Return traffic now passes without being re-evaluated against every later rule."
-      },
-      {
-        "text": "Add a guest-isolation rule and confirm it hits.",
-        "cmd": "/ip/firewall/filter/add chain=forward action=drop src-address=10.10.30.0/24 in-interface=bridge-lan out-interface=!bridge-lan comment=\"guest isolated\"\n/ip/firewall/filter/print stats",
-        "where": "RouterOS",
-        "expect": "The packets column goes above zero once a guest tries to reach an internal network."
-      },
-      {
-        "text": "Deliberately put the same rule in `input` and watch it do nothing.",
-        "cmd": "/ip/firewall/filter/add chain=input action=drop src-address=10.10.30.0/24 comment=\"wrong chain demo\"\n/ip/firewall/filter/print stats",
-        "where": "RouterOS",
-        "expect": "Packets stays at 0. The guest is still isolated by the forward rule, so behaviour does not change — the counters tell you why."
-      },
-      {
-        "text": "Remove the demo rule before you forget.",
-        "cmd": "/ip/firewall/filter/remove [find comment=\"wrong chain demo\"]",
-        "where": "RouterOS"
-      }
-    ],
-    "failures": [
-      {
-        "why": "Clients get addresses but no internet.",
-        "fix": "Check `/ip/firewall/nat/print` for a masquerade rule on the WAN interface. Filtering alone drops the replies."
-      },
-      {
-        "why": "A rule appears correct but never matches.",
-        "fix": "Check the chain and the direction, then `print stats`. Zero packets on a rule you have tested means it is in the wrong place."
-      },
-      {
-        "why": "You blocked yourself out.",
-        "fix": "`/system/backup/load` from a known-good backup, or connect from the LAN and remove the rule by comment."
-      }
-    ],
-    "objectives": [
-      {
-        "id": "MTCNA-M6.2"
-      },
-      {
-        "id": "MTCNA-M6.3",
-        "note": "input chain"
-      },
-      {
-        "id": "MTCNA-M6.4",
-        "note": "forward chain"
-      }
-    ]
-  }
+    "code": "/ip/firewall/filter/add chain=forward action=accept connection-state=established,related comment=\"accept established\"\n/ip/firewall/filter/add chain=forward action=drop in-interface=bridge-lan src-address=10.10.30.0/24 out-interface=!bridge-lan place-before=0 comment=\"guest isolated\"\n/ip/firewall/filter/print stats",
+    "where": "RouterOS",
+    "risk": "caution"
+   }
+  ],
+  "lab": [
+   {
+    "text": "Write an accept-established rule at the top of the forward chain.",
+    "cmd": "/ip/firewall/filter/add chain=forward action=accept connection-state=established,related comment=\"established first\"",
+    "where": "RouterOS",
+    "expect": "Return traffic now passes without being re-evaluated against every later rule."
+   },
+   {
+    "text": "Add a guest-isolation rule and confirm it hits.",
+    "cmd": "/ip/firewall/filter/add chain=forward action=drop src-address=10.10.30.0/24 in-interface=bridge-lan out-interface=!bridge-lan comment=\"guest isolated\"\n/ip/firewall/filter/print stats",
+    "where": "RouterOS",
+    "expect": "The packets column goes above zero once a guest tries to reach an internal network."
+   },
+   {
+    "text": "Deliberately put the same rule in `input` and watch it do nothing.",
+    "cmd": "/ip/firewall/filter/add chain=input action=drop src-address=10.10.30.0/24 comment=\"wrong chain demo\"\n/ip/firewall/filter/print stats",
+    "where": "RouterOS",
+    "expect": "Packets stays at 0. The guest is still isolated by the forward rule, so behaviour does not change — the counters tell you why."
+   },
+   {
+    "text": "Remove the demo rule before you forget.",
+    "cmd": "/ip/firewall/filter/remove [find comment=\"wrong chain demo\"]",
+    "where": "RouterOS"
+   }
+  ],
+  "failures": [
+   {
+    "why": "Clients get addresses but no internet.",
+    "fix": "Check `/ip/firewall/nat/print` for a masquerade rule on the WAN interface. Filtering alone drops the replies."
+   },
+   {
+    "why": "A rule appears correct but never matches.",
+    "fix": "Check the chain and the direction, then `print stats`. Zero packets on a rule you have tested means it is in the wrong place."
+   },
+   {
+    "why": "You blocked yourself out.",
+    "fix": "`/system/backup/load` from a known-good backup, or connect from the LAN and remove the rule by comment."
+   }
+  ],
+  "objectives": [
+   {
+    "id": "MTCNA-M6.2"
+   },
+   {
+    "id": "MTCNA-M6.3",
+    "note": "input chain"
+   },
+   {
+    "id": "MTCNA-M6.4",
+    "note": "forward chain"
+   }
+  ]
+ }
 ]

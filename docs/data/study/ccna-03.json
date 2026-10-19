@@ -1,0 +1,2420 @@
+{
+ "id": "ccna-03",
+ "n": 3,
+ "sourceNumber": "CC03",
+ "kind": "chapter",
+ "title": "Easy Subnetting",
+ "display": "Chapter 3: Easy Subnetting",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 5500,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 3"
+    },
+    {
+     "level": 0,
+     "text": "Easy Subnetting"
+    },
+    {
+     "level": 0,
+     "text": "Personalised study document built from Todd Lammle, CCNA Certification Study Guide, Volume 2 (Exam 200-301, 2020), book pages 75-103. Section numbers (3.1, 3.1.1 ...) match the rows in your Notion tracker CCNA Knowledge Tracker."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Details |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 75-103 (review questions p. 103, answers in the Appendix) |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 3 and sections 3.1 to 3.1.6 (8 rows, Seq 33-40). All start as Not assessed. |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | Two sessions of about 2 hours (a suggestion, not a measured need). Session A: pre-check, 3.1.1-3.1.5 (Class C), labs 3.1-3.2. Session B: Class B, VLSM, drill sheet, lab 3.3, review. Subnetting is a speed skill: plan short daily drills after this chapter, not only one long session. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | v1.1 (retires 2 Feb 2027): objective 1.6. v2.0 (from 3 Feb 2027): objective 1.3, which says to troubleshoot IPv4 configuration, assignment and subnetting (public and private). Very high priority in both. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Do the pre-check first. Nothing here assumes you know or do not know subnetting. |"
+    },
+    {
+     "level": 3,
+     "text": "Tags used in this document"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Content from the Lammle chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is out of date or unclear. The note says what changed. Nothing was replaced silently. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material not in this chapter that matters for the exam or real work. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified on real equipment or in an official source in this session. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objective (from the book): configure and verify IPv4 addressing and subnetting. After this chapter you should be able to answer, for any address and mask: how many subnets, how many hosts, which subnet an address is in, its broadcast address and its valid host range."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. ADDED Every subnet answer in this document (examples, drill sheet, VLSM, quick checks) was calculated by a script and compared with the worked answer, so the numbers are reliable. The explanations are written to teach the fast manual method, which is what you need in the exam."
+    },
+    {
+     "level": 3,
+     "text": "Where this chapter fits in the exam"
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 (book map) | v2.0 outline (Cisco PDF) | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.1-3.1.2 Creating subnets, masks | 1.6 | 1.3 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.3 CIDR | 1.6 | 1.3 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.4 IP subnet-zero | 1.6 (the book says the exam may state whether it is allowed) | 1.3 | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.5 Class C subnetting | 1.6 | 1.3 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.6 Class B subnetting | 1.6 | 1.3 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| VLSM (added section) | Used in later chapters (routing, OSPF design) | Part of the same subnetting skill | High |"
+    }
+   ],
+   "words": 506
+  },
+  {
+   "title": "Step 0: Pre-check (do this before you read)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer from memory with no looking up and no calculator. Add a confidence tag: (K) I know it, (U) unsure, (G) guessing. Time yourself. The answer key is at the end (Answer Key A)."
+    },
+    {
+     "level": 0,
+     "text": "- Write 255.255.255.240 in slash (CIDR) notation."
+    },
+    {
+     "level": 0,
+     "text": "- What are the subnet address and the broadcast address of the host 192.168.1.100/26?"
+    },
+    {
+     "level": 0,
+     "text": "- How many usable hosts are in a /23?"
+    },
+    {
+     "level": 0,
+     "text": "- You need subnets that hold at least 12 hosts each. Which mask do you choose?"
+    },
+    {
+     "level": 0,
+     "text": "- Is 172.16.10.255/24 a valid host address? Why or why not?"
+    },
+    {
+     "level": 0,
+     "text": "Mark tracker rows only when your answers are real evidence. If you were not tested on a row, leave it as Not assessed."
+    }
+   ],
+   "words": 114
+  },
+  {
+   "title": "3.1 Subnetting Basics",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK In Chapter 2 you found the host range of one network by turning host bits all off and then all on. A single large network is one large broadcast domain, which is slow and hard to manage. Subnetting breaks one network address into several smaller networks, each with its own broadcast domain. Routers sit between them."
+    },
+    {
+     "level": 2,
+     "text": "3.1.1 How to Create Subnets (book p. 77-78)"
+    },
+    {
+     "level": 0,
+     "text": "You create subnets by borrowing bits from the host part of the address and using them as subnet bits. You get more networks, but fewer hosts in each. Plan for today's needs and for growth first. Then follow the book's three steps:"
+    },
+    {
+     "level": 0,
+     "text": "- Count the network IDs you need: one for each LAN subnet and one for each WAN connection."
+    },
+    {
+     "level": 0,
+     "text": "- Count the host IDs you need per subnet: one for each host and one for each router interface."
+    },
+    {
+     "level": 0,
+     "text": "- Create: a subnet mask for the network, a unique subnet ID for each segment and a range of host IDs for each subnet."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Borrowing bits: subnets go up, hosts go down. Each bit you borrow doubles the subnets and roughly halves the hosts."
+    },
+    {
+     "level": 2,
+     "text": "3.1.2 Subnet Masks (book pp. 78-79)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK A subnet mask is a 32-bit value that tells a device which part of an address is the network/subnet and which part is the host. The 1s mark the network and subnet bits. The 0s mark the host bits. A network that is not subnetted uses the default mask."
+    },
+    {
+     "level": 0,
+     "text": "| Class | Format | Default mask | Slash |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| A | network.node.node.node | 255.0.0.0 | /8 |"
+    },
+    {
+     "level": 0,
+     "text": "| B | network.network.node.node | 255.255.0.0 | /16 |"
+    },
+    {
+     "level": 0,
+     "text": "| C | network.network.network.node | 255.255.255.0 | /24 |"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Never use 255.255.255.255 as an ordinary host mask (all 1s is the broadcast address). Subnet bits start at the left and move right with no gaps, so a mask like 255.255.255.100 is invalid."
+    },
+    {
+     "level": 3,
+     "text": "The pattern you must memorise"
+    },
+    {
+     "level": 0,
+     "text": "| Binary of the octet | Decimal | Bits on | Block size (256 - value) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 10000000 | 128 | 1 | 128 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11000000 | 192 | 2 | 64 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11100000 | 224 | 3 | 32 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11110000 | 240 | 4 | 16 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11111000 | 248 | 5 | 8 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11111100 | 252 | 6 | 4 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11111110 | 254 | 7 | 2 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11111111 | 255 | 8 | 1 |"
+    },
+    {
+     "level": 3,
+     "text": "Powers of 2 (book p. 79)"
+    },
+    {
+     "level": 0,
+     "text": "| 21 | 2� | 23 | 24 | 25 | 26 | 27 | 28 | 2? | 21� | 211 | 21� | 213 | 214 |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1,024 | 2,048 | 4,096 | 8,192 | 16,384 |"
+    },
+    {
+     "level": 0,
+     "text": "Each power is double the one before. Know 28 = 256 and double or halve from there."
+    },
+    {
+     "level": 2,
+     "text": "3.1.3 Classless Inter-Domain Routing (CIDR) (book pp. 80-81)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK CIDR is how ISPs hand out blocks of addresses. The slash number says how many bits are 1s in the mask. 192.168.10.32/28 means the mask has 28 ones, which is 255.255.255.240. The biggest mask the book uses is /30, because you must keep at least 2 host bits."
+    },
+    {
+     "level": 0,
+     "text": "| Slash | Mask | Interesting octet | Block size | Slash | Mask | Interesting octet | Block size |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| /8 | 255.0.0.0 | 1st | - | /20 | 255.255.240.0 | 3rd | 16 |"
+    },
+    {
+     "level": 0,
+     "text": "| /9 | 255.128.0.0 | 2nd | 128 | /21 | 255.255.248.0 | 3rd | 8 |"
+    },
+    {
+     "level": 0,
+     "text": "| /10 | 255.192.0.0 | 2nd | 64 | /22 | 255.255.252.0 | 3rd | 4 |"
+    },
+    {
+     "level": 0,
+     "text": "| /11 | 255.224.0.0 | 2nd | 32 | /23 | 255.255.254.0 | 3rd | 2 |"
+    },
+    {
+     "level": 0,
+     "text": "| /12 | 255.240.0.0 | 2nd | 16 | /24 | 255.255.255.0 | - | - |"
+    },
+    {
+     "level": 0,
+     "text": "| /13 | 255.248.0.0 | 2nd | 8 | /25 | 255.255.255.128 | 4th | 128 |"
+    },
+    {
+     "level": 0,
+     "text": "| /14 | 255.252.0.0 | 2nd | 4 | /26 | 255.255.255.192 | 4th | 64 |"
+    },
+    {
+     "level": 0,
+     "text": "| /15 | 255.254.0.0 | 2nd | 2 | /27 | 255.255.255.224 | 4th | 32 |"
+    },
+    {
+     "level": 0,
+     "text": "| /16 | 255.255.0.0 | - | - | /28 | 255.255.255.240 | 4th | 16 |"
+    },
+    {
+     "level": 0,
+     "text": "| /17 | 255.255.128.0 | 3rd | 128 | /29 | 255.255.255.248 | 4th | 8 |"
+    },
+    {
+     "level": 0,
+     "text": "| /18 | 255.255.192.0 | 3rd | 64 | /30 | 255.255.255.252 | 4th | 4 |"
+    },
+    {
+     "level": 0,
+     "text": "| /19 | 255.255.224.0 | 3rd | 32 |  |  |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Finding the interesting octet: the octet where the mask is neither 255 nor 0. /17-/23 \u001a third octet. /25-/30 \u001a fourth octet. /9-/15 \u001a second octet. Slash trick: /8 = 255, /16 = 255.255, /24 = 255.255.255. Then add the extra bits in the next octet using the table above (1 bit = 128, 2 = 192, 3 = 224 ...)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Classful thinking is old. UPDATED The book says /8-/15 can only be used with Class A, /16-/23 with A and B, and /24-/30 with all three. That was the classful rule. Today the mask decides the network, not the first octet, so any class of address can use any mask. The book's statement is useful for the exam only as a way to understand where you can borrow bits."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The /31 mask. UPDATED The book says /30 is the biggest usable mask and calls /31 beyond the CCNA. RFC 3021 (Proposed Standard, published December 2000) lets a /31 be used on point-to-point links. It leaves one host bit, and the two addresses are both treated as hosts, so a link uses 2 addresses instead of 4. It is only for point-to-point links. Not all devices support it (a network engineer's blog notes that MikroTik did not at the time of writing, while Cisco did). (Verified against the RFC.)"
+    },
+    {
+     "level": 0,
+     "text": "For the exam: use /30 for a two-host link unless the question says /31 is allowed. In real work: /31 is common on router-to-router links."
+    },
+    {
+     "level": 2,
+     "text": "3.1.4 IP Subnet-Zero (book pp. 81-82)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Subnet-zero means you may use the very first subnet (the one whose subnet bits are all 0). With a /26 mask on a Class C network, the subnets are 0, 64, 128, 192. Without subnet-zero you lose the 0 subnet (and, in the old rule, the last one), so you get two fewer usable subnets for every mask. Cisco turned ip subnet-zero on by default from IOS 12.x. The book says to read each exam question carefully because Cisco sometimes tells you not to use subnet-zero."
+    },
+    {
+     "level": 0,
+     "text": "From the book (p. 82): this line shows subnet-zero is enabled"
+    },
+    {
+     "level": 0,
+     "text": "Router# show running-config"
+    },
+    {
+     "level": 0,
+     "text": "..."
+    },
+    {
+     "level": 0,
+     "text": "hostname Pod1R1"
+    },
+    {
+     "level": 0,
+     "text": "!"
+    },
+    {
+     "level": 0,
+     "text": "ip subnet-zero"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Default assumption: subnet-zero is allowed, so the number of subnets is 2 to the power of the borrowed bits with no -2. Only subtract 2 if the question says not to use subnet-zero. (Hosts per subnet always subtract 2.)"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Current IOS. CHECK The ip subnet-zero line is rarely seen in modern configurations. I did not verify in this session how current IOS XE shows it. Treat subnet-zero as allowed unless an exam question says otherwise."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 3.1.1-3.1.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is 255.255.255.224 in slash notation, and what is its block size?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /27, block size 32 - 224 = 3 bits on (/24 + 3); 256 - 224 = 32."
+    },
+    {
+     "level": 0,
+     "text": "Q2. How many subnets does a /26 give you from a Class C network (subnet-zero allowed)?"
+    },
+    {
+     "level": 0,
+     "text": "A. 2"
+    },
+    {
+     "level": 0,
+     "text": "B. 4"
+    },
+    {
+     "level": 0,
+     "text": "C. 6"
+    },
+    {
+     "level": 0,
+     "text": "D. 8"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 2 borrowed bits give 2� = 4 subnets: 0, 64, 128, 192."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which of these is an invalid subnet mask? 255.255.255.248, 255.255.255.192, 255.255.255.100, 255.255.240.0"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 255.255.255.100 - 100 is not one of 128, 192, 224, 240, 248, 252, 254 or 255; mask bits must be contiguous."
+    },
+    {
+     "level": 2,
+     "text": "3.1.5 Subnetting Class C Addresses (book pp. 82-93)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK A Class C address has only 8 host bits, so only these masks are possible. You cannot use /31 or /32 for normal hosts (see the /31 note above)."
+    },
+    {
+     "level": 0,
+     "text": "| Binary | Decimal | CIDR |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 00000000 | 255.255.255.0 | /24 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10000000 | 255.255.255.128 | /25 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11000000 | 255.255.255.192 | /26 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11100000 | 255.255.255.224 | /27 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11110000 | 255.255.255.240 | /28 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11111000 | 255.255.255.248 | /29 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11111100 | 255.255.255.252 | /30 |"
+    },
+    {
+     "level": 3,
+     "text": "The fast method: answer the Big Five"
+    },
+    {
+     "level": 0,
+     "text": "| # | Question | How to answer |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | How many subnets? | 2 to the power of the 1s in the interesting octet (borrowed bits) |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | How many hosts per subnet? | 2 to the power of the 0s, minus 2. Or: block size - 2. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | What are the valid subnets? | 256 - mask = block size. Start at 0 and count in blocks of that size. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | What is each broadcast address? | The number just before the next subnet. The last subnet's broadcast always ends in 255. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | What are the valid hosts? | Everything between the subnet address and the broadcast address |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Five-second routine for any question: (1) find the interesting octet, (2) block size = 256 - mask, (3) count in blocks until you pass the host, (4) subnet = the number just below, broadcast = next block - 1, (5) hosts are in between."
+    },
+    {
+     "level": 3,
+     "text": "Worked example: 192.168.10.0 with a /26 (255.255.255.192)"
+    },
+    {
+     "level": 0,
+     "text": "Block size 256 - 192 = 64. Subnets: 0, 64, 128, 192. Subnets = 2� = 4. Hosts = 26 - 2 = 62 (or 64 - 2)."
+    },
+    {
+     "level": 0,
+     "text": "| Subnet | 192.168.10.0 | 192.168.10.64 | 192.168.10.128 | 192.168.10.192 |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| First host | .1 | .65 | .129 | .193 |"
+    },
+    {
+     "level": 0,
+     "text": "| Last host | .62 | .126 | .190 | .254 |"
+    },
+    {
+     "level": 0,
+     "text": "| Broadcast | .63 | .127 | .191 | .255 |"
+    },
+    {
+     "level": 3,
+     "text": "Worked example: 192.168.10.0 with a /27 (255.255.255.224)"
+    },
+    {
+     "level": 0,
+     "text": "Block size 32. Subnets = 8: 0, 32, 64, 96, 128, 160, 192, 224. Hosts = 30 each."
+    },
+    {
+     "level": 0,
+     "text": "| Subnet | .0 | .32 | .64 | .96 | .128 | .160 | .192 | .224 |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| First host | .1 | .33 | .65 | .97 | .129 | .161 | .193 | .225 |"
+    },
+    {
+     "level": 0,
+     "text": "| Last host | .30 | .62 | .94 | .126 | .158 | .190 | .222 | .254 |"
+    },
+    {
+     "level": 0,
+     "text": "| Broadcast | .31 | .63 | .95 | .127 | .159 | .191 | .223 | .255 |"
+    },
+    {
+     "level": 3,
+     "text": "All Class C masks on one table (the book's \"What Do We Know?\", Table 3.3)"
+    },
+    {
+     "level": 0,
+     "text": "| Slash | Mask | Bits on / off | Block size | Subnets | Hosts each |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| /25 | 128 | 1 / 7 | 128 | 2 (0, 128) | 126 |"
+    },
+    {
+     "level": 0,
+     "text": "| /26 | 192 | 2 / 6 | 64 | 4 (0, 64, 128, 192) | 62 |"
+    },
+    {
+     "level": 0,
+     "text": "| /27 | 224 | 3 / 5 | 32 | 8 (0, 32 ... 224) | 30 |"
+    },
+    {
+     "level": 0,
+     "text": "| /28 | 240 | 4 / 4 | 16 | 16 (0, 16 ... 240) | 14 |"
+    },
+    {
+     "level": 0,
+     "text": "| /29 | 248 | 5 / 3 | 8 | 32 (0, 8 ... 248) | 6 |"
+    },
+    {
+     "level": 0,
+     "text": "| /30 | 252 | 6 / 2 | 4 | 64 (0, 4 ... 252) | 2 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "The book says to write this table out from memory at the start of the exam on your note sheet. It is the single most useful thing to memorise in this chapter. Say it aloud, make flashcards, drill daily."
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "Why /30 matters. The book says a /30 gives only two hosts and is suited to point-to-point links such as WAN links. Using a /24 on a two-router link wastes 252 addresses. (See the /31 update above.)"
+    },
+    {
+     "level": 3,
+     "text": "Subnetting in your head: Class C (book pp. 90-91)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Here the question gives a host address and a mask and asks for its subnet, broadcast and valid range. Count in blocks until you pass the host."
+    },
+    {
+     "level": 0,
+     "text": "| Host and mask | Block size | Subnet | Broadcast | Valid hosts |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.50 / 255.255.255.224 (/27) | 32 | 192.168.10.32 | 192.168.10.63 | .33 - .62 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.50 / 255.255.255.240 (/28) | 16 | 192.168.10.48 | 192.168.10.63 | .49 - .62 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.174 / 255.255.255.240 (/28) | 16 | 192.168.10.160 | 192.168.10.175 | .161 - .174 |"
+    },
+    {
+     "level": 0,
+     "text": "| 192.168.10.17 / 255.255.255.252 (/30) | 4 | 192.168.10.16 | 192.168.10.19 | .17 - .18 |"
+    },
+    {
+     "level": 0,
+     "text": "Note how .50 sits in a different subnet with /27 (32) and /28 (48): the same host address belongs to a different subnet when the mask changes."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 3.1.5"
+    },
+    {
+     "level": 0,
+     "text": "Q4. How many usable hosts are in a /28? How many /28 subnets fit in a Class C?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 14 hosts; 16 subnets - 24 - 2 = 14; 24 = 16 subnets."
+    },
+    {
+     "level": 0,
+     "text": "Q5. What are the subnet and broadcast addresses of 192.168.20.133/27?"
+    },
+    {
+     "level": 0,
+     "text": "A. 192.168.20.128 and .159"
+    },
+    {
+     "level": 0,
+     "text": "B. 192.168.20.132 and .163"
+    },
+    {
+     "level": 0,
+     "text": "C. 192.168.20.96 and .127"
+    },
+    {
+     "level": 0,
+     "text": "D. 192.168.20.128 and .255"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - block size 32: 128, 160 \u001a 133 is in the 128 subnet; broadcast = 160 - 1 = 159; hosts .129 - .158."
+    },
+    {
+     "level": 0,
+     "text": "Q6. Which mask gives you at least 50 hosts per subnet in a Class C?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /26 (255.255.255.192) - 26 - 2 = 62 � 50; /27 gives only 30."
+    },
+    {
+     "level": 0,
+     "text": "Q7. Is 192.168.8.127/26 a valid host?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - the /26 subnets are 0, 64, 128, 192; 127 is the broadcast address of the 64 subnet."
+    },
+    {
+     "level": 2,
+     "text": "3.1.6 Subnetting Class B Addresses (book pp. 93-103)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK A Class B network has 16 host bits, so you can borrow up to 14 and still keep 2 host bits. The method is the same as Class C. You start in the third octet and use the same mask numbers (128, 192, 224 ...) and the same block sizes."
+    },
+    {
+     "level": 0,
+     "text": "BOOK The book's example for 255.255.240.0 (/20): subnets in the third octet are 16.0, 32.0, 48.0 ... with broadcasts 31.255, 47.255, 63.255. After /24, Class B behaves exactly like Class C in the fourth octet, but the third octet is now part of the subnet address."
+    },
+    {
+     "level": 0,
+     "text": "| Mask | Slash | Interesting octet | Block size | Subnets (from /16) | Hosts each |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.128.0 | /17 | 3rd | 128 | 2 | 32,766 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.192.0 | /18 | 3rd | 64 | 4 | 16,382 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.224.0 | /19 | 3rd | 32 | 8 | 8,190 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.240.0 | /20 | 3rd | 16 | 16 | 4,094 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.248.0 | /21 | 3rd | 8 | 32 | 2,046 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.252.0 | /22 | 3rd | 4 | 64 | 1,022 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.254.0 | /23 | 3rd | 2 | 128 | 510 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.255.0 | /24 | 4th (none) | - | 256 | 254 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.255.128 | /25 | 4th | 128 | 512 | 126 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.255.192 | /26 | 4th | 64 | 1,024 | 62 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.255.224 | /27 | 4th | 32 | 2,048 | 30 |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.255.240 | /28 | 4th | 16 | 4,096 | 14 |"
+    },
+    {
+     "level": 0,
+     "text": "These numbers are from a Class B network such as 172.16.0.0, with subnet-zero allowed. The book's example #10B uses /27: 211 = 2,048 subnets and 25 - 2 = 30 hosts, with the first subnets 0.0, 0.32, 0.64 ... and the last subnets 255.0, 255.32 ... 255.224."
+    },
+    {
+     "level": 3,
+     "text": "Subnetting in your head: Class B (book pp. 100-101)"
+    },
+    {
+     "level": 0,
+     "text": "| Host and mask | Interesting octet and block | Subnet | Broadcast | Valid hosts |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 172.16.10.33 /27 | 4th, block 32 | 172.16.10.32 | 172.16.10.63 | 10.33 - 10.62 |"
+    },
+    {
+     "level": 0,
+     "text": "| 172.16.66.10 /18 | 3rd, block 64 | 172.16.64.0 | 172.16.127.255 | 64.1 - 127.254 |"
+    },
+    {
+     "level": 0,
+     "text": "| 172.16.50.10 /19 | 3rd, block 32 | 172.16.32.0 | 172.16.63.255 | 32.1 - 63.254 |"
+    },
+    {
+     "level": 0,
+     "text": "| 172.16.46.255 /20 | 3rd, block 16 | 172.16.32.0 | 172.16.47.255 | 32.1 - 47.254 (so 46.255 is valid) |"
+    },
+    {
+     "level": 0,
+     "text": "| 172.16.45.14 /30 | 4th, block 4 | 172.16.45.12 | 172.16.45.15 | 45.13 - 45.14 |"
+    },
+    {
+     "level": 0,
+     "text": "| 172.16.88.255 /20 | 3rd, block 16 | 172.16.80.0 | 172.16.95.255 | 80.1 - 95.254 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Careful: with a mask like /20 or /22, a host ending in .255 or .0 can still be a valid host because the subnet's broadcast is further up (172.16.46.255/20 is valid; the broadcast is 172.16.47.255). Always work in the interesting octet first."
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book's router question. A router receives a packet for 172.16.46.191/26. What does it do? /26 \u001a block 64 \u001a subnets 0, 64, 128, 192 in the fourth octet. 191 is the broadcast address of the 172.16.46.128 subnet. By default a router discards broadcast packets, so it discards this one."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Class A subnetting. ADDED The book does not do Class A, but the method is identical: find the interesting octet (now the second, third or fourth), use the block size and count. Example: 10.50.130.7/12 \u001a mask 255.240.0.0, interesting octet is the second, block 16: 0, 16, 32, 48, 64 \u001a 50 is in 48. Subnet 10.48.0.0, broadcast 10.63.255.255, hosts 10.48.0.1 - 10.63.255.254 (1,048,574 hosts)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 3.1.6"
+    },
+    {
+     "level": 0,
+     "text": "Q8. What are the subnet and broadcast addresses of 172.20.45.130/20?"
+    },
+    {
+     "level": 0,
+     "text": "A. 172.20.32.0 and 172.20.47.255"
+    },
+    {
+     "level": 0,
+     "text": "B. 172.20.45.128 and 172.20.45.255"
+    },
+    {
+     "level": 0,
+     "text": "C. 172.20.40.0 and 172.20.47.255"
+    },
+    {
+     "level": 0,
+     "text": "D. 172.20.44.0 and 172.20.45.255"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - /20 \u001a block 16 in the third octet: 32, 48 \u001a 45 is in 32; broadcast = 48.0 - 1 = 47.255."
+    },
+    {
+     "level": 0,
+     "text": "Q9. How many subnets and hosts per subnet does 172.16.0.0/19 give?"
+    },
+    {
+     "level": 0,
+     "text": "A. 8 subnets, 8,190 hosts"
+    },
+    {
+     "level": 0,
+     "text": "B. 7 subnets, 8,190 hosts"
+    },
+    {
+     "level": 0,
+     "text": "C. 8 subnets, 2,046 hosts"
+    },
+    {
+     "level": 0,
+     "text": "D. 32 subnets, 2,046 hosts"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - 3 bits borrowed = 8 subnets (subnet-zero allowed); 13 host bits = 8,190 hosts. If subnet-zero were disallowed you would count 6 or 7."
+    },
+    {
+     "level": 0,
+     "text": "Q10. What is the broadcast address of 172.30.99.255/22?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 172.30.99.255 - /22 \u001a block 4 in the third octet: 96, 100 \u001a the subnet is 172.30.96.0 and the broadcast is 99.255, so this host address IS the broadcast and is not a valid host."
+    }
+   ],
+   "words": 3227
+  },
+  {
+   "title": "VLSM: Different Mask Sizes in One Network",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED Missing from this edition. The book promises \"the section on VLSM network design in the next chapter\" (p. 90), and the Chapter 4 Exam Essentials list VLSM and summarization, but neither is taught in Chapter 4 of this edition. VLSM is needed for the exam and for the OSPF and routing chapters, so it is covered here and route summarization is covered in the Chapter 4 document."
+    },
+    {
+     "level": 0,
+     "text": "VLSM (variable length subnet masking) means using different masks in different parts of the same network, so each subnet is sized to what it really needs. It avoids waste (like giving a two-host WAN link a /24)."
+    },
+    {
+     "level": 3,
+     "text": "Method: biggest first, no overlaps"
+    },
+    {
+     "level": 0,
+     "text": "- List every subnet and the hosts it needs. Add 2 for the network and broadcast addresses."
+    },
+    {
+     "level": 0,
+     "text": "- Choose the smallest block that fits each one: 2, 4, 8, 16, 32, 64, 128 addresses."
+    },
+    {
+     "level": 0,
+     "text": "- Sort from largest to smallest."
+    },
+    {
+     "level": 0,
+     "text": "- Allocate in order from the start of the address space. Each subnet begins where the last one ended. Subnet addresses must start on a multiple of their own block size."
+    },
+    {
+     "level": 3,
+     "text": "Worked example: 192.168.50.0/24"
+    },
+    {
+     "level": 0,
+     "text": "Needs: LAN A = 100 hosts, LAN B = 50 hosts, LAN C = 25 hosts, two WAN links = 2 hosts each."
+    },
+    {
+     "level": 0,
+     "text": "| Subnet | Needs | Smallest fit | Network / mask | Valid hosts | Broadcast |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| LAN A | 100 | 128 \u001a /25 (126 hosts) | 192.168.50.0/25 | .1 - .126 | .127 |"
+    },
+    {
+     "level": 0,
+     "text": "| LAN B | 50 | 64 \u001a /26 (62 hosts) | 192.168.50.128/26 | .129 - .190 | .191 |"
+    },
+    {
+     "level": 0,
+     "text": "| LAN C | 25 | 32 \u001a /27 (30 hosts) | 192.168.50.192/27 | .193 - .222 | .223 |"
+    },
+    {
+     "level": 0,
+     "text": "| WAN 1 | 2 | 4 \u001a /30 (2 hosts) | 192.168.50.224/30 | .225 - .226 | .227 |"
+    },
+    {
+     "level": 0,
+     "text": "| WAN 2 | 2 | 4 \u001a /30 (2 hosts) | 192.168.50.228/30 | .229 - .230 | .231 |"
+    },
+    {
+     "level": 0,
+     "text": "Check: 128 + 64 + 32 + 4 + 4 = 232 addresses used. Space left: 192.168.50.232 - .255 (24 addresses) for growth. No overlaps. Why largest first? A big block must start on a boundary that is a multiple of its size, so placing it last can leave gaps you cannot fill."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "In the exam, the mask must fit the largest subnet in a fixed-mask design (the book's Chapter 4 example: the biggest city needs 16 hosts, 16 + 2 = 18 > 16, so you need a block of 32 \u001a /27). With VLSM you size each subnet separately."
+    }
+   ],
+   "words": 445
+  },
+  {
+   "title": "Subnetting Drill Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "Do these without a calculator. Time yourself: aim for under 40 seconds each once you are comfortable. Cover the answers, work each one, then check. Record misses in the tracker."
+    },
+    {
+     "level": 3,
+     "text": "A. Find the subnet, broadcast and valid host range"
+    },
+    {
+     "level": 0,
+     "text": "| # | Host / mask |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | 192.168.5.77/26 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | 192.168.20.133/27 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 10.1.1.200/28 |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | 172.16.100.9/29 |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | 172.20.45.130/20 |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | 172.18.200.17/19 |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | 192.168.3.250/30 |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | 172.30.99.255/22 |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | 10.50.130.7/12 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | 100.100.100.100/25 |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Answers A."
+    },
+    {
+     "level": 0,
+     "text": "1. Subnet 192.168.5.64, broadcast 192.168.5.127, hosts .65 - .126."
+    },
+    {
+     "level": 0,
+     "text": "2. Subnet 192.168.20.128, broadcast 192.168.20.159, hosts .129 - .158."
+    },
+    {
+     "level": 0,
+     "text": "3. Subnet 10.1.1.192, broadcast 10.1.1.207, hosts .193 - .206."
+    },
+    {
+     "level": 0,
+     "text": "4. Subnet 172.16.100.8, broadcast 172.16.100.15, hosts .9 - .14 (this host is the first usable address)."
+    },
+    {
+     "level": 0,
+     "text": "5. Subnet 172.20.32.0, broadcast 172.20.47.255, hosts 32.1 - 47.254."
+    },
+    {
+     "level": 0,
+     "text": "6. Subnet 172.18.192.0, broadcast 172.18.223.255, hosts 192.1 - 223.254."
+    },
+    {
+     "level": 0,
+     "text": "7. Subnet 192.168.3.248, broadcast 192.168.3.251, hosts .249 - .250 (this host is the last usable address)."
+    },
+    {
+     "level": 0,
+     "text": "8. Subnet 172.30.96.0, broadcast 172.30.99.255 (this host is the broadcast), hosts 96.1 - 99.254."
+    },
+    {
+     "level": 0,
+     "text": "9. Subnet 10.48.0.0, broadcast 10.63.255.255, hosts 10.48.0.1 - 10.63.255.254."
+    },
+    {
+     "level": 0,
+     "text": "10. Subnet 100.100.100.0, broadcast 100.100.100.127, hosts .1 - .126 (Class A address, /25 mask)."
+    },
+    {
+     "level": 3,
+     "text": "B. Choose the mask"
+    },
+    {
+     "level": 0,
+     "text": "| # | Requirement |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | A Class C network, subnets of 6 hosts each. Which mask? |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | A Class C network, subnets of 50 hosts each. Which mask? |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | A Class C network, you need at least 20 subnets. Which mask? How many hosts per subnet? |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | A Class B network, you need at least 100 subnets and the most hosts possible per subnet. Which mask? How many hosts per subnet? |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Answers B."
+    },
+    {
+     "level": 0,
+     "text": "11. /29 (255.255.255.248): 6 hosts exactly."
+    },
+    {
+     "level": 0,
+     "text": "12. /26 (255.255.255.192): 62 hosts. /27 only gives 30."
+    },
+    {
+     "level": 0,
+     "text": "13. /29 (255.255.255.248): 5 bits borrowed = 32 subnets, 6 hosts each. (/28 gives only 16 subnets.)"
+    },
+    {
+     "level": 0,
+     "text": "14. /23 (255.255.254.0): 7 bits borrowed = 128 subnets (26 = 64 is too few), 510 hosts each."
+    },
+    {
+     "level": 3,
+     "text": "C. Is it a valid host address?"
+    },
+    {
+     "level": 0,
+     "text": "| # | Address |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | 192.168.8.127/26 |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | 172.16.5.64/26 |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | 10.4.255.255/16 |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | 172.16.46.255/20 |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Answers C."
+    },
+    {
+     "level": 0,
+     "text": "15. No. Broadcast of 192.168.8.64/26 (range 64-127)."
+    },
+    {
+     "level": 0,
+     "text": "16. No. It is the subnet (network) address of 172.16.5.64/26."
+    },
+    {
+     "level": 0,
+     "text": "17. No. It is the broadcast address of 10.4.0.0/16."
+    },
+    {
+     "level": 0,
+     "text": "18. Yes. The subnet is 172.16.32.0/20 and its broadcast is 172.16.47.255, so 46.255 is a normal host."
+    }
+   ],
+   "words": 456
+  },
+  {
+   "title": "Troubleshooting: Common Subnetting Mistakes",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED These are the mistakes behind most real subnetting faults. Chapter 4 teaches the full method."
+    },
+    {
+     "level": 0,
+     "text": "| Mistake | What happens | How to spot it |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Host uses the network or broadcast address | Device cannot work properly (IOS refuses it on a router interface) | Work out the subnet and broadcast. The address equals one of them. |"
+    },
+    {
+     "level": 0,
+     "text": "| Wrong mask on one host | Host believes it is in a different subnet. Local ping works one way but not the other, or it cannot reach the gateway. | Compare the masks on every device in the segment |"
+    },
+    {
+     "level": 0,
+     "text": "| Default gateway outside the host's subnet | Host cannot leave its network | Check the gateway is a valid host in the same subnet |"
+    },
+    {
+     "level": 0,
+     "text": "| Overlapping subnets (for example 192.168.50.0/25 and 192.168.50.64/26) | Routing confusion and unreachable hosts | List each subnet's first and last address and check for overlap |"
+    },
+    {
+     "level": 0,
+     "text": "| Mask too small for growth | Runs out of addresses | Plan for growth: use block sizes with spare room |"
+    },
+    {
+     "level": 0,
+     "text": "| Forgetting that .0 and .255 can be valid hosts in /23 or larger | Wrongly rejecting a valid host | Work in the interesting octet |"
+    },
+    {
+     "level": 0,
+     "text": "CHECK These are standard networking practice. I did not test them on hardware in this session."
+    }
+   ],
+   "words": 232
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Why subnet | Smaller broadcast domains, less traffic, better performance, simpler management and security. |"
+    },
+    {
+     "level": 0,
+     "text": "| Steps | Count subnets needed, count hosts needed, then choose a mask that fits both. |"
+    },
+    {
+     "level": 0,
+     "text": "| Mask rules | Bits are contiguous from the left. Values: 128, 192, 224, 240, 248, 252, 254, 255. Default masks /8, /16, /24. |"
+    },
+    {
+     "level": 0,
+     "text": "| Block size | 256 - mask octet. Valid sizes: 2, 4, 8, 16, 32, 64, 128. |"
+    },
+    {
+     "level": 0,
+     "text": "| The Big Five | Subnets (2^borrowed), hosts (2^host bits - 2), valid subnets (count in blocks), broadcast (next subnet - 1), hosts (in between). |"
+    },
+    {
+     "level": 0,
+     "text": "| Slash to mask | /25 128, /26 192, /27 224, /28 240, /29 248, /30 252. |"
+    },
+    {
+     "level": 0,
+     "text": "| Class C table | /25 2x126, /26 4x62, /27 8x30, /28 16x14, /29 32x6, /30 64x2. |"
+    },
+    {
+     "level": 0,
+     "text": "| Class B | Same numbers in the third octet for /17-/23. After /24 it looks like Class C. Hosts: /17 32,766; /18 16,382; /19 8,190; /20 4,094; /21 2,046; /22 1,022; /23 510. |"
+    },
+    {
+     "level": 0,
+     "text": "| Subnet-zero | On by default. The first subnet is usable unless the question says not to. |"
+    },
+    {
+     "level": 0,
+     "text": "| Invalid hosts | The subnet address and the broadcast address. A .0 or .255 can still be valid when the interesting octet is earlier. |"
+    },
+    {
+     "level": 0,
+     "text": "| /30 and /31 | /30: 2 hosts, point-to-point links. /31 (RFC 3021): point-to-point only, both addresses usable. |"
+    },
+    {
+     "level": 0,
+     "text": "| VLSM | Largest subnet first. Each subnet starts on a boundary that is a multiple of its block size. Avoid overlap. |"
+    }
+   ],
+   "words": 269
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Fill this in after the pre-check, quick checks, labs, drill sheet and review questions. Then copy the result to the matching row in the Notion tracker. Leave a row as Not assessed if you have not been tested on it. Use Know only if you answered correctly without help and quickly."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status (pick one) | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1 Subnetting Basics |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.1 How to Create Subnets |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.2 Subnet Masks |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.3 CIDR |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.4 IP Subnet-Zero |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.5 Subnetting Class C |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3.1.6 Subnetting Class B |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| VLSM (added topic, no book row) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "Status choices: Not assessed � Know � Partially understand � Need to learn � Needs revision."
+    }
+   ],
+   "words": 190
+  },
+  {
+   "title": "Answer Key A: Pre-Check",
+   "content": [
+    {
+     "level": 0,
+     "text": "- /28. 240 = 4 bits on, so /24 + 4."
+    },
+    {
+     "level": 0,
+     "text": "- Block size 64. 100 is between 64 and 128. Subnet 192.168.1.64, broadcast 192.168.1.127."
+    },
+    {
+     "level": 0,
+     "text": "- 510. A /23 has 9 host bits: 2? - 2."
+    },
+    {
+     "level": 0,
+     "text": "- /28 (255.255.255.240). 14 hosts. /29 gives only 6, so it is too small."
+    },
+    {
+     "level": 0,
+     "text": "- No. With /24 the broadcast address of 172.16.10.0 is 172.16.10.255."
+    }
+   ],
+   "words": 61
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "Do these after the drill sheet and the labs. Then also do the book's own review questions on p. 103 and check them in the Appendix. I did not copy the book's questions. I read them while writing this document and they are all of the types practised here. Mark tracker rows from the evidence of your answers."
+    }
+   ],
+   "words": 58
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "Every place where this document differs from the book or adds to it is listed. Nothing was replaced silently."
+    },
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | /30 is the largest usable mask; /31 is out of scope (pp. 80, 82) | Explains that /31 is valid on point-to-point links (RFC 3021) and says to use /30 unless the exam says otherwise | RFC 3021 verified from search results (Proposed Standard, Dec 2000). Device support noted only from a blog. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Classful rule: /8-/15 only Class A, and so on (p. 81) | Kept for context, noted that masks apply to any class today | Standard CIDR practice |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | \"VLSM in the next chapter\" (p. 90). Chapter 4 Exam Essentials list VLSM and summarization but the chapter does not teach them | Adds a VLSM section here. Summarization is covered in the Chapter 4 document. | Worked example calculated by script and checked |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Class A subnetting is not covered | Adds one worked Class A example and states the method is identical | Calculated by script |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | ip subnet-zero shown in a running configuration (p. 82) | Kept; notes that current IOS output may differ | CHECK not verified on current IOS |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | A leftover cross-reference to \"Chapter 2, Ethernet Networking and Data Encapsulation\" (p. 94) | Ignored. In this edition Chapter 2 is TCP/IP and the binary-to-decimal table is in this chapter. | n/a (editing leftover) |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | \"Bad mask error\" when entering a subnet or broadcast address on a router (Chapter 4, p. 110) | Kept in Lab 3.2 as an observation to record | CHECK not run on hardware |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | v1.1 objective numbers | Uses the book's map (1.6) and flags that v1.1 numbering could differ | Cisco's own v1.1 PDF was not opened |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | v2.0 objectives | Uses objective 1.3 (troubleshoot IPv4 configuration, assignment and subnetting, public and private) | Read directly from Cisco's v2.0 PDF |"
+    }
+   ],
+   "words": 364
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware. Commands and lab results are written from standard usage. Test them and correct anything that differs on your platform."
+    }
+   ],
+   "words": 29
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. These labs are written for Cisco Packet Tracer. Record what you actually saw in the tracker (Practical lab, Evidence / mistakes)."
+    }
+   ]
+  },
+  {
+   "number": "3.1",
+   "title": "The \"What do we know?\" table (paper, 15 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "On a blank page, write the full Class C table from memory (slash, mask, bits on/off, block size, number of subnets, hosts each, for /25 to /30). Check it against the table in 3.1.5. Repeat tomorrow and the day after. Record how long it took and what you missed."
+    }
+   ]
+  },
+  {
+   "number": "3.2",
+   "title": "Build a /25 network (Packet Tracer, 25 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use the book's design: one router, two switches and two LANs from 192.168.10.0/25 (block 128): the subnets are 192.168.10.0/25 and 192.168.10.128/25."
+    },
+    {
+     "level": 0,
+     "text": "- Place one router, two switches and two PCs per switch. Connect with straight-through cables. Router G0/0 to Switch 1, router G0/1 to Switch 2."
+    },
+    {
+     "level": 0,
+     "text": "- Plan the addresses first. LAN 1: router 192.168.10.1, PCs .2 and .3. LAN 2: router 192.168.10.129, PCs .130 and .131. Mask 255.255.255.128 everywhere."
+    },
+    {
+     "level": 0,
+     "text": "- Configure the router with the commands below. Configure the PCs with IP, mask and default gateway."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip route on the router."
+    },
+    {
+     "level": 0,
+     "text": "- Ping from a PC on LAN 1 to a PC on LAN 2."
+    },
+    {
+     "level": 0,
+     "text": "- Try to set a PC to 192.168.10.127 and note what happens. Then try 192.168.10.128 on a PC in LAN 1."
+    },
+    {
+     "level": 0,
+     "text": "Router configuration (standard IOS) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# interface gigabitEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-if)# ip address 192.168.10.1 255.255.255.128"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-if)# interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-if)# ip address 192.168.10.129 255.255.255.128"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-if)# end"
+    },
+    {
+     "level": 0,
+     "text": "Router# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "- interface gigabitEthernet 0/0 selects the port. Your router model may name it differently, for example FastEthernet0/0."
+    },
+    {
+     "level": 0,
+     "text": "- ip address <address> <mask> assigns the address and mask."
+    },
+    {
+     "level": 0,
+     "text": "- no shutdown turns the interface on (router interfaces are off by default)."
+    },
+    {
+     "level": 0,
+     "text": "- show ip route displays the routing table. Lines starting with C are directly connected networks."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: two lines starting with C: 192.168.10.0/25 and 192.168.10.128/25, each pointing to its interface. Pings between the PCs succeed after the first ARP delay. In step 6, 192.168.10.127 is the broadcast of the first subnet and 192.168.10.128 is the network address of the second, so neither is a valid host. CHECK A PC in Packet Tracer may accept the address without complaining. Real IOS refuses to put a network or broadcast address on an interface (the book says you get a bad mask error). Record what your simulator did."
+    }
+   ]
+  },
+  {
+   "number": "3.3",
+   "title": "VLSM addressing (Packet Tracer, 30 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Use the VLSM example in the VLSM section: three LANs and two WAN links."
+    },
+    {
+     "level": 0,
+     "text": "- Build: Router A and Router B joined by a serial or Ethernet link (WAN 1). Give each router a LAN (LAN A on Router A, LAN B on Router B). Use the addresses from the VLSM table."
+    },
+    {
+     "level": 0,
+     "text": "- Address the WAN link as 192.168.50.224/30: Router A .225, Router B .226. Use mask 255.255.255.252."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip interface brief on each router and confirm the interfaces are up/up."
+    },
+    {
+     "level": 0,
+     "text": "- Ping across the WAN link from Router A to 192.168.50.226."
+    },
+    {
+     "level": 0,
+     "text": "WAN link, Router A side CHECK"
+    },
+    {
+     "level": 0,
+     "text": "RouterA(config)# interface gigabitEthernet 0/1"
+    },
+    {
+     "level": 0,
+     "text": "RouterA(config-if)# ip address 192.168.50.225 255.255.255.252"
+    },
+    {
+     "level": 0,
+     "text": "RouterA(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "RouterA# show ip interface brief"
+    },
+    {
+     "level": 0,
+     "text": "RouterA# ping 192.168.50.226"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the interface shows up/up and the ping succeeds (the first reply may time out). The two routers are on the same /30, so they can reach each other directly. To reach the LANs across the WAN you will need routing, which starts in Chapter 5, so for now only test the directly connected link."
+    }
+   ]
+  },
+  {
+   "number": "3.4",
+   "title": "Daily 10-minute drill (any time)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Ten random host/mask questions a day for a week. Use the drill sheet, then make your own. Record the time per question and the number correct. Move a tracker row to Know only when you can do them quickly and accurately without help."
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "Easy Subnetting — review questions",
+   "questions": [
+    {
+     "source": "Q1. What is 255.255.255.224 in slash notation, and what is its block size?",
+     "sourceNumber": "Q1",
+     "q": "What is 255.255.255.224 in slash notation, and what is its block size?",
+     "options": [],
+     "answer": null,
+     "why": "/27, block size 32 - 224 = 3 bits on (/24 + 3); 256 - 224 = 32.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. How many subnets does a /26 give you from a Class C network (subnet-zero allowed)?",
+     "sourceNumber": "Q2",
+     "q": "How many subnets does a /26 give you from a Class C network (subnet-zero allowed)?",
+     "options": [
+      "2",
+      "4",
+      "6",
+      "8"
+     ],
+     "answer": "B",
+     "why": "2 borrowed bits give 2� = 4 subnets: 0, 64, 128, 192.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Which of these is an invalid subnet mask? 255.255.255.248, 255.255.255.192, 255.255.255.100, 255.255.240.0",
+     "sourceNumber": "Q3",
+     "q": "Which of these is an invalid subnet mask? 255.255.255.248, 255.255.255.192, 255.255.255.100, 255.255.240.0",
+     "options": [],
+     "answer": null,
+     "why": "255.255.255.100 - 100 is not one of 128, 192, 224, 240, 248, 252, 254 or 255; mask bits must be contiguous.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. How many usable hosts are in a /28? How many /28 subnets fit in a Class C?",
+     "sourceNumber": "Q4",
+     "q": "How many usable hosts are in a /28? How many /28 subnets fit in a Class C?",
+     "options": [],
+     "answer": null,
+     "why": "14 hosts; 16 subnets - 24 - 2 = 14; 24 = 16 subnets.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What are the subnet and broadcast addresses of 192.168.20.133/27?",
+     "sourceNumber": "Q5",
+     "q": "What are the subnet and broadcast addresses of 192.168.20.133/27?",
+     "options": [
+      "192.168.20.128 and .159",
+      "192.168.20.132 and .163",
+      "192.168.20.96 and .127",
+      "192.168.20.128 and .255"
+     ],
+     "answer": "A",
+     "why": "block size 32: 128, 160 \u001a 133 is in the 128 subnet; broadcast = 160 - 1 = 159; hosts .129 - .158.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q6. Which mask gives you at least 50 hosts per subnet in a Class C?",
+     "sourceNumber": "Q6",
+     "q": "Which mask gives you at least 50 hosts per subnet in a Class C?",
+     "options": [],
+     "answer": null,
+     "why": "/26 (255.255.255.192) - 26 - 2 = 62 � 50; /27 gives only 30.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. Is 192.168.8.127/26 a valid host?",
+     "sourceNumber": "Q7",
+     "q": "Is 192.168.8.127/26 a valid host?",
+     "options": [],
+     "answer": null,
+     "why": "No - the /26 subnets are 0, 64, 128, 192; 127 is the broadcast address of the 64 subnet.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. What are the subnet and broadcast addresses of 172.20.45.130/20?",
+     "sourceNumber": "Q8",
+     "q": "What are the subnet and broadcast addresses of 172.20.45.130/20?",
+     "options": [
+      "172.20.32.0 and 172.20.47.255",
+      "172.20.45.128 and 172.20.45.255",
+      "172.20.40.0 and 172.20.47.255",
+      "172.20.44.0 and 172.20.45.255"
+     ],
+     "answer": "A",
+     "why": "/20 \u001a block 16 in the third octet: 32, 48 \u001a 45 is in 32; broadcast = 48.0 - 1 = 47.255.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q9. How many subnets and hosts per subnet does 172.16.0.0/19 give?",
+     "sourceNumber": "Q9",
+     "q": "How many subnets and hosts per subnet does 172.16.0.0/19 give?",
+     "options": [
+      "8 subnets, 8,190 hosts",
+      "7 subnets, 8,190 hosts",
+      "8 subnets, 2,046 hosts",
+      "32 subnets, 2,046 hosts"
+     ],
+     "answer": "A",
+     "why": "3 bits borrowed = 8 subnets (subnet-zero allowed); 13 host bits = 8,190 hosts. If subnet-zero were disallowed you would count 6 or 7.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q10. What is the broadcast address of 172.30.99.255/22?",
+     "sourceNumber": "Q10",
+     "q": "What is the broadcast address of 172.30.99.255/22?",
+     "options": [],
+     "answer": null,
+     "why": "172.30.99.255 - /22 \u001a block 4 in the third octet: 96, 100 \u001a the subnet is 172.30.96.0 and the broadcast is 99.255, so this host address IS the broadcast and is not a valid host.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. How many usable host addresses does the 255.255.255.224 mask give per subnet?",
+     "sourceNumber": "Q11",
+     "q": "How many usable host addresses does the 255.255.255.224 mask give per subnet?",
+     "options": [
+      "14",
+      "30",
+      "32",
+      "62"
+     ],
+     "answer": "B",
+     "why": "224 means 5 host bits: 25 - 2 = 30.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q12. You need 29 subnets and as many hosts per subnet as possible from a Class C network. How many bits do you borrow?",
+     "sourceNumber": "Q12",
+     "q": "You need 29 subnets and as many hosts per subnet as possible from a Class C network. How many bits do you borrow?",
+     "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+     ],
+     "answer": "C",
+     "why": "24 = 16 is too few; 25 = 32 � 29, so borrow 5 bits (/29), giving 6 hosts per subnet.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q13. What subnet does 200.10.5.68/28 belong to?",
+     "sourceNumber": "Q13",
+     "q": "What subnet does 200.10.5.68/28 belong to?",
+     "options": [
+      "200.10.5.56",
+      "200.10.5.64",
+      "200.10.5.32",
+      "200.10.5.0"
+     ],
+     "answer": "B",
+     "why": "block 16: 64, 80 \u001a 68 is in 64.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q14. What is the broadcast address of 10.16.3.65/23?",
+     "sourceNumber": "Q14",
+     "q": "What is the broadcast address of 10.16.3.65/23?",
+     "options": [],
+     "answer": null,
+     "why": "10.16.3.255 - /23 \u001a block 2 in the third octet: 2, 4 \u001a 3 is in 2, so the subnet is 10.16.2.0 and the broadcast is 10.16.3.255.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. For 10.16.3.65/23, what are the lowest and highest valid host addresses?",
+     "sourceNumber": "Q15",
+     "q": "For 10.16.3.65/23, what are the lowest and highest valid host addresses?",
+     "options": [],
+     "answer": null,
+     "why": "10.16.2.1 and 10.16.3.254 - the subnet spans 10.16.2.0 - 10.16.3.255.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. How many hosts per subnet does a /22 give?",
+     "sourceNumber": "Q16",
+     "q": "How many hosts per subnet does a /22 give?",
+     "options": [],
+     "answer": null,
+     "why": "1,022 - 10 host bits: 21� - 2.",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. What is the best mask for a point-to-point link where the question does not mention /31?",
+     "sourceNumber": "Q17",
+     "q": "What is the best mask for a point-to-point link where the question does not mention /31?",
+     "options": [],
+     "answer": null,
+     "why": "/30 (255.255.255.252) - it gives exactly 2 usable hosts.",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. Which statement about subnet-zero is correct?",
+     "sourceNumber": "Q18",
+     "q": "Which statement about subnet-zero is correct?",
+     "options": [
+      "It is off by default in modern IOS",
+      "It lets you use the first subnet",
+      "It removes the broadcast address",
+      "It adds two hosts per subnet"
+     ],
+     "answer": "B",
+     "why": "it allows the all-zeros subnet; it is on by default.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q19. Which three subnets are valid for a /27 on 192.168.4.0?",
+     "sourceNumber": "Q19",
+     "q": "Which three subnets are valid for a /27 on 192.168.4.0?",
+     "options": [
+      "192.168.4.0, .32, .64",
+      "192.168.4.0, .27, .54",
+      "192.168.4.16, .48, .80",
+      "192.168.4.10, .20, .30"
+     ],
+     "answer": "A",
+     "why": "valid subnets are multiples of the block size 32.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q20. A /20 on 172.16.0.0 gives how many subnets and hosts per subnet?",
+     "sourceNumber": "Q20",
+     "q": "A /20 on 172.16.0.0 gives how many subnets and hosts per subnet?",
+     "options": [],
+     "answer": null,
+     "why": "16 subnets, 4,094 hosts - 4 bits borrowed; 12 host bits.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. Why does the broadcast address of the last subnet always end with 255 (for a Class C)?",
+     "sourceNumber": "Q21",
+     "q": "Why does the broadcast address of the last subnet always end with 255 (for a Class C)?",
+     "options": [],
+     "answer": null,
+     "why": "The last subnet's host bits are all 1s, and in a Class C the subnet ends at the last address of the network - e.g. 192.168.10.255.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. Design: 192.168.9.0/24 needs two LANs of 60 hosts and two WAN links. Give the VLSM plan.",
+     "sourceNumber": "Q22",
+     "q": "Design: 192.168.9.0/24 needs two LANs of 60 hosts and two WAN links. Give the VLSM plan.",
+     "options": [],
+     "answer": null,
+     "why": "LAN 1 192.168.9.0/26, LAN 2 192.168.9.64/26, WAN 1 192.168.9.128/30, WAN 2 192.168.9.132/30 - 60 + 2 = 62 � 64 \u001a /26 each; /30 for each link; no overlaps.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 What is 255.255.255.224 in slash notation, and what is its block size?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /27, block size 32 - 224 = 3 bits on (/24 + 3); 256 - 224 = 32."
+    },
+    {
+     "level": 0,
+     "text": "Q2 How many subnets does a /26 give you from a Class C network (subnet-zero allowed)?"
+    },
+    {
+     "level": 0,
+     "text": "A. 2"
+    },
+    {
+     "level": 0,
+     "text": "B. 4"
+    },
+    {
+     "level": 0,
+     "text": "C. 6"
+    },
+    {
+     "level": 0,
+     "text": "D. 8"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 2 borrowed bits give 2� = 4 subnets: 0, 64, 128, 192."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which of these is an invalid subnet mask? 255.255.255.248, 255.255.255.192, 255.255.255.100, 255.255.240.0"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 255.255.255.100 - 100 is not one of 128, 192, 224, 240, 248, 252, 254 or 255; mask bits must be contiguous."
+    },
+    {
+     "level": 0,
+     "text": "Q4 How many usable hosts are in a /28? How many /28 subnets fit in a Class C?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 14 hosts; 16 subnets - 24 - 2 = 14; 24 = 16 subnets."
+    },
+    {
+     "level": 0,
+     "text": "Q5 What are the subnet and broadcast addresses of 192.168.20.133/27?"
+    },
+    {
+     "level": 0,
+     "text": "A. 192.168.20.128 and .159"
+    },
+    {
+     "level": 0,
+     "text": "B. 192.168.20.132 and .163"
+    },
+    {
+     "level": 0,
+     "text": "C. 192.168.20.96 and .127"
+    },
+    {
+     "level": 0,
+     "text": "D. 192.168.20.128 and .255"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - block size 32: 128, 160 \u001a 133 is in the 128 subnet; broadcast = 160 - 1 = 159; hosts .129 - .158."
+    },
+    {
+     "level": 0,
+     "text": "Q6 Which mask gives you at least 50 hosts per subnet in a Class C?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /26 (255.255.255.192) - 26 - 2 = 62 � 50; /27 gives only 30."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Is 192.168.8.127/26 a valid host?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - the /26 subnets are 0, 64, 128, 192; 127 is the broadcast address of the 64 subnet."
+    },
+    {
+     "level": 0,
+     "text": "Q8 What are the subnet and broadcast addresses of 172.20.45.130/20?"
+    },
+    {
+     "level": 0,
+     "text": "A. 172.20.32.0 and 172.20.47.255"
+    },
+    {
+     "level": 0,
+     "text": "B. 172.20.45.128 and 172.20.45.255"
+    },
+    {
+     "level": 0,
+     "text": "C. 172.20.40.0 and 172.20.47.255"
+    },
+    {
+     "level": 0,
+     "text": "D. 172.20.44.0 and 172.20.45.255"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - /20 \u001a block 16 in the third octet: 32, 48 \u001a 45 is in 32; broadcast = 48.0 - 1 = 47.255."
+    },
+    {
+     "level": 0,
+     "text": "Q9 How many subnets and hosts per subnet does 172.16.0.0/19 give?"
+    },
+    {
+     "level": 0,
+     "text": "A. 8 subnets, 8,190 hosts"
+    },
+    {
+     "level": 0,
+     "text": "B. 7 subnets, 8,190 hosts"
+    },
+    {
+     "level": 0,
+     "text": "C. 8 subnets, 2,046 hosts"
+    },
+    {
+     "level": 0,
+     "text": "D. 32 subnets, 2,046 hosts"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - 3 bits borrowed = 8 subnets (subnet-zero allowed); 13 host bits = 8,190 hosts. If subnet-zero were disallowed you would count 6 or 7."
+    },
+    {
+     "level": 0,
+     "text": "Q10 What is the broadcast address of 172.30.99.255/22?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 172.30.99.255 - /22 \u001a block 4 in the third octet: 96, 100 \u001a the subnet is 172.30.96.0 and the broadcast is 99.255, so this host address IS the broadcast and is not a valid host."
+    },
+    {
+     "level": 0,
+     "text": "Q11 How many usable host addresses does the 255.255.255.224 mask give per subnet?"
+    },
+    {
+     "level": 0,
+     "text": "A. 14"
+    },
+    {
+     "level": 0,
+     "text": "B. 30"
+    },
+    {
+     "level": 0,
+     "text": "C. 32"
+    },
+    {
+     "level": 0,
+     "text": "D. 62"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 224 means 5 host bits: 25 - 2 = 30."
+    },
+    {
+     "level": 0,
+     "text": "Q12 You need 29 subnets and as many hosts per subnet as possible from a Class C network. How many bits do you borrow?"
+    },
+    {
+     "level": 0,
+     "text": "A. 3"
+    },
+    {
+     "level": 0,
+     "text": "B. 4"
+    },
+    {
+     "level": 0,
+     "text": "C. 5"
+    },
+    {
+     "level": 0,
+     "text": "D. 6"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 24 = 16 is too few; 25 = 32 � 29, so borrow 5 bits (/29), giving 6 hosts per subnet."
+    },
+    {
+     "level": 0,
+     "text": "Q13 What subnet does 200.10.5.68/28 belong to?"
+    },
+    {
+     "level": 0,
+     "text": "A. 200.10.5.56"
+    },
+    {
+     "level": 0,
+     "text": "B. 200.10.5.64"
+    },
+    {
+     "level": 0,
+     "text": "C. 200.10.5.32"
+    },
+    {
+     "level": 0,
+     "text": "D. 200.10.5.0"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - block 16: 64, 80 \u001a 68 is in 64."
+    },
+    {
+     "level": 0,
+     "text": "Q14 What is the broadcast address of 10.16.3.65/23?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.16.3.255 - /23 \u001a block 2 in the third octet: 2, 4 \u001a 3 is in 2, so the subnet is 10.16.2.0 and the broadcast is 10.16.3.255."
+    },
+    {
+     "level": 0,
+     "text": "Q15 For 10.16.3.65/23, what are the lowest and highest valid host addresses?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 10.16.2.1 and 10.16.3.254 - the subnet spans 10.16.2.0 - 10.16.3.255."
+    },
+    {
+     "level": 0,
+     "text": "Q16 How many hosts per subnet does a /22 give?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 1,022 - 10 host bits: 21� - 2."
+    },
+    {
+     "level": 0,
+     "text": "Q17 What is the best mask for a point-to-point link where the question does not mention /31?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /30 (255.255.255.252) - it gives exactly 2 usable hosts."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Which statement about subnet-zero is correct?"
+    },
+    {
+     "level": 0,
+     "text": "A. It is off by default in modern IOS"
+    },
+    {
+     "level": 0,
+     "text": "B. It lets you use the first subnet"
+    },
+    {
+     "level": 0,
+     "text": "C. It removes the broadcast address"
+    },
+    {
+     "level": 0,
+     "text": "D. It adds two hosts per subnet"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - it allows the all-zeros subnet; it is on by default."
+    },
+    {
+     "level": 0,
+     "text": "Q19 Which three subnets are valid for a /27 on 192.168.4.0?"
+    },
+    {
+     "level": 0,
+     "text": "A. 192.168.4.0, .32, .64"
+    },
+    {
+     "level": 0,
+     "text": "B. 192.168.4.0, .27, .54"
+    },
+    {
+     "level": 0,
+     "text": "C. 192.168.4.16, .48, .80"
+    },
+    {
+     "level": 0,
+     "text": "D. 192.168.4.10, .20, .30"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - valid subnets are multiples of the block size 32."
+    },
+    {
+     "level": 0,
+     "text": "Q20 A /20 on 172.16.0.0 gives how many subnets and hosts per subnet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 16 subnets, 4,094 hosts - 4 bits borrowed; 12 host bits."
+    },
+    {
+     "level": 0,
+     "text": "Q21 Why does the broadcast address of the last subnet always end with 255 (for a Class C)?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The last subnet's host bits are all 1s, and in a Class C the subnet ends at the last address of the network - e.g. 192.168.10.255."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Design: 192.168.9.0/24 needs two LANs of 60 hosts and two WAN links. Give the VLSM plan."
+    },
+    {
+     "level": 0,
+     "text": "Answer: LAN 1 192.168.9.0/26, LAN 2 192.168.9.64/26, WAN 1 192.168.9.128/30, WAN 2 192.168.9.132/30 - 60 + 2 = 62 � 64 \u001a /26 each; /30 for each link; no overlaps."
+    }
+   ],
+   "multipleChoice": 9,
+   "open": 13
+  }
+ ],
+ "generatedFrom": "CC03.docx",
+ "totalWords": 7222,
+ "wordBreakdown": {
+  "sections": 5500,
+  "labs": 613,
+  "quizzes": 730,
+  "currency": 267,
+  "sources": 112
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "/30 is the largest usable mask; /31 is out of scope (pp. 80, 82)",
+   "current": "Explains that /31 is valid on point-to-point links (RFC 3021) and says to use /30 unless the exam says otherwise",
+   "action": "",
+   "source": "RFC 3021 verified from search results (Proposed Standard, Dec 2000). Device support noted only from a blog.",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "Classful rule: /8-/15 only Class A, and so on (p. 81)",
+   "current": "Kept for context, noted that masks apply to any class today",
+   "action": "",
+   "source": "Standard CIDR practice",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "\"VLSM in the next chapter\" (p. 90). Chapter 4 Exam Essentials list VLSM and summarization but the chapter does not teach them",
+   "current": "Adds a VLSM section here. Summarization is covered in the Chapter 4 document.",
+   "action": "",
+   "source": "Worked example calculated by script and checked",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "Class A subnetting is not covered",
+   "current": "Adds one worked Class A example and states the method is identical",
+   "action": "",
+   "source": "Calculated by script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "ip subnet-zero shown in a running configuration (p. 82)",
+   "current": "Kept; notes that current IOS output may differ",
+   "action": "",
+   "source": "CHECK not verified on current IOS",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "A leftover cross-reference to \"Chapter 2, Ethernet Networking and Data Encapsulation\" (p. 94)",
+   "current": "Ignored. In this edition Chapter 2 is TCP/IP and the binary-to-decimal table is in this chapter.",
+   "action": "",
+   "source": "n/a (editing leftover)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "\"Bad mask error\" when entering a subnet or broadcast address on a router (Chapter 4, p. 110)",
+   "current": "Kept in Lab 3.2 as an observation to record",
+   "action": "",
+   "source": "CHECK not run on hardware",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "v1.1 objective numbers",
+   "current": "Uses the book's map (1.6) and flags that v1.1 numbering could differ",
+   "action": "",
+   "source": "Cisco's own v1.1 PDF was not opened",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "v2.0 objectives",
+   "current": "Uses objective 1.3 (troubleshoot IPv4 configuration, assignment and subnetting, public and private)",
+   "action": "",
+   "source": "Read directly from Cisco's v2.0 PDF",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Todd Lammle, CCNA Certification Study Guide Vol 2 (2020), Chapter 3",
+   "usedFor": "All BOOK content",
+   "status": "Read from your PDF (all explanatory text, worked examples, summary and exam essentials; the five review questions were skimmed, not copied)"
+  },
+  {
+   "source": "Cisco, 200-301 CCNA v2.0 exam topics (PDF on learningcontent.cisco.com)",
+   "usedFor": "v2.0 objective 1.3",
+   "status": "Official source, read this session"
+  },
+  {
+   "source": "IETF, RFC 3021, Using 31-Bit Prefixes on IPv4 Point-to-Point Links",
+   "usedFor": "/31 on point-to-point links",
+   "status": "Official source, from search results"
+  },
+  {
+   "source": "Script calculation (Python ipaddress module)",
+   "usedFor": "Every subnet, broadcast, host-range, subnet-count, VLSM and summary answer in this document",
+   "status": "Calculated and compared with the manual method"
+  },
+  {
+   "source": "Everything marked CHECK",
+   "usedFor": "Current IOS subnet-zero display, simulator behaviour, router bad-mask error",
+   "status": "Not verified in this session"
+  }
+ ],
+ "questionCount": 22,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log (book versus current)",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A: Pre-Check",
+  "Sources and Verification Status"
+ ]
+}

@@ -830,6 +830,25 @@ function knowledgeCheck(questions, answers, opts = {}) {
  * heading, so the table of contents is generated from the content itself
  * rather than maintained by hand.
  */
+/**
+ * The text a verify callout puts in its tag.
+ *
+ * ONE place decides it, and the renderer calls this rather than repeating the
+ * value. That is the whole point: the tag used to be the literal "verify"
+ * written into renderBlocks, while classifyBlock captured the real label on
+ * the same object and nothing ever read it. The label was deleted from the
+ * screen - 47 RHEL blocks and 3 CCNA blocks - and no test could see it,
+ * because the check reads classifyBlock and the renderer was a different
+ * function.
+ *
+ * scripts/check-content-preserved.mjs asserts this function's output against
+ * the source line, and separately asserts that renderBlocks calls it, so the
+ * two cannot drift apart again.
+ */
+export function verifyTag(b) {
+  return (b && b.label) || "verify";
+}
+
 export function renderBlocks(items, opts = {}) {
   const arr = (Array.isArray(items) ? items : []).map((b) => classifyBlock(b));
   const frag = document.createDocumentFragment();
@@ -957,7 +976,7 @@ export function renderBlocks(items, opts = {}) {
 
       case "verify":
         frag.appendChild(h("div.pl-verify",
-          h("span.pl-verify__tag", "verify"),
+          h("span.pl-verify__tag", verifyTag(b)),
           h("div.pl-verify__body", ...marked(b.body))));
         i++;
         continue;

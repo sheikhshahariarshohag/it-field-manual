@@ -53,7 +53,26 @@ export function verifyBadge(status) {
   if (!status) return null;
   const s = String(status);
   const known = ["execution-tested", "release-approved", "independently-reviewed", "source-checked"];
-  const best = known.find((k) => s.includes(k)) || "source-checked";
+  const best = known.find((k) => s.includes(k));
+  /*
+   * An unrecognised status renders as "Unverified", not as "Source-checked".
+   *
+   * The fallback used to be `|| "source-checked"`, which quietly promoted
+   * anything unknown to a claim. A status of "not-source-checked" - which is
+   * what the CCNA chapters would have carried - therefore displayed a green
+   * "Source-checked" badge on all 46 of them, which is the precise opposite
+   * of what it says.
+   *
+   * Nothing in the corpus uses an unknown value today, so this changes no
+   * existing badge. It exists so that the next typo is visible instead of
+   * reassuring, and so a status can be added without its absence being read as
+   * verification.
+   */
+  if (!best) {
+    return h("span.vlevel.v-unverified", {
+      title: `Verification status "${s}" is not one this app recognises, so it is not claimed as checked.`,
+    }, "Unverified");
+  }
   return h("span.vlevel", {
     class: `vlevel v-${best}`,
     title: `Verification: ${s}`,
@@ -1305,7 +1324,7 @@ export function verifyView() {
 
 /**
  * The user's own master curriculum: Enterprise_Infrastructure_Knowledge_Map_Unified
- * (146 sessions, 10 layers). The PDF stays in their private library; only a
+ * (10 layers). The PDF stays in their private library; only a
  * derived outline is shipped, so the app can say where each session connects
  * to the manual without republishing the book.
  */
@@ -1343,7 +1362,7 @@ export function knowledgeMapView() {
   wrap.appendChild(h("header.page-head",
     h("h1", "Knowledge Map"),
     h("p", "Your master curriculum — " +
-      `${km ? km.totalSessions : 146} sessions across ${km ? km.layers.length : 10} layers, ` +
+      `${km ? km.totalSessions : 0} sessions across ${km ? km.layers.length : 0} layers, ` +
       "from physical hardware up to governance. Each session links to the parts of this manual " +
       "that cover it, so you can move between the roadmap and the hands-on detail in either direction."),
   ));
@@ -1468,7 +1487,7 @@ export function knowledgeMapView() {
 /**
  * Session prose, fetched per session and kept in memory for the session.
  *
- * The corpus is ~2.9 MB across 146 files (~20 KB each), so it is NOT part of
+ * The corpus is a few MB across many files, so it is NOT part of
  * the initial payload. Opening a session's chips fetches that one file; the
  * service worker caches it for offline afterwards. `STATUS` is exposed so the
  * UI can say "no content for this section" instead of an empty panel.

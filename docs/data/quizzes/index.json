@@ -1,276 +1,190 @@
 [
-  {
-    "id": "quiz-rhel-basics",
-    "kind": "quiz",
-    "tech": "rhel",
-    "title": "RHEL 10 — services, logs and firewall",
-    "summary": "Checks the four things beginners most often get wrong: start vs enable, where the logs are, which address a service is listening on, and the firewalld rule set.",
-    "tags": [
-      "rhel",
-      "systemd",
-      "firewalld",
-      "quiz"
+ {
+  "id": "quiz-rhel-basics",
+  "kind": "quiz",
+  "tech": "rhel",
+  "title": "RHEL 10 — services, logs and firewall",
+  "summary": "Checks the four things beginners most often get wrong: start vs enable, where the logs are, which address a service is listening on, and the firewalld rule set.",
+  "tags": [
+   "rhel",
+   "systemd",
+   "firewalld",
+   "quiz"
+  ],
+  "questions": [
+   {
+    "q": "You run `sudo systemctl restart httpd` after editing its config. Clients still get the old page. What is the most likely cause?",
+    "options": [
+     "httpd needs `systemctl daemon-reload` because its config file changed",
+     "You edited the wrong file — httpd is not reading the one you changed",
+     "The service is bound to 127.0.0.1 only, so clients on the LAN never saw the new page",
+     "firewalld is dropping the response traffic"
     ],
-    "questions": [
-      {
-        "q": "You run `sudo systemctl restart httpd` after editing its config. Clients still get the old page. What is the most likely cause?",
-        "options": [
-          "httpd needs `systemctl daemon-reload` because its config file changed",
-          "You edited the wrong file — httpd is not reading the one you changed",
-          "The service is bound to 127.0.0.1 only, so clients on the LAN never saw the new page",
-          "firewalld is dropping the response traffic"
-        ],
-        "answer": 1,
-        "topic": "Reading logs and verifying",
-        "hint": "daemon-reload is about unit files, not application config files. Before blaming the firewall, check what is actually listening and what the server sees from its own LAN address.",
-        "why": "daemon-reload applies to *unit* files under /etc/systemd/system, not to the application's own configuration. Restarting does re-read the app config, so if the page is unchanged the file you edited is almost certainly not the one httpd reads. Confirm with `grep -r` for the setting, or `httpd -S`. The other options are real faults but do not match this symptom: a localhost bind and a firewall drop would both produce a connection problem, not an old-but-working page."
-      },
-      {
-        "q": "Which single command tells you that a service is listening on **all** interfaces rather than only on loopback?",
-        "options": [
-          "`systemctl status httpd`",
-          "`systemctl is-active httpd`",
-          "`ss -lntup` and read the Local Address column",
-          "`firewall-cmd --list-all`"
-        ],
-        "answer": 2,
-        "topic": "Listening vs running",
-        "hint": "`0.0.0.0` or `[::]` means every interface. `127.0.0.1` or `[::1]` means this machine only.",
-        "why": "Only `ss` reports which addresses a socket is bound to. `systemctl status` shows process state, `is-active` returns one word, and firewalld describes policy rather than what is bound."
-      },
-      {
-        "q": "You run `sudo firewall-cmd --add-port=8080/tcp --permanent` and the port is still blocked. Why?",
-        "options": [
-          "Permanent rules are not applied until you reload or restart firewalld",
-          "firewalld only supports ports up to 1023 without a service definition",
-          "The zone is wrong and no zone was specified",
-          "You need `--runtime` as well as `--permanent` in the same command"
-        ],
-        "answer": 0,
-        "topic": "firewalld rule sets",
-        "hint": "firewalld keeps two separate rule sets.",
-        "why": "`--permanent` edits the stored configuration only; it has no effect until `firewall-cmd --reload` (or a reboot). Adding at runtime works immediately but is lost on reload. This is the single most common firewalld misunderstanding."
-      },
-      {
-        "q": "A service shows `active (running)` but clients cannot connect. Which is NOT a useful next check?",
-        "options": [
-          "`ss -lntup` for the listen address",
-          "`curl` the service from the server's own LAN address",
-          "`firewall-cmd --list-all`",
-          "`systemctl cat httpd | grep Restart`"
-        ],
-        "answer": 3,
-        "topic": "Troubleshooting discipline",
-        "hint": "One of these tells you about a policy for restarting a crashed process. That is not a reachability question.",
-        "why": "`Restart=` is about what systemd does if the process exits — relevant to a crash loop, not to a service that is running and simply not reachable. The other three all test a different link in the running → listening → reachable chain."
-      },
-      {
-        "q": "A user says \"DNS is not working\" and `ping example.com` fails while `ping 10.0.0.1` succeeds. What should you check first?",
-        "options": [
-          "The user's /etc/hosts file",
-          "Which DNS server the machine is configured to use, and whether it is reachable",
-          "The default gateway",
-          "The MTU setting on the interface"
-        ],
-        "answer": 1,
-        "topic": "Name resolution",
-        "hint": "Name resolution happens before routing. Confirm the resolver exists and can be reached before anything else.",
-        "why": "With a default gateway reachable, routing is working. The next link in the chain is the resolver: `resolvectl status`, `cat /etc/resolv.conf`, and a `dig` against the configured server. Checking /etc/hosts first is backwards — a stale entry there can *cause* misleading DNS results, but it is not the first thing to rule in."
-      },
-      {
-        "q": "What is the difference between `systemctl start sshd` and `systemctl enable sshd`?",
-        "options": [
-          "They are equivalent; enable is the older spelling",
-          "start applies now, enable applies at next boot — neither does both",
-          "start requires root, enable does not",
-          "enable restarts the service to pick up new configuration"
-        ],
-        "answer": 1,
-        "topic": "systemd lifecycle",
-        "hint": "Runtime and boot-time are two separate pieces of state.",
-        "why": "They are genuinely different actions. `enable --now` does both, which is why it is the form you will use almost every time."
-      }
+    "answer": 1,
+    "topic": "Reading logs and verifying",
+    "hint": "daemon-reload is about unit files, not application config files. Before blaming the firewall, check what is actually listening and what the server sees from its own LAN address.",
+    "why": "daemon-reload applies to *unit* files under /etc/systemd/system, not to the application's own configuration. Restarting does re-read the app config, so if the page is unchanged the file you edited is almost certainly not the one httpd reads. Confirm with `grep -r` for the setting, or `httpd -S`. The other options are real faults but do not match this symptom: a localhost bind and a firewall drop would both produce a connection problem, not an old-but-working page."
+   },
+   {
+    "q": "Which single command tells you that a service is listening on **all** interfaces rather than only on loopback?",
+    "options": [
+     "`systemctl status httpd`",
+     "`systemctl is-active httpd`",
+     "`ss -lntup` and read the Local Address column",
+     "`firewall-cmd --list-all`"
     ],
-    "objectives": [
-      {
-        "id": "RHCSA-1",
-        "note": "Essential tools"
-      },
-      {
-        "id": "RHCSA-4"
-      }
-    ]
-  },
-  {
-    "id": "quiz-switching",
-    "kind": "quiz",
-    "tech": "cisco",
-    "title": "Switching and VLANs",
-    "summary": "Reading the evidence a switch gives you before you change anything.",
-    "tags": [
-      "cisco",
-      "vlan",
-      "switching",
-      "quiz"
+    "answer": 2,
+    "topic": "Listening vs running",
+    "hint": "`0.0.0.0` or `[::]` means every interface. `127.0.0.1` or `[::1]` means this machine only.",
+    "why": "Only `ss` reports which addresses a socket is bound to. `systemctl status` shows process state, `is-active` returns one word, and firewalld describes policy rather than what is bound."
+   },
+   {
+    "q": "You run `sudo firewall-cmd --add-port=8080/tcp --permanent` and the port is still blocked. Why?",
+    "options": [
+     "Permanent rules are not applied until you reload or restart firewalld",
+     "firewalld only supports ports up to 1023 without a service definition",
+     "The zone is wrong and no zone was specified",
+     "You need `--runtime` as well as `--permanent` in the same command"
     ],
-    "questions": [
-      {
-        "q": "Two PCs are configured into VLAN 20 on the same switch and cannot reach each other. `show interfaces gi0/3 switchport` shows `Administrative Mode: access`, `Operational Mode: down`. What does that mean?",
-        "options": [
-          "The port is administratively shut, so no traffic can pass regardless of configuration",
-          "The switchport negotiation failed and the port is running as a trunk",
-          "VLAN 20 does not exist on this switch",
-          "The spanning tree is blocking the port"
-        ],
-        "answer": 0,
-        "topic": "Reading switchport state",
-        "hint": "Compare what is configured with what is actually operating.",
-        "why": "`Operational Mode: down` means the port is not carrying traffic at all — typically `shutdown` was applied. Check `show interfaces status`. Nothing at the VLAN layer matters until the port is up. STP blocking would show `blocking`, not `down`."
-      },
-      {
-        "q": "What does `show mac address-table` tell you that `show ip interface brief` does not?",
-        "options": [
-          "Which IP addresses are configured on the interfaces",
-          "Which MAC addresses were learned on which port and VLAN",
-          "Whether the spanning tree is converged",
-          "The duplex and speed negotiated on each port"
-        ],
-        "answer": 1,
-        "topic": "MAC table",
-        "hint": "A Layer 2 switch forwards frames, not packets. Its table is about hardware addresses.",
-        "why": "The MAC address table is the switch's forwarding table — MAC, port, VLAN. It is the single most useful command for \"which VLAN is this device actually in\", which is the question behind most VLAN faults."
-      },
-      {
-        "q": "Two hosts in the same VLAN on the same switch both have addresses in 192.168.1.0/24, correct masks, and still cannot ping each other. What is the most likely cause?",
-        "options": [
-          "The default gateway is wrong",
-          "They are in different IP subnets because one mask is wrong",
-          "The trunk does not carry the VLAN",
-          "One port is an access port and the other is a trunk"
-        ],
-        "answer": 1,
-        "topic": "Above Layer 2",
-        "hint": "Within one VLAN and one switch there is no trunk and no routing involved.",
-        "why": "A mismatch in subnet mask makes each host believe the other is on-link, so it ARPs directly instead of sending to the gateway — and the ARP goes unanswered. Gateways and trunks are irrelevant when both hosts are on the same switch in the same VLAN."
-      },
-      {
-        "q": "You created VLAN 10 with `vlan 10` on a Catalyst 2960-X and got `% Invalid input detected`. What is correct?",
-        "options": [
-          "VLANs are created in `vlan database` mode on this platform, not in `configure terminal`",
-          "VLAN 10 is a reserved number and cannot be used",
-          "You must enable `ip routing` first",
-          "The syntax is `switchport vlan 10`"
-        ],
-        "answer": 0,
-        "topic": "Platform differences",
-        "hint": "The command reference for your specific model decides this. On Catalyst 9000 running IOS XE the other form is correct.",
-        "why": "On 2960-class switches, VLAN creation happens in `vlan database` mode. On Catalyst 9000 with IOS XE it happens in global configuration. This is a genuine platform difference, which is why reading commands for your exact model matters more than memorising one form."
-      },
-      {
-        "q": "A client on an access port gets no DHCP offer. `show interfaces gi0/5 switchport` shows Operational Mode: access, Access VLAN: 20, Operational VLAN: 20. What should you check next?",
-        "options": [
-          "Whether VLAN 20 exists on the switch",
-          "Whether the DHCP server or relay is reachable on VLAN 20",
-          "Whether the client's subnet mask is correct",
-          "Whether the trunk to the DHCP server carries VLAN 20"
-        ],
-        "answer": 1,
-        "topic": "Beyond the access port",
-        "hint": "The access port is working correctly. The problem is now upstream of it.",
-        "why": "The port is confirmed in the right VLAN and operational, so Layer 2 on the port is fine. DHCP requires a server (or a relay agent to a server) reachable on VLAN 20. Whether the VLAN also exists on the trunk to that server is a possible cause, but the more direct next check is whether the server or relay answers."
-      }
+    "answer": 0,
+    "topic": "firewalld rule sets",
+    "hint": "firewalld keeps two separate rule sets.",
+    "why": "`--permanent` edits the stored configuration only; it has no effect until `firewall-cmd --reload` (or a reboot). Adding at runtime works immediately but is lost on reload. This is the single most common firewalld misunderstanding."
+   },
+   {
+    "q": "A service shows `active (running)` but clients cannot connect. Which is NOT a useful next check?",
+    "options": [
+     "`ss -lntup` for the listen address",
+     "`curl` the service from the server's own LAN address",
+     "`firewall-cmd --list-all`",
+     "`systemctl cat httpd | grep Restart`"
     ],
-    "objectives": [
-      {
-        "id": "CCNA-2",
-        "note": "Network Access"
-      }
-    ]
-  },
-  {
-    "id": "quiz-windows-basics",
-    "kind": "quiz",
-    "tech": "winserver",
-    "title": "Windows Server roles and identity",
-    "summary": "The practical server-side questions: role installation, DHCP scope options, DNS delegation, and domain join prerequisites.",
-    "tags": [
-      "windows server",
-      "active directory",
-      "dhcp",
-      "quiz"
+    "answer": 3,
+    "topic": "Troubleshooting discipline",
+    "hint": "One of these tells you about a policy for restarting a crashed process. That is not a reachability question.",
+    "why": "`Restart=` is about what systemd does if the process exits — relevant to a crash loop, not to a service that is running and simply not reachable. The other three all test a different link in the running → listening → reachable chain."
+   },
+   {
+    "q": "A user says \"DNS is not working\" and `ping example.com` fails while `ping 10.0.0.1` succeeds. What should you check first?",
+    "options": [
+     "The user's /etc/hosts file",
+     "Which DNS server the machine is configured to use, and whether it is reachable",
+     "The default gateway",
+     "The MTU setting on the interface"
     ],
-    "questions": [
-      {
-        "q": "A DHCP scope is created on a fresh Windows Server and clients get addresses but cannot resolve any name. What is missing?",
-        "options": [
-          "The DNS server role is not installed",
-          "DHCP scope option 6 (DNS server) was never set",
-          "The clients need a reboot",
-          "The lease time is too long"
-        ],
-        "answer": 1,
-        "topic": "DHCP options",
-        "hint": "The lease succeeded, so DHCP itself works. What did the lease tell the client to use for DNS?",
-        "why": "Option 6 is how the client learns its DNS server. Without it, the client falls back to nothing useful. Installing the DNS role on this server does not help unless the scope actually hands out its address."
-      },
-      {
-        "q": "`Get-ADUser` fails with \"The term is not recognized\". What is the fix?",
-        "options": [
-          "Restart the Active Directory Domain Services role",
-          "Install the RSAT-AD-Tools feature",
-          "Run the command from a domain controller instead",
-          "Import the ActiveDirectory module manually every session"
-        ],
-        "answer": 1,
-        "topic": "Role and feature management",
-        "hint": "Windows Server does not ship the AD PowerShell module by default.",
-        "why": "`RSAT-AD-Tools` is a separate feature and is not installed by `Install-WindowsFeature AD-Domain-Services`. It is the most commonly forgotten step in a first AD lab."
-      },
-      {
-        "q": "You add a second domain controller. Clients on one subnet immediately lose DNS. What is the most likely cause?",
-        "options": [
-          "The new DC did not install the DNS role",
-          "The DHCP scope on that subnet still hands out only the old DC's address as DNS",
-          "The domain has exceeded 1000 users",
-          "You must restart every client to register with the new DC"
-        ],
-        "answer": 1,
-        "topic": "DNS and DHCP interaction",
-        "hint": "Adding a DC does not update DHCP scope options anywhere.",
-        "why": "DHCP option 6 is a separate system that does not self-update. Clients keep asking the old server, which may no longer be authoritative for the name. Adding a second DC and updating every scope's option 6 belongs in the same runbook step."
-      },
-      {
-        "q": "Which statement about `Add-DhcpServerv4Scope -ScopeAddress` is correct?",
-        "options": [
-          "It accepts the first usable host address, such as 10.20.30.1",
-          "It requires the network address, with host bits zero, such as 10.20.30.0 for a /24",
-          "It accepts any address in the range; the server normalises it",
-          "It accepts the broadcast address"
-        ],
-        "answer": 1,
-        "topic": "DHCP scope correctness",
-        "hint": "ScopeAddress is the network, not a host.",
-        "why": "The scope is defined by its network address and prefix. `10.20.30.1` for a /24 is rejected because host bits are set."
-      },
-      {
-        "q": "A Windows 11 client fails to join a domain with \"the network path was not found\". The client can ping the DC by IP and resolve its name. What is the next check?",
-        "options": [
-          "That TCP 389 and TCP 88 are reachable from the client",
-          "That the client's time is within five minutes of the DC's",
-          "That the client has a static IP in the right subnet",
-          "That the computer account does not already exist in AD"
-        ],
-        "answer": 0,
-        "topic": "Domain join prerequisites",
-        "hint": "Name resolution and ICMP are not the ports the join actually uses.",
-        "why": "The join needs LDAP (389) and Kerberos (88). ICMP and DNS both working tells you very little about either. The other options produce different error messages, which is a useful reminder: error text is diagnostic evidence."
-      }
+    "answer": 1,
+    "topic": "Name resolution",
+    "hint": "Name resolution happens before routing. Confirm the resolver exists and can be reached before anything else.",
+    "why": "With a default gateway reachable, routing is working. The next link in the chain is the resolver: `resolvectl status`, `cat /etc/resolv.conf`, and a `dig` against the configured server. Checking /etc/hosts first is backwards — a stale entry there can *cause* misleading DNS results, but it is not the first thing to rule in."
+   },
+   {
+    "q": "What is the difference between `systemctl start sshd` and `systemctl enable sshd`?",
+    "options": [
+     "They are equivalent; enable is the older spelling",
+     "start applies now, enable applies at next boot — neither does both",
+     "start requires root, enable does not",
+     "enable restarts the service to pick up new configuration"
     ],
-    "objectives": [
-      {
-        "id": "AZ800-10.2",
-        "note": "Windows Server troubleshooting and recovery"
-      }
-    ]
-  }
+    "answer": 1,
+    "topic": "systemd lifecycle",
+    "hint": "Runtime and boot-time are two separate pieces of state.",
+    "why": "They are genuinely different actions. `enable --now` does both, which is why it is the form you will use almost every time."
+   }
+  ],
+  "objectives": [
+   {
+    "id": "RHCSA-1",
+    "note": "Essential tools"
+   },
+   {
+    "id": "RHCSA-4"
+   }
+  ]
+ },
+ {
+  "id": "quiz-windows-basics",
+  "kind": "quiz",
+  "tech": "winserver",
+  "title": "Windows Server roles and identity",
+  "summary": "The practical server-side questions: role installation, DHCP scope options, DNS delegation, and domain join prerequisites.",
+  "tags": [
+   "windows server",
+   "active directory",
+   "dhcp",
+   "quiz"
+  ],
+  "questions": [
+   {
+    "q": "A DHCP scope is created on a fresh Windows Server and clients get addresses but cannot resolve any name. What is missing?",
+    "options": [
+     "The DNS server role is not installed",
+     "DHCP scope option 6 (DNS server) was never set",
+     "The clients need a reboot",
+     "The lease time is too long"
+    ],
+    "answer": 1,
+    "topic": "DHCP options",
+    "hint": "The lease succeeded, so DHCP itself works. What did the lease tell the client to use for DNS?",
+    "why": "Option 6 is how the client learns its DNS server. Without it, the client falls back to nothing useful. Installing the DNS role on this server does not help unless the scope actually hands out its address."
+   },
+   {
+    "q": "`Get-ADUser` fails with \"The term is not recognized\". What is the fix?",
+    "options": [
+     "Restart the Active Directory Domain Services role",
+     "Install the RSAT-AD-Tools feature",
+     "Run the command from a domain controller instead",
+     "Import the ActiveDirectory module manually every session"
+    ],
+    "answer": 1,
+    "topic": "Role and feature management",
+    "hint": "Windows Server does not ship the AD PowerShell module by default.",
+    "why": "`RSAT-AD-Tools` is a separate feature and is not installed by `Install-WindowsFeature AD-Domain-Services`. It is the most commonly forgotten step in a first AD lab."
+   },
+   {
+    "q": "You add a second domain controller. Clients on one subnet immediately lose DNS. What is the most likely cause?",
+    "options": [
+     "The new DC did not install the DNS role",
+     "The DHCP scope on that subnet still hands out only the old DC's address as DNS",
+     "The domain has exceeded 1000 users",
+     "You must restart every client to register with the new DC"
+    ],
+    "answer": 1,
+    "topic": "DNS and DHCP interaction",
+    "hint": "Adding a DC does not update DHCP scope options anywhere.",
+    "why": "DHCP option 6 is a separate system that does not self-update. Clients keep asking the old server, which may no longer be authoritative for the name. Adding a second DC and updating every scope's option 6 belongs in the same runbook step."
+   },
+   {
+    "q": "Which statement about `Add-DhcpServerv4Scope -ScopeAddress` is correct?",
+    "options": [
+     "It accepts the first usable host address, such as 10.20.30.1",
+     "It requires the network address, with host bits zero, such as 10.20.30.0 for a /24",
+     "It accepts any address in the range; the server normalises it",
+     "It accepts the broadcast address"
+    ],
+    "answer": 1,
+    "topic": "DHCP scope correctness",
+    "hint": "ScopeAddress is the network, not a host.",
+    "why": "The scope is defined by its network address and prefix. `10.20.30.1` for a /24 is rejected because host bits are set."
+   },
+   {
+    "q": "A Windows 11 client fails to join a domain with \"the network path was not found\". The client can ping the DC by IP and resolve its name. What is the next check?",
+    "options": [
+     "That TCP 389 and TCP 88 are reachable from the client",
+     "That the client's time is within five minutes of the DC's",
+     "That the client has a static IP in the right subnet",
+     "That the computer account does not already exist in AD"
+    ],
+    "answer": 0,
+    "topic": "Domain join prerequisites",
+    "hint": "Name resolution and ICMP are not the ports the join actually uses.",
+    "why": "The join needs LDAP (389) and Kerberos (88). ICMP and DNS both working tells you very little about either. The other options produce different error messages, which is a useful reminder: error text is diagnostic evidence."
+   }
+  ],
+  "objectives": [
+   {
+    "id": "AZ800-10.2",
+    "note": "Windows Server troubleshooting and recovery"
+   }
+  ]
+ }
 ]

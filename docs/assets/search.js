@@ -177,7 +177,7 @@ function buildIndex() {
     }
   }
 
-  // The 146 Knowledge Map sessions are searchable too, so a topic that only
+  // The Knowledge Map sessions are searchable too, so a topic that only
   // appears on the roadmap still finds its way home. `terms` is the
   // distinctive-word list built by export-knowledge-content.mjs: it is what
   // lets a search reach the prose, which lives in lazily-fetched files and

@@ -1,0 +1,4989 @@
+{
+ "id": "ccna-17",
+ "n": 17,
+ "sourceNumber": "CC17",
+ "kind": "chapter",
+ "title": "Internet Protocol Version 6 (IPv6)",
+ "display": "Chapter 17: Internet Protocol Version 6 (IPv6)",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 9261,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 17"
+    },
+    {
+     "level": 0,
+     "text": "Internet Protocol Version 6 (IPv6)"
+    },
+    {
+     "level": 0,
+     "text": "This document replaces Chapter 17 of Todd Lammle, CCNA Certification Study Guide, Volume 2, Exam 200-301 (Sybex, 2020), book pages 465 to 494. It covers why IPv6 exists, address format and shortening, address types, special addresses, manual addressing, EUI-64 and stateless autoconfiguration, DHCPv6, the IPv6 header, ICMPv6 and neighbor discovery, and IPv6 static routing, with configuration and verification. Every difference from the book is tagged and listed in the Changes and Gaps Log."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 465 to 494 (PDF pages 523 to 552; offset +58 confirmed). Review answers: book pages 802 to 803 (Appendix). |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 17, then 17.1 to 17.7 with their sub-rows (names match the headings in this document). Seq numbers were not checked: the Notion tracker could not be reached in this chat. |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 8 to 10 hours including the labs. This is a suggestion, not a measured need. Spend most of it on EUI-64, shortening, and the verification commands. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | Written for v1.1 (retires 2 Feb 2027) with v2.0 (starts 3 Feb 2027) shown side by side. v2.0 removes the separate \"compare IPv6 address types\" objective but still needs the knowledge. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Nothing here assumes you already know any topic. |"
+    },
+    {
+     "level": 3,
+     "text": "Tag legend"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is outdated, wrong or unclear. The note says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the chapter but is useful or needed for the exam. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified on real equipment or not confirmed in an official source. Treat as unproven until you test it. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives (from the book). After this chapter you should be able to:"
+    },
+    {
+     "level": 0,
+     "text": "Configure and verify IPv6 addressing and prefix (objective 1.8)."
+    },
+    {
+     "level": 0,
+     "text": "Compare IPv6 address types: global unicast, unique local, link local, anycast, multicast and modified EUI-64 (objective 1.9 a to f)."
+    },
+    {
+     "level": 0,
+     "text": "Configure and verify IPv4 and IPv6 static routing (objective 3.3)."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. Every address calculation in this chapter (EUI-64, shortening, expansion, address type, solicited-node multicast, sizes, header bits) was done with a Python script using the ipaddress module and compared with the manual method. The script agreed with the book's EUI-64 examples and found errors in the book's flow label size and one documentation prefix (see the Gaps Log). Nothing in this document was run on real Cisco hardware or in Packet Tracer. Commands and outputs are copied from the book or written from documentation, so they are marked CHECK where they matter."
+    }
+   ],
+   "words": 470
+  },
+  {
+   "title": "Where this chapter fits in the exam",
+   "content": [
+    {
+     "level": 0,
+     "text": "Cisco says related topics may appear even if they are not listed. v2.0 wording is from Cisco's own v2.0 PDF (read in this session). v1.1 wording is from the book's chapter opener (secondary for v1.1: Cisco's v1.1 PDF was not opened). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.1 to 17.2 Why IPv6, benefits | Background for 1.8 | Background for 1.4 | Low |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3.1 Shortened expression | 1.8 configure and verify IPv6 addressing and prefix | 1.4 troubleshoot IPv6 address configuration, assignment, prefix sizing | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3.2 Address types | 1.9.a to 1.9.e global, unique local, link local, anycast, multicast | No separate objective (1.9 removed). Needed for 1.4 and for reading output | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3.3 Special addresses | Related to 1.9 | Related to 1.4 | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.1 Manual address assignment | 1.8 | 1.4 | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.2 Stateless autoconfiguration, EUI-64 | 1.9.f modified EUI-64 | 1.4 (unicast and modified EUI 64) | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.3 DHCPv6 | Related to 1.8 | 1.4 address assignment (1.7 is DHCPv4 only) | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.4 IPv6 header | Not named (related) | Not named (related) | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.5 ICMPv6, neighbor discovery, DAD | Related to 1.8 | Related to 1.4 and 1.6 troubleshooting | Medium to high |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.5 IPv6 routing protocols (names only) | Not tested here | 3.3 OSPFv3 for IPv6 (single area) is a v2.0 configure task | Medium (see the added OSPFv3 note) |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.5.1, 17.7 IPv6 static routing | 3.3 IPv4 and IPv6 static routing | 3.2 troubleshoot static routing: default, network, host, floating static | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.6 Configuring IPv6 on the internetwork | 1.8 | 1.4 | High |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "v2.0 changes for this chapter. The v2.0 wording is troubleshoot (1.4 and 3.2), not just configure. v2.0 also names OSPFv3 for IPv6 in objective 3.3, but the book's chapter 17 only names OSPFv3 and never configures it (see 17.5). I added a short OSPFv3 configuration ADDED . Also, v2.0 has no standalone objective on IPv6 address types, but you cannot read addresses or troubleshoot without them."
+    }
+   ],
+   "words": 376
+  },
+  {
+   "title": "Step 0: Pre-check",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer these five questions before reading. Write your answer, then mark your confidence: K (I know it), U (I think so), G (I am guessing). Answers are in Answer Key A at the end. This does not change your tracker status."
+    },
+    {
+     "level": 0,
+     "text": "| # | Question | Your answer | K / U / G |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Write 2001:0db8:0000:0000:0012:0000:0000:0001 in its shortest legal form. |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | A NIC has MAC 00:1A:2B:3C:4D:5E. What is its modified EUI-64 interface ID? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Which prefix do link-local addresses use, and can a router route them? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Which multicast address does a host use to send a router solicitation? |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | What command must be on a Cisco router before it forwards IPv6 packets? |  |  |"
+    }
+   ],
+   "words": 150
+  },
+  {
+   "title": "17.1 Why Do We Need IPv6?",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 467. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "IPv4 has only about 4.3 billion addresses (2^32). CIDR, VLSM and NAT stretched them, but they were never a real fix. IPv6 was created as the long-term solution: its address is 128 bits, which gives 2^128, about 3.4 x 10^38, addresses (checked by script)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book's numbers are out of date (page 467: \"about 7 billion people\", \"just under half connected\", \"we will run out within a few years\", and a comment about China being barely online). The real situation: IANA gave out its last free IPv4 blocks in February 2011. APNIC ran out in April 2011, ARIN in September 2015, and RIPE NCC in November 2019. IPv4 addresses now come from transfers, leasing or tiny leftover pools. UPDATED Sources: secondary summaries and an APNIC report (see Sources). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "The real driver is not just \"more addresses\". It is that every device can have its own globally unique address again, without NAT breaking end-to-end connections."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. How many bits is an IPv6 address, and how many bits is an IPv4 address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 128 and 32 - The IPv6 space is 2^96 times larger, not four times larger."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Roughly how many IPv6 addresses exist?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: About 3.4 x 10^38 - 2^128, calculated by script."
+    }
+   ],
+   "words": 218
+  },
+  {
+   "title": "17.2 The Benefits and Uses of IPv6",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 467 to 469. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Benefit | What it means |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Huge address space | 128-bit addresses, more levels of hierarchy, easier route summarisation. |"
+    },
+    {
+     "level": 0,
+     "text": "| Simpler, faster header | Fixed 40-byte header with 8 fields. Rarely used information moves to optional extension headers. |"
+    },
+    {
+     "level": 0,
+     "text": "| No broadcasts | Replaced by multicast and a new type, anycast. This removes IPv4 broadcast storms and the interruptions broadcasts cause. |"
+    },
+    {
+     "level": 0,
+     "text": "| Autoconfiguration | Hosts can build their own address from a router advertisement (plug and play). |"
+    },
+    {
+     "level": 0,
+     "text": "| Multiple addresses per interface | An interface normally has a link-local address and at least one other address. |"
+    },
+    {
+     "level": 0,
+     "text": "| Security built in | The book says IPsec is a mandatory standard feature. See the update below. |"
+    },
+    {
+     "level": 0,
+     "text": "| Expanded multicast | More efficient: only interested hosts process the traffic. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "IPsec is no longer mandatory. The book says IPsec is a \"standard and mandatory\" part of IPv6 (page 468). That was true of the original node requirements (RFC 4294), but RFC 6434 (2011) relaxed support for the IPsec architecture to SHOULD. A later RFC (8504) updated the node requirements again; it was not re-read here. This also matters for book review question 8 (see the Gaps Log). UPDATED Source: secondary summary plus the RFC errata page showing RFC 4294 is obsolete. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book also says the address is \"four times bigger\". It has four times as many bits, but 2^96 times as many addresses. UPDATED (script)"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What replaces broadcast in IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "A. Unicast only"
+    },
+    {
+     "level": 0,
+     "text": "B. Multicast (and anycast is new)"
+    },
+    {
+     "level": 0,
+     "text": "C. ARP"
+    },
+    {
+     "level": 0,
+     "text": "D. Nothing replaces it"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - There is no broadcast in IPv6."
+    },
+    {
+     "level": 0,
+     "text": "Q2. How long is the basic IPv6 header?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 40 bytes, fixed - IPv4 is 20 bytes minimum and variable."
+    }
+   ],
+   "words": 313
+  },
+  {
+   "title": "17.3 IPv6 Addressing and Expressions",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 469 to 473. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "An IPv6 address is 128 bits, written as eight groups of four hexadecimal digits separated by colons. Each group is 16 bits. Hex digits are 0 to 9 and a to f (not case sensitive)."
+    },
+    {
+     "level": 0,
+     "text": "Book Figure 17.1, example address"
+    },
+    {
+     "level": 0,
+     "text": "2001:0db8:3c4d:0012:0000:0000:1234:56ab"
+    },
+    {
+     "level": 0,
+     "text": "| Part | Bits | In the example | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Global routing prefix | 48 | 2001:0db8:3c4d | Given to a site by an ISP (a /48 is common). |"
+    },
+    {
+     "level": 0,
+     "text": "| Subnet ID | 16 | 0012 | Your own subnets: 2^16 = 65,536 /64 subnets from one /48 (script). |"
+    },
+    {
+     "level": 0,
+     "text": "| Interface ID | 64 | 0000:0000:1234:56ab | Identifies the host on the subnet. |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Think /48 from the ISP + 16 bits of subnet = /64 for each LAN. Almost every LAN in IPv6 is a /64. SLAAC needs a /64."
+    },
+    {
+     "level": 2,
+     "text": "17.3.1 Shortened Expression"
+    },
+    {
+     "level": 0,
+     "text": "Two rules let you shorten an address. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Drop leading zeros in each group. 0012 becomes 12, 0000 becomes 0, 0db8 becomes db8. You may not drop trailing zeros (1200 is not 12)."
+    },
+    {
+     "level": 0,
+     "text": "- Replace one contiguous run of all-zero groups with ::. You may use :: only once in an address."
+    },
+    {
+     "level": 0,
+     "text": "| Step | Address |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Full | 2001:0db8:3c4d:0012:0000:0000:1234:56ab |"
+    },
+    {
+     "level": 0,
+     "text": "| Rule 1 (leading zeros) | 2001:db8:3c4d:12:0:0:1234:56ab |"
+    },
+    {
+     "level": 0,
+     "text": "| Rule 2 (one ::) | 2001:db8:3c4d:12::1234:56ab |"
+    },
+    {
+     "level": 0,
+     "text": "Why only once? If you wrote 2001::12::1234:56ab, the device cannot know how many zero groups go in each gap. So with two separate zero runs you can compress only one. For 2001:0000:0000:0012:0000:0000:1234:56ab the best the book offers is 2001::12:0:0:1234:56ab."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Which run to compress (RFC 5952 recommendation): compress the longest run of zero groups; if two runs are the same length, compress the first one. The script (Python ipaddress) gave 2001::12:0:0:1234:56ab for the book's example, which matches. The exam usually accepts any legal form, but this is the standard way. CHECK RFC 5952 was not re-read; this comes from general knowledge and the script."
+    },
+    {
+     "level": 0,
+     "text": "How to expand ::: count the groups you can see, subtract from 8, and fill that many zero groups where :: is. For 2001:db8::1 there are 3 visible groups, so 5 zero groups fit in the gap: 2001:0db8:0000:0000:0000:0000:0000:0001."
+    },
+    {
+     "level": 3,
+     "text": "Practice (answers calculated by script)"
+    },
+    {
+     "level": 0,
+     "text": "| Full address | Shortest form |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:0db8:3c4d:0012:0000:0000:1234:56ab | 2001:db8:3c4d:12::1234:56ab |"
+    },
+    {
+     "level": 0,
+     "text": "| fe80:0000:0000:0000:0000:0000:0000:0001 | fe80::1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 0000:0000:0000:0000:0000:0000:0000:0001 | ::1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 0000:0000:0000:0000:0000:0000:0000:0000 | :: |"
+    },
+    {
+     "level": 0,
+     "text": "| ff02:0000:0000:0000:0000:0000:0000:0002 | ff02::2 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:0db8:0000:0000:0000:0000:0000:0000 | 2001:db8:: |"
+    },
+    {
+     "level": 3,
+     "text": "Prefix length"
+    },
+    {
+     "level": 0,
+     "text": "Like CIDR, IPv6 writes the network part as address/prefix-length, for example 2001:db8:3c4d:12::/64 means the first 64 bits are the network. The remaining 64 bits are the interface ID. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.3.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Is 2001::12::1234:56ab a legal address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - :: can be used only once."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Shorten fe80:0000:0000:0000:0204:61ff:fe9d:f156."
+    },
+    {
+     "level": 0,
+     "text": "Answer: fe80::204:61ff:fe9d:f156 - Drop leading zeros, then compress the one run of zero groups."
+    },
+    {
+     "level": 0,
+     "text": "Q3. How many hex digits are in each group and how many bits?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 4 digits, 16 bits - Eight groups x 16 bits = 128 bits."
+    },
+    {
+     "level": 2,
+     "text": "17.3.2 Address Types"
+    },
+    {
+     "level": 0,
+     "text": "IPv6 has unicast, multicast and anycast. There is no broadcast. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Type | Prefix | Starts with | Delivered to | Routable? |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Global unicast | 2000::/3 | 2 or 3 | One interface (public) | Yes, on the Internet |"
+    },
+    {
+     "level": 0,
+     "text": "| Link-local unicast | FE80::/10 | fe80 to febf | One interface on the local link | No, never routed |"
+    },
+    {
+     "level": 0,
+     "text": "| Unique local unicast | FC00::/7 | fc or fd | One interface (private) | Within a site or organisation, not on the Internet |"
+    },
+    {
+     "level": 0,
+     "text": "| Multicast | FF00::/8 | ff | All interfaces in the group | Depends on scope |"
+    },
+    {
+     "level": 0,
+     "text": "| Anycast | From a unicast range | Any unicast address | The nearest device sharing the address | Yes (it is a unicast address configured on several devices) |"
+    },
+    {
+     "level": 0,
+     "text": "The first-digit and range values above were calculated by script: FE80::/10 covers fe80:: to febf::, FC00::/7 covers fc00:: to fdff::, and 2000::/3 covers 2000:: to 3fff::."
+    },
+    {
+     "level": 3,
+     "text": "Global unicast (2000::/3)"
+    },
+    {
+     "level": 0,
+     "text": "The public, routable addresses, like public IPv4. Figure 17.2: a registry gives an ISP a prefix (around /23 to /32), the ISP gives a company a /48 (or similar), the company uses 16 bits for subnets (/64 each) and the last 64 bits identify the host. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Link-local (FE80::/10)"
+    },
+    {
+     "level": 0,
+     "text": "Like APIPA in IPv4, but far more important. The book says they are used for temporary or local networks and are not routed. Every IPv6-enabled interface gets one automatically. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Why link-local matters more than the book says. Routers use link-local addresses as next hops, and neighbor discovery and routing protocol neighbours use them. With only a link-local address (ipv6 enable) a device can talk only on its own link. ADDED (general knowledge) CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Unique local (FC00::/7)"
+    },
+    {
+     "level": 0,
+     "text": "Replaces the old site-local addresses, which were deprecated in September 2004. They work like IPv4 private addresses: usable inside a site or between sites, not routed on the Internet. The book calls them \"nearly globally unique\". BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "In practice only FD00::/8 is used. FC00::/7 is split in two: fc00::/8 is reserved for a possible future registry, and fd00::/8 is the half you generate yourself, with a random 40-bit global ID (for example fd12:3456:789a::/48). The book never says this. UPDATED Source: general knowledge of RFC 4193; the script confirms fd00::/8 sits inside fc00::/7. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Multicast (FF00::/8)"
+    },
+    {
+     "level": 0,
+     "text": "One-to-many. Always starts with FF. Hosts that have joined the group receive the packet. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Address | Group |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::1 | All nodes on the link (used for RA) |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::2 | All routers on the link (used for RS) |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::5 | OSPFv3 all SPF routers |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::6 | OSPFv3 designated routers |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::9 | RIPng routers |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::A | EIGRP routers |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::1:2 | All DHCPv6 relay agents and servers |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02::1:FFxx:xxxx | Solicited-node multicast (neighbor discovery, see 17.4.5) |"
+    },
+    {
+     "level": 0,
+     "text": "FF02::1 and FF02::2 are in the book. The other rows are ADDED from general knowledge and must be confirmed. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Hosts send RS to FF02::2 (all routers). Routers send RA to FF02::1 (all nodes). The ending digit is the clue: 1 = nodes, 2 = routers."
+    },
+    {
+     "level": 3,
+     "text": "Anycast"
+    },
+    {
+     "level": 0,
+     "text": "The same address is configured on several devices and a packet goes to the nearest one by routing distance (one-to-nearest). Anycast addresses are configured on routers or servers, never as a source address. The IETF reserved the top 128 addresses of each /64 for anycast. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Subnet-router anycast. In every subnet the address with an interface ID of all zeros (for example 2001:db8:3c4d:12::) is reserved as the subnet-router anycast address. That is why IOS rejects ipv6 address 2001:db8:3c4d:12::/64 without eui-64 (see 17.6). ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "An interface can have several IPv6 addresses at once (link-local plus global plus unique local). Having a global address does not remove the link-local one."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.3.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which prefix is global unicast?"
+    },
+    {
+     "level": 0,
+     "text": "A. FE80::/10"
+    },
+    {
+     "level": 0,
+     "text": "B. FC00::/7"
+    },
+    {
+     "level": 0,
+     "text": "C. 2000::/3"
+    },
+    {
+     "level": 0,
+     "text": "D. FF00::/8"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 2000::/3 (addresses starting with 2 or 3)."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Can a router forward a packet whose destination is FE80::1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - Link-local is never routed off the link."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which is the Layer 3 delivery model of anycast?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: One-to-nearest - Not one-to-many."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What kind of address is fd12:3456:789a::1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Unique local - It is inside FC00::/7 (script)."
+    },
+    {
+     "level": 2,
+     "text": "17.3.3 Special Addresses"
+    },
+    {
+     "level": 0,
+     "text": "Book Table 17.1, with corrections. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Address | Meaning | Note |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| :: (0:0:0:0:0:0:0:0) | Unspecified, like IPv4 0.0.0.0. The source before an address is assigned (DHCPv6 stateful). | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| ::1 | Loopback, like IPv4 127.0.0.1. | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| ::192.168.100.1 | Book: IPv4 address in a mixed network. | UPDATED This is the old IPv4-compatible format, which is deprecated. Dual-stack sockets use IPv4-mapped addresses written ::ffff:192.168.100.1. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2000::/3 | Global unicast range. | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| FC00::/7 | Unique local range. | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| FE80::/10 | Link-local range. | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| FF00::/8 | Multicast range. | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| 3FFF:FFFF::/32 | Book: reserved for documentation. | UPDATED Wrong. See the box below. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:0DB8::/32 | Reserved for documentation (RFC 3849). | BOOK |"
+    },
+    {
+     "level": 0,
+     "text": "| 2002::/16 | 6to4 tunnelling (IPv4-to-IPv6 transition). | UPDATED 6to4 is deprecated. Still appears on old exams. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Documentation prefix correction. The book (page 472) lists 3FFF:FFFF::/32 as reserved for documentation. The IANA registry entry is 3fff::/20 (RFC 9637, August 2024, in addition to 2001:db8::/32). The script shows 3fff:ffff::/32 is not inside 3fff::/20, so the book's value is just ordinary global unicast space. Use 2001:db8::/32 in examples, as the book does for all its configs. UPDATED Source: RFC 9637 (official IETF text). 6to4 deprecation: general knowledge, not re-verified. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Dual-stack: running IPv4 and IPv6 at the same time on a router or host. BOOK The book gives it one line; it is the most common migration method (see the migration note in 17.4.5)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.3.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the IPv6 loopback address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ::1 - There is only one loopback address."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which prefix should you use in documentation and labs?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 2001:db8::/32 - Never real prefixes. 3fff::/20 is also reserved."
+    }
+   ],
+   "words": 1587
+  },
+  {
+   "title": "17.4 How IPv6 Works in an Internetwork",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 473 to 483. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "17.4.1 Manual Address Assignment"
+    },
+    {
+     "level": 0,
+     "text": "A Cisco router does not forward IPv6 by default, and no interface has IPv6 enabled until you configure it. First turn on IPv6 routing globally, then address each interface. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "The three ways to give an interface IPv6 (use ONE per address) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# interface fastethernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ipv6 address 2001:db8:3c4d:1::1/64"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ipv6 address 2001:db8:3c4d:1::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ipv6 enable"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 unicast-routing (global) enables IPv6 packet forwarding on the router. Without it the router will not route IPv6."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 address 2001:db8:3c4d:1::1/64 sets the whole 128-bit address by hand. The /64 is the prefix length."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 address 2001:db8:3c4d:1::/64 eui-64 gives only the prefix. The router builds the last 64 bits from the interface MAC (EUI-64)."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 enable turns IPv6 on using only a link-local address, with no global address. The device then talks only on its own subnet."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Typo in the book (page 473). The example 2001:db8:3c4d:1:0260:d6FF.FE73:1987/64 has a dot instead of a colon. A correct form is 2001:db8:3c4d:1:260:d6ff:fe73:1987/64. UPDATED (checked by script)"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Enabling IPv6 on an interface always creates a link-local address too. The global address is added to it, not instead of it."
+    },
+    {
+     "level": 3,
+     "text": "Verifying addresses"
+    },
+    {
+     "level": 0,
+     "text": "Output from the book, shortened (illustrative, not run) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ipv6 interface brief"
+    },
+    {
+     "level": 0,
+     "text": "FastEthernet0/0 [up/up]"
+    },
+    {
+     "level": 0,
+     "text": "FE80::20D:BDFF:FE3B:D80"
+    },
+    {
+     "level": 0,
+     "text": "2001:DB8:3C4D:11:20D:BDFF:FE3B:D80"
+    },
+    {
+     "level": 0,
+     "text": "FastEthernet0/1 [administratively down/down]"
+    },
+    {
+     "level": 0,
+     "text": "unassigned"
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 interface brief lists each interface with its status, link-local address and global address."
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 interface fa0/0 gives full detail: addresses, joined multicast groups, DAD setting, ND timers. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.4.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which command makes a Cisco router forward IPv6 packets?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 unicast-routing - It is a global configuration command."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which command gives an interface only a link-local address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 enable - No global address is configured."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What does eui-64 at the end of ipv6 address do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Builds the interface ID from the MAC address - You give only the prefix."
+    },
+    {
+     "level": 2,
+     "text": "17.4.2 Stateless Autoconfiguration (eui-64)"
+    },
+    {
+     "level": 0,
+     "text": "Autoconfiguration lets a device give itself a link-local address and a global address. It learns the prefix from a router and builds the interface ID itself. It is called stateless because no server tracks which host got which address. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "The EUI-64 interface ID"
+    },
+    {
+     "level": 0,
+     "text": "A MAC address is 48 bits but the interface ID is 64, so 16 bits are added. Modified EUI-64 does two things: insert FFFE in the middle (between the 3-byte OUI and the 3-byte device part) and flip the 7th bit of the first byte (the U/L bit). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Write the MAC: 00:1A:2B:3C:4D:5E (OUI 001A2B, device part 3C4D5E)."
+    },
+    {
+     "level": 0,
+     "text": "- Insert FF:FE in the middle: 001A:2BFF:FE3C:4D5E."
+    },
+    {
+     "level": 0,
+     "text": "- Flip the 7th bit of the first byte: 00 = 00000000 becomes 00000010 = 02."
+    },
+    {
+     "level": 0,
+     "text": "- Result: 021A:2BFF:FE3C:4D5E, shortened 21a:2bff:fe3c:4d5e."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Shortcut for the 7th bit: it is the same as XOR with 0x02, which changes only the second hex digit of the first byte: 0 to 2, 1 to 3, 2 to 0, 3 to 1, 4 to 6, 5 to 7, 6 to 4, 7 to 5, 8 to A, 9 to B, A to 8, B to 9, C to E, D to F, E to C, F to D."
+    },
+    {
+     "level": 0,
+     "text": "| MAC | First byte in binary | Flipped | EUI-64 interface ID |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 0060:d673:1987 (book) | 00 = 00000000 | 00000010 = 02 | 0260:d6ff:fe73:1987 |"
+    },
+    {
+     "level": 0,
+     "text": "| 0090:2716:fd0f (book) | 00 = 00000000 | 00000010 = 02 | 0290:27ff:fe16:fd0f |"
+    },
+    {
+     "level": 0,
+     "text": "| aa12:bcbc:1234 (book) | aa = 10101010 | 10101000 = a8 | a812:bcff:febc:1234 |"
+    },
+    {
+     "level": 0,
+     "text": "| 0c0c:dede:1234 (book) | 0c = 00001100 | 00001110 = 0e | 0e0c:deff:fede:1234 |"
+    },
+    {
+     "level": 0,
+     "text": "| 0b34:ba12:1234 (book) | 0b = 00001011 | 00001001 = 09 | 0934:baff:fe12:1234 |"
+    },
+    {
+     "level": 0,
+     "text": "| FC:99:47:75:CE:E0 (new) | fc = 11111100 | 11111110 = fe | fe99:47ff:fe75:cee0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3C:52:82:11:22:33 (new) | 3c = 00111100 | 00111110 = 3e | 3e52:82ff:fe11:2233 |"
+    },
+    {
+     "level": 0,
+     "text": "| 52:54:00:AB:CD:EF (new) | 52 = 01010010 | 01010000 = 50 | 5054:00ff:feab:cdef |"
+    },
+    {
+     "level": 0,
+     "text": "All eight results were calculated by script and agree with the book's own examples. CHECK only for the new rows because they are not from the book."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "U/L bit wording. The book (Figure 17.4) says \"10 = universally unique, 00 = locally unique\", which is hard to follow. The clear version: in a normal MAC, bit value 0 means a burned-in (universally administered) address. EUI-64 inverts it, so in the interface ID 1 = universal and 0 = local. That is why most EUI-64 addresses show a 2 (or a 3, 6, 7, a, b, e, f depending on the OUI) where the MAC had a 0. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "Modern hosts often do not use EUI-64. Current Windows, Android, macOS and iOS generate random or temporary interface IDs for privacy. Cisco routers still use EUI-64 when you add eui-64, and the exam still tests it. ADDED General knowledge. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "The two-step process (RS and RA)"
+    },
+    {
+     "level": 0,
+     "text": "- The host sends a router solicitation (RS) to FF02::2 (all routers). It is ICMPv6 type 133."
+    },
+    {
+     "level": 0,
+     "text": "- The router answers with a router advertisement (RA) carrying the prefix. It goes to FF02::1 (all nodes), ICMPv6 type 134. RAs are also sent on a timer, but the RS gets an immediate answer."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "RS = 133 to FF02::2. RA = 134 to FF02::1. The advertised prefix must be /64 for SLAAC to work."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "What is inside an RA ADDED : the prefix and its lifetimes, the A flag (autonomous: use SLAAC for this prefix), the M flag (managed: use stateful DHCPv6) and the O flag (other: use DHCPv6 for other settings like DNS), and router information used for the default gateway (the host uses the router's link-local address). On a Cisco router, ipv6 nd managed-config-flag sets M and ipv6 nd other-config-flag sets O. Sources: secondary (NetworkLessons-style articles, ipspace.net, NANOG). CHECK"
+    },
+    {
+     "level": 0,
+     "text": "After building its address the host runs duplicate address detection (see 17.4.5)."
+    },
+    {
+     "level": 0,
+     "text": "A router interface sends RAs only when ipv6 unicast-routing is on and RAs are not suppressed. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "ipv6 address autoconfig (Branch router)"
+    },
+    {
+     "level": 0,
+     "text": "Book Figure 17.6 CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Branch(config-if)# ipv6 address autoconfig default"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 address autoconfig makes the interface listen for RAs and build its own global address with EUI-64."
+    },
+    {
+     "level": 0,
+     "text": "- default also installs the default route learned from the RA (the router that sent the RA becomes the gateway). The book says this correctly at page 476."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Contradiction at the end of the chapter. For the Boulder router (page 490) the book says the default keyword \"will advertise itself as the default route for the local link\". That is wrong: the keyword makes this router learn a default route from a neighbour's RA. It does not advertise anything. UPDATED CHECK Behaviour with ipv6 unicast-routing enabled depends on platform."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.4.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the EUI-64 interface ID for MAC 00:1A:2B:3C:4D:5E?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 021a:2bff:fe3c:4d5e - Insert FFFE and flip the 7th bit (00 to 02). Calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which ICMPv6 type is a router advertisement?"
+    },
+    {
+     "level": 0,
+     "text": "A. 133"
+    },
+    {
+     "level": 0,
+     "text": "B. 134"
+    },
+    {
+     "level": 0,
+     "text": "C. 135"
+    },
+    {
+     "level": 0,
+     "text": "D. 136"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 133 is RS, 135 NS, 136 NA."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which multicast address does a host use for an RS?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::2 - All routers on the link."
+    },
+    {
+     "level": 0,
+     "text": "Q4. A MAC starts with 0A. What does the interface ID start with?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 08 - 0A = 00001010, flip the 7th bit: 00001000 = 08."
+    },
+    {
+     "level": 2,
+     "text": "17.4.3 DHCPv6 (Stateful)"
+    },
+    {
+     "level": 0,
+     "text": "DHCPv6 works like DHCP for IPv4 but for IPv6 addresses. The book's main point: DHCP still matters because it can give options (DNS servers, domain name) that plain autoconfiguration, as the book describes it, does not. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Method | Address from | Other settings (DNS) | RA flags |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| SLAAC only | The host, from the RA prefix | None (or from the RA itself, see below) | A=1, M=0, O=0 |"
+    },
+    {
+     "level": 0,
+     "text": "| SLAAC + stateless DHCPv6 | The host, from the RA prefix | DHCPv6 server | A=1, M=0, O=1 |"
+    },
+    {
+     "level": 0,
+     "text": "| Stateful DHCPv6 | DHCPv6 server (tracks leases) | DHCPv6 server | M=1 |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "What the book gets wrong or leaves out. (1) It says that when no router is found the client sends a DHCP Solicit. In reality the RA flags (M and O) tell the host whether to use DHCPv6. The Solicit is a multicast to FF02::1:2, using UDP port 547 at the server and 546 at the client. (2) It says autoconfiguration has no way to carry DNS servers. Newer RA options can carry DNS servers and search lists; Cisco has ipv6 nd ra dns server on some platforms. (3) It says IOS DHCPv6 support is only stateless. Newer IOS releases can also run stateful pools. UPDATED Sources: secondary and general knowledge. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "DHCPv6 message order ADDED CHECK : Solicit, Advertise, Request, Reply (stateful). Stateless clients use Information-Request and Reply. Clients are identified by a DUID, not by MAC."
+    },
+    {
+     "level": 0,
+     "text": "Stateless DHCPv6 server on Cisco IOS (example):"
+    },
+    {
+     "level": 0,
+     "text": "Stateless DHCPv6 (SLAAC for the address, DHCPv6 for DNS) ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 dhcp pool LAN-POOL"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-dhcpv6)# dns-server 2001:db8:acad:ffff::53"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-dhcpv6)# domain-name example.com"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-dhcpv6)# exit"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface g0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 dhcp server LAN-POOL"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 nd other-config-flag"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 dhcp pool LAN-POOL creates a pool named LAN-POOL."
+    },
+    {
+     "level": 0,
+     "text": "- dns-server and domain-name are the options handed out."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 dhcp server LAN-POOL (interface) answers DHCPv6 requests on that LAN."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 nd other-config-flag sets the O flag in RAs so hosts ask DHCPv6 for the options. To use a server on another subnet, use ipv6 dhcp relay destination <server address> on the LAN interface."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Both stateless and stateful methods can give a host an IPv6 address dynamically. Stateless means no server tracks the address; stateful means a server does."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.4.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which RA flag tells hosts to use stateful DHCPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: M (managed) - O means other configuration only."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What destination address does a DHCPv6 Solicit use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::1:2 - All DHCPv6 relay agents and servers."
+    },
+    {
+     "level": 2,
+     "text": "17.4.4 IPv6 Header"
+    },
+    {
+     "level": 0,
+     "text": "Even though the address is four times as long, the header is only twice the size: 40 bytes, fixed, with 8 fields. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Field | Size | Purpose | IPv4 equivalent |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Version | 4 bits | Contains 6. | Version |"
+    },
+    {
+     "level": 0,
+     "text": "| Traffic Class | 8 bits | QoS marking. | Type of Service |"
+    },
+    {
+     "level": 0,
+     "text": "| Flow Label | 20 bits | Marks a flow of packets for efficient handling. | None (new) |"
+    },
+    {
+     "level": 0,
+     "text": "| Payload Length | 16 bits | Length of the payload only (not the header). | Total Length |"
+    },
+    {
+     "level": 0,
+     "text": "| Next Header | 8 bits | Says what follows: an extension header or the upper-layer protocol. | Protocol |"
+    },
+    {
+     "level": 0,
+     "text": "| Hop Limit | 8 bits | Maximum hops, reduced by 1 at each router. | TTL |"
+    },
+    {
+     "level": 0,
+     "text": "| Source Address | 128 bits | Sender. | Source Address |"
+    },
+    {
+     "level": 0,
+     "text": "| Destination Address | 128 bits | Receiver. | Destination Address |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Flow label size. The book says the Flow Label is 24 bits (page 478). It is 20 bits. With 20 bits the first row is 4 + 8 + 20 = 32 bits, which fits the standard four-byte row; the script confirmed the whole header adds up to 40 bytes only with 20. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "What changed from IPv4 (book list)"
+    },
+    {
+     "level": 0,
+     "text": "- The Internet Header Length field was removed: the header is fixed at 40 bytes."
+    },
+    {
+     "level": 0,
+     "text": "- Fragmentation is different: routers no longer fragment. The sending host does it, using a fragment extension header, not the IPv4 Flags field."
+    },
+    {
+     "level": 0,
+     "text": "- The header checksum was removed (Data Link and upper layers already check). That is why the UDP checksum becomes mandatory."
+    },
+    {
+     "level": 0,
+     "text": "- Extension headers follow the basic header and carry optional information. They have variable length."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Objective reminders: Hop Limit = TTL. Fixed 40-byte header. Extension header replaces IPv4 fragmentation fields. No header checksum."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Next Header values worth knowing ADDED CHECK : 6 = TCP, 17 = UDP, 58 = ICMPv6, 44 = fragment extension header."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.4.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the IPv6 equivalent of the IPv4 TTL field?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Hop Limit - Reduced by one at every router."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Who fragments an IPv6 packet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The sending host, never a router - Routers send a Packet Too Big message instead."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which header field was removed completely?"
+    },
+    {
+     "level": 0,
+     "text": "A. Hop Limit"
+    },
+    {
+     "level": 0,
+     "text": "B. Header checksum"
+    },
+    {
+     "level": 0,
+     "text": "C. Version"
+    },
+    {
+     "level": 0,
+     "text": "D. Source address"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Upper layers and Layer 2 check for errors."
+    },
+    {
+     "level": 2,
+     "text": "17.4.5 ICMPv6"
+    },
+    {
+     "level": 0,
+     "text": "ICMPv6 does what ICMP did (errors, ping, traceroute) and a lot more: it is how IPv6 finds neighbours, routers and MAC addresses. It is not optional. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Two wording errors in the book (page 479). (1) It says ICMPv6 is carried \"as an extension header\". It is an upper-layer protocol, identified by Next Header = 58 in the IPv6 header. (2) It says the value 58 is \"located inside the ICMPv6 packet\". The Next Header field is in the IPv6 header. UPDATED CHECK General knowledge; consistent with the book's own Figure 17.8."
+    },
+    {
+     "level": 0,
+     "text": "| ICMPv6 type | Message |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Destination Unreachable |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Packet Too Big (used by path MTU discovery) ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Time Exceeded ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| 128 | Echo Request |"
+    },
+    {
+     "level": 0,
+     "text": "| 129 | Echo Reply |"
+    },
+    {
+     "level": 0,
+     "text": "| 133 | Router Solicitation (RS) |"
+    },
+    {
+     "level": 0,
+     "text": "| 134 | Router Advertisement (RA) |"
+    },
+    {
+     "level": 0,
+     "text": "| 135 | Neighbor Solicitation (NS) |"
+    },
+    {
+     "level": 0,
+     "text": "| 136 | Neighbor Advertisement (NA) |"
+    },
+    {
+     "level": 0,
+     "text": "| 137 | Redirect ADDED |"
+    },
+    {
+     "level": 3,
+     "text": "Path MTU discovery"
+    },
+    {
+     "level": 0,
+     "text": "The source sends packets up to its link MTU. If a router on the path has a smaller MTU, it drops the packet and sends back a Packet Too Big message (ICMPv6 type 2) with the allowed size. The source then sends smaller packets. This is how IPv6 avoids fragmentation by routers. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Do not block ICMPv6 with ACLs or firewalls. Blocking it breaks neighbor discovery, SLAAC and path MTU discovery. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Neighbor discovery (NDP)"
+    },
+    {
+     "level": 0,
+     "text": "Neighbor discovery replaces ARP and adds more. A neighbor is a device on the same link or VLAN. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Function | Messages |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Find a neighbor's MAC address (replaces ARP) | Neighbor solicitation (NS, type 135), neighbor advertisement (NA, type 136) |"
+    },
+    {
+     "level": 0,
+     "text": "| Find routers and prefixes | Router solicitation (RS, 133, FF02::2), router advertisement (RA, 134, FF02::1) |"
+    },
+    {
+     "level": 0,
+     "text": "| Duplicate address detection (DAD) | NS and NA |"
+    },
+    {
+     "level": 0,
+     "text": "| Redirect a host to a better router | Redirect (137) |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "RS/RA = about routers. NS/NA = about hosts. ARP in IPv4 is replaced by NS/NA in IPv6."
+    },
+    {
+     "level": 3,
+     "text": "Solicited-node multicast and Ethernet mapping"
+    },
+    {
+     "level": 0,
+     "text": "Instead of a broadcast, an NS goes to the solicited-node multicast address of the target. It is built from the prefix FF02::1:FF00:0/104 plus the last 24 bits of the target address. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Take the last 24 bits (six hex digits) of the unicast address. For an address ending ...:FE18:FC0F they are 18:FC0F."
+    },
+    {
+     "level": 0,
+     "text": "- Put them after FF02::1:FF: FF02::1:FF18:FC0F."
+    },
+    {
+     "level": 0,
+     "text": "- For the Ethernet destination MAC, put 33:33 in front of the last 32 bits of the IPv6 multicast address: 33:33:FF:18:FC:0F."
+    },
+    {
+     "level": 0,
+     "text": "| IPv6 address | Solicited-node multicast | Ethernet MAC |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:DB8:2002:F:2C0:10FF:FE18:FC0F (book) | FF02::1:FF18:FC0F | 33:33:FF:18:FC:0F |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:db8:3c4d:14:21a:2fff:fee7:4398 (book config) | FF02::1:FFE7:4398 | 33:33:FF:E7:43:98 |"
+    },
+    {
+     "level": 0,
+     "text": "| fe80::20d:bdff:fe3b:d80 (book config) | FF02::1:FF3B:D80 | 33:33:FF:3B:0D:80 |"
+    },
+    {
+     "level": 0,
+     "text": "Calculated by script. CHECK only for the last two rows (derived from the book's config addresses)."
+    },
+    {
+     "level": 3,
+     "text": "Duplicate address detection (DAD)"
+    },
+    {
+     "level": 0,
+     "text": "Before using an address, a host sends an NS asking whether anyone already has it. If nobody answers, it uses the address. DAD is a function of NS and NA, not a separate protocol. The book says hosts send three DAD messages. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Default is one NS, not three. The IPv6 specification and vendor documentation default to 1 DAD transmission (configurable, for example ipv6 nd dad attempts on Cisco IOS). UPDATED Source: vendor documentation for the same setting on other platforms (secondary) and general knowledge of Cisco IOS; Cisco's own page was not opened. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Multicast listener discovery and default gateways"
+    },
+    {
+     "level": 0,
+     "text": "In IPv4, IGMP lets a host tell a router it joined a multicast group. In IPv6 this job is done by multicast listener discovery (MLD), which is part of ICMPv6. Hosts also learn default gateways from RAs (no manual gateway needed, and several routers can be learned at once). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative (shape written from memory of IOS output, addresses from the book config) ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ipv6 interface fa0/0"
+    },
+    {
+     "level": 0,
+     "text": "FastEthernet0/0 is up, line protocol is up"
+    },
+    {
+     "level": 0,
+     "text": "IPv6 is enabled, link-local address is FE80::20D:BDFF:FE3B:D80"
+    },
+    {
+     "level": 0,
+     "text": "Global unicast address(es):"
+    },
+    {
+     "level": 0,
+     "text": "2001:DB8:3C4D:11:20D:BDFF:FE3B:D80, subnet is 2001:DB8:3C4D:11::/64 [EUI]"
+    },
+    {
+     "level": 0,
+     "text": "Joined group address(es):"
+    },
+    {
+     "level": 0,
+     "text": "FF02::1"
+    },
+    {
+     "level": 0,
+     "text": "FF02::2"
+    },
+    {
+     "level": 0,
+     "text": "FF02::1:FF3B:D80"
+    },
+    {
+     "level": 0,
+     "text": "ND DAD is enabled, number of DAD attempts: 1"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ipv6 neighbors"
+    },
+    {
+     "level": 0,
+     "text": "- Joined group address(es) shows FF02::1 (all nodes), FF02::2 (all routers, present because ipv6 unicast-routing is on) and the solicited-node group for the interface."
+    },
+    {
+     "level": 0,
+     "text": "- number of DAD attempts shows the DAD setting."
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 neighbors shows the neighbor cache, the IPv6 version of the ARP table. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Migration methods (needed for the book's review question 4)"
+    },
+    {
+     "level": 0,
+     "text": "| Method | How it works |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Dual stack | Run IPv4 and IPv6 side by side on the same devices. The most common method. |"
+    },
+    {
+     "level": 0,
+     "text": "| Tunnelling | Carry IPv6 packets inside IPv4 packets across an IPv4 network between IPv6 islands. |"
+    },
+    {
+     "level": 0,
+     "text": "| Translation (NAT64 and similar) | Translate between IPv6 and IPv4 packets so IPv6-only and IPv4-only hosts can communicate. |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.4.5"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which Next Header value identifies ICMPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 58 - 6 is TCP and 17 is UDP."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What replaces ARP in IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Neighbor discovery (NS and NA) - Carried in ICMPv6."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is the solicited-node multicast address for a host whose address ends ...:fe18:fc0f?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::1:FF18:FC0F - FF02::1:FF plus the last 24 bits."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which message does a router send when a packet is too big for the next link?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ICMPv6 Packet Too Big (type 2) - The source then lowers its packet size."
+    }
+   ],
+   "words": 3064
+  },
+  {
+   "title": "17.5 IPv6 Routing Protocols",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 483 to 484. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Routing protocols that depended on broadcasts could not survive in IPv6. The ones that remain were updated and renamed:"
+    },
+    {
+     "level": 0,
+     "text": "| IPv4 protocol | IPv6 version | Note |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| RIP | RIPng (next generation) | Distance vector, small networks. |"
+    },
+    {
+     "level": 0,
+     "text": "| EIGRP | EIGRP for IPv6 (the book writes EIGRPv6) | EIGRP added a protocol-dependent module for IPv6. |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPFv2 | OSPFv3 | OSPF for IPv4 is version 2, so the IPv6 version is 3. |"
+    },
+    {
+     "level": 0,
+     "text": "| BGP-4 | MP-BGP4 (multiprotocol BGP) | Mentioned by the book only. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Promise not delivered. The book says it will \"add the OSPFv3 routing protocol\" to the internetwork (page 484) but chapter 17 never does. v2.0 objective 3.3 is Configure single area OSPFv2 for IPv4 and OSPFv3 for IPv6, so the short OSPFv3 section below is ADDED . Check Chapter 6 of the book (OSPF, pages 163 to 192) for whether OSPFv3 is covered; that was not checked here. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Single-area OSPFv3 (added)"
+    },
+    {
+     "level": 0,
+     "text": "OSPFv3 on R1, single area 0 ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 router ospf 1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-rtr)# router-id 1.1.1.1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-rtr)# exit"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface g0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 ospf 1 area 0"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ipv6 ospf neighbor"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ipv6 route ospf"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 router ospf 1 starts OSPFv3 process 1."
+    },
+    {
+     "level": 0,
+     "text": "- router-id 1.1.1.1 sets the 32-bit router ID (written like an IPv4 address even in IPv6). Set it by hand if the router has no IPv4 address."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 ospf 1 area 0 (interface) turns OSPFv3 on for that interface and puts it in area 0. There are no network statements in OSPFv3."
+    },
+    {
+     "level": 0,
+     "text": "- Neighbors form over link-local addresses and use multicast FF02::5 (all SPF routers) and FF02::6 (designated routers)."
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 ospf neighbor should show neighbors in state FULL. show ipv6 route ospf shows routes marked O."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.5"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which version of OSPF is used for IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OSPFv3 - OSPF for IPv4 is OSPFv2."
+    },
+    {
+     "level": 0,
+     "text": "Q2. How do you enable OSPFv3 on an interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 ospf <process> area <area> on the interface - There are no network statements."
+    },
+    {
+     "level": 2,
+     "text": "17.5.1 Static Routing with IPv6"
+    },
+    {
+     "level": 0,
+     "text": "Static routing needs the same three things in IPv4 and IPv6: an accurate network map, the next-hop address and exit interface for each neighbour, and the remote subnet IDs. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book Figure 17.12 CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ipv6 route 2001:1234:4321:1::/64 2001:db8:43:91::1"
+    },
+    {
+     "level": 0,
+     "text": "Branch(config)# ipv6 route ::/0 gi0/0"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 route creates a static route. The first item is the destination prefix with its length."
+    },
+    {
+     "level": 0,
+     "text": "- 2001:db8:43:91::1 is the next-hop address (the neighbour toward the destination)."
+    },
+    {
+     "level": 0,
+     "text": "- ::/0 is the default route (matches everything, like 0.0.0.0/0 in IPv4)."
+    },
+    {
+     "level": 0,
+     "text": "- gi0/0 is the exit interface. You can use a next hop, an exit interface, or both."
+    },
+    {
+     "level": 3,
+     "text": "The four types of static route (v2.0 objective 3.2)"
+    },
+    {
+     "level": 0,
+     "text": "| Type | Example | Use |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Network route | ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:12::2 | A remote subnet. |"
+    },
+    {
+     "level": 0,
+     "text": "| Host route | ipv6 route 2001:db8:acad:2::10/128 2001:db8:acad:12::2 | One specific host (/128). |"
+    },
+    {
+     "level": 0,
+     "text": "| Default route | ipv6 route ::/0 2001:db8:acad:12::2 | Everything not matched by a more specific route. |"
+    },
+    {
+     "level": 0,
+     "text": "| Floating static | ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:21::2 150 | A backup route with a higher administrative distance, used only if the better route disappears. |"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Three ways to write the target ADDED CHECK : next hop only (global address), exit interface only (fine on point-to-point serial links), or both (a fully specified route). If the next hop is a link-local address you must include the interface, because the same link-local address can exist on every link. Static routes have an administrative distance of 1 by default; a number at the end (such as 150) changes it."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Exit-interface-only default route on Ethernet. The book's Branch example ipv6 route ::/0 gi0/0 points at an Ethernet interface with no next hop. On a multi-access link like Ethernet the router would then try to resolve every destination address on that link, which usually fails or burdens the neighbour. Use a next hop (or next hop plus interface) on Ethernet. Exit-interface-only is acceptable on a point-to-point link such as the serial links later in the chapter. UPDATED General knowledge. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Floating static = same destination, higher AD. Default static AD is 1. OSPF is 110, so a static route with AD 150 loses to OSPF and sits in the config as a backup."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.5.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is the IPv6 default route?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ::/0 - The same idea as 0.0.0.0/0."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What makes a static route floating?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A higher administrative distance than the primary route - It only appears in the routing table if the primary disappears."
+    },
+    {
+     "level": 0,
+     "text": "Q3. When must you add the exit interface to a static route with a next hop?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: When the next hop is a link-local address - Link-local addresses are only unique per link."
+    }
+   ],
+   "words": 833
+  },
+  {
+   "title": "17.6 Configuring IPv6 on Our Internetwork",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 484 to 487. BOOK Same internetwork as earlier chapters (Figure 17.13). The subnet plan is a simple scheme of 11 to 15:"
+    },
+    {
+     "level": 0,
+     "text": "| Subnet | Where | Prefix |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | Corp Fa0/0 LAN | 2001:db8:3c4d:11::/64 |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | Corp S0/0 to SF S0/0/0 | 2001:db8:3c4d:12::/64 |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | Corp S0/1 to LA S0/0/1 | 2001:db8:3c4d:13::/64 |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | SF Fa0/0 LAN | 2001:db8:3c4d:14::/64 |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | LA Fa0/0 LAN | 2001:db8:3c4d:15::/64 |"
+    },
+    {
+     "level": 0,
+     "text": "Corp configuration CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# interface f0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ipv6 address 2001:db8:3c4d:11::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# interface s0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ipv6 address 2001:db8:3c4d:12::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# interface s0/1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ipv6 address 2001:db8:3c4d:13::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 unicast-routing turns on IPv6 forwarding."
+    },
+    {
+     "level": 0,
+     "text": "- Each ipv6 address <prefix>/64 eui-64 gives the interface the prefix plus an EUI-64 interface ID from its MAC. The book used the same subnet number on both ends of each WAN link, which is correct: both routers are on the same /64."
+    },
+    {
+     "level": 3,
+     "text": "Reading the routing table"
+    },
+    {
+     "level": 0,
+     "text": "From the book, shortened (illustrative) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ipv6 route"
+    },
+    {
+     "level": 0,
+     "text": "C 2001:DB8:3C4D:11::/64 [0/0]"
+    },
+    {
+     "level": 0,
+     "text": "via ::, FastEthernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "L 2001:DB8:3C4D:11:20D:BDFF:FE3B:D80/128 [0/0]"
+    },
+    {
+     "level": 0,
+     "text": "via ::, FastEthernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "L FE80::/10 [0/0]"
+    },
+    {
+     "level": 0,
+     "text": "via ::, Null0"
+    },
+    {
+     "level": 0,
+     "text": "L FF00::/8 [0/0]"
+    },
+    {
+     "level": 0,
+     "text": "via ::, Null0"
+    },
+    {
+     "level": 0,
+     "text": "| Code | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| C | Connected network (the /64 you configured). |"
+    },
+    {
+     "level": 0,
+     "text": "| L | Local route: the router's own address as a /128 host route. |"
+    },
+    {
+     "level": 0,
+     "text": "| S | Static route. |"
+    },
+    {
+     "level": 0,
+     "text": "| O | OSPF route. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book misreads the L entries (page 485). It says the C entry is the configured address and the L entry \"is the link-local that's been automatically assigned\". That is wrong. L means local route: a /128 for the interface's own global address (it is the same EUI-64 address). The FE80::/10 and FF00::/8 lines are local routes for the link-local and multicast ranges, pointing to Null0. The EUI-64 part (the FF:FE in the middle) is still visible in the L address, so the book's EUI-64 point stands. UPDATED CHECK The IID in the book's Corp output (20D:BDFF:FE3B:D80) was verified by script as a valid EUI-64 from MAC 00:0d:bd:3b:0d:80."
+    },
+    {
+     "level": 3,
+     "text": "SF and LA, and the anycast error"
+    },
+    {
+     "level": 0,
+     "text": "SF configuration with the book's error message CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# interface s0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# ipv6 address 2001:db8:3c4d:12::/64"
+    },
+    {
+     "level": 0,
+     "text": "% 2001:DB8:3C4D:12::/64 should not be configured on Serial0/0/0, a subnet router anycast"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# ipv6 address 2001:db8:3c4d:12::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# interface fa0/0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# ipv6 address 2001:db8:3c4d:14::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "Without eui-64 the command sets the interface ID to all zeros. That is the subnet-router anycast address, so IOS warns that it should not be used on an interface. Add eui-64 (or write a full host address such as ...:12::1/64). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Check the book's own output. After the warning, the SF routing table (page 486) still shows L 2001:DB8:3C4D:12::/128, which is the anycast address. That suggests IOS accepted the first command despite the warning and the address stayed configured. If you ever see this, remove it with no ipv6 address 2001:db8:3c4d:12::/64. UPDATED CHECK (based on reading the book output, not tested)"
+    },
+    {
+     "level": 0,
+     "text": "The LA configuration in the book is typed at an SF prompt (SF#config t). It is a typo; those commands are for LA. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.6"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What does an L entry in show ipv6 route mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A local /128 route for the router's own interface address - C is the connected prefix; L is the router's own address."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why does ipv6 address 2001:db8:3c4d:12::/64 without eui-64 trigger a warning?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The interface ID is all zeros, the subnet-router anycast address - Add eui-64 or a host part."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Should both ends of a router-to-router link use the same /64?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Yes - They share one subnet, with different interface IDs."
+    }
+   ],
+   "words": 632
+  },
+  {
+   "title": "17.7 Configuring Routing on Our Internetwork",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 487 to 490. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Static routes from the book CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ipv6 route 2001:db8:3c4d:14::/64 2001:DB8:3C4D:12:21A:2FFF:FEE7:4398 150"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ipv6 route 2001:DB8:3C4D:15::/64 s0/1 150"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# ipv6 route 2001:db8:3c4d:11::/64 s0/0/0 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# ipv6 route ::/0 s0/0/1"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ipv6 route static"
+    },
+    {
+     "level": 0,
+     "text": "- Corp reaches subnet 14 through SF's global address (a next hop, copied from show ipv6 int brief on SF)."
+    },
+    {
+     "level": 0,
+     "text": "- Corp reaches subnet 15 through its exit interface s0/1 (a point-to-point serial link, so an exit interface is acceptable)."
+    },
+    {
+     "level": 0,
+     "text": "- The trailing 150 is the administrative distance. The book calls these floating static routes: OSPF (AD 110) would replace them if you later enabled it."
+    },
+    {
+     "level": 0,
+     "text": "- LA gets a single default route out its serial link. SF gets a route to subnet 11 only."
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 route static shows S 2001:DB8:3C4D:14::/64 [150/0] and the other route marked S."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Reachability caveat ADDED CHECK : SF has a route only to subnet 11 and LA has only a default route, so SF cannot reach subnets 13 and 15 and does not have a path to the LA LAN. The book's ping tests work because they start on Corp, and a router sources a ping from the outgoing interface address, which is on a subnet directly connected to the far router, so replies come back. A ping from a host on the SF LAN to the LA LAN would fail until SF gets more routes (for example a default route)."
+    },
+    {
+     "level": 3,
+     "text": "Testing"
+    },
+    {
+     "level": 0,
+     "text": "Book testing method, shortened CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SF# show ipv6 interface brief"
+    },
+    {
+     "level": 0,
+     "text": "Corp# ping ipv6 2001:DB8:3C4D:14:21A:2FFF:FEE7:4398"
+    },
+    {
+     "level": 0,
+     "text": "!!!!!"
+    },
+    {
+     "level": 0,
+     "text": "Success rate is 100 percent (5/5), round-trip min/avg/max = 0/0/0 ms"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ipv6 interface brief"
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 interface brief on the far router gives the address to ping (copy and paste it)."
+    },
+    {
+     "level": 0,
+     "text": "- ping ipv6 <address> sends ICMPv6 echo requests (type 128). ! means a reply (type 129) came back."
+    },
+    {
+     "level": 0,
+     "text": "- show ipv6 interface brief on Corp should show all interfaces up/up with their link-local and global addresses."
+    },
+    {
+     "level": 3,
+     "text": "The Boulder router"
+    },
+    {
+     "level": 0,
+     "text": "Book example CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Boulder(config)# interface f0/0"
+    },
+    {
+     "level": 0,
+     "text": "Boulder(config-if)# ipv6 address autoconfig default"
+    },
+    {
+     "level": 0,
+     "text": "Boulder joins the Corp LAN with no manual addressing. It listens for RAs from Corp, builds its global address with EUI-64, and installs a default route toward Corp. See the correction on the default keyword in 17.4.2. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Verification commands (all in one place)"
+    },
+    {
+     "level": 0,
+     "text": "| Command | Shows |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| show ipv6 interface brief | Status, link-local and global address of each interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| show ipv6 interface <if> | Full detail: joined multicast groups, DAD, ND timers, prefix. ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| show ipv6 route | Routing table (C, L, S, O). |"
+    },
+    {
+     "level": 0,
+     "text": "| show ipv6 route static | Only the static routes. |"
+    },
+    {
+     "level": 0,
+     "text": "| show ipv6 neighbors | Neighbor cache (IPv6 ARP table). ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| ping ipv6 <address> | Reachability test. |"
+    },
+    {
+     "level": 0,
+     "text": "| traceroute ipv6 <address> | Path test. ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| Windows: ipconfig, ping -6, netsh interface ipv6 show neighbors | Host view. ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| Linux: ip -6 addr, ip -6 neigh, ip -6 route | Host view. ADDED |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 17.7"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which route is used when both an AD 150 static route and an OSPF route exist for the same prefix?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The OSPF route - OSPF AD 110 is lower than 150."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why do the book's pings from Corp succeed even though SF and LA have few routes?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The ping source is the directly connected outgoing interface address - The far router has a connected route back to it."
+    }
+   ],
+   "words": 588
+  },
+  {
+   "title": "Troubleshooting",
+   "content": [
+    {
+     "level": 0,
+     "text": "All rows are written from documentation and general practice, not tested on hardware. CHECK (v2.0 objectives 1.4 and 3.2 are troubleshooting objectives.)"
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Router will not forward IPv6; pings through it fail | ipv6 unicast-routing missing | show running-config \\| include ipv6 unicast |"
+    },
+    {
+     "level": 0,
+     "text": "| Host has only a link-local address | No RA received: router interface has no IPv6 address, IPv6 routing off, or RAs suppressed | show ipv6 interface <if> on the router (look for RA settings) |"
+    },
+    {
+     "level": 0,
+     "text": "| SLAAC does not work | Prefix length is not /64, or the A flag is off in the RA | Check the prefix length on the router interface and RA flags |"
+    },
+    {
+     "level": 0,
+     "text": "| Warning about subnet router anycast | Interface ID is all zeros: forgot eui-64 or a host part | Re-enter with eui-64 or ::1; remove the anycast address if it was kept |"
+    },
+    {
+     "level": 0,
+     "text": "| Address stuck in a duplicate state | DAD found the same address on the link | show ipv6 interface brief; change one device's address |"
+    },
+    {
+     "level": 0,
+     "text": "| Static route is not in the routing table | Next hop unreachable, exit interface down, typo in prefix, or link-local next hop without an interface | show ipv6 route, show ipv6 interface brief, show running-config \\| include ipv6 route |"
+    },
+    {
+     "level": 0,
+     "text": "| Ping to a remote subnet fails one way | Missing return route on the far router | show ipv6 route on both ends |"
+    },
+    {
+     "level": 0,
+     "text": "| Ping to a link-local address asks for an interface | A link-local address is only unique per link | Include the exit interface when pinging or routing to it |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbors cannot be resolved, SLAAC breaks | ACL or firewall blocking ICMPv6 (NS, NA, RS, RA) | Check IPv6 ACLs; permit neighbor discovery |"
+    },
+    {
+     "level": 0,
+     "text": "| IPv4 works but IPv6 does not (or the reverse) | Dual-stack: one protocol misconfigured, or DNS returns AAAA records the path cannot reach | Test with literal addresses first, then DNS |"
+    },
+    {
+     "level": 0,
+     "text": "| No default gateway on a host | RA lifetime 0, no RA, or no default on an autoconfig router | show ipv6 route or host ipconfig |"
+    }
+   ],
+   "words": 371
+  },
+  {
+   "title": "Exam Essentials: one-page revision sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Why IPv6 | IPv4 ran out (IANA 2011). IPv6 is 128 bits, about 3.4 x 10^38 addresses. |"
+    },
+    {
+     "level": 0,
+     "text": "| Format | Eight groups of 4 hex digits. Drop leading zeros. One :: only, for a run of zero groups. Prefix length like /64. |"
+    },
+    {
+     "level": 0,
+     "text": "| Typical split | /48 from the ISP, 16 bits of subnet, /64 for each LAN, 64-bit interface ID. |"
+    },
+    {
+     "level": 0,
+     "text": "| Address types | Global unicast 2000::/3. Link-local FE80::/10 (never routed). Unique local FC00::/7 (use FD). Multicast FF00::/8. Anycast = same address on several devices, nearest wins. No broadcast. |"
+    },
+    {
+     "level": 0,
+     "text": "| Special | :: unspecified, ::1 loopback, 2001:db8::/32 and 3fff::/20 documentation (not the book's 3FFF:FFFF::/32). |"
+    },
+    {
+     "level": 0,
+     "text": "| Multicast | FF02::1 all nodes, FF02::2 all routers, FF02::5 and FF02::6 OSPFv3, FF02::1:2 DHCPv6 agents, FF02::1:FFxx:xxxx solicited-node. |"
+    },
+    {
+     "level": 0,
+     "text": "| EUI-64 | Insert FFFE in the middle of the MAC and flip the 7th bit (XOR 02). 00 becomes 02. |"
+    },
+    {
+     "level": 0,
+     "text": "| SLAAC | RS (133) to FF02::2, RA (134) to FF02::1. Prefix must be /64. Flags A, M, O. |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCPv6 | Stateful (M=1) or stateless (O=1, SLAAC for the address). UDP 547 server, 546 client. |"
+    },
+    {
+     "level": 0,
+     "text": "| Header | 40 bytes, 8 fields, Flow Label 20 bits, Hop Limit = TTL, no header checksum, extension headers, hosts fragment. |"
+    },
+    {
+     "level": 0,
+     "text": "| ICMPv6 | Next Header 58. Types: 1, 2 (packet too big), 128, 129, 133, 134, 135, 136. NS/NA replace ARP. DAD uses NS. |"
+    },
+    {
+     "level": 0,
+     "text": "| Router commands | ipv6 unicast-routing, ipv6 address <prefix>/64 [eui-64], ipv6 enable, ipv6 address autoconfig [default]. |"
+    },
+    {
+     "level": 0,
+     "text": "| Static routes | ipv6 route <prefix>/<len> <next hop \\| interface>. Default is ::/0. Floating static = higher AD. Link-local next hop needs the interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| Verify | show ipv6 interface brief, show ipv6 route, show ipv6 neighbors, ping ipv6. |"
+    },
+    {
+     "level": 0,
+     "text": "| Migration | Dual stack, tunnelling, translation. |"
+    }
+   ],
+   "words": 315
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Allowed statuses: Not assessed, Know, Partially understand, Need to learn, Needs revision. Know needs unaided correct answers or a finished lab. Everything starts as Not assessed. Fill in the table after the quick checks, review questions and labs. Then update the Notion tracker yourself or ask me to when the connector is on."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Chapter 17 - Internet Protocol Version 6 (IPv6) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.1 Why Do We Need IPv6? |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.2 The Benefits and Uses of IPv6 |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3 IPv6 Addressing and Expressions |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3.1 Shortened Expression |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3.2 Address Types |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.3.3 Special Addresses |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4 How IPv6 Works in an Internetwork |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.1 Manual Address Assignment |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.2 Stateless Autoconfiguration (eui-64) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.3 DHCPv6 (Stateful) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.4 IPv6 Header |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.4.5 ICMPv6 |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.5 IPv6 Routing Protocols |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.5.1 Static Routing with IPv6 |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.6 Configuring IPv6 on Our Internetwork |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 17.7 Configuring Routing on Our Internetwork |  | Not assessed |  |  |"
+    }
+   ],
+   "words": 295
+  },
+  {
+   "title": "Answer Key A (pre-check answers)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- 2001:db8::12:0:0:1 (compress the first of the two equal-length zero runs). Calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "- 021a:2bff:fe3c:4d5e (insert FFFE, flip the 7th bit: 00 becomes 02)."
+    },
+    {
+     "level": 0,
+     "text": "- Link-local is FE80::/10. A router cannot route it off the link."
+    },
+    {
+     "level": 0,
+     "text": "- FF02::2 (all routers), ICMPv6 type 133."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 unicast-routing (global configuration)."
+    }
+   ],
+   "words": 49
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "28 original questions with answers. Also do the book's own 10 review questions (pages 492 to 493) and check them in the Appendix (pages 802 to 803). Read the Gaps Log first: some book answers are incomplete or arguable. UPDATED"
+    }
+   ],
+   "words": 40
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "Every difference between this document and the book. The Verification column says how each item was checked."
+    },
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | IPv4 numbers: 7 billion people, about half online, running out \"within a few years\" (p. 467). | Replaced with the real timeline: IANA 2011, APNIC 2011, ARIN 2015, RIPE NCC 2019. UPDATED | Secondary summaries + APNIC report; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | IPsec described as mandatory (p. 468). Review question 8 treats \"Optional IPsec\" as wrong. | Explained that RFC 6434 relaxed it to SHOULD, so question 8 option A is arguable. UPDATED | Secondary + RFC errata page; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Address is \"four times bigger\" (p. 468). | Four times the bits, 2^96 times the addresses. UPDATED | Script |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Typo d6FF.FE73 with a dot in the manual address example (p. 473). | Corrected to a colon. UPDATED | Script |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Unique local \"nearly globally unique\" with no mention that only FD00::/8 is used (p. 471). | Added the fc00::/8 and fd00::/8 split. UPDATED | General knowledge + script; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | 3FFF:FFFF::/32 listed as documentation space (p. 472). | Corrected: documentation is 2001:db8::/32 and 3fff::/20 (RFC 9637). UPDATED | RFC 9637 (official) + script |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | ::192.168.100.1 shown as the mixed IPv4/IPv6 format (p. 472). | Noted IPv4-compatible is deprecated; IPv4-mapped is ::ffff:a.b.c.d. UPDATED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | 6to4 (2002::/16) presented as current (p. 473). | Marked deprecated. UPDATED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | U/L bit explanation \"10 = universal, 00 = local\" (Figure 17.4). | Rewritten clearly: EUI-64 inverts the MAC bit, so 1 = universal. UPDATED | Script (examples) |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | Book EUI-64 examples (pp. 475). | Confirmed all five as correct. Added new practice rows. ADDED | Script |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | default keyword described as advertising a default route (Boulder, p. 490), but correct at p. 476. | Corrected: it learns a default route from an RA. UPDATED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | DHCP Solicit sent \"if a router isn't found\"; autoconfig \"has no DNS\"; IOS DHCPv6 only stateless (p. 477). | Explained M/O flags, UDP 546/547, RDNSS and newer IOS support. UPDATED | Secondary sources; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | Flow Label is 24 bits (p. 478). | Corrected to 20 bits. Header total 40 bytes confirmed. UPDATED | Script |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | ICMPv6 carried \"as an extension header\" and Next Header 58 \"inside the ICMPv6 packet\" (p. 479). | Corrected: upper-layer protocol, Next Header 58 in the IPv6 header. UPDATED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | Table 17.2 omits Packet Too Big, Time Exceeded, Redirect. | Added types 2, 3, 137. ADDED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | Hosts send three DAD messages (p. 482). | Corrected: default is one NS. UPDATED | Vendor docs (secondary); CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | Solicited-node address given as FF02:0:0:0:0:1:FF/104. | Written as FF02::1:FF00:0/104 with worked examples. UPDATED | Script |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | Chapter promises to add OSPFv3 (p. 484) but never does. | Added a short single-area OSPFv3 section and lab. ADDED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | Default route ipv6 route ::/0 gi0/0 on Ethernet with no next hop (p. 484). | Flagged and explained next-hop requirement. UPDATED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 20 | L entry in show ipv6 route called \"the link-local\" (p. 485). | Corrected: L = local /128 route for the router's own address. UPDATED | Reading + general knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 21 | SF output after the anycast warning still shows the ::/128 anycast address (p. 486). | Noted IOS may have accepted it; show how to remove it. UPDATED | Reading only; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 22 | LA configuration typed at an SF prompt (p. 486). | Noted as a typo. UPDATED | Reading |"
+    },
+    {
+     "level": 0,
+     "text": "| 23 | SF has only a route to subnet 11, LA only a default (p. 488). | Added a reachability caveat and why Corp's pings work. ADDED | Reasoning; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 24 | Review question 3 writes \"FF00:/8\"; question 9 writes \"FE00:/12\" (pp. 492 to 493). | Noted as typos; the answers still hold. UPDATED | Reading |"
+    },
+    {
+     "level": 0,
+     "text": "| 25 | Review question 5 answer says the RA prefix must be \"at least 64 bits\" (p. 802). | Used the exam wording: the prefix must be /64 for SLAAC. UPDATED | General knowledge; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 26 | No troubleshooting, no verification list, no labs. | Added a troubleshooting table, one verification table and 7 labs. ADDED | Not run on equipment; CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 27 | Exam objectives: v1.1 only. | Added v2.0 numbers: 1.4, 3.2, 3.3; noted 1.9 removed. ADDED | Cisco v2.0 PDF (official) |"
+    }
+   ],
+   "words": 827
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware or in Packet Tracer. Treat every command output and lab result as unproven until you run it and record what you saw."
+    }
+   ],
+   "words": 33
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Default tool: Cisco Packet Tracer. No lab was run while writing this document, so each expected result is based on how the protocol should work. Simulator output may differ from real equipment. CHECK Use the documentation prefix 2001:db8::/32. Record what you actually saw in the tracker: set Practical lab to Done or Needs redo and note surprises in Evidence / mistakes."
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "Manual IPv6 addressing and static routes",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Build: PC1 to R1 g0/0, R1 g0/1 to R2 g0/1, R2 g0/0 to PC2. Plan: LAN A 2001:db8:acad:1::/64, link 2001:db8:acad:12::/64, LAN B 2001:db8:acad:2::/64."
+    },
+    {
+     "level": 0,
+     "text": "- Configure R1 and R2 as below. Give the PCs static IPv6 addresses (PC1 2001:db8:acad:1::10, PC2 2001:db8:acad:2::10, both /64, gateway the router's ::1)."
+    },
+    {
+     "level": 0,
+     "text": "- Run the verification commands, then ping PC1 to PC2."
+    },
+    {
+     "level": 0,
+     "text": "Commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface g0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 address 2001:db8:acad:1::1/64"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# interface g0/1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 address 2001:db8:acad:12::1/64"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# exit"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:12::2"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# ipv6 unicast-routing"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# interface g0/1"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# ipv6 address 2001:db8:acad:12::2/64"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# interface g0/0"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# ipv6 address 2001:db8:acad:2::1/64"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "R2(config-if)# exit"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# ipv6 route 2001:db8:acad:1::/64 2001:db8:acad:12::1"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ipv6 interface brief"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ipv6 route"
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 unicast-routing enables forwarding. no shutdown brings the interface up."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 address .../64 sets the full address. The routers get a link-local address automatically."
+    },
+    {
+     "level": 0,
+     "text": "- ipv6 route <prefix> <next hop> sends traffic for the far LAN to the other router."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: show ipv6 interface brief lists a link-local (FE80::...) and your global address on each interface. show ipv6 route shows C for each connected /64, L /128 entries for the router's own addresses, and S 2001:DB8:ACAD:2::/64 [1/0] on R1. PC1 pings PC2 successfully. If not, check the return route on R2. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "EUI-64 prediction",
+   "content": [
+    {
+     "level": 0,
+     "text": "- On R1 remove the manual address on g0/0 and use EUI-64 instead."
+    },
+    {
+     "level": 0,
+     "text": "- Before running show, find the MAC of g0/0 with show interfaces g0/0 (the burned-in address) and write down your predicted interface ID by hand."
+    },
+    {
+     "level": 0,
+     "text": "- Compare your prediction with the router's address."
+    },
+    {
+     "level": 0,
+     "text": "Commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface g0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# no ipv6 address 2001:db8:acad:1::1/64"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# ipv6 address 2001:db8:acad:1::/64 eui-64"
+    },
+    {
+     "level": 0,
+     "text": "R1# show interfaces g0/0"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ipv6 interface brief"
+    },
+    {
+     "level": 0,
+     "text": "- no ipv6 address ... removes the manual address so the interface does not hold both."
+    },
+    {
+     "level": 0,
+     "text": "- eui-64 builds the interface ID from the MAC."
+    },
+    {
+     "level": 0,
+     "text": "- show interfaces g0/0 shows the MAC (bia). Use it to predict."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the global address is 2001:DB8:ACAD:1: followed by the EUI-64 of the g0/0 MAC, and the link-local address uses the same interface ID with the FE80:: prefix. If your prediction differs, check that you flipped the 7th bit and inserted FFFE in the middle. Update the PC default gateway if needed. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "Stateless autoconfiguration (SLAAC) on a PC",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Keep R1 g0/0 with a /64 global address and IPv6 routing on. Set PC1 to obtain IPv6 automatically (in Packet Tracer: IP Configuration, IPv6 Automatic)."
+    },
+    {
+     "level": 0,
+     "text": "- Look at the address the PC gets and compare it with the PC's MAC address."
+    },
+    {
+     "level": 0,
+     "text": "- On R1 run show ipv6 interface g0/0."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the PC builds 2001:db8:acad:1:<interface ID> from the RA prefix and its own interface ID, and learns R1's link-local address as its gateway. In Packet Tracer the PC may use EUI-64 from its MAC; real modern hosts often use random interface IDs. Not every Packet Tracer version supports every RA behaviour. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "4",
+   "title": "Floating static route and default route",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Add a second link: R1 g0/2 to R2 g0/2, with 2001:db8:acad:21::1/64 and ::2/64."
+    },
+    {
+     "level": 0,
+     "text": "- On R1 keep the AD-1 route via 12::2 and add a floating static via 21::2 with AD 150. On R2 add a default route via 12::1."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ipv6 route static. Then shutdown R1 g0/1 and run it again. Ping PC2 from PC1 after each step."
+    },
+    {
+     "level": 0,
+     "text": "- Bring g0/1 back with no shutdown and check again."
+    },
+    {
+     "level": 0,
+     "text": "Commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ipv6 route 2001:db8:acad:2::/64 2001:db8:acad:21::2 150"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# ipv6 route ::/0 2001:db8:acad:12::1"
+    },
+    {
+     "level": 0,
+     "text": "R1# show ipv6 route static"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# interface g0/1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-if)# shutdown"
+    },
+    {
+     "level": 0,
+     "text": "- The first command is the floating static route (AD 150, higher than the primary route's AD 1)."
+    },
+    {
+     "level": 0,
+     "text": "- The second command is a default route on R2 (stub network)."
+    },
+    {
+     "level": 0,
+     "text": "- shutdown on the primary link simulates a failure."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: before the failure only the AD-1 route appears (S ... [1/0]). After the failure the AD-150 route appears (S ... [150/0]) and the ping still works. After no shutdown the AD-1 route returns. The return route on R2 needs to reach LAN A through whichever link is up: the default route via 12::1 stops working when g0/1 is down, so for a full test also give R2 a floating default through 21::1. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "5",
+   "title": "Neighbor discovery and solicited-node groups",
+   "content": [
+    {
+     "level": 0,
+     "text": "- On R1 run show ipv6 interface g0/0 and write down the joined groups."
+    },
+    {
+     "level": 0,
+     "text": "- Compute the solicited-node multicast address from the last 24 bits of the global address and compare."
+    },
+    {
+     "level": 0,
+     "text": "- Ping PC1 from R1, then run show ipv6 neighbors."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: Joined group address(es) shows FF02::1, FF02::2 (routing on) and FF02::1:FFxx:xxxx where xx:xxxx are the last 24 bits of the address. After the ping, show ipv6 neighbors lists the PC with its MAC. Output format may differ in Packet Tracer. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "6",
+   "title": "Lab 6 (optional): OSPFv3 instead of static routes",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Remove the static routes from Lab 1. Give R1 router ID 1.1.1.1 and R2 2.2.2.2."
+    },
+    {
+     "level": 0,
+     "text": "- Enable OSPFv3 on g0/0 and g0/1 of both routers in area 0 (interface commands from Section 17.5)."
+    },
+    {
+     "level": 0,
+     "text": "- Verify with show ipv6 ospf neighbor and show ipv6 route ospf, then ping PC1 to PC2."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the neighbor shows state FULL, each router has an O route to the far LAN, and the ping works. Some Packet Tracer versions have limited OSPFv3 support. ADDED CHECK"
+    }
+   ]
+  },
+  {
+   "number": "7",
+   "title": "Paper labs (no equipment)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Part A. EUI-64. Write the modified EUI-64 interface ID for each MAC. Then check below."
+    },
+    {
+     "level": 0,
+     "text": "| MAC | Your answer | Correct answer (script) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 0A:1B:2C:3D:4E:5F |  | 081b:2cff:fe3d:4e5f |"
+    },
+    {
+     "level": 0,
+     "text": "| 7C:E1:C3:00:00:01 |  | 7ee1:c3ff:fe00:0001 (7ee1:c3ff:fe00:1) |"
+    },
+    {
+     "level": 0,
+     "text": "| A4:5E:60:D2:11:90 |  | a65e:60ff:fed2:1190 |"
+    },
+    {
+     "level": 0,
+     "text": "| D8:CB:8A:12:34:56 |  | dacb:8aff:fe12:3456 |"
+    },
+    {
+     "level": 0,
+     "text": "| 1E:00:5C:AA:BB:CC |  | 1c00:5cff:feaa:bbcc |"
+    },
+    {
+     "level": 0,
+     "text": "| B2:3F:00:00:00:09 |  | b03f:00ff:fe00:0009 (b03f:ff:fe00:9) |"
+    },
+    {
+     "level": 0,
+     "text": "Part B. Shorten each address, then check."
+    },
+    {
+     "level": 0,
+     "text": "| Full address | Shortest form (script) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:0DB8:0000:0000:0000:FF00:0042:8329 | 2001:db8::ff00:42:8329 |"
+    },
+    {
+     "level": 0,
+     "text": "| FE80:0000:0000:0000:0202:B3FF:FE1E:8329 | fe80::202:b3ff:fe1e:8329 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:0db8:0001:0000:0000:0000:0000:0001 | 2001:db8:1::1 |"
+    },
+    {
+     "level": 0,
+     "text": "| FF02:0000:0000:0000:0000:0000:0001:0002 | ff02::1:2 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:0db8:0000:0001:0000:0000:0000:0000 | 2001:db8:0:1:: |"
+    },
+    {
+     "level": 0,
+     "text": "Part C. Expand fe80::a:b and 2001:db8:0:1::5."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Answers (script): fe80:0000:0000:0000:0000:0000:000a:000b and 2001:0db8:0000:0001:0000:0000:0000:0005."
+    },
+    {
+     "level": 0,
+     "text": "Part D. Classify each address."
+    },
+    {
+     "level": 0,
+     "text": "| Address | Type (script) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2001:db8:acad:1::1 | Global unicast range (documentation prefix) |"
+    },
+    {
+     "level": 0,
+     "text": "| fe80::1 | Link-local unicast |"
+    },
+    {
+     "level": 0,
+     "text": "| fd00:ab:cd::1 | Unique local |"
+    },
+    {
+     "level": 0,
+     "text": "| ff02::2 | Multicast (all routers) |"
+    },
+    {
+     "level": 0,
+     "text": "| ::1 | Loopback |"
+    },
+    {
+     "level": 0,
+     "text": "| 2a02:6b8::1 | Global unicast |"
+    },
+    {
+     "level": 0,
+     "text": "| fec0::1 | Site-local (deprecated) |"
+    },
+    {
+     "level": 0,
+     "text": "| ff02::1:ffab:cdef | Multicast (solicited-node) |"
+    },
+    {
+     "level": 0,
+     "text": "Part E. Subnetting. How many /64 subnets does a /48 contain? A /56? A /60? What is the next /64 after 2001:db8:acad:ff::/64?"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Answers (script): /48 contains 65,536 /64 subnets, a /56 contains 256, a /60 contains 16. The next /64 is 2001:db8:acad:100::/64 (the subnet field is hex, so ff + 1 = 100). Also: 2001:db8:acad:ffff::1 is inside 2001:db8:acad::/48; 2001:db8:acae::1 is not."
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "Internet Protocol Version 6 (IPv6) — review questions",
+   "questions": [
+    {
+     "source": "Q1. How many bits is an IPv6 address, and how many bits is an IPv4 address?",
+     "sourceNumber": "Q1",
+     "q": "How many bits is an IPv6 address, and how many bits is an IPv4 address?",
+     "options": [],
+     "answer": null,
+     "why": "128 and 32 - The IPv6 space is 2^96 times larger, not four times larger.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Roughly how many IPv6 addresses exist?",
+     "sourceNumber": "Q2",
+     "q": "Roughly how many IPv6 addresses exist?",
+     "options": [],
+     "answer": "A",
+     "why": "bout 3.4 x 10^38 - 2^128, calculated by script.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What replaces broadcast in IPv6?",
+     "sourceNumber": "Q1",
+     "q": "What replaces broadcast in IPv6?",
+     "options": [
+      "Unicast only",
+      "Multicast (and anycast is new)",
+      "ARP",
+      "Nothing replaces it"
+     ],
+     "answer": "B",
+     "why": "There is no broadcast in IPv6.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. How long is the basic IPv6 header?",
+     "sourceNumber": "Q2",
+     "q": "How long is the basic IPv6 header?",
+     "options": [],
+     "answer": null,
+     "why": "40 bytes, fixed - IPv4 is 20 bytes minimum and variable.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Is 2001::12::1234:56ab a legal address?",
+     "sourceNumber": "Q1",
+     "q": "Is 2001::12::1234:56ab a legal address?",
+     "options": [],
+     "answer": null,
+     "why": "No - :: can be used only once.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Shorten fe80:0000:0000:0000:0204:61ff:fe9d:f156.",
+     "sourceNumber": "Q2",
+     "q": "Shorten fe80:0000:0000:0000:0204:61ff:fe9d:f156.",
+     "options": [],
+     "answer": null,
+     "why": "fe80::204:61ff:fe9d:f156 - Drop leading zeros, then compress the one run of zero groups.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. How many hex digits are in each group and how many bits?",
+     "sourceNumber": "Q3",
+     "q": "How many hex digits are in each group and how many bits?",
+     "options": [],
+     "answer": null,
+     "why": "4 digits, 16 bits - Eight groups x 16 bits = 128 bits.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which prefix is global unicast?",
+     "sourceNumber": "Q1",
+     "q": "Which prefix is global unicast?",
+     "options": [
+      "FE80::/10",
+      "FC00::/7",
+      "2000::/3",
+      "FF00::/8"
+     ],
+     "answer": "C",
+     "why": "2000::/3 (addresses starting with 2 or 3).",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Can a router forward a packet whose destination is FE80::1?",
+     "sourceNumber": "Q2",
+     "q": "Can a router forward a packet whose destination is FE80::1?",
+     "options": [],
+     "answer": null,
+     "why": "No - Link-local is never routed off the link.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which is the Layer 3 delivery model of anycast?",
+     "sourceNumber": "Q3",
+     "q": "Which is the Layer 3 delivery model of anycast?",
+     "options": [],
+     "answer": null,
+     "why": "One-to-nearest - Not one-to-many.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What kind of address is fd12:3456:789a::1?",
+     "sourceNumber": "Q4",
+     "q": "What kind of address is fd12:3456:789a::1?",
+     "options": [],
+     "answer": null,
+     "why": "Unique local - It is inside FC00::/7 (script).",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the IPv6 loopback address?",
+     "sourceNumber": "Q1",
+     "q": "What is the IPv6 loopback address?",
+     "options": [],
+     "answer": null,
+     "why": "::1 - There is only one loopback address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which prefix should you use in documentation and labs?",
+     "sourceNumber": "Q2",
+     "q": "Which prefix should you use in documentation and labs?",
+     "options": [],
+     "answer": null,
+     "why": "2001:db8::/32 - Never real prefixes. 3fff::/20 is also reserved.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which command makes a Cisco router forward IPv6 packets?",
+     "sourceNumber": "Q1",
+     "q": "Which command makes a Cisco router forward IPv6 packets?",
+     "options": [],
+     "answer": null,
+     "why": "ipv6 unicast-routing - It is a global configuration command.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which command gives an interface only a link-local address?",
+     "sourceNumber": "Q2",
+     "q": "Which command gives an interface only a link-local address?",
+     "options": [],
+     "answer": null,
+     "why": "ipv6 enable - No global address is configured.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What does eui-64 at the end of ipv6 address do?",
+     "sourceNumber": "Q3",
+     "q": "What does eui-64 at the end of ipv6 address do?",
+     "options": [],
+     "answer": "B",
+     "why": "uilds the interface ID from the MAC address - You give only the prefix.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the EUI-64 interface ID for MAC 00:1A:2B:3C:4D:5E?",
+     "sourceNumber": "Q1",
+     "q": "What is the EUI-64 interface ID for MAC 00:1A:2B:3C:4D:5E?",
+     "options": [],
+     "answer": null,
+     "why": "021a:2bff:fe3c:4d5e - Insert FFFE and flip the 7th bit (00 to 02). Calculated by script.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which ICMPv6 type is a router advertisement?",
+     "sourceNumber": "Q2",
+     "q": "Which ICMPv6 type is a router advertisement?",
+     "options": [
+      "133",
+      "134",
+      "135",
+      "136"
+     ],
+     "answer": "B",
+     "why": "133 is RS, 135 NS, 136 NA.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Which multicast address does a host use for an RS?",
+     "sourceNumber": "Q3",
+     "q": "Which multicast address does a host use for an RS?",
+     "options": [],
+     "answer": null,
+     "why": "FF02::2 - All routers on the link.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. A MAC starts with 0A. What does the interface ID start with?",
+     "sourceNumber": "Q4",
+     "q": "A MAC starts with 0A. What does the interface ID start with?",
+     "options": [],
+     "answer": null,
+     "why": "08 - 0A = 00001010, flip the 7th bit: 00001000 = 08.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which RA flag tells hosts to use stateful DHCPv6?",
+     "sourceNumber": "Q1",
+     "q": "Which RA flag tells hosts to use stateful DHCPv6?",
+     "options": [],
+     "answer": null,
+     "why": "M (managed) - O means other configuration only.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What destination address does a DHCPv6 Solicit use?",
+     "sourceNumber": "Q2",
+     "q": "What destination address does a DHCPv6 Solicit use?",
+     "options": [],
+     "answer": null,
+     "why": "FF02::1:2 - All DHCPv6 relay agents and servers.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the IPv6 equivalent of the IPv4 TTL field?",
+     "sourceNumber": "Q1",
+     "q": "What is the IPv6 equivalent of the IPv4 TTL field?",
+     "options": [],
+     "answer": null,
+     "why": "Hop Limit - Reduced by one at every router.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Who fragments an IPv6 packet?",
+     "sourceNumber": "Q2",
+     "q": "Who fragments an IPv6 packet?",
+     "options": [],
+     "answer": null,
+     "why": "The sending host, never a router - Routers send a Packet Too Big message instead.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which header field was removed completely?",
+     "sourceNumber": "Q3",
+     "q": "Which header field was removed completely?",
+     "options": [
+      "Hop Limit",
+      "Header checksum",
+      "Version",
+      "Source address"
+     ],
+     "answer": "B",
+     "why": "Upper layers and Layer 2 check for errors.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q1. Which Next Header value identifies ICMPv6?",
+     "sourceNumber": "Q1",
+     "q": "Which Next Header value identifies ICMPv6?",
+     "options": [],
+     "answer": null,
+     "why": "58 - 6 is TCP and 17 is UDP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What replaces ARP in IPv6?",
+     "sourceNumber": "Q2",
+     "q": "What replaces ARP in IPv6?",
+     "options": [],
+     "answer": null,
+     "why": "Neighbor discovery (NS and NA) - Carried in ICMPv6.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What is the solicited-node multicast address for a host whose address ends ...:fe18:fc0f?",
+     "sourceNumber": "Q3",
+     "q": "What is the solicited-node multicast address for a host whose address ends ...:fe18:fc0f?",
+     "options": [],
+     "answer": null,
+     "why": "FF02::1:FF18:FC0F - FF02::1:FF plus the last 24 bits.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which message does a router send when a packet is too big for the next link?",
+     "sourceNumber": "Q4",
+     "q": "Which message does a router send when a packet is too big for the next link?",
+     "options": [],
+     "answer": null,
+     "why": "ICMPv6 Packet Too Big (type 2) - The source then lowers its packet size.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which version of OSPF is used for IPv6?",
+     "sourceNumber": "Q1",
+     "q": "Which version of OSPF is used for IPv6?",
+     "options": [],
+     "answer": null,
+     "why": "OSPFv3 - OSPF for IPv4 is OSPFv2.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. How do you enable OSPFv3 on an interface?",
+     "sourceNumber": "Q2",
+     "q": "How do you enable OSPFv3 on an interface?",
+     "options": [],
+     "answer": null,
+     "why": "ipv6 ospf <process> area <area> on the interface - There are no network statements.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is the IPv6 default route?",
+     "sourceNumber": "Q1",
+     "q": "What is the IPv6 default route?",
+     "options": [],
+     "answer": null,
+     "why": "::/0 - The same idea as 0.0.0.0/0.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. What makes a static route floating?",
+     "sourceNumber": "Q2",
+     "q": "What makes a static route floating?",
+     "options": [],
+     "answer": "A",
+     "why": "higher administrative distance than the primary route - It only appears in the routing table if the primary disappears.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. When must you add the exit interface to a static route with a next hop?",
+     "sourceNumber": "Q3",
+     "q": "When must you add the exit interface to a static route with a next hop?",
+     "options": [],
+     "answer": null,
+     "why": "When the next hop is a link-local address - Link-local addresses are only unique per link.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What does an L entry in show ipv6 route mean?",
+     "sourceNumber": "Q1",
+     "q": "What does an L entry in show ipv6 route mean?",
+     "options": [],
+     "answer": "A",
+     "why": "local /128 route for the router's own interface address - C is the connected prefix; L is the router's own address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Why does ipv6 address 2001:db8:3c4d:12::/64 without eui-64 trigger a warning?",
+     "sourceNumber": "Q2",
+     "q": "Why does ipv6 address 2001:db8:3c4d:12::/64 without eui-64 trigger a warning?",
+     "options": [],
+     "answer": null,
+     "why": "The interface ID is all zeros, the subnet-router anycast address - Add eui-64 or a host part.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Should both ends of a router-to-router link use the same /64?",
+     "sourceNumber": "Q3",
+     "q": "Should both ends of a router-to-router link use the same /64?",
+     "options": [],
+     "answer": null,
+     "why": "Yes - They share one subnet, with different interface IDs.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which route is used when both an AD 150 static route and an OSPF route exist for the same prefix?",
+     "sourceNumber": "Q1",
+     "q": "Which route is used when both an AD 150 static route and an OSPF route exist for the same prefix?",
+     "options": [],
+     "answer": null,
+     "why": "The OSPF route - OSPF AD 110 is lower than 150.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Why do the book's pings from Corp succeed even though SF and LA have few routes?",
+     "sourceNumber": "Q2",
+     "q": "Why do the book's pings from Corp succeed even though SF and LA have few routes?",
+     "options": [],
+     "answer": null,
+     "why": "The ping source is the directly connected outgoing interface address - The far router has a connected route back to it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. How many bits is an IPv6 address, and how is it written?",
+     "sourceNumber": "Q1",
+     "q": "How many bits is an IPv6 address, and how is it written?",
+     "options": [],
+     "answer": null,
+     "why": "128 bits, as eight groups of four hex digits separated by colons - Each group is 16 bits.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Shorten 2001:0db8:0000:0000:0012:0000:0000:0001.",
+     "sourceNumber": "Q2",
+     "q": "Shorten 2001:0db8:0000:0000:0012:0000:0000:0001.",
+     "options": [],
+     "answer": null,
+     "why": "2001:db8::12:0:0:1 - Compress the first of two equal-length runs of zero groups. (script)",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which address is valid?",
+     "sourceNumber": "Q3",
+     "q": "Which address is valid?",
+     "options": [
+      "2001:db8::1::5",
+      "2001:db8:0:1::5",
+      "2001:db8:0:1:5",
+      "2001:db8:g::1"
+     ],
+     "answer": "B",
+     "why": "A has two ::, C has too few groups, D has an invalid hex digit g.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q4. What is the modified EUI-64 interface ID of MAC 00:1A:2B:3C:4D:5E?",
+     "sourceNumber": "Q4",
+     "q": "What is the modified EUI-64 interface ID of MAC 00:1A:2B:3C:4D:5E?",
+     "options": [],
+     "answer": null,
+     "why": "021a:2bff:fe3c:4d5e - Insert FFFE and flip the 7th bit. (script)",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. What is the EUI-64 interface ID of MAC FC:99:47:75:CE:E0?",
+     "sourceNumber": "Q5",
+     "q": "What is the EUI-64 interface ID of MAC FC:99:47:75:CE:E0?",
+     "options": [],
+     "answer": null,
+     "why": "fe99:47ff:fe75:cee0 - fc = 11111100 becomes 11111110 = fe. (script)",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. A MAC starts with 3C. What does its EUI-64 interface ID start with?",
+     "sourceNumber": "Q6",
+     "q": "A MAC starts with 3C. What does its EUI-64 interface ID start with?",
+     "options": [
+      "3C",
+      "3D",
+      "3E",
+      "3F"
+     ],
+     "answer": "C",
+     "why": "3C = 00111100, flip the 7th bit: 00111110 = 3E.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q7. Which prefix is link-local unicast?",
+     "sourceNumber": "Q7",
+     "q": "Which prefix is link-local unicast?",
+     "options": [
+      "FC00::/7",
+      "FE80::/10",
+      "FF00::/8",
+      "2000::/3"
+     ],
+     "answer": "B",
+     "why": "FE80::/10 covers fe80:: to febf::.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q8. Which prefix range does 2000::/3 cover?",
+     "sourceNumber": "Q8",
+     "q": "Which prefix range does 2000::/3 cover?",
+     "options": [],
+     "answer": null,
+     "why": "2000:: to 3fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff - Addresses beginning with 2 or 3. (script)",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. What kind of address is fd12:3456:789a::1?",
+     "sourceNumber": "Q9",
+     "q": "What kind of address is fd12:3456:789a::1?",
+     "options": [],
+     "answer": null,
+     "why": "Unique local - It lies inside FC00::/7. (script)",
+     "kind": "open"
+    },
+    {
+     "source": "Q10. What is the IPv6 loopback address and what is the unspecified address?",
+     "sourceNumber": "Q10",
+     "q": "What is the IPv6 loopback address and what is the unspecified address?",
+     "options": [],
+     "answer": null,
+     "why": "::1 and :: - Equivalent to 127.0.0.1 and 0.0.0.0.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. Name the three IPv6 communication types.",
+     "sourceNumber": "Q11",
+     "q": "Name the three IPv6 communication types.",
+     "options": [],
+     "answer": null,
+     "why": "Unicast, multicast, anycast - There is no broadcast.",
+     "kind": "open"
+    },
+    {
+     "source": "Q12. An anycast packet is delivered to...",
+     "sourceNumber": "Q12",
+     "q": "An anycast packet is delivered to...",
+     "options": [
+      "Every device with the address",
+      "The nearest device with the address",
+      "One random device",
+      "Only the router"
+     ],
+     "answer": "B",
+     "why": "One-to-nearest.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q13. Which multicast address do hosts use for a router solicitation, and which ICMPv6 type is it?",
+     "sourceNumber": "Q13",
+     "q": "Which multicast address do hosts use for a router solicitation, and which ICMPv6 type is it?",
+     "options": [],
+     "answer": null,
+     "why": "FF02::2, type 133 - All routers on the link.",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. Which multicast address does a router advertisement go to, and which type is it?",
+     "sourceNumber": "Q14",
+     "q": "Which multicast address does a router advertisement go to, and which type is it?",
+     "options": [],
+     "answer": null,
+     "why": "FF02::1, type 134 - All nodes on the link.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. Which prefix length must an advertised SLAAC prefix have?",
+     "sourceNumber": "Q15",
+     "q": "Which prefix length must an advertised SLAAC prefix have?",
+     "options": [],
+     "answer": null,
+     "why": "/64 - The interface ID is 64 bits.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. RA flags are A=1, M=0, O=1. Which method is this?",
+     "sourceNumber": "Q16",
+     "q": "RA flags are A=1, M=0, O=1. Which method is this?",
+     "options": [],
+     "answer": null,
+     "why": "SLAAC for the address and stateless DHCPv6 for other settings (such as DNS) - M=1 would mean stateful DHCPv6.",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. What is the solicited-node multicast address for 2001:db8:acad:1:21a:2bff:fe3c:4d5e?",
+     "sourceNumber": "Q17",
+     "q": "What is the solicited-node multicast address for 2001:db8:acad:1:21a:2bff:fe3c:4d5e?",
+     "options": [],
+     "answer": null,
+     "why": "ff02::1:ff3c:4d5e - FF02::1:FF plus the last 24 bits. The Ethernet MAC is 33:33:ff:3c:4d:5e. (script)",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. How long is the IPv6 basic header and how large is the Flow Label field?",
+     "sourceNumber": "Q18",
+     "q": "How long is the IPv6 basic header and how large is the Flow Label field?",
+     "options": [],
+     "answer": null,
+     "why": "40 bytes; 20 bits - The book says 24 bits, which is wrong.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. Which IPv6 header field replaces the IPv4 TTL?",
+     "sourceNumber": "Q19",
+     "q": "Which IPv6 header field replaces the IPv4 TTL?",
+     "options": [],
+     "answer": null,
+     "why": "Hop Limit - It is reduced by 1 at every router.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. Which Next Header value identifies ICMPv6?",
+     "sourceNumber": "Q20",
+     "q": "Which Next Header value identifies ICMPv6?",
+     "options": [
+      "6",
+      "17",
+      "58",
+      "89"
+     ],
+     "answer": "C",
+     "why": "6 = TCP, 17 = UDP, 58 = ICMPv6.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q21. What replaces ARP in IPv6?",
+     "sourceNumber": "Q21",
+     "q": "What replaces ARP in IPv6?",
+     "options": [],
+     "answer": null,
+     "why": "Neighbor discovery using ICMPv6 NS and NA - Types 135 and 136.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. How many DAD neighbor solicitations does a host normally send by default?",
+     "sourceNumber": "Q22",
+     "q": "How many DAD neighbor solicitations does a host normally send by default?",
+     "options": [],
+     "answer": null,
+     "why": "One - The book says three, which is out of date. CHECK default is configurable.",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. What command lets a Cisco router forward IPv6 packets?",
+     "sourceNumber": "Q23",
+     "q": "What command lets a Cisco router forward IPv6 packets?",
+     "options": [],
+     "answer": null,
+     "why": "ipv6 unicast-routing - Global configuration.",
+     "kind": "open"
+    },
+    {
+     "source": "Q24. You type ipv6 address 2001:db8:acad:5::/64 on a router interface and get a subnet router anycast warning. Why?",
+     "sourceNumber": "Q24",
+     "q": "You type ipv6 address 2001:db8:acad:5::/64 on a router interface and get a subnet router anycast warning. Why?",
+     "options": [],
+     "answer": null,
+     "why": "The interface ID is all zeros - Use eui-64 or add a host part.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. What does the L entry mean in show ipv6 route?",
+     "sourceNumber": "Q25",
+     "q": "What does the L entry mean in show ipv6 route?",
+     "options": [],
+     "answer": "A",
+     "why": "local /128 route for the router's own address - The book wrongly calls it the link-local address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q26. Write the IPv6 default route.",
+     "sourceNumber": "Q26",
+     "q": "Write the IPv6 default route.",
+     "options": [],
+     "answer": null,
+     "why": "ipv6 route ::/0 <next hop or interface> - It matches everything.",
+     "kind": "open"
+    },
+    {
+     "source": "Q27. What makes a static route a floating static route?",
+     "sourceNumber": "Q27",
+     "q": "What makes a static route a floating static route?",
+     "options": [],
+     "answer": "A",
+     "why": "higher administrative distance than another route to the same prefix - For example AD 150 against OSPF 110.",
+     "kind": "open"
+    },
+    {
+     "source": "Q28. Which three migration methods move a network from IPv4 to IPv6?",
+     "sourceNumber": "Q28",
+     "q": "Which three migration methods move a network from IPv4 to IPv6?",
+     "options": [],
+     "answer": "D",
+     "why": "ual stack, tunnelling, translation - Dual stack is the most common.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 How many bits is an IPv6 address, and how many bits is an IPv4 address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 128 and 32 - The IPv6 space is 2^96 times larger, not four times larger."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Roughly how many IPv6 addresses exist?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - bout 3.4 x 10^38 - 2^128, calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What replaces broadcast in IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "A. Unicast only"
+    },
+    {
+     "level": 0,
+     "text": "B. Multicast (and anycast is new)"
+    },
+    {
+     "level": 0,
+     "text": "C. ARP"
+    },
+    {
+     "level": 0,
+     "text": "D. Nothing replaces it"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - There is no broadcast in IPv6."
+    },
+    {
+     "level": 0,
+     "text": "Q2 How long is the basic IPv6 header?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 40 bytes, fixed - IPv4 is 20 bytes minimum and variable."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Is 2001::12::1234:56ab a legal address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - :: can be used only once."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Shorten fe80:0000:0000:0000:0204:61ff:fe9d:f156."
+    },
+    {
+     "level": 0,
+     "text": "Answer: fe80::204:61ff:fe9d:f156 - Drop leading zeros, then compress the one run of zero groups."
+    },
+    {
+     "level": 0,
+     "text": "Q3 How many hex digits are in each group and how many bits?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 4 digits, 16 bits - Eight groups x 16 bits = 128 bits."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which prefix is global unicast?"
+    },
+    {
+     "level": 0,
+     "text": "A. FE80::/10"
+    },
+    {
+     "level": 0,
+     "text": "B. FC00::/7"
+    },
+    {
+     "level": 0,
+     "text": "C. 2000::/3"
+    },
+    {
+     "level": 0,
+     "text": "D. FF00::/8"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 2000::/3 (addresses starting with 2 or 3)."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Can a router forward a packet whose destination is FE80::1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - Link-local is never routed off the link."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which is the Layer 3 delivery model of anycast?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: One-to-nearest - Not one-to-many."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What kind of address is fd12:3456:789a::1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Unique local - It is inside FC00::/7 (script)."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the IPv6 loopback address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ::1 - There is only one loopback address."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which prefix should you use in documentation and labs?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 2001:db8::/32 - Never real prefixes. 3fff::/20 is also reserved."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which command makes a Cisco router forward IPv6 packets?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 unicast-routing - It is a global configuration command."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which command gives an interface only a link-local address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 enable - No global address is configured."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What does eui-64 at the end of ipv6 address do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - uilds the interface ID from the MAC address - You give only the prefix."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the EUI-64 interface ID for MAC 00:1A:2B:3C:4D:5E?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 021a:2bff:fe3c:4d5e - Insert FFFE and flip the 7th bit (00 to 02). Calculated by script."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which ICMPv6 type is a router advertisement?"
+    },
+    {
+     "level": 0,
+     "text": "A. 133"
+    },
+    {
+     "level": 0,
+     "text": "B. 134"
+    },
+    {
+     "level": 0,
+     "text": "C. 135"
+    },
+    {
+     "level": 0,
+     "text": "D. 136"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 133 is RS, 135 NS, 136 NA."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which multicast address does a host use for an RS?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::2 - All routers on the link."
+    },
+    {
+     "level": 0,
+     "text": "Q4 A MAC starts with 0A. What does the interface ID start with?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 08 - 0A = 00001010, flip the 7th bit: 00001000 = 08."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which RA flag tells hosts to use stateful DHCPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: M (managed) - O means other configuration only."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What destination address does a DHCPv6 Solicit use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::1:2 - All DHCPv6 relay agents and servers."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the IPv6 equivalent of the IPv4 TTL field?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Hop Limit - Reduced by one at every router."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Who fragments an IPv6 packet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The sending host, never a router - Routers send a Packet Too Big message instead."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which header field was removed completely?"
+    },
+    {
+     "level": 0,
+     "text": "A. Hop Limit"
+    },
+    {
+     "level": 0,
+     "text": "B. Header checksum"
+    },
+    {
+     "level": 0,
+     "text": "C. Version"
+    },
+    {
+     "level": 0,
+     "text": "D. Source address"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Upper layers and Layer 2 check for errors."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which Next Header value identifies ICMPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 58 - 6 is TCP and 17 is UDP."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What replaces ARP in IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Neighbor discovery (NS and NA) - Carried in ICMPv6."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What is the solicited-node multicast address for a host whose address ends ...:fe18:fc0f?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::1:FF18:FC0F - FF02::1:FF plus the last 24 bits."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which message does a router send when a packet is too big for the next link?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ICMPv6 Packet Too Big (type 2) - The source then lowers its packet size."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which version of OSPF is used for IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: OSPFv3 - OSPF for IPv4 is OSPFv2."
+    },
+    {
+     "level": 0,
+     "text": "Q2 How do you enable OSPFv3 on an interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 ospf <process> area <area> on the interface - There are no network statements."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is the IPv6 default route?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ::/0 - The same idea as 0.0.0.0/0."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What makes a static route floating?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - higher administrative distance than the primary route - It only appears in the routing table if the primary disappears."
+    },
+    {
+     "level": 0,
+     "text": "Q3 When must you add the exit interface to a static route with a next hop?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: When the next hop is a link-local address - Link-local addresses are only unique per link."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What does an L entry in show ipv6 route mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - local /128 route for the router's own interface address - C is the connected prefix; L is the router's own address."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why does ipv6 address 2001:db8:3c4d:12::/64 without eui-64 trigger a warning?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The interface ID is all zeros, the subnet-router anycast address - Add eui-64 or a host part."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Should both ends of a router-to-router link use the same /64?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Yes - They share one subnet, with different interface IDs."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which route is used when both an AD 150 static route and an OSPF route exist for the same prefix?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The OSPF route - OSPF AD 110 is lower than 150."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why do the book's pings from Corp succeed even though SF and LA have few routes?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The ping source is the directly connected outgoing interface address - The far router has a connected route back to it."
+    },
+    {
+     "level": 0,
+     "text": "Q1 How many bits is an IPv6 address, and how is it written?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 128 bits, as eight groups of four hex digits separated by colons - Each group is 16 bits."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Shorten 2001:0db8:0000:0000:0012:0000:0000:0001."
+    },
+    {
+     "level": 0,
+     "text": "Answer: 2001:db8::12:0:0:1 - Compress the first of two equal-length runs of zero groups. (script)"
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which address is valid?"
+    },
+    {
+     "level": 0,
+     "text": "A. 2001:db8::1::5"
+    },
+    {
+     "level": 0,
+     "text": "B. 2001:db8:0:1::5"
+    },
+    {
+     "level": 0,
+     "text": "C. 2001:db8:0:1:5"
+    },
+    {
+     "level": 0,
+     "text": "D. 2001:db8:g::1"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - A has two ::, C has too few groups, D has an invalid hex digit g."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What is the modified EUI-64 interface ID of MAC 00:1A:2B:3C:4D:5E?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 021a:2bff:fe3c:4d5e - Insert FFFE and flip the 7th bit. (script)"
+    },
+    {
+     "level": 0,
+     "text": "Q5 What is the EUI-64 interface ID of MAC FC:99:47:75:CE:E0?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: fe99:47ff:fe75:cee0 - fc = 11111100 becomes 11111110 = fe. (script)"
+    },
+    {
+     "level": 0,
+     "text": "Q6 A MAC starts with 3C. What does its EUI-64 interface ID start with?"
+    },
+    {
+     "level": 0,
+     "text": "A. 3C"
+    },
+    {
+     "level": 0,
+     "text": "B. 3D"
+    },
+    {
+     "level": 0,
+     "text": "C. 3E"
+    },
+    {
+     "level": 0,
+     "text": "D. 3F"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 3C = 00111100, flip the 7th bit: 00111110 = 3E."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Which prefix is link-local unicast?"
+    },
+    {
+     "level": 0,
+     "text": "A. FC00::/7"
+    },
+    {
+     "level": 0,
+     "text": "B. FE80::/10"
+    },
+    {
+     "level": 0,
+     "text": "C. FF00::/8"
+    },
+    {
+     "level": 0,
+     "text": "D. 2000::/3"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - FE80::/10 covers fe80:: to febf::."
+    },
+    {
+     "level": 0,
+     "text": "Q8 Which prefix range does 2000::/3 cover?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 2000:: to 3fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff - Addresses beginning with 2 or 3. (script)"
+    },
+    {
+     "level": 0,
+     "text": "Q9 What kind of address is fd12:3456:789a::1?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Unique local - It lies inside FC00::/7. (script)"
+    },
+    {
+     "level": 0,
+     "text": "Q10 What is the IPv6 loopback address and what is the unspecified address?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ::1 and :: - Equivalent to 127.0.0.1 and 0.0.0.0."
+    },
+    {
+     "level": 0,
+     "text": "Q11 Name the three IPv6 communication types."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Unicast, multicast, anycast - There is no broadcast."
+    },
+    {
+     "level": 0,
+     "text": "Q12 An anycast packet is delivered to..."
+    },
+    {
+     "level": 0,
+     "text": "A. Every device with the address"
+    },
+    {
+     "level": 0,
+     "text": "B. The nearest device with the address"
+    },
+    {
+     "level": 0,
+     "text": "C. One random device"
+    },
+    {
+     "level": 0,
+     "text": "D. Only the router"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - One-to-nearest."
+    },
+    {
+     "level": 0,
+     "text": "Q13 Which multicast address do hosts use for a router solicitation, and which ICMPv6 type is it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::2, type 133 - All routers on the link."
+    },
+    {
+     "level": 0,
+     "text": "Q14 Which multicast address does a router advertisement go to, and which type is it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: FF02::1, type 134 - All nodes on the link."
+    },
+    {
+     "level": 0,
+     "text": "Q15 Which prefix length must an advertised SLAAC prefix have?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: /64 - The interface ID is 64 bits."
+    },
+    {
+     "level": 0,
+     "text": "Q16 RA flags are A=1, M=0, O=1. Which method is this?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SLAAC for the address and stateless DHCPv6 for other settings (such as DNS) - M=1 would mean stateful DHCPv6."
+    },
+    {
+     "level": 0,
+     "text": "Q17 What is the solicited-node multicast address for 2001:db8:acad:1:21a:2bff:fe3c:4d5e?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ff02::1:ff3c:4d5e - FF02::1:FF plus the last 24 bits. The Ethernet MAC is 33:33:ff:3c:4d:5e. (script)"
+    },
+    {
+     "level": 0,
+     "text": "Q18 How long is the IPv6 basic header and how large is the Flow Label field?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 40 bytes; 20 bits - The book says 24 bits, which is wrong."
+    },
+    {
+     "level": 0,
+     "text": "Q19 Which IPv6 header field replaces the IPv4 TTL?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Hop Limit - It is reduced by 1 at every router."
+    },
+    {
+     "level": 0,
+     "text": "Q20 Which Next Header value identifies ICMPv6?"
+    },
+    {
+     "level": 0,
+     "text": "A. 6"
+    },
+    {
+     "level": 0,
+     "text": "B. 17"
+    },
+    {
+     "level": 0,
+     "text": "C. 58"
+    },
+    {
+     "level": 0,
+     "text": "D. 89"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - 6 = TCP, 17 = UDP, 58 = ICMPv6."
+    },
+    {
+     "level": 0,
+     "text": "Q21 What replaces ARP in IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Neighbor discovery using ICMPv6 NS and NA - Types 135 and 136."
+    },
+    {
+     "level": 0,
+     "text": "Q22 How many DAD neighbor solicitations does a host normally send by default?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: One - The book says three, which is out of date. CHECK default is configurable."
+    },
+    {
+     "level": 0,
+     "text": "Q23 What command lets a Cisco router forward IPv6 packets?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 unicast-routing - Global configuration."
+    },
+    {
+     "level": 0,
+     "text": "Q24 You type ipv6 address 2001:db8:acad:5::/64 on a router interface and get a subnet router anycast warning. Why?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The interface ID is all zeros - Use eui-64 or add a host part."
+    },
+    {
+     "level": 0,
+     "text": "Q25 What does the L entry mean in show ipv6 route?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - local /128 route for the router's own address - The book wrongly calls it the link-local address."
+    },
+    {
+     "level": 0,
+     "text": "Q26 Write the IPv6 default route."
+    },
+    {
+     "level": 0,
+     "text": "Answer: ipv6 route ::/0 <next hop or interface> - It matches everything."
+    },
+    {
+     "level": 0,
+     "text": "Q27 What makes a static route a floating static route?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - higher administrative distance than another route to the same prefix - For example AD 150 against OSPF 110."
+    },
+    {
+     "level": 0,
+     "text": "Q28 Which three migration methods move a network from IPv4 to IPv6?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - ual stack, tunnelling, translation - Dual stack is the most common."
+    }
+   ],
+   "multipleChoice": 9,
+   "open": 58
+  }
+ ],
+ "generatedFrom": "CC17.docx",
+ "totalWords": 12669,
+ "wordBreakdown": {
+  "sections": 9261,
+  "labs": 1191,
+  "quizzes": 1402,
+  "currency": 624,
+  "sources": 191
+ },
+ "currency": [
+  {
+   "severity": "high",
+   "title": "Gap 1",
+   "found": "IPv4 numbers: 7 billion people, about half online, running out \"within a few years\" (p. 467).",
+   "current": "Replaced with the real timeline: IANA 2011, APNIC 2011, ARIN 2015, RIPE NCC 2019. UPDATED",
+   "action": "",
+   "source": "Secondary summaries + APNIC report; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "IPsec described as mandatory (p. 468). Review question 8 treats \"Optional IPsec\" as wrong.",
+   "current": "Explained that RFC 6434 relaxed it to SHOULD, so question 8 option A is arguable. UPDATED",
+   "action": "",
+   "source": "Secondary + RFC errata page; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "Address is \"four times bigger\" (p. 468).",
+   "current": "Four times the bits, 2^96 times the addresses. UPDATED",
+   "action": "",
+   "source": "Script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "Typo d6FF.FE73 with a dot in the manual address example (p. 473).",
+   "current": "Corrected to a colon. UPDATED",
+   "action": "",
+   "source": "Script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "Unique local \"nearly globally unique\" with no mention that only FD00::/8 is used (p. 471).",
+   "current": "Added the fc00::/8 and fd00::/8 split. UPDATED",
+   "action": "",
+   "source": "General knowledge + script; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "3FFF:FFFF::/32 listed as documentation space (p. 472).",
+   "current": "Corrected: documentation is 2001:db8::/32 and 3fff::/20 (RFC 9637). UPDATED",
+   "action": "",
+   "source": "RFC 9637 (official) + script",
+   "verified": ""
+  },
+  {
+   "severity": "high",
+   "title": "Gap 7",
+   "found": "::192.168.100.1 shown as the mixed IPv4/IPv6 format (p. 472).",
+   "current": "Noted IPv4-compatible is deprecated; IPv4-mapped is ::ffff:a.b.c.d. UPDATED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "high",
+   "title": "Gap 8",
+   "found": "6to4 (2002::/16) presented as current (p. 473).",
+   "current": "Marked deprecated. UPDATED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "U/L bit explanation \"10 = universal, 00 = local\" (Figure 17.4).",
+   "current": "Rewritten clearly: EUI-64 inverts the MAC bit, so 1 = universal. UPDATED",
+   "action": "",
+   "source": "Script (examples)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "Book EUI-64 examples (pp. 475).",
+   "current": "Confirmed all five as correct. Added new practice rows. ADDED",
+   "action": "",
+   "source": "Script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "default keyword described as advertising a default route (Boulder, p. 490), but correct at p. 476.",
+   "current": "Corrected: it learns a default route from an RA. UPDATED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "DHCP Solicit sent \"if a router isn't found\"; autoconfig \"has no DNS\"; IOS DHCPv6 only stateless (p. 477).",
+   "current": "Explained M/O flags, UDP 546/547, RDNSS and newer IOS support. UPDATED",
+   "action": "",
+   "source": "Secondary sources; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "Flow Label is 24 bits (p. 478).",
+   "current": "Corrected to 20 bits. Header total 40 bytes confirmed. UPDATED",
+   "action": "",
+   "source": "Script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "ICMPv6 carried \"as an extension header\" and Next Header 58 \"inside the ICMPv6 packet\" (p. 479).",
+   "current": "Corrected: upper-layer protocol, Next Header 58 in the IPv6 header. UPDATED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "Table 17.2 omits Packet Too Big, Time Exceeded, Redirect.",
+   "current": "Added types 2, 3, 137. ADDED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "Hosts send three DAD messages (p. 482).",
+   "current": "Corrected: default is one NS. UPDATED",
+   "action": "",
+   "source": "Vendor docs (secondary); CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "Solicited-node address given as FF02:0:0:0:0:1:FF/104.",
+   "current": "Written as FF02::1:FF00:0/104 with worked examples. UPDATED",
+   "action": "",
+   "source": "Script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "Chapter promises to add OSPFv3 (p. 484) but never does.",
+   "current": "Added a short single-area OSPFv3 section and lab. ADDED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "Default route ipv6 route ::/0 gi0/0 on Ethernet with no next hop (p. 484).",
+   "current": "Flagged and explained next-hop requirement. UPDATED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 20",
+   "found": "L entry in show ipv6 route called \"the link-local\" (p. 485).",
+   "current": "Corrected: L = local /128 route for the router's own address. UPDATED",
+   "action": "",
+   "source": "Reading + general knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 21",
+   "found": "SF output after the anycast warning still shows the ::/128 anycast address (p. 486).",
+   "current": "Noted IOS may have accepted it; show how to remove it. UPDATED",
+   "action": "",
+   "source": "Reading only; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 22",
+   "found": "LA configuration typed at an SF prompt (p. 486).",
+   "current": "Noted as a typo. UPDATED",
+   "action": "",
+   "source": "Reading",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 23",
+   "found": "SF has only a route to subnet 11, LA only a default (p. 488).",
+   "current": "Added a reachability caveat and why Corp's pings work. ADDED",
+   "action": "",
+   "source": "Reasoning; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 24",
+   "found": "Review question 3 writes \"FF00:/8\"; question 9 writes \"FE00:/12\" (pp. 492 to 493).",
+   "current": "Noted as typos; the answers still hold. UPDATED",
+   "action": "",
+   "source": "Reading",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 25",
+   "found": "Review question 5 answer says the RA prefix must be \"at least 64 bits\" (p. 802).",
+   "current": "Used the exam wording: the prefix must be /64 for SLAAC. UPDATED",
+   "action": "",
+   "source": "General knowledge; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 26",
+   "found": "No troubleshooting, no verification list, no labs.",
+   "current": "Added a troubleshooting table, one verification table and 7 labs. ADDED",
+   "action": "",
+   "source": "Not run on equipment; CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 27",
+   "found": "Exam objectives: v1.1 only.",
+   "current": "Added v2.0 numbers: 1.4, 3.2, 3.3; noted 1.9 removed. ADDED",
+   "action": "",
+   "source": "Cisco v2.0 PDF (official)",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Lammle, CCNA Certification Study Guide Vol. 2 (uploaded PDF)",
+   "usedFor": "All BOOK content, review answers",
+   "status": "Primary (the book itself)"
+  },
+  {
+   "source": "Cisco 200-301 v2.0 exam topics PDF (learningcontent.cisco.com)",
+   "usedFor": "v2.0 objectives 1.4, 3.2, 3.3, and removal of the IPv6 address types objective",
+   "status": "Official, read in full"
+  },
+  {
+   "source": "Book chapter opener (objectives 1.8, 1.9, 3.3)",
+   "usedFor": "v1.1 objective wording",
+   "status": "Secondary for v1.1; Cisco's v1.1 PDF not opened CHECK"
+  },
+  {
+   "source": "RFC 9637 (rfc-editor.org, datatracker.ietf.org)",
+   "usedFor": "3fff::/20 documentation prefix",
+   "status": "Official IETF text"
+  },
+  {
+   "source": "RFC errata page for RFC 4294; summaries of RFC 6434",
+   "usedFor": "IPsec no longer mandatory in IPv6",
+   "status": "Official (errata) + secondary summary CHECK"
+  },
+  {
+   "source": "Larus, Infoblox, APNIC report, ipv4center, worldip.io",
+   "usedFor": "IPv4 exhaustion dates",
+   "status": "Secondary / APNIC (registry data)"
+  },
+  {
+   "source": "ipspace.net, NANOG archive, ipcisco, blueally",
+   "usedFor": "RA flags M, O, A; Cisco ipv6 nd commands",
+   "status": "Secondary CHECK"
+  },
+  {
+   "source": "Extreme Networks, Avaya documentation",
+   "usedFor": "Default DAD transmissions (1) on other platforms",
+   "status": "Secondary (other vendors); Cisco's page not opened CHECK"
+  },
+  {
+   "source": "Python script verify_ch17.py and paper17.py (own work)",
+   "usedFor": "EUI-64, shortening, expansion, address types, solicited-node, sizes, header bits, paper-lab answers",
+   "status": "Calculated and compared with the manual method"
+  },
+  {
+   "source": "General knowledge",
+   "usedFor": "ULA FD00::/8 use, link-local next hops, floating static behaviour, DHCPv6 ports and messages, OSPFv3 commands, multicast addresses, ICMPv6 types",
+   "status": "Not verified CHECK"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-3.2"
+  }
+ ],
+ "questionCount": 67,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: one-page revision sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A (pre-check answers)",
+  "Sources and Verification Status"
+ ]
+}

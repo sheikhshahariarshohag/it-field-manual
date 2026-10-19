@@ -47,7 +47,7 @@ async function loadCorpus() {
     // converted RHEL service profiles, and the networking / Windows lessons.
     lessons: ["lessons/index", "lessons/services", "lessons/networking", "lessons/windows"],
     scenarios: ["scenarios/index"],
-    quizzes: ["quizzes/index"],
+    quizzes: ["quizzes/index", "quizzes/ccna"],
     projects: ["projects/index"],
   };
   const out = { commands: [], lessons: [], scenarios: [], quizzes: [], projects: [] };
@@ -125,7 +125,7 @@ function navLink(label, routeStr, opts = {}) {
  */
 function buildNav() {
   const st = search.searchStats();
-  const kmSessions = corpus && corpus.km ? corpus.km.totalSessions : 146;
+  const kmSessions = corpus && corpus.km ? corpus.km.totalSessions : 0;
   const studyUnits = corpus && corpus.study
     ? corpus.study.books.reduce((a, b) => a + (b.units || []).length, 0)
     : 39;
@@ -182,7 +182,7 @@ function buildNav() {
  * never started. A bar that cannot be wrong is worth more than a smooth one.
  *
  * WHY THERE IS NO BAR EVERYWHERE
- * Commands, lessons, scenarios, quizzes and all 146 Knowledge Map sessions are
+ * Commands, lessons, scenarios, quizzes and every Knowledge Map session are
  * not tracked at all. There is no honest fraction to draw for them, so they get
  * no bar rather than a decorative one.
  *

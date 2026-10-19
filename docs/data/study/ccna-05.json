@@ -1,0 +1,3430 @@
+{
+ "id": "ccna-05",
+ "n": 5,
+ "sourceNumber": "CC05",
+ "kind": "chapter",
+ "title": "IP Routing",
+ "display": "Chapter 5: IP Routing",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 8137,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 5"
+    },
+    {
+     "level": 0,
+     "text": "IP Routing"
+    },
+    {
+     "level": 0,
+     "text": "Personalised study document built from Todd Lammle, CCNA Certification Study Guide, Volume 2 (Exam 200-301, 2020), book pages 117-161. Section numbers (5.1, 5.2.1 ...) match the rows in your Notion tracker CCNA Knowledge Tracker."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Details |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 117-161 (review questions at the end, answers in the Appendix) |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 5 and sections 5.1 to 5.6.2 (17 rows, Seq 45-61). All start as Not assessed. |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | Two sessions of about 2 hours (a suggestion, not a measured need). Session A: pre-check, 5.1-5.2 (routing basics and the routing process), labs 5.1 and 5.7. Session B: 5.3-5.6 (configuration, static, default, RIP), labs 5.2-5.6, review questions. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | v1.1 (retires 2 Feb 2027): the book maps this chapter to 3.1 (routing table components), 3.2 (forwarding decision), 3.3 (IPv4 and IPv6 static routing, including default, network, host and floating static), 4.3 (DHCP and DNS) and 4.6 (DHCP client and relay). v2.0 (from 3 Feb 2027): 3.1 interpret a routing table, 3.2 troubleshoot IPv4 and IPv6 static routing, 1.7 troubleshoot DHCPv4 client, server and relay, 2.4 ping, extended ping, trace route. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Do the pre-check first. Nothing here assumes you know or do not know a topic. |"
+    },
+    {
+     "level": 3,
+     "text": "Tags used in this document"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Content from the Lammle chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is out of date or unclear. The note says what changed. Nothing was replaced silently. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material not in this chapter that matters for the exam or real work. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified on real equipment or in an official source in this session. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives (from the book): interpret the components of a routing table (code, prefix, mask, next hop, administrative distance, metric, gateway of last resort); describe how a router makes a forwarding decision (longest match, administrative distance, metric); configure and verify static, default and floating static routes; configure a router as a DHCP server and as a DHCP relay; configure RIPv2 as a first look at dynamic routing."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. ADDED All addresses and longest-match examples in this document were checked by script. The administrative distance values were checked against Cisco's own AD table. Commands and outputs were not run on real equipment."
+    },
+    {
+     "level": 3,
+     "text": "Where this chapter fits in the exam"
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 (book map) | v2.0 outline (Cisco PDF) | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.1 Routing basics, longest match | 3.1, 3.2 | 3.1 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.2 The IP routing process | 3.2 (foundation) | 2.4, 3.1 (foundation) | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.3 Configuring IP routing, DHCP server and relay | 4.3, 4.6 | 1.7 | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.4.1 Static routing (network, host, floating) | 3.3 | 3.2 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.4.2 Default routing | 3.3 | 3.2 | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.5 Dynamic routing basics, AD, protocol types | 3.1, 3.2 | 3.1 | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.6 RIP | Not an exam objective (used to teach dynamic routing) | Not an exam objective | Low (learn the ideas, not RIP detail) |"
+    },
+    {
+     "level": 0,
+     "text": "RIP does not appear in the v2.0 outline. The routing protocol you must configure for the exam is OSPF (Chapter 6). IPv6 static routing is also tested but is covered later in the book (Chapter 17)."
+    }
+   ],
+   "words": 606
+  },
+  {
+   "title": "Step 0: Pre-check (do this before you read)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer from memory with no looking up. Add a confidence tag: (K) I know it, (U) unsure, (G) guessing. The answer key is at the end (Answer Key A)."
+    },
+    {
+     "level": 0,
+     "text": "- Host A pings Host B on a different network through its default gateway. What are the destination MAC address and destination IP address of the frame leaving Host A?"
+    },
+    {
+     "level": 0,
+     "text": "- A router has these routes: 10.0.0.0/8 (learned by RIP), 10.1.0.0/16 (learned by OSPF) and 0.0.0.0/0 (static). Which route does a packet for 10.1.5.5 use, and why?"
+    },
+    {
+     "level": 0,
+     "text": "- Give the default administrative distance of: connected, static, EIGRP (internal), OSPF, RIP."
+    },
+    {
+     "level": 0,
+     "text": "- Write the command to add a static route to 192.168.20.0/24 using the next hop 172.16.10.6."
+    },
+    {
+     "level": 0,
+     "text": "- In a routing table, what does an entry that starts with S* mean?"
+    },
+    {
+     "level": 0,
+     "text": "Mark tracker rows only when your answers are real evidence. If you were not tested on a row, leave it as Not assessed."
+    }
+   ],
+   "words": 152
+  },
+  {
+   "title": "5.1 Routing Basics",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Routing means taking a packet from one device and sending it through the internetwork to a device on a different network. Routers do not care about individual hosts. They care about networks and the best path to each one."
+    },
+    {
+     "level": 3,
+     "text": "Routing protocol versus routed protocol"
+    },
+    {
+     "level": 0,
+     "text": "| Term | Meaning | Examples |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Routing protocol | Used between routers to learn networks dynamically and keep their routing tables in sync | RIP, RIPv2, EIGRP, OSPF |"
+    },
+    {
+     "level": 0,
+     "text": "| Routed protocol | The protocol that carries user data through the network. It is assigned to an interface. | IP, IPv6 |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Routing protocol = the map-sharing language routers speak. Routed protocol = the cargo being delivered."
+    },
+    {
+     "level": 3,
+     "text": "What a router must know (book p. 119)"
+    },
+    {
+     "level": 0,
+     "text": "- The destination address"
+    },
+    {
+     "level": 0,
+     "text": "- The neighbour routers it can learn about remote networks from"
+    },
+    {
+     "level": 0,
+     "text": "- Possible routes to all remote networks"
+    },
+    {
+     "level": 0,
+     "text": "- The best route to each remote network"
+    },
+    {
+     "level": 0,
+     "text": "- How to maintain and verify routing information"
+    },
+    {
+     "level": 0,
+     "text": "A router learns about networks in three ways: directly connected (it already knows them), static (an administrator types them in) and dynamic (a routing protocol shares them). Most large networks use a mix of static and dynamic routing."
+    },
+    {
+     "level": 3,
+     "text": "The longest match rule (book pp. 119-121)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK When a packet arrives, the router looks through its routing table for the most specific route that matches the destination address. The most specific match is the one with the longest prefix (the biggest mask). If there is no match and no default route, the packet is dropped."
+    },
+    {
+     "level": 0,
+     "text": "The book's Figure 5.1 routing table (cut down)"
+    },
+    {
+     "level": 0,
+     "text": "Lab_A# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "10.0.0.0/8 is variably subnetted, 6 subnets, 4 masks"
+    },
+    {
+     "level": 0,
+     "text": "C 10.0.0.0/8 is directly connected, FastEthernet0/3"
+    },
+    {
+     "level": 0,
+     "text": "L 10.0.0.1/32 is directly connected, FastEthernet0/3"
+    },
+    {
+     "level": 0,
+     "text": "C 10.10.0.0/16 is directly connected, FastEthernet0/2"
+    },
+    {
+     "level": 0,
+     "text": "L 10.10.0.1/32 is directly connected, FastEthernet0/2"
+    },
+    {
+     "level": 0,
+     "text": "C 10.10.10.0/24 is directly connected, FastEthernet0/1"
+    },
+    {
+     "level": 0,
+     "text": "L 10.10.10.1/32 is directly connected, FastEthernet0/1"
+    },
+    {
+     "level": 0,
+     "text": "S* 0.0.0.0/0 is directly connected, FastEthernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "A packet for 10.10.10.30 matches 10.0.0.0/8, 10.10.0.0/16 and 10.10.10.0/24. The longest match is 10.10.10.0/24, so it leaves FastEthernet0/1. The default route (0.0.0.0/0) is the shortest possible match, so it is used only when nothing else matches."
+    },
+    {
+     "level": 3,
+     "text": "Reading a routing table line"
+    },
+    {
+     "level": 0,
+     "text": "| Part | Example | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Code | C, L, S, S*, R, O, D | How the route was learned: C = connected, L = local, S = static, S* = static candidate default, R = RIP, O = OSPF, D = EIGRP |"
+    },
+    {
+     "level": 0,
+     "text": "| Prefix and mask | 10.10.10.0/24 | The destination network and its mask |"
+    },
+    {
+     "level": 0,
+     "text": "| Administrative distance / metric | [120/1] | AD 120 (trust of the source), metric 1 (cost within that protocol) |"
+    },
+    {
+     "level": 0,
+     "text": "| Next hop | via 172.16.10.1 | The next router to send the packet to |"
+    },
+    {
+     "level": 0,
+     "text": "| Age | 00:00:08 | How long ago the route was last updated (dynamic routes) |"
+    },
+    {
+     "level": 0,
+     "text": "| Exit interface | Serial0/0/0 | The interface the packet leaves from |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Local routes (L). BOOK The book explains that IOS 15 and later add a local host route with a /32 prefix for each configured interface address (for example 10.10.10.1/32). They tell the router that this exact address belongs to itself. They are normal; do not be surprised by them."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "The full order of decisions. ADDED The book covers longest match and administrative distance separately. Put together, a router chooses a route in this order: 1) longest prefix match first (always, no matter which protocol), 2) lowest administrative distance (only between routes to the same prefix from different sources), 3) lowest metric (only between routes to the same prefix from the same protocol). Equal everything = load balancing. This is exactly what v1.1 3.2 and v2.0 3.1 test."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 5.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. A router has 10.0.0.0/8 via RIP and 10.1.1.0/24 via a static route. Which route does a packet for 10.1.1.9 use?"
+    },
+    {
+     "level": 0,
+     "text": "A. 10.0.0.0/8, because RIP is dynamic"
+    },
+    {
+     "level": 0,
+     "text": "B. 10.1.1.0/24, because it is the longest match"
+    },
+    {
+     "level": 0,
+     "text": "C. Neither, it uses the default route"
+    },
+    {
+     "level": 0,
+     "text": "D. Both, load balanced"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - longest prefix match wins first, before administrative distance is even considered."
+    },
+    {
+     "level": 0,
+     "text": "Q2. What does the L entry with a /32 mask in a routing table mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A local host route for the router's own interface address - it tells the router that address belongs to itself."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Is a routing protocol the same thing as a routed protocol?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - routing protocols (OSPF, RIP) share routes between routers; routed protocols (IP) carry user data."
+    }
+   ],
+   "words": 764
+  },
+  {
+   "title": "5.2 The IP Routing Process",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK The IP routing process is the same whether the network has one router or hundreds. The book walks through it in 36 steps for a ping from Host A (172.16.10.2) to Host B (172.16.20.2) across one router. Here it is in short phases."
+    },
+    {
+     "level": 3,
+     "text": "The journey of one ping, in phases"
+    },
+    {
+     "level": 0,
+     "text": "| Phase | What happens | Key point |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1. Host A builds the packet | ICMP creates an echo request. IP wraps it: source 172.16.10.2, destination 172.16.20.2, Protocol field 0x01 (ICMP). | IP checks the destination against its own subnet using the mask. It is remote. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2. Send it to the default gateway | A remote destination must go to the default gateway (172.16.10.1). Host A needs the gateway's MAC address. It checks its ARP cache, and if the entry is missing it sends an ARP broadcast. | The frame uses the router's MAC address, never Host B's. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3. Host A builds the frame | Destination MAC = router E0, source MAC = Host A, EtherType 0x0800 (IP), and the FCS (CRC) at the end. | MAC addresses are local to one LAN. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4. The router receives it | The router checks the CRC. If it is good, it checks that the destination MAC is its own, reads the EtherType, strips the frame and passes the packet to IP. | A bad CRC means the frame is discarded. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5. The router looks up the route | IP sees that the destination is not one of its own addresses, so it searches the routing table for 172.16.20.0. | No route = packet discarded and an ICMP destination unreachable is sent back. |"
+    },
+    {
+     "level": 0,
+     "text": "| 6. The router forwards | The packet goes to the exit interface (E1). The router needs Host B's MAC address, so it checks its ARP cache or sends an ARP request out E1. | It builds a new frame: source MAC = router E1, destination MAC = Host B. |"
+    },
+    {
+     "level": 0,
+     "text": "| 7. Host B receives and replies | Host B checks the CRC, MAC and EtherType, hands the packet to IP, which hands the payload to ICMP. ICMP creates the echo reply. The same process runs in reverse. | The return path needs a route back to 172.16.10.0 too. |"
+    },
+    {
+     "level": 0,
+     "text": "| 8. Host A shows the result | ICMP receives the reply and prints ! (or a reply line). | The ping then repeats for the remaining packets. |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "What changes and what does not at each router hop. The frame is rebuilt at every hop: source and destination MAC addresses change. The packet's source and destination IP addresses stay the same all the way (the book's Exam Essentials). The only parts of the IP header that change are the TTL, which goes down by 1 at each router, and the header checksum."
+    },
+    {
+     "level": 0,
+     "text": "| Where the frame is | Source MAC | Destination MAC | Source IP | Destination IP |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Host A \u001a Router (LAN 1) | Host A | Router E0 | 172.16.10.2 | 172.16.20.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| Router \u001a Host B (LAN 2) | Router E1 | Host B | 172.16.10.2 | 172.16.20.2 |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "MACs are local. They never cross a router. IPs are end to end. They stay the same."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Header checksum. ADDED Because TTL changes, each router must recalculate the IP header checksum. The book says IP does not run a complete CRC like the Data Link layer, it checks only the header. Both statements fit together: the Data Link FCS covers the whole frame, the IP header checksum covers only the IP header."
+    },
+    {
+     "level": 3,
+     "text": "Why a ping can fail on the way back (book pp. 124-126)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK When a ping fails, many people assume the packet never reached the destination. Often it did arrive, and the reply was dropped because one router on the return trip had no route back to the source network. The error message tells you which half of the trip failed:"
+    },
+    {
+     "level": 0,
+     "text": "| What you see | What it usually means |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Request timed out | An unknown failure. The packet or its reply was lost. Often a missing return route, a down link or a firewall. |"
+    },
+    {
+     "level": 0,
+     "text": "| Destination host unreachable (reply from a router) | A router knows there is no route to the destination network. The error came from the router that has no route. |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "In the exam, work out the return path as well as the forward path. One missing route back to the source network is enough to break a ping."
+    },
+    {
+     "level": 2,
+     "text": "5.2.1 The Cisco Router Internal Process (book pp. 126-127)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Looking up every packet in a table with thousands of routes would use huge amounts of CPU. Cisco uses three forwarding methods:"
+    },
+    {
+     "level": 0,
+     "text": "| Method | How it works | Status |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Process switching | The CPU looks up every packet in the routing table and finds the exit interface. This is the original method from Cisco's first router in 1990. | Slowest. Used only for special traffic today. |"
+    },
+    {
+     "level": 0,
+     "text": "| Fast switching | A cache stores recently used destinations, including the exit interface and Layer 2 header, so lookups are not needed for every packet. | Faster, but built before CEF. |"
+    },
+    {
+     "level": 0,
+     "text": "| Cisco Express Forwarding (CEF) | Builds several tables ahead of time. It is change-triggered, not packet-triggered: when the topology changes, the tables update. | Default on modern Cisco routers. |"
+    },
+    {
+     "level": 0,
+     "text": "To see which method an interface uses CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router# show ip interface fastEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "Router# show ip cef"
+    },
+    {
+     "level": 0,
+     "text": "CHECK The book says to use a command to see which method an interface is using, but the command text was missing in my copy of the chapter. show ip interface normally includes lines about CEF and fast switching, and show ip cef shows the CEF table. I did not run either in this session."
+    },
+    {
+     "level": 2,
+     "text": "5.2.2 Testing Your IP Routing Understanding (book pp. 127-132)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The book gives four test scenarios. The patterns are the key learning."
+    },
+    {
+     "level": 0,
+     "text": "| Scenario | Answer |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| HostA on a LAN reaches an HTTP server on another network through two routers. What do the frame, packet and segment contain leaving HostA? | Destination MAC = HostA's default gateway interface. Destination IP = the HTTP server. Destination port = 80. |"
+    },
+    {
+     "level": 0,
+     "text": "| Same, but to an HTTPS server with a switch in the path. | Same pattern with destination port 443. The switches are not involved in routing, so the switch is never the destination MAC. |"
+    },
+    {
+     "level": 0,
+     "text": "| A packet arrives on Fa0/0 with destination 192.168.22.3, but the routing table has no route to 192.168.22.0 and no default. | The router discards the packet and sends an ICMP destination unreachable back toward the source. |"
+    },
+    {
+     "level": 0,
+     "text": "| Host 4 requests ARP for the Sales server across routers (the book's Figure 5.6). | The local router (Lab_B Fa0/0) answers with its own MAC. All frames from Host 4 go to that MAC. At the far LAN the frame has Lab_A Fa0/0 as source MAC and the server's MAC as destination MAC. |"
+    },
+    {
+     "level": 0,
+     "text": "| Host 4 has two web pages open from the same server. How does each reply reach the right window? | TCP port numbers. Each connection uses a different source port. |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Switches use MAC addresses to forward frames within a LAN, so they are never the answer for \"what is the destination MAC when the destination is on another network\". It is always the router interface."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 5.2"
+    },
+    {
+     "level": 0,
+     "text": "Q4. Host A sends to a server on another network. The source and destination MAC addresses of the frame leaving the router towards the server are:"
+    },
+    {
+     "level": 0,
+     "text": "A. Host A and the server"
+    },
+    {
+     "level": 0,
+     "text": "B. Router interface on the server's LAN and the server"
+    },
+    {
+     "level": 0,
+     "text": "C. Router interface on Host A's LAN and the server"
+    },
+    {
+     "level": 0,
+     "text": "D. Switch and the server"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the router builds a new frame: its own outgoing interface MAC as source, and the server's MAC as destination."
+    },
+    {
+     "level": 0,
+     "text": "Q5. Which fields change at each router hop: source MAC, destination MAC, source IP, destination IP, TTL?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Source MAC, destination MAC and TTL - the IP addresses stay the same end to end."
+    },
+    {
+     "level": 0,
+     "text": "Q6. What does a router do when it has no route and no default route for a packet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Drops it and sends an ICMP destination unreachable back - this is the \"destination host unreachable\" you see on the sender."
+    },
+    {
+     "level": 0,
+     "text": "Q7. Which forwarding method is the default on modern Cisco routers?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Cisco Express Forwarding (CEF) - it is change-triggered and uses pre-built tables."
+    }
+   ],
+   "words": 1471
+  },
+  {
+   "title": "5.3 Configuring IP Routing",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK From here the book builds one network and uses it for the rest of the book: three routers named Corp, SF and LA. Routers only know directly connected networks until you add routes."
+    },
+    {
+     "level": 0,
+     "text": "| Router | Interface | Address | Connects to |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Corp | Fa0/0 | 10.10.10.1/24 | Corp LAN |"
+    },
+    {
+     "level": 0,
+     "text": "| Corp | S0/0 | 172.16.10.1/30 | SF (serial link) |"
+    },
+    {
+     "level": 0,
+     "text": "| Corp | S0/1 | 172.16.10.5/30 | LA (serial link) |"
+    },
+    {
+     "level": 0,
+     "text": "| SF | S0/0/0 | 172.16.10.2/30 | Corp (this side is the DCE) |"
+    },
+    {
+     "level": 0,
+     "text": "| SF | Fa0/0 | 192.168.10.1/24 | SF LAN |"
+    },
+    {
+     "level": 0,
+     "text": "| LA | S0/0/1 | 172.16.10.6/30 | Corp |"
+    },
+    {
+     "level": 0,
+     "text": "| LA | Fa0/0 | 192.168.20.1/24 | LA LAN |"
+    },
+    {
+     "level": 0,
+     "text": "Address check by script: 172.16.10.0/30 has hosts .1 and .2 (broadcast .3). 172.16.10.4/30 has hosts .5 and .6 (broadcast .7). Each WAN link is a /30, the right size for a two-router link (Chapter 3)."
+    },
+    {
+     "level": 2,
+     "text": "5.3.1 Corp Configuration (book pp. 133-135)"
+    },
+    {
+     "level": 0,
+     "text": "Corp router configuration (the book's values, with placeholders for passwords) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# hostname Corp"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# enable secret <your-secret>"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# no ip domain-lookup"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# interface fastEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# description Connection to LAN Backbone"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ip address 10.10.10.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# interface serial 0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# description WAN connection to SF"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ip address 172.16.10.1 255.255.255.252"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# interface serial 0/1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# description WAN connection to LA"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# ip address 172.16.10.5 255.255.255.252"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-if)# exit"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# line console 0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# password <console-password>"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# login"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# logging synchronous"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# line vty 0 4"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# password <vty-password>"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# login"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-line)# exit"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# banner motd # This is my Corp Router #"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# end"
+    },
+    {
+     "level": 0,
+     "text": "Corp# copy running-config startup-config"
+    },
+    {
+     "level": 0,
+     "text": "- hostname names the router. enable secret sets the encrypted privileged-mode password."
+    },
+    {
+     "level": 0,
+     "text": "- no ip domain-lookup stops the router from trying to look up mistyped commands as hostnames (annoying delays unless you have a DNS or host table)."
+    },
+    {
+     "level": 0,
+     "text": "- description labels each interface. Good habit on every router."
+    },
+    {
+     "level": 0,
+     "text": "- ip address <address> <mask> assigns the address. no shutdown turns the interface on."
+    },
+    {
+     "level": 0,
+     "text": "- logging synchronous (under the console line) stops console messages from interrupting what you are typing."
+    },
+    {
+     "level": 0,
+     "text": "- line console 0 and line vty 0 4 secure the console and the remote (Telnet/SSH) lines. login makes the line ask for the password."
+    },
+    {
+     "level": 0,
+     "text": "- copy running-config startup-config saves your work."
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Passwords. The book uses simple example passwords. Use your own strong ones in real life and prefer SSH over Telnet for the VTY lines (Chapter 2 and Chapter 12). The <...> items above are placeholders to replace."
+    },
+    {
+     "level": 3,
+     "text": "What you will see in the routing table"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Only configured and up directly connected networks appear. Right after configuring Corp, only the Fa0/0 network appears. The serial interfaces stay down until the other side of each link is configured."
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output (codes list cut)"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "10.0.0.0/24 is subnetted, 1 subnets"
+    },
+    {
+     "level": 0,
+     "text": "C 10.10.10.0 is directly connected, FastEthernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "L 10.10.10.1/32 is directly connected, FastEthernet0/0"
+    },
+    {
+     "level": 2,
+     "text": "5.3.2 SF Configuration (book pp. 135-139)"
+    },
+    {
+     "level": 0,
+     "text": "SF router (interfaces only; add the same hostname, passwords and banner as Corp) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# hostname SF"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# interface serial 0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# description WAN Connection to Corp"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# ip address 172.16.10.2 255.255.255.252"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# clock rate 2000000"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# interface fastEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# ip address 192.168.10.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# end"
+    },
+    {
+     "level": 0,
+     "text": "SF# show ip interface brief"
+    },
+    {
+     "level": 0,
+     "text": "SF# show controllers serial 0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "- clock rate 2000000 sets the clock speed on the DCE end of a serial link. Only the DCE side needs it (the book says a CSU/DSU normally supplies clocking, as in Chapter 1)."
+    },
+    {
+     "level": 0,
+     "text": "- show controllers serial 0/0/0 shows whether the interface has a DTE or DCE cable."
+    },
+    {
+     "level": 0,
+     "text": "- show ip interface brief lists each interface, its IP address, and Status and Protocol."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "up/up only proves Layers 1 and 2. The book asks: \"If the link shows up/up, can you ping the directly connected network?\" The honest answer is I do not know yet. show ip interface brief does not show Layer 3. Test with a ping."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Erase command. BOOK The book notes that from IOS 12.4 on, ISR routers no longer accept the short command erase start. Type erase startup-config. It also notes that a freshly erased router may try to load a config from a TFTP server (you will see timeouts). That is normal."
+    },
+    {
+     "level": 2,
+     "text": "5.3.3 LA Configuration (book pp. 139-141)"
+    },
+    {
+     "level": 0,
+     "text": "LA router (interfaces only) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# hostname LA"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# interface serial 0/0/1"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# description WAN To Corporate"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# ip address 172.16.10.6 255.255.255.252"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# no shutdown"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# interface fastEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# ip address 192.168.20.1 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# no shutdown"
+    },
+    {
+     "level": 3,
+     "text": "A DHCP server on the Corp router (book pp. 140-141)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Instead of creating a DHCP pool on every router, the book builds two pools on Corp and has SF and LA forward their clients' requests. This covers v1.1 objectives 4.3 and 4.6 and v2.0 objective 1.7."
+    },
+    {
+     "level": 0,
+     "text": "DHCP server on Corp and relay on SF and LA (pool names are my examples) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip dhcp excluded-address 192.168.10.1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip dhcp excluded-address 192.168.20.1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip dhcp pool SF_LAN"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# network 192.168.10.0 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# default-router 192.168.10.1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# dns-server 4.4.4.4"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# ip dhcp pool LA_LAN"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# network 192.168.20.0 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# default-router 192.168.20.1"
+    },
+    {
+     "level": 0,
+     "text": "Corp(dhcp-config)# dns-server 4.4.4.4"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# interface fastEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-if)# ip helper-address 172.16.10.1"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# interface fastEthernet 0/0"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-if)# ip helper-address 172.16.10.5"
+    },
+    {
+     "level": 0,
+     "text": "- ip dhcp excluded-address keeps an address (or a range, on one line) out of the pool. Always exclude the router's own address. Do it before creating the pool."
+    },
+    {
+     "level": 0,
+     "text": "- ip dhcp pool <name> creates a pool and enters DHCP configuration mode."
+    },
+    {
+     "level": 0,
+     "text": "- network defines the range. default-router and dns-server are the settings given to clients."
+    },
+    {
+     "level": 0,
+     "text": "- ip helper-address <server> on the LAN-facing interface of the remote router turns the client's broadcast into a unicast to the DHCP server. The address is the DHCP server's IP address as seen from that router (Corp S0/0 for SF, Corp S0/1 for LA)."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Why the helper address is needed. A DHCP Discover is a broadcast, and routers do not forward broadcasts. Without ip helper-address, hosts behind SF and LA would never reach the Corp DHCP server and would end up with 169.254.x.x addresses (Chapter 2)."
+    },
+    {
+     "level": 3,
+     "text": "Verifying DHCP (book pp. 148-150)"
+    },
+    {
+     "level": 0,
+     "text": "DHCP verification commands"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ip dhcp binding"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ip dhcp pool"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ip dhcp conflict"
+    },
+    {
+     "level": 0,
+     "text": "- show ip dhcp binding lists which IP address was given to which client (client ID) and when the lease expires."
+    },
+    {
+     "level": 0,
+     "text": "- show ip dhcp pool shows pool statistics: addresses, utilisation and leased addresses."
+    },
+    {
+     "level": 0,
+     "text": "- show ip dhcp conflict lists duplicate-address conflicts. The server detects them in two ways: it pings the address before handing it out, and the client does a gratuitous ARP for its new address (Chapter 2)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 5.3"
+    },
+    {
+     "level": 0,
+     "text": "Q8. Why does the serial interface on Corp stay down right after you configure it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The other end of the link is not configured yet (or no clock on a DCE end) - a serial link needs both ends up, and the DCE end needs a clock rate."
+    },
+    {
+     "level": 0,
+     "text": "Q9. Where do you configure ip helper-address, and what address do you give it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: On the router interface that faces the clients; the DHCP server's IP address - it converts the client's broadcast into a unicast to the server."
+    },
+    {
+     "level": 0,
+     "text": "Q10. Which command shows which hosts have received DHCP addresses from the router?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip dhcp binding - it shows each leased address and its lease expiry."
+    }
+   ],
+   "words": 1252
+  },
+  {
+   "title": "5.4 Configuring IP Routing in Our Network",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Even with interfaces configured, Corp cannot reach SF's or LA's LANs. Routers discard packets for networks that are not in the routing table. There are three ways to fix that: static routing, default routing and dynamic routing. The book starts with static."
+    },
+    {
+     "level": 2,
+     "text": "5.4.1 Static Routing (book pp. 142-147)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Static routing means you manually add every route to each router."
+    },
+    {
+     "level": 0,
+     "text": "| Pros | Cons |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| No routing-protocol CPU load. Cheaper routers can do the job. | You need a perfect map of the network or things get messy quickly. |"
+    },
+    {
+     "level": 0,
+     "text": "| No bandwidth used between routers. Good for expensive WAN links. | Adding a network means editing every router by hand. |"
+    },
+    {
+     "level": 0,
+     "text": "| More secure: you choose exactly which networks are reachable. | Not practical on large networks. Maintenance becomes a full-time job. |"
+    },
+    {
+     "level": 3,
+     "text": "The static route command"
+    },
+    {
+     "level": 0,
+     "text": "Syntax and the book's three examples"
+    },
+    {
+     "level": 0,
+     "text": "ip route [destination_network] [mask] [next-hop_address | exit-interface] [administrative_distance] [permanent]"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# ip route 172.16.3.0 255.255.255.0 192.168.2.4"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# ip route 172.16.3.0 255.255.255.0 192.168.2.4 150"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# ip route 172.16.3.0 255.255.255.0 s0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "| Part | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| ip route | Creates a static route |"
+    },
+    {
+     "level": 0,
+     "text": "| destination_network and mask | The remote network and its mask |"
+    },
+    {
+     "level": 0,
+     "text": "| next-hop_address | The IP address of the next router on the way. It must be on a directly connected network, and you must be able to reach it. If the next hop is unreachable or the interface is down, the route stays in the configuration but is removed from the routing table. |"
+    },
+    {
+     "level": 0,
+     "text": "| exit-interface | Used instead of a next-hop address. The route then shows as \"directly connected\". |"
+    },
+    {
+     "level": 0,
+     "text": "| administrative_distance | Optional. Changes the trust level of the route. The default for a static route is 1. |"
+    },
+    {
+     "level": 0,
+     "text": "| permanent | Keeps the route in the routing table even if the interface goes down or the next hop cannot be reached. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "AD of a route that uses an exit interface. UPDATED CHECK The book says static routes have an AD of 1, \"or 0 if you use an exit interface instead of a next-hop address\". Cisco's own AD table lists static route = 1 and connected interface = 0. A route written with an exit interface displays as \"directly connected\", but a secondary source says its AD is 1, not 0, since IOS 12.2 (only the interface itself is 0). I could not confirm this on real equipment. In your lab, run show ip route <network> and read the \"Distance\" line to see for yourself."
+    },
+    {
+     "level": 0,
+     "text": "Best practice. ADDED CHECK On a point-to-point serial link, a next hop or an exit interface both work. On an Ethernet (multi-access) link, use a next-hop address (or both). An exit-interface-only route on Ethernet makes the router ARP for every destination, which can fail or waste resources. This is general knowledge and was not tested here."
+    },
+    {
+     "level": 3,
+     "text": "The book's static routes for Corp, SF and LA"
+    },
+    {
+     "level": 0,
+     "text": "Each router needs a route to every network it is not directly connected to. The book adds 150 to every route. A static route normally has AD 1, so it would beat RIP (120) and OSPF (110). Setting 150 makes each route lose to any routing protocol, so it acts as a backup."
+    },
+    {
+     "level": 0,
+     "text": "The book's static routes (floating, AD 150) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip route 192.168.10.0 255.255.255.0 172.16.10.2 150"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip route 192.168.20.0 255.255.255.0 s0/1 150"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# ip route 10.10.10.0 255.255.255.0 172.16.10.1 150"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# ip route 172.16.10.4 255.255.255.252 172.16.10.1 150"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# ip route 192.168.20.0 255.255.255.0 172.16.10.1 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# ip route 10.10.10.0 255.255.255.0 172.16.10.5 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# ip route 172.16.10.0 255.255.255.252 172.16.10.5 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# ip route 192.168.10.0 255.255.255.0 172.16.10.5 150"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output (L lines cut)"
+    },
+    {
+     "level": 0,
+     "text": "Corp# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "S 192.168.10.0/24 [150/0] via 172.16.10.2"
+    },
+    {
+     "level": 0,
+     "text": "172.16.0.0/30 is subnetted, 2 subnets"
+    },
+    {
+     "level": 0,
+     "text": "C 172.16.10.4 is directly connected, Serial0/1"
+    },
+    {
+     "level": 0,
+     "text": "C 172.16.10.0 is directly connected, Serial0/0"
+    },
+    {
+     "level": 0,
+     "text": "S 192.168.20.0/24 is directly connected, Serial0/1"
+    },
+    {
+     "level": 0,
+     "text": "10.0.0.0/24 is subnetted, 1 subnets"
+    },
+    {
+     "level": 0,
+     "text": "C 10.10.10.0 is directly connected, FastEthernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "- S = static. [150/0] means administrative distance 150, metric 0."
+    },
+    {
+     "level": 0,
+     "text": "- A route with a next hop shows via 172.16.10.2. A route with an exit interface shows directly connected, Serial0/1, which is why the book says to notice the difference."
+    },
+    {
+     "level": 0,
+     "text": "- Never create a static route to a network that is directly connected."
+    },
+    {
+     "level": 3,
+     "text": "Route types you must recognise (v1.1 3.3 and v2.0 3.2)"
+    },
+    {
+     "level": 0,
+     "text": "| Type | Example | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Network route | ip route 192.168.20.0 255.255.255.0 172.16.10.6 | A route to a specific network |"
+    },
+    {
+     "level": 0,
+     "text": "| Host route | ip route 10.10.10.5 255.255.255.255 172.16.10.1 | A route to one address (mask /32). Most specific, so it wins by longest match. |"
+    },
+    {
+     "level": 0,
+     "text": "| Default route | ip route 0.0.0.0 0.0.0.0 172.16.10.5 | A route to everything not otherwise matched (mask /0) |"
+    },
+    {
+     "level": 0,
+     "text": "| Floating static route | ip route 192.168.20.0 255.255.255.0 172.16.10.6 150 | A static route with a higher AD than the routing protocol. It stays hidden until the dynamic route disappears, then it \"floats\" into the table as a backup. |"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED The book shows network routes, a default route and (through the AD 150 routes) the floating static idea, but only names the host route and floating static terms in the exam objectives. The examples above fill that gap. The host route example is my own. IPv6 static routes use ipv6 route and are covered with IPv6 in Chapter 17. CHECK"
+    },
+    {
+     "level": 2,
+     "text": "5.4.2 Default Routing (book pp. 147-150)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK SF and LA are stub routers: each has only one way out. Instead of typing many static routes, one default route points everything unknown at Corp. The book removes LA's static routes and adds one default route."
+    },
+    {
+     "level": 0,
+     "text": "Default route on the LA stub router (illustrative output, L lines cut) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# no ip route 10.10.10.0 255.255.255.0 172.16.10.5 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# no ip route 172.16.10.0 255.255.255.252 172.16.10.5 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# no ip route 192.168.10.0 255.255.255.0 172.16.10.5 150"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# ip route 0.0.0.0 0.0.0.0 172.16.10.5"
+    },
+    {
+     "level": 0,
+     "text": "LA# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "Gateway of last resort is 172.16.10.5 to network 0.0.0.0"
+    },
+    {
+     "level": 0,
+     "text": "172.16.0.0/30 is subnetted, 1 subnets"
+    },
+    {
+     "level": 0,
+     "text": "C 172.16.10.4 is directly connected, Serial0/0/1"
+    },
+    {
+     "level": 0,
+     "text": "C 192.168.20.0/24 is directly connected, FastEthernet0/0"
+    },
+    {
+     "level": 0,
+     "text": "S* 0.0.0.0/0 [1/0] via 172.16.10.5"
+    },
+    {
+     "level": 0,
+     "text": "- 0.0.0.0 0.0.0.0 matches every address, with the shortest possible prefix (/0). It is used only if no more specific route matches."
+    },
+    {
+     "level": 0,
+     "text": "- S* means a static route that is a candidate default route."
+    },
+    {
+     "level": 0,
+     "text": "- Gateway of last resort is where the router sends packets for unknown networks. It is set once a default route exists."
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Careful where you put default routes. The book warns that a badly placed default route can create routing loops. Use default routes on stub routers (one way out), and never create a default route that points back toward the router it came from."
+    },
+    {
+     "level": 3,
+     "text": "Verifying with ping (book pp. 148-149)"
+    },
+    {
+     "level": 0,
+     "text": "The book verifies end-to-end connectivity with ping from Corp to the remote LAN interfaces (192.168.10.1 and 192.168.20.1), and tests that the DHCP clients on SF and LA receive addresses from Corp (for example 192.168.10.8 and 192.168.20.4). A success rate of 100 percent (5/5) means the routing, return routes and DHCP relay all work."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 5.4"
+    },
+    {
+     "level": 0,
+     "text": "Q11. Write the command to create a default route with next hop 10.1.1.1."
+    },
+    {
+     "level": 0,
+     "text": "Answer: ip route 0.0.0.0 0.0.0.0 10.1.1.1 - mask 0.0.0.0 matches everything."
+    },
+    {
+     "level": 0,
+     "text": "Q12. What does [150/0] mean in S 192.168.10.0/24 [150/0] via 172.16.10.2?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Administrative distance 150, metric 0 - the AD was raised from the default 1 to 150, making it a floating static route."
+    },
+    {
+     "level": 0,
+     "text": "Q13. A static route to 10.5.5.0/24 via 172.16.10.2 does not appear in the routing table. Name two possible causes."
+    },
+    {
+     "level": 0,
+     "text": "Answer: The next hop is unreachable or the outgoing interface is down - a static route is removed when it has no valid next hop (unless you use permanent)."
+    },
+    {
+     "level": 0,
+     "text": "Q14. Which kind of router is best suited to a default route?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A stub router (only one way out) - it avoids typing many static routes."
+    }
+   ],
+   "words": 1328
+  },
+  {
+   "title": "5.5 Dynamic Routing",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK Dynamic routing uses a routing protocol to find networks and update routing tables. It is much easier than static routing, but it costs router CPU and link bandwidth."
+    },
+    {
+     "level": 2,
+     "text": "5.5.1 Routing Protocol Basics"
+    },
+    {
+     "level": 0,
+     "text": "| Term | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| IGP (interior gateway protocol) | Exchanges routes inside one autonomous system. Examples: RIP, EIGRP, OSPF. |"
+    },
+    {
+     "level": 0,
+     "text": "| EGP (exterior gateway protocol) | Exchanges routes between autonomous systems. Example: BGP (beyond CCNA). |"
+    },
+    {
+     "level": 0,
+     "text": "| Autonomous system (AS) | A network or group of networks under one administrative domain |"
+    },
+    {
+     "level": 3,
+     "text": "Administrative distance (AD)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK AD rates how trustworthy the source of a route is. It is a number from 0 (most trusted) to 255 (never used). If a router learns the same prefix from two sources, it installs the one with the lowest AD. If the AD is the same, the lowest metric wins. If both are equal, the router load-balances."
+    },
+    {
+     "level": 0,
+     "text": "| Route source | Default AD | Note |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Connected interface | 0 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| Static route | 1 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| EIGRP summary route | 5 | ADDED from Cisco's AD table |"
+    },
+    {
+     "level": 0,
+     "text": "| External BGP (eBGP) | 20 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| Internal EIGRP | 90 | The book lists \"EIGRP 90\" |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPF | 110 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| IS-IS | 115 | ADDED missing from the book's table; listed in Cisco's own table |"
+    },
+    {
+     "level": 0,
+     "text": "| RIP | 120 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| External EIGRP | 170 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| Internal BGP (iBGP) | 200 |  |"
+    },
+    {
+     "level": 0,
+     "text": "| Unknown / unusable | 255 | Never installed |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Order of trust: Connected 0, Static 1, EIGRP 90, OSPF 110, RIP 120. Remember 0, 1, 90, 110, 120 and that a floating static route uses a number above the protocol it backs up (the book uses 150 to sit above RIP and OSPF)."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Which route wins: a static route (AD 1) or an OSPF route (AD 110) to the same prefix? The static route. It is more trusted. This is why the book adds 150 to its static routes when it wants a routing protocol to take priority."
+    },
+    {
+     "level": 3,
+     "text": "Three classes of routing protocols"
+    },
+    {
+     "level": 0,
+     "text": "| Class | Key ideas | Example |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Distance vector | Judges the best path by distance (hop count) and direction (vector). Sends the entire routing table periodically to neighbours. | RIP |"
+    },
+    {
+     "level": 0,
+     "text": "| Link state (SPF) | Each router builds three tables: neighbours, topology and routing. Sends triggered updates with only the changes, plus small hello keepalives. | OSPF |"
+    },
+    {
+     "level": 0,
+     "text": "| Advanced distance vector (hybrid) | Distance-vector principles, but uses hellos to find neighbours and sends partial updates when something changes. | EIGRP |"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 5.5"
+    },
+    {
+     "level": 0,
+     "text": "Q15. A router learns 172.16.50.0/24 from OSPF and from RIP. Which does it install?"
+    },
+    {
+     "level": 0,
+     "text": "A. RIP, because it is simpler"
+    },
+    {
+     "level": 0,
+     "text": "B. OSPF, because 110 is lower than 120"
+    },
+    {
+     "level": 0,
+     "text": "C. Both, load balanced"
+    },
+    {
+     "level": 0,
+     "text": "D. Neither"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - lower administrative distance wins when the prefixes are the same."
+    },
+    {
+     "level": 0,
+     "text": "Q16. Which class of routing protocol sends triggered updates and keeps three tables?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Link state - OSPF is the example."
+    },
+    {
+     "level": 0,
+     "text": "Q17. What is the AD range, and which end is most trusted?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0 to 255; 0 is most trusted - 255 means the route is never used."
+    }
+   ],
+   "words": 560
+  },
+  {
+   "title": "5.6 Routing Information Protocol (RIP)",
+   "content": [
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "RIP is not on the exam. UPDATED The book itself says RIP is not used in production today and that the next chapter covers \"the CCNA star routing protocol\", OSPF. Neither v1.1 nor the v2.0 outline lists RIP as a topic. Study this section to understand dynamic routing (metrics, updates, AD, default-route advertisement), not to memorise RIP detail."
+    },
+    {
+     "level": 0,
+     "text": "BOOK RIP is a true distance-vector protocol. It sends the complete routing table out of all active interfaces every 30 seconds. Its metric is hop count, with a maximum of 15 by default, so 16 means unreachable. It works in tiny networks, is inefficient on large networks and slow WAN links, and is useless when links have different speeds (it ignores bandwidth)."
+    },
+    {
+     "level": 0,
+     "text": "|  | RIPv1 | RIPv2 |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Routing style | Classful: updates carry no subnet mask, so all devices must use the same mask | Classless (prefix routing): sends the mask with each route |"
+    },
+    {
+     "level": 0,
+     "text": "| Update delivery CHECK | Broadcast | Multicast 224.0.0.9 |"
+    },
+    {
+     "level": 0,
+     "text": "The multicast address row is general knowledge (it matches the routing-protocol multicast list in the Chapter 2 document). The book describes RIP updates as broadcasts in the passive-interface section. Check it with a packet capture in your lab. CHECK"
+    },
+    {
+     "level": 2,
+     "text": "5.6.1 Configuring RIP Routing (book pp. 153-156)"
+    },
+    {
+     "level": 0,
+     "text": "RIPv2 on all three routers CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# router rip"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# version 2"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# network 10.0.0.0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# network 172.16.0.0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# no auto-summary"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# router rip"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-router)# version 2"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-router)# network 192.168.10.0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-router)# network 172.16.0.0"
+    },
+    {
+     "level": 0,
+     "text": "SF(config-router)# no auto-summary"
+    },
+    {
+     "level": 0,
+     "text": "LA(config)# router rip"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-router)# version 2"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-router)# network 192.168.20.0"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-router)# network 172.16.0.0"
+    },
+    {
+     "level": 0,
+     "text": "LA(config-router)# no auto-summary"
+    },
+    {
+     "level": 0,
+     "text": "- router rip turns on the RIP process."
+    },
+    {
+     "level": 0,
+     "text": "- version 2 makes the router use RIPv2 (classless)."
+    },
+    {
+     "level": 0,
+     "text": "- network <classful network> tells RIP which directly connected networks to advertise and which interfaces to run on. Enter the classful network (10.0.0.0, 172.16.0.0, 192.168.10.0), not the subnet. RIP finds the subnets itself."
+    },
+    {
+     "level": 0,
+     "text": "- no auto-summary stops RIP summarising to classful boundaries so it advertises the real subnets."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Opposite of static routing. With static routes you type remote networks. With a routing protocol you type only your directly connected networks. Never type a remote network under the protocol."
+    },
+    {
+     "level": 0,
+     "text": "SF after RIP on Corp and SF (illustrative, shortened)"
+    },
+    {
+     "level": 0,
+     "text": "SF# show ip route"
+    },
+    {
+     "level": 0,
+     "text": "S 192.168.20.0/24 [150/0] via 172.16.10.1"
+    },
+    {
+     "level": 0,
+     "text": "R 172.16.10.4 [120/1] via 172.16.10.1, 00:00:08, Serial0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "R 10.10.10.0 [120/1] via 172.16.10.1, 00:00:08, Serial0/0/0"
+    },
+    {
+     "level": 0,
+     "text": "Reading it. R = learned by RIP. [120/1] = AD 120, metric 1 hop. In this output SF still shows S for 192.168.20.0 because LA has not joined RIP yet, so the static route is the only route SF has to that network. Once LA advertises 192.168.20.0 by RIP, SF has two routes to the same prefix: the RIP route (AD 120) and the static route (AD 150). The lower AD wins, so the R route replaces the S route in the table and the static route waits in the configuration as a backup. That is a floating static route doing its job."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Auto-summary. BOOK CHECK The book says RIP (and EIGRP before 15.x code) auto-summarise by default and recommends no auto-summary. I did not verify the current default on IOS XE. Always check with show ip protocols in your lab."
+    },
+    {
+     "level": 3,
+     "text": "Hop count growing (book p. 156)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Each router that passes on a RIP route adds 1 to the hop count. A route shown as [120/15] is the last usable one. The next router would see 16 and discard it as unreachable. If a router receives an update with a higher-cost path to a network it already has, the update is ignored."
+    },
+    {
+     "level": 2,
+     "text": "5.6.2 Holding Down RIP Propagations (book pp. 156-158)"
+    },
+    {
+     "level": 0,
+     "text": "You do not want RIP advertised everywhere on your LANs and WANs. The easiest control is passive-interface: it stops RIP updates from being sent out of an interface, but the interface can still receive them."
+    },
+    {
+     "level": 0,
+     "text": "Stop RIP updates leaving a LAN interface CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# router rip"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# passive-interface FastEthernet 0/1"
+    },
+    {
+     "level": 3,
+     "text": "Using RIP with old equipment (book p. 157)"
+    },
+    {
+     "level": 0,
+     "text": "If old routers only support RIP, you can run RIP only where you need it and use redistribution (translating routes from one protocol to another) to join it to a better protocol such as EIGRP or OSPF for the rest of the network. Do not run RIP everywhere just because one device needs it."
+    },
+    {
+     "level": 3,
+     "text": "Advertising a default route with RIP (book pp. 157-158)"
+    },
+    {
+     "level": 0,
+     "text": "If Corp connects to the Internet (the book imagines Fa0/0 going to a Metro Ethernet ISP link), the SF and LA routers must also know where to send Internet traffic. Corp gets a default route to the ISP and then advertises it into RIP."
+    },
+    {
+     "level": 0,
+     "text": "Default route plus advertisement CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# ip route 0.0.0.0 0.0.0.0 fa0/0"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config)# router rip"
+    },
+    {
+     "level": 0,
+     "text": "Corp(config-router)# default-information originate"
+    },
+    {
+     "level": 0,
+     "text": "- ip route 0.0.0.0 0.0.0.0 fa0/0 is Corp's own default route toward the ISP."
+    },
+    {
+     "level": 0,
+     "text": "- default-information originate tells RIP to advertise that default route to the other routers. On SF and LA it appears as R* (a RIP-learned candidate default) and the gateway of last resort is set."
+    },
+    {
+     "level": 0,
+     "text": "The book's example points the default route only at an Ethernet exit interface. On a real Ethernet link a next-hop address is the safer choice (see the best-practice note in 5.4.1). CHECK The same default-information originate idea is used in OSPF (Chapter 6)."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 5.6"
+    },
+    {
+     "level": 0,
+     "text": "Q18. Why does the network command under RIP use classful networks and not subnets?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: RIP finds the subnets itself. The network command just says which interfaces to run RIP on. - enter the classful network address of each directly connected network."
+    },
+    {
+     "level": 0,
+     "text": "Q19. What hop count means unreachable in RIP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 16 - the maximum usable hop count is 15."
+    },
+    {
+     "level": 0,
+     "text": "Q20. What does passive-interface do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stops RIP updates being sent out that interface, but the interface still receives updates - used so RIP is not advertised onto LANs that do not need it."
+    }
+   ],
+   "words": 987
+  },
+  {
+   "title": "Troubleshooting: Routing Problems",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED This builds on the four-step method from Chapter 4 and the exam objectives v1.1 3.1-3.3 and v2.0 3.1-3.2."
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Ping works to the next router but not beyond | Missing route on a router in the path, or missing return route | show ip route on every router in the path, in both directions |"
+    },
+    {
+     "level": 0,
+     "text": "| Static route is in the configuration but not in the routing table | Next hop unreachable, outgoing interface down, or mistyped next hop | show ip interface brief, ping the next hop, show running-config \\| include ip route |"
+    },
+    {
+     "level": 0,
+     "text": "| Traffic goes the wrong way | A more specific route (longer prefix) exists, or a lower-AD route wins | Compare prefix lengths first, then AD, then metric |"
+    },
+    {
+     "level": 0,
+     "text": "| A floating static route is used even though the routing protocol is up | The static route's AD is lower than the protocol's | Make the floating static AD higher than the protocol (for example 150 for RIP or OSPF) |"
+    },
+    {
+     "level": 0,
+     "text": "| Hosts behind a remote router get 169.254.x.x | No ip helper-address on the LAN interface, or no route to the DHCP server | Check show running-config interface <LAN> and ping the DHCP server |"
+    },
+    {
+     "level": 0,
+     "text": "| Gateway of last resort is \"not set\" | No default route | ip route 0.0.0.0 0.0.0.0 <next hop> |"
+    },
+    {
+     "level": 0,
+     "text": "| RIP route not appearing | Wrong network statement, passive interface, mismatched version | show ip protocols, check version 2 on all routers |"
+    },
+    {
+     "level": 0,
+     "text": "| Routing loop or packets circling | Default routes pointing at each other | Check each router's default route points toward the exit, not back |"
+    },
+    {
+     "level": 0,
+     "text": "CHECK These are standard troubleshooting rules. I did not test them on real equipment in this session."
+    }
+   ],
+   "words": 310
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Routing process | Frame is rebuilt at every hop (MACs change). The packet's IP addresses stay the same. TTL goes down by 1. Destination MAC to a remote host = the default gateway interface. |"
+    },
+    {
+     "level": 0,
+     "text": "| Forwarding decision | 1) Longest prefix match. 2) Lowest AD. 3) Lowest metric. Equal = load balance. No match and no default = drop and ICMP unreachable. |"
+    },
+    {
+     "level": 0,
+     "text": "| Routing table | C connected, L local (/32), S static, S* static default, R RIP, O OSPF, D EIGRP. [AD/metric], via next hop, gateway of last resort. |"
+    },
+    {
+     "level": 0,
+     "text": "| Static route | ip route <network> <mask> <next hop \\| exit interface> [AD] [permanent]. Default AD 1. Not installed if the next hop is unreachable. |"
+    },
+    {
+     "level": 0,
+     "text": "| Route types | Network route, host route (/32), default route (0.0.0.0/0), floating static (AD higher than the protocol). |"
+    },
+    {
+     "level": 0,
+     "text": "| Default route | ip route 0.0.0.0 0.0.0.0 <next hop>. Best on stub routers. Sets the gateway of last resort. Avoid loops. |"
+    },
+    {
+     "level": 0,
+     "text": "| AD values | Connected 0, static 1, EIGRP summary 5, eBGP 20, EIGRP 90, OSPF 110, IS-IS 115, RIP 120, external EIGRP 170, iBGP 200, unknown 255. |"
+    },
+    {
+     "level": 0,
+     "text": "| Protocol classes | Distance vector (RIP, hop count, whole table), link state (OSPF, triggered updates, 3 tables), advanced distance vector (EIGRP). |"
+    },
+    {
+     "level": 0,
+     "text": "| RIP (learning tool) | 30-second updates, max 15 hops (16 = unreachable). v1 classful, v2 classless. Config: router rip, version 2, network (classful), no auto-summary. |"
+    },
+    {
+     "level": 0,
+     "text": "| Dynamic vs static | You enter only directly connected networks under a routing protocol, and remote networks only in static routes. |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP server and relay | ip dhcp excluded-address, ip dhcp pool, network, default-router, dns-server. Remote LAN needs ip helper-address <server>. |"
+    },
+    {
+     "level": 0,
+     "text": "| Verification | show ip route, show ip interface brief (Layers 1 and 2 only), ping, show ip dhcp binding \\| pool \\| conflict. |"
+    }
+   ],
+   "words": 323
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Fill this in after the pre-check, quick checks, labs and review questions. Then copy the result to the matching row in the Notion tracker. Leave a row as Not assessed if you have not been tested on it. Use Know only if you answered correctly without help, or completed the lab without the answer in front of you."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status (pick one) | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.1 Routing Basics |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.2 The IP Routing Process |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.2.1 Cisco Router Internal Process |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.2.2 Testing Your IP Routing Understanding |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.3 Configuring IP Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.3.1 Corp Configuration |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.3.2 SF Configuration |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.3.3 LA Configuration (and DHCP server and relay) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.4 Configuring IP Routing in Our Network |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.4.1 Static Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.4.2 Default Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.5 Dynamic Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.5.1 Routing Protocol Basics (AD, protocol classes) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.6 Routing Information Protocol (RIP) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.6.1 Configuring RIP Routing |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 5.6.2 Holding Down RIP Propagations |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "Status choices: Not assessed � Know � Partially understand � Need to learn � Needs revision."
+    }
+   ],
+   "words": 305
+  },
+  {
+   "title": "Answer Key A: Pre-Check",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Destination MAC = the default gateway's interface MAC. Destination IP = Host B's IP address."
+    },
+    {
+     "level": 0,
+     "text": "- 10.1.0.0/16 (OSPF). It is the longest match for 10.1.5.5. Longest prefix is checked before AD, so RIP's /8 and the /0 default never compete."
+    },
+    {
+     "level": 0,
+     "text": "- Connected 0, static 1, EIGRP (internal) 90, OSPF 110, RIP 120."
+    },
+    {
+     "level": 0,
+     "text": "- ip route 192.168.20.0 255.255.255.0 172.16.10.6"
+    },
+    {
+     "level": 0,
+     "text": "- A static route that is a candidate default route (the default route 0.0.0.0/0 with a gateway of last resort)."
+    }
+   ],
+   "words": 79
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "Do these after the labs. Then also do the book's own review questions at the end of the chapter and check them in the Appendix. I did not copy them here. Mark tracker rows from the evidence of your answers."
+    }
+   ],
+   "words": 40
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "Every place where this document differs from the book or adds to it is listed. Nothing was replaced silently."
+    },
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Static routes have AD 1, \"or 0 if you use an exit interface\" (p. 143) | Flags the 0 claim as likely wrong and tells you how to check it in a lab | Cisco's AD table lists static = 1. The AD 1 for exit-interface routes comes from a secondary source only. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | AD table without IS-IS and the EIGRP summary route (p. 151) | Adds IS-IS 115 and EIGRP summary 5 | Cisco's own administrative distance document |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Longest match and AD explained separately | Adds a single decision order: longest prefix, then AD, then metric | Standard routing behaviour |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Command to see the packet-switching method is missing in my copy (p. 127) | Suggests show ip interface and show ip cef | CHECK not run |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Host route and floating static named in objectives only | Adds examples and a route-types table | Standard IOS syntax. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | Exit-interface routes on Ethernet | Adds a best-practice note (use a next hop on Ethernet) | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | RIP taught in detail; RIP is not an exam topic | Marks section 5.6 as a learning tool; points to OSPF in Chapter 6 | Cisco v2.0 outline read directly; v1.1 from the book's map |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | RIP update type described as broadcasts (p. 157) | Adds that RIPv2 uses multicast 224.0.0.9, flagged | General knowledge. CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | no auto-summary rule for RIP and pre-15.x EIGRP (p. 154) | Kept; tells you to verify with show ip protocols | CHECK not verified on current IOS XE |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | Static routes for IPv4 only | Notes that IPv6 static routes are tested and covered in Chapter 17 | Cisco v1.1 map and v2.0 outline |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | Old hardware and examples (ISR routers, serial links, IOS 12.4 notes, 2013 DHCP lease dates) | Kept as in the book; Packet Tracer interface names may differ | n/a |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | Example passwords (for example the enable secret) | Replaced with placeholders in the code blocks and advises using strong passwords and SSH | Good practice |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | v1.1 objectives (3.1, 3.2, 3.3, 4.3, 4.6) | Uses the book's map and flags that v1.1 numbering could differ | Cisco's own v1.1 PDF was not opened |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | v2.0 objectives | Uses v2.0 3.1, 3.2, 1.7 and 2.4 | Read directly from Cisco's v2.0 PDF this session |"
+    }
+   ],
+   "words": 474
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware. Commands, outputs and lab results are written from standard usage. Test them and correct anything that differs on your platform."
+    }
+   ],
+   "words": 30
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. Labs are written for Cisco Packet Tracer (or GNS3/CML). Record what you actually saw in the tracker (Practical lab, Evidence / mistakes). Simulators differ from real equipment, so write down your real results. Serial interface names and clock-rate values differ between router models. Use the interface names your router shows."
+    }
+   ]
+  },
+  {
+   "number": "5.1",
+   "title": "Longest match drill (paper, 10 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "A router has this routing table. For each destination write the route (prefix and source) that the router uses."
+    },
+    {
+     "level": 0,
+     "text": "| Code | Route |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| S* | 0.0.0.0/0 via 203.0.113.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| R | 10.0.0.0/8 via 172.16.1.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| O | 10.1.0.0/16 via 172.16.2.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| S | 10.1.1.0/24 via 172.16.3.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| C | 192.168.1.0/24 directly connected, GigabitEthernet0/0 |"
+    },
+    {
+     "level": 0,
+     "text": "| # | Destination |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | 10.1.1.77 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | 10.1.2.5 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 10.2.2.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | 8.8.8.8 |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | 192.168.1.50 |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | 10.1.1.255 |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | 172.16.9.9 |"
+    },
+    {
+     "level": 0,
+     "text": "**What the book says**"
+    },
+    {
+     "level": 0,
+     "text": "Solutions (checked by script). 1. 10.1.1.0/24 (static, via 172.16.3.2). 2. 10.1.0.0/16 (OSPF, via 172.16.2.2). 3. 10.0.0.0/8 (RIP, via 172.16.1.2). 4. 0.0.0.0/0 (default, via 203.0.113.1). 5. 192.168.1.0/24 (connected, Gi0/0). 6. 10.1.1.0/24 (static): the router does not treat .255 as a broadcast here, longest match is still the /24. 7. 0.0.0.0/0 (default): none of the more specific routes match 172.16.9.9."
+    },
+    {
+     "level": 0,
+     "text": "Extra: if OSPF and RIP both offered 10.1.0.0/16, the router would install OSPF (AD 110 beats RIP 120)."
+    }
+   ]
+  },
+  {
+   "number": "5.2",
+   "title": "Build the Corp, SF, LA network (Packet Tracer, 40 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Build three routers (Corp, SF, LA) and one switch with a PC on each LAN. Join Corp-SF and Corp-LA with serial links (or Ethernet if your simulator lacks serial). Use the address table in 5.3."
+    },
+    {
+     "level": 0,
+     "text": "- Configure each router with the commands in 5.3, setting a clock rate on the DCE end of each serial link."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip interface brief and show ip route on each router. Record which interfaces are up/up, and which networks appear."
+    },
+    {
+     "level": 0,
+     "text": "- Ping the directly connected neighbour from each router (for example Corp to 172.16.10.2)."
+    },
+    {
+     "level": 0,
+     "text": "- Ping from Corp to 192.168.10.1 (SF's LAN). Record the result."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: every interface is up/up once both ends are configured. Each routing table shows only C and L routes. The neighbour pings succeed, and the ping from Corp to SF's LAN fails (no route to 192.168.10.0). That failure is the whole reason the rest of the chapter exists. CHECK Packet Tracer serial interface names and the clock rate values it accepts can differ from the book's."
+    }
+   ]
+  },
+  {
+   "number": "5.3",
+   "title": "Static routes, then floating static (Packet Tracer, 30 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Add the book's static routes from 5.4.1 on all three routers, including the 150 at the end."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip route on each router. Find the S entries and the [150/0] values."
+    },
+    {
+     "level": 0,
+     "text": "- Ping from a PC on the SF LAN to a PC on the LA LAN."
+    },
+    {
+     "level": 0,
+     "text": "- Now enable RIPv2 on all three routers (Lab 5.6 commands). Run show ip route again."
+    },
+    {
+     "level": 0,
+     "text": "- Remove RIP with no router rip on all three routers and run show ip route once more."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: step 3 succeeds once every router has a route to every network (and a return route). In step 4 the R (RIP, AD 120) routes replace the S (AD 150) routes, because 120 is lower. In step 5 the static routes come back. That is a floating static route acting as backup. If something does not match, write down what you saw. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "5.4",
+   "title": "Default routes on the stub routers (Packet Tracer, 20 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- From Lab 5.3, remove the three static routes on SF and LA with no ip route ... (use the same command with no in front)."
+    },
+    {
+     "level": 0,
+     "text": "- On SF and LA add ip route 0.0.0.0 0.0.0.0 <Corp address on the link> (172.16.10.1 for SF, 172.16.10.5 for LA)."
+    },
+    {
+     "level": 0,
+     "text": "- Keep Corp's two static routes to SF's and LA's LANs."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip route on SF. Find S* and the Gateway of last resort line."
+    },
+    {
+     "level": 0,
+     "text": "- Ping from the SF LAN to the LA LAN. Then ping an address that exists nowhere, for example 8.8.8.8 from the SF router."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: SF and LA reach each other through Corp. A ping to 8.8.8.8 from SF is forwarded to Corp, and Corp has no route to it, so the ICMP destination unreachable reply comes back from Corp (the ping shows U). This shows exactly how a default route sends unknown traffic one hop onwards and where it dies. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "5.5",
+   "title": "DHCP server and relay (Packet Tracer, 30 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Use the DHCP server and ip helper-address commands in 5.3.3. Replace the PCs' static addresses with DHCP."
+    },
+    {
+     "level": 0,
+     "text": "- First leave the helper-address off SF Fa0/0. Check the PC's address."
+    },
+    {
+     "level": 0,
+     "text": "- Add the helper-address and renew the PC's address (for example ipconfig /renew on the PC)."
+    },
+    {
+     "level": 0,
+     "text": "- On Corp run show ip dhcp binding, show ip dhcp pool and show ip dhcp conflict."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: without the helper address, the PC shows a 169.254.x.x APIPA address (the broadcast never reaches Corp). With it, the PC gets an address from 192.168.10.2 or higher, with 192.168.10.1 as the gateway. The binding table shows the PC's lease and the conflict table is empty. CHECK Packet Tracer may give an address a little differently from real IOS."
+    }
+   ]
+  },
+  {
+   "number": "5.6",
+   "title": "RIPv2 and default-information originate (Packet Tracer, 30 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Remove the static routes (or leave them at AD 150) and configure RIPv2 on all three routers with the commands in 5.6.1."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip route on SF and LA. Write down the AD and metric of each R route."
+    },
+    {
+     "level": 0,
+     "text": "- Run show ip protocols on Corp and read the output."
+    },
+    {
+     "level": 0,
+     "text": "- Add passive-interface for an unused interface on Corp."
+    },
+    {
+     "level": 0,
+     "text": "- Add an extra router or loopback as an \"ISP\" on Corp Fa0/1. Configure ip route 0.0.0.0 0.0.0.0 <ISP address> on Corp and default-information originate under RIP. Check SF and LA for R* and the gateway of last resort."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: R routes show [120/1] for networks one hop away and [120/2] for networks two hops away. After default-information originate, SF and LA show an R* default route and a gateway of last resort. CHECK show ip protocols was not in this chapter, so treat its output as new information and compare it with the commands you typed."
+    }
+   ]
+  },
+  {
+   "number": "5.7",
+   "title": "Trace the frames (paper, 15 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Host 4 (192.168.30.10) is on the Lab_B LAN. It sends a file to the email server (192.168.40.5) on the Lab_A LAN. The two routers are joined by a WAN link. Fill in the table for each stage."
+    },
+    {
+     "level": 0,
+     "text": "| Stage | Source MAC | Destination MAC | Source IP | Destination IP |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Leaving Host 4 | ? | ? | ? | ? |"
+    },
+    {
+     "level": 0,
+     "text": "| On the WAN link (Lab_B to Lab_A) | ? | ? | ? | ? |"
+    },
+    {
+     "level": 0,
+     "text": "| Arriving at the email server | ? | ? | ? | ? |"
+    },
+    {
+     "level": 0,
+     "text": "**What the book says**"
+    },
+    {
+     "level": 0,
+     "text": "Solutions. Leaving Host 4: source MAC Host 4, destination MAC Lab_B Fa0/0, source IP 192.168.30.10, destination IP 192.168.40.5. On the WAN link: MACs are those of the two WAN interfaces (the frame type depends on the WAN technology), IPs unchanged. Arriving at the server: source MAC Lab_A Fa0/0, destination MAC the server, IPs unchanged. The IP addresses never change. The MAC addresses change at every router."
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "IP Routing — review questions",
+   "questions": [
+    {
+     "source": "Q1. A router has 10.0.0.0/8 via RIP and 10.1.1.0/24 via a static route. Which route does a packet for 10.1.1.9 use?",
+     "sourceNumber": "Q1",
+     "q": "A router has 10.0.0.0/8 via RIP and 10.1.1.0/24 via a static route. Which route does a packet for 10.1.1.9 use?",
+     "options": [
+      "10.0.0.0/8, because RIP is dynamic",
+      "10.1.1.0/24, because it is the longest match",
+      "Neither, it uses the default route",
+      "Both, load balanced"
+     ],
+     "answer": "B",
+     "why": "longest prefix match wins first, before administrative distance is even considered.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. What does the L entry with a /32 mask in a routing table mean?",
+     "sourceNumber": "Q2",
+     "q": "What does the L entry with a /32 mask in a routing table mean?",
+     "options": [],
+     "answer": "A",
+     "why": "local host route for the router's own interface address - it tells the router that address belongs to itself.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Is a routing protocol the same thing as a routed protocol?",
+     "sourceNumber": "Q3",
+     "q": "Is a routing protocol the same thing as a routed protocol?",
+     "options": [],
+     "answer": null,
+     "why": "No - routing protocols (OSPF, RIP) share routes between routers; routed protocols (IP) carry user data.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Host A sends to a server on another network. The source and destination MAC addresses of the frame leaving the router towards the server are:",
+     "sourceNumber": "Q4",
+     "q": "Host A sends to a server on another network. The source and destination MAC addresses of the frame leaving the router towards the server are:",
+     "options": [
+      "Host A and the server",
+      "Router interface on the server's LAN and the server",
+      "Router interface on Host A's LAN and the server",
+      "Switch and the server"
+     ],
+     "answer": "B",
+     "why": "the router builds a new frame: its own outgoing interface MAC as source, and the server's MAC as destination.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q5. Which fields change at each router hop: source MAC, destination MAC, source IP, destination IP, TTL?",
+     "sourceNumber": "Q5",
+     "q": "Which fields change at each router hop: source MAC, destination MAC, source IP, destination IP, TTL?",
+     "options": [],
+     "answer": null,
+     "why": "Source MAC, destination MAC and TTL - the IP addresses stay the same end to end.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. What does a router do when it has no route and no default route for a packet?",
+     "sourceNumber": "Q6",
+     "q": "What does a router do when it has no route and no default route for a packet?",
+     "options": [],
+     "answer": "D",
+     "why": "rops it and sends an ICMP destination unreachable back - this is the \"destination host unreachable\" you see on the sender.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. Which forwarding method is the default on modern Cisco routers?",
+     "sourceNumber": "Q7",
+     "q": "Which forwarding method is the default on modern Cisco routers?",
+     "options": [],
+     "answer": "C",
+     "why": "isco Express Forwarding (CEF) - it is change-triggered and uses pre-built tables.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. Why does the serial interface on Corp stay down right after you configure it?",
+     "sourceNumber": "Q8",
+     "q": "Why does the serial interface on Corp stay down right after you configure it?",
+     "options": [],
+     "answer": null,
+     "why": "The other end of the link is not configured yet (or no clock on a DCE end) - a serial link needs both ends up, and the DCE end needs a clock rate.",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. Where do you configure ip helper-address, and what address do you give it?",
+     "sourceNumber": "Q9",
+     "q": "Where do you configure ip helper-address, and what address do you give it?",
+     "options": [],
+     "answer": null,
+     "why": "On the router interface that faces the clients; the DHCP server's IP address - it converts the client's broadcast into a unicast to the server.",
+     "kind": "open"
+    },
+    {
+     "source": "Q10. Which command shows which hosts have received DHCP addresses from the router?",
+     "sourceNumber": "Q10",
+     "q": "Which command shows which hosts have received DHCP addresses from the router?",
+     "options": [],
+     "answer": null,
+     "why": "show ip dhcp binding - it shows each leased address and its lease expiry.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. Write the command to create a default route with next hop 10.1.1.1.",
+     "sourceNumber": "Q11",
+     "q": "Write the command to create a default route with next hop 10.1.1.1.",
+     "options": [],
+     "answer": null,
+     "why": "ip route 0.0.0.0 0.0.0.0 10.1.1.1 - mask 0.0.0.0 matches everything.",
+     "kind": "open"
+    },
+    {
+     "source": "Q12. What does [150/0] mean in S 192.168.10.0/24 [150/0] via 172.16.10.2?",
+     "sourceNumber": "Q12",
+     "q": "What does [150/0] mean in S 192.168.10.0/24 [150/0] via 172.16.10.2?",
+     "options": [],
+     "answer": "A",
+     "why": "dministrative distance 150, metric 0 - the AD was raised from the default 1 to 150, making it a floating static route.",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. A static route to 10.5.5.0/24 via 172.16.10.2 does not appear in the routing table. Name two possible causes.",
+     "sourceNumber": "Q13",
+     "q": "A static route to 10.5.5.0/24 via 172.16.10.2 does not appear in the routing table. Name two possible causes.",
+     "options": [],
+     "answer": null,
+     "why": "The next hop is unreachable or the outgoing interface is down - a static route is removed when it has no valid next hop (unless you use permanent).",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. Which kind of router is best suited to a default route?",
+     "sourceNumber": "Q14",
+     "q": "Which kind of router is best suited to a default route?",
+     "options": [],
+     "answer": "A",
+     "why": "stub router (only one way out) - it avoids typing many static routes.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. A router learns 172.16.50.0/24 from OSPF and from RIP. Which does it install?",
+     "sourceNumber": "Q15",
+     "q": "A router learns 172.16.50.0/24 from OSPF and from RIP. Which does it install?",
+     "options": [
+      "RIP, because it is simpler",
+      "OSPF, because 110 is lower than 120",
+      "Both, load balanced",
+      "Neither"
+     ],
+     "answer": "B",
+     "why": "lower administrative distance wins when the prefixes are the same.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q16. Which class of routing protocol sends triggered updates and keeps three tables?",
+     "sourceNumber": "Q16",
+     "q": "Which class of routing protocol sends triggered updates and keeps three tables?",
+     "options": [],
+     "answer": null,
+     "why": "Link state - OSPF is the example.",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. What is the AD range, and which end is most trusted?",
+     "sourceNumber": "Q17",
+     "q": "What is the AD range, and which end is most trusted?",
+     "options": [],
+     "answer": null,
+     "why": "0 to 255; 0 is most trusted - 255 means the route is never used.",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. Why does the network command under RIP use classful networks and not subnets?",
+     "sourceNumber": "Q18",
+     "q": "Why does the network command under RIP use classful networks and not subnets?",
+     "options": [],
+     "answer": null,
+     "why": "RIP finds the subnets itself. The network command just says which interfaces to run RIP on. - enter the classful network address of each directly connected network.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. What hop count means unreachable in RIP?",
+     "sourceNumber": "Q19",
+     "q": "What hop count means unreachable in RIP?",
+     "options": [],
+     "answer": null,
+     "why": "16 - the maximum usable hop count is 15.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. What does passive-interface do?",
+     "sourceNumber": "Q20",
+     "q": "What does passive-interface do?",
+     "options": [],
+     "answer": null,
+     "why": "Stops RIP updates being sent out that interface, but the interface still receives updates - used so RIP is not advertised onto LANs that do not need it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. Which command displays the routing table on a Cisco router?",
+     "sourceNumber": "Q21",
+     "q": "Which command displays the routing table on a Cisco router?",
+     "options": [
+      "show routes",
+      "show ip route",
+      "show route table",
+      "show ip interface brief"
+     ],
+     "answer": "B",
+     "why": "show ip route.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q22. A router has no route to a packet's destination and no default route. What happens?",
+     "sourceNumber": "Q22",
+     "q": "A router has no route to a packet's destination and no default route. What happens?",
+     "options": [],
+     "answer": null,
+     "why": "The packet is dropped and an ICMP destination unreachable is sent to the source - routers do not guess.",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. What does the L code mean in a routing table?",
+     "sourceNumber": "Q23",
+     "q": "What does the L code mean in a routing table?",
+     "options": [],
+     "answer": "A",
+     "why": "local host route (/32) for one of the router's own interface addresses - added by IOS 15 and later.",
+     "kind": "open"
+    },
+    {
+     "source": "Q24. Which administrative distance is higher: OSPF or RIP? Which is preferred?",
+     "sourceNumber": "Q24",
+     "q": "Which administrative distance is higher: OSPF or RIP? Which is preferred?",
+     "options": [],
+     "answer": null,
+     "why": "RIP (120) is higher; OSPF (110) is preferred - lower AD is more trusted.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Write a floating static route to 10.5.0.0/16 via 192.168.1.2 that backs up OSPF.",
+     "sourceNumber": "Q25",
+     "q": "Write a floating static route to 10.5.0.0/16 via 192.168.1.2 that backs up OSPF.",
+     "options": [],
+     "answer": null,
+     "why": "ip route 10.5.0.0 255.255.0.0 192.168.1.2 150 - any AD above 110 works; 150 is the book's value.",
+     "kind": "open"
+    },
+    {
+     "source": "Q26. Which command makes a router advertise its default route in RIP?",
+     "sourceNumber": "Q26",
+     "q": "Which command makes a router advertise its default route in RIP?",
+     "options": [],
+     "answer": "D",
+     "why": "default-information originate under router rip - it advertises the default route to neighbours.",
+     "kind": "open"
+    },
+    {
+     "source": "Q27. What is the maximum usable RIP hop count?",
+     "sourceNumber": "Q27",
+     "q": "What is the maximum usable RIP hop count?",
+     "options": [],
+     "answer": null,
+     "why": "15 - 16 means unreachable.",
+     "kind": "open"
+    },
+    {
+     "source": "Q28. A frame crosses a router. Which of these changes: destination MAC, source IP, TTL?",
+     "sourceNumber": "Q28",
+     "q": "A frame crosses a router. Which of these changes: destination MAC, source IP, TTL?",
+     "options": [],
+     "answer": "D",
+     "why": "estination MAC (and source MAC) and TTL; the source IP stays the same - frames are rebuilt at each hop; packet addresses stay the same.",
+     "kind": "open"
+    },
+    {
+     "source": "Q29. A packet for 10.10.10.14 arrives. The router has 10.10.10.0/30, 10.10.10.4/30, 10.10.10.8/29 and 10.10.10.16/28 connected. Which interface does it use?",
+     "sourceNumber": "Q29",
+     "q": "A packet for 10.10.10.14 arrives. The router has 10.10.10.0/30, 10.10.10.4/30, 10.10.10.8/29 and 10.10.10.16/28 connected. Which interface does it use?",
+     "options": [],
+     "answer": null,
+     "why": "The one on 10.10.10.8/29 - the /29 covers 10.10.10.8 - 10.10.10.15 (checked by script).",
+     "kind": "open"
+    },
+    {
+     "source": "Q30. Why must you configure ip helper-address on the remote router's LAN interface?",
+     "sourceNumber": "Q30",
+     "q": "Why must you configure ip helper-address on the remote router's LAN interface?",
+     "options": [],
+     "answer": "B",
+     "why": "ecause the DHCP Discover is a broadcast and routers do not forward broadcasts - the helper address converts it into a unicast to the DHCP server.",
+     "kind": "open"
+    },
+    {
+     "source": "Q31. Which routing-protocol class does OSPF belong to, and how does it send updates?",
+     "sourceNumber": "Q31",
+     "q": "Which routing-protocol class does OSPF belong to, and how does it send updates?",
+     "options": [],
+     "answer": null,
+     "why": "Link state; triggered updates of changes only, plus hello keepalives - RIP, by contrast, sends the whole table every 30 seconds.",
+     "kind": "open"
+    },
+    {
+     "source": "Q32. What does no auto-summary do under RIP?",
+     "sourceNumber": "Q32",
+     "q": "What does no auto-summary do under RIP?",
+     "options": [],
+     "answer": null,
+     "why": "Stops RIP summarising to classful boundaries, so it advertises the real subnets - important when subnets of a classful network are in different places.",
+     "kind": "open"
+    },
+    {
+     "source": "Q33. Why can two routes to the same destination, one static (AD 1) and one OSPF (AD 110), exist without conflict?",
+     "sourceNumber": "Q33",
+     "q": "Why can two routes to the same destination, one static (AD 1) and one OSPF (AD 110), exist without conflict?",
+     "options": [],
+     "answer": null,
+     "why": "The router installs only the one with the lowest AD, the static route; the OSPF route is not used while the static one exists - that is how floating statics are made to wait: give them a higher AD.",
+     "kind": "open"
+    },
+    {
+     "source": "Q34. On which type of router is a default route most appropriate?",
+     "sourceNumber": "Q34",
+     "q": "On which type of router is a default route most appropriate?",
+     "options": [],
+     "answer": "A",
+     "why": "stub router with a single way out - it removes the need for many static routes.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 A router has 10.0.0.0/8 via RIP and 10.1.1.0/24 via a static route. Which route does a packet for 10.1.1.9 use?"
+    },
+    {
+     "level": 0,
+     "text": "A. 10.0.0.0/8, because RIP is dynamic"
+    },
+    {
+     "level": 0,
+     "text": "B. 10.1.1.0/24, because it is the longest match"
+    },
+    {
+     "level": 0,
+     "text": "C. Neither, it uses the default route"
+    },
+    {
+     "level": 0,
+     "text": "D. Both, load balanced"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - longest prefix match wins first, before administrative distance is even considered."
+    },
+    {
+     "level": 0,
+     "text": "Q2 What does the L entry with a /32 mask in a routing table mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - local host route for the router's own interface address - it tells the router that address belongs to itself."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Is a routing protocol the same thing as a routed protocol?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - routing protocols (OSPF, RIP) share routes between routers; routed protocols (IP) carry user data."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Host A sends to a server on another network. The source and destination MAC addresses of the frame leaving the router towards the server are:"
+    },
+    {
+     "level": 0,
+     "text": "A. Host A and the server"
+    },
+    {
+     "level": 0,
+     "text": "B. Router interface on the server's LAN and the server"
+    },
+    {
+     "level": 0,
+     "text": "C. Router interface on Host A's LAN and the server"
+    },
+    {
+     "level": 0,
+     "text": "D. Switch and the server"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the router builds a new frame: its own outgoing interface MAC as source, and the server's MAC as destination."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which fields change at each router hop: source MAC, destination MAC, source IP, destination IP, TTL?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Source MAC, destination MAC and TTL - the IP addresses stay the same end to end."
+    },
+    {
+     "level": 0,
+     "text": "Q6 What does a router do when it has no route and no default route for a packet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - rops it and sends an ICMP destination unreachable back - this is the \"destination host unreachable\" you see on the sender."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Which forwarding method is the default on modern Cisco routers?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - isco Express Forwarding (CEF) - it is change-triggered and uses pre-built tables."
+    },
+    {
+     "level": 0,
+     "text": "Q8 Why does the serial interface on Corp stay down right after you configure it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The other end of the link is not configured yet (or no clock on a DCE end) - a serial link needs both ends up, and the DCE end needs a clock rate."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Where do you configure ip helper-address, and what address do you give it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: On the router interface that faces the clients; the DHCP server's IP address - it converts the client's broadcast into a unicast to the server."
+    },
+    {
+     "level": 0,
+     "text": "Q10 Which command shows which hosts have received DHCP addresses from the router?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show ip dhcp binding - it shows each leased address and its lease expiry."
+    },
+    {
+     "level": 0,
+     "text": "Q11 Write the command to create a default route with next hop 10.1.1.1."
+    },
+    {
+     "level": 0,
+     "text": "Answer: ip route 0.0.0.0 0.0.0.0 10.1.1.1 - mask 0.0.0.0 matches everything."
+    },
+    {
+     "level": 0,
+     "text": "Q12 What does [150/0] mean in S 192.168.10.0/24 [150/0] via 172.16.10.2?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - dministrative distance 150, metric 0 - the AD was raised from the default 1 to 150, making it a floating static route."
+    },
+    {
+     "level": 0,
+     "text": "Q13 A static route to 10.5.5.0/24 via 172.16.10.2 does not appear in the routing table. Name two possible causes."
+    },
+    {
+     "level": 0,
+     "text": "Answer: The next hop is unreachable or the outgoing interface is down - a static route is removed when it has no valid next hop (unless you use permanent)."
+    },
+    {
+     "level": 0,
+     "text": "Q14 Which kind of router is best suited to a default route?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - stub router (only one way out) - it avoids typing many static routes."
+    },
+    {
+     "level": 0,
+     "text": "Q15 A router learns 172.16.50.0/24 from OSPF and from RIP. Which does it install?"
+    },
+    {
+     "level": 0,
+     "text": "A. RIP, because it is simpler"
+    },
+    {
+     "level": 0,
+     "text": "B. OSPF, because 110 is lower than 120"
+    },
+    {
+     "level": 0,
+     "text": "C. Both, load balanced"
+    },
+    {
+     "level": 0,
+     "text": "D. Neither"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - lower administrative distance wins when the prefixes are the same."
+    },
+    {
+     "level": 0,
+     "text": "Q16 Which class of routing protocol sends triggered updates and keeps three tables?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Link state - OSPF is the example."
+    },
+    {
+     "level": 0,
+     "text": "Q17 What is the AD range, and which end is most trusted?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0 to 255; 0 is most trusted - 255 means the route is never used."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Why does the network command under RIP use classful networks and not subnets?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: RIP finds the subnets itself. The network command just says which interfaces to run RIP on. - enter the classful network address of each directly connected network."
+    },
+    {
+     "level": 0,
+     "text": "Q19 What hop count means unreachable in RIP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 16 - the maximum usable hop count is 15."
+    },
+    {
+     "level": 0,
+     "text": "Q20 What does passive-interface do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stops RIP updates being sent out that interface, but the interface still receives updates - used so RIP is not advertised onto LANs that do not need it."
+    },
+    {
+     "level": 0,
+     "text": "Q21 Which command displays the routing table on a Cisco router?"
+    },
+    {
+     "level": 0,
+     "text": "A. show routes"
+    },
+    {
+     "level": 0,
+     "text": "B. show ip route"
+    },
+    {
+     "level": 0,
+     "text": "C. show route table"
+    },
+    {
+     "level": 0,
+     "text": "D. show ip interface brief"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - show ip route."
+    },
+    {
+     "level": 0,
+     "text": "Q22 A router has no route to a packet's destination and no default route. What happens?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The packet is dropped and an ICMP destination unreachable is sent to the source - routers do not guess."
+    },
+    {
+     "level": 0,
+     "text": "Q23 What does the L code mean in a routing table?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - local host route (/32) for one of the router's own interface addresses - added by IOS 15 and later."
+    },
+    {
+     "level": 0,
+     "text": "Q24 Which administrative distance is higher: OSPF or RIP? Which is preferred?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: RIP (120) is higher; OSPF (110) is preferred - lower AD is more trusted."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Write a floating static route to 10.5.0.0/16 via 192.168.1.2 that backs up OSPF."
+    },
+    {
+     "level": 0,
+     "text": "Answer: ip route 10.5.0.0 255.255.0.0 192.168.1.2 150 - any AD above 110 works; 150 is the book's value."
+    },
+    {
+     "level": 0,
+     "text": "Q26 Which command makes a router advertise its default route in RIP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - default-information originate under router rip - it advertises the default route to neighbours."
+    },
+    {
+     "level": 0,
+     "text": "Q27 What is the maximum usable RIP hop count?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 15 - 16 means unreachable."
+    },
+    {
+     "level": 0,
+     "text": "Q28 A frame crosses a router. Which of these changes: destination MAC, source IP, TTL?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - estination MAC (and source MAC) and TTL; the source IP stays the same - frames are rebuilt at each hop; packet addresses stay the same."
+    },
+    {
+     "level": 0,
+     "text": "Q29 A packet for 10.10.10.14 arrives. The router has 10.10.10.0/30, 10.10.10.4/30, 10.10.10.8/29 and 10.10.10.16/28 connected. Which interface does it use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The one on 10.10.10.8/29 - the /29 covers 10.10.10.8 - 10.10.10.15 (checked by script)."
+    },
+    {
+     "level": 0,
+     "text": "Q30 Why must you configure ip helper-address on the remote router's LAN interface?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - ecause the DHCP Discover is a broadcast and routers do not forward broadcasts - the helper address converts it into a unicast to the DHCP server."
+    },
+    {
+     "level": 0,
+     "text": "Q31 Which routing-protocol class does OSPF belong to, and how does it send updates?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Link state; triggered updates of changes only, plus hello keepalives - RIP, by contrast, sends the whole table every 30 seconds."
+    },
+    {
+     "level": 0,
+     "text": "Q32 What does no auto-summary do under RIP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Stops RIP summarising to classful boundaries, so it advertises the real subnets - important when subnets of a classful network are in different places."
+    },
+    {
+     "level": 0,
+     "text": "Q33 Why can two routes to the same destination, one static (AD 1) and one OSPF (AD 110), exist without conflict?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The router installs only the one with the lowest AD, the static route; the OSPF route is not used while the static one exists - that is how floating statics are made to wait: give them a higher AD."
+    },
+    {
+     "level": 0,
+     "text": "Q34 On which type of router is a default route most appropriate?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - stub router with a single way out - it removes the need for many static routes."
+    }
+   ],
+   "multipleChoice": 4,
+   "open": 30
+  }
+ ],
+ "generatedFrom": "CC05.docx",
+ "totalWords": 10929,
+ "wordBreakdown": {
+  "sections": 8137,
+  "labs": 1190,
+  "quizzes": 1123,
+  "currency": 347,
+  "sources": 132
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "Static routes have AD 1, \"or 0 if you use an exit interface\" (p. 143)",
+   "current": "Flags the 0 claim as likely wrong and tells you how to check it in a lab",
+   "action": "",
+   "source": "Cisco's AD table lists static = 1. The AD 1 for exit-interface routes comes from a secondary source only. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "AD table without IS-IS and the EIGRP summary route (p. 151)",
+   "current": "Adds IS-IS 115 and EIGRP summary 5",
+   "action": "",
+   "source": "Cisco's own administrative distance document",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "Longest match and AD explained separately",
+   "current": "Adds a single decision order: longest prefix, then AD, then metric",
+   "action": "",
+   "source": "Standard routing behaviour",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "Command to see the packet-switching method is missing in my copy (p. 127)",
+   "current": "Suggests show ip interface and show ip cef",
+   "action": "",
+   "source": "CHECK not run",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "Host route and floating static named in objectives only",
+   "current": "Adds examples and a route-types table",
+   "action": "",
+   "source": "Standard IOS syntax. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "Exit-interface routes on Ethernet",
+   "current": "Adds a best-practice note (use a next hop on Ethernet)",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "RIP taught in detail; RIP is not an exam topic",
+   "current": "Marks section 5.6 as a learning tool; points to OSPF in Chapter 6",
+   "action": "",
+   "source": "Cisco v2.0 outline read directly; v1.1 from the book's map",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "RIP update type described as broadcasts (p. 157)",
+   "current": "Adds that RIPv2 uses multicast 224.0.0.9, flagged",
+   "action": "",
+   "source": "General knowledge. CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "no auto-summary rule for RIP and pre-15.x EIGRP (p. 154)",
+   "current": "Kept; tells you to verify with show ip protocols",
+   "action": "",
+   "source": "CHECK not verified on current IOS XE",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "Static routes for IPv4 only",
+   "current": "Notes that IPv6 static routes are tested and covered in Chapter 17",
+   "action": "",
+   "source": "Cisco v1.1 map and v2.0 outline",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "Old hardware and examples (ISR routers, serial links, IOS 12.4 notes, 2013 DHCP lease dates)",
+   "current": "Kept as in the book; Packet Tracer interface names may differ",
+   "action": "",
+   "source": "n/a",
+   "verified": ""
+  },
+  {
+   "severity": "high",
+   "title": "Gap 12",
+   "found": "Example passwords (for example the enable secret)",
+   "current": "Replaced with placeholders in the code blocks and advises using strong passwords and SSH",
+   "action": "",
+   "source": "Good practice",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "v1.1 objectives (3.1, 3.2, 3.3, 4.3, 4.6)",
+   "current": "Uses the book's map and flags that v1.1 numbering could differ",
+   "action": "",
+   "source": "Cisco's own v1.1 PDF was not opened",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "v2.0 objectives",
+   "current": "Uses v2.0 3.1, 3.2, 1.7 and 2.4",
+   "action": "",
+   "source": "Read directly from Cisco's v2.0 PDF this session",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Todd Lammle, CCNA Certification Study Guide Vol 2 (2020), Chapter 5",
+   "usedFor": "All BOOK content",
+   "status": "Read from your PDF (text, configurations, outputs, summary and exam essentials). Most review questions were not read in detail."
+  },
+  {
+   "source": "Cisco, 200-301 CCNA v2.0 exam topics (PDF on learningcontent.cisco.com)",
+   "usedFor": "v2.0 objectives 1.7, 2.4, 3.1, 3.2",
+   "status": "Official source, read this session"
+  },
+  {
+   "source": "Cisco, \"What Is Administrative Distance?\" (document 15986)",
+   "usedFor": "AD default values including IS-IS 115 and static 1",
+   "status": "Official Cisco document, from search results"
+  },
+  {
+   "source": "Secondary notes and a network-engineer reference",
+   "usedFor": "Static route with an exit interface has AD 1",
+   "status": "Secondary source only. CHECK"
+  },
+  {
+   "source": "Script calculation (Python ipaddress module)",
+   "usedFor": "Addresses, hosts, longest-match answers",
+   "status": "Calculated and compared with the manual method"
+  },
+  {
+   "source": "Everything marked CHECK",
+   "usedFor": "Commands, simulator behaviour, RIPv2 multicast, auto-summary default, DHCP behaviour in Packet Tracer",
+   "status": "General knowledge, not verified in this session"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-3.1"
+  }
+ ],
+ "questionCount": 34,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log (book versus current)",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A: Pre-Check",
+  "Sources and Verification Status"
+ ]
+}

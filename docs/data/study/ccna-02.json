@@ -1,0 +1,3167 @@
+{
+ "id": "ccna-02",
+ "n": 2,
+ "sourceNumber": "CC02",
+ "kind": "chapter",
+ "title": "TCP/IP",
+ "display": "Chapter 2: TCP/IP",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 6822,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 2"
+    },
+    {
+     "level": 0,
+     "text": "TCP/IP"
+    },
+    {
+     "level": 0,
+     "text": "Personalised study document built from Todd Lammle, CCNA Certification Study Guide, Volume 2 (Exam 200-301, 2020), book pages 29-73. Section numbers (2.1, 2.2 ...) match the rows in your Notion tracker CCNA Knowledge Tracker."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Details |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 29-73 (review questions p. 73, answers in the Appendix) |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 2 and sections 2.1 to 2.4 (16 rows, Seq 17-32). All start as Not assessed. |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | Two sessions of about 2 hours (a suggestion, not a measured need). Session A: pre-check, 2.1-2.2 (application and transport layers), labs 2.1-2.3. Session B: internet layer, IP addressing, address types, labs 2.4-2.6, review questions. |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | Tags show what applies to v1.1 (retires 2 Feb 2027) and v2.0 (from 3 Feb 2027). |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Do the pre-check first. Nothing here assumes you know or do not know a topic. |"
+    },
+    {
+     "level": 3,
+     "text": "Tags used in this document"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Content from the Lammle chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is out of date or unclear. The note says what changed. Nothing was replaced silently. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material not in this chapter that matters for the exam or real work. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified in an official source or on real equipment in this session. Check it in your lab. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives (from the book): compare TCP to UDP; configure and verify IPv4 addressing; describe the need for private IPv4 addressing; explain the role of DHCP and DNS; describe the function of TFTP/FTP. You should also be able to map protocols to the DoD model layers, name common ports, and identify address classes and address types."
+    },
+    {
+     "level": 3,
+     "text": "Where this chapter fits in the exam"
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 (book map, v1.0 numbering) | v2.0 outline (Cisco PDF) | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.1 History of TCP/IP | Not tested | Not tested | Low (context only) |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2.1 Application layer protocols | 4.3 DHCP and DNS; 4.9 TFTP/FTP (SNMP, NTP, SSH are tested in later chapters) | 1.7 DHCPv4 client/server/relay troubleshooting; 4.4 DNS records; 4.2 SFTP/SCP; 5.4 SNMP. TFTP/FTP are not listed. | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2.2 Transport layer (TCP, UDP, ports) | 1.5 Compare TCP to UDP | No separate objective, but needed for ACLs, NAT, troubleshooting | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2.3 Internet layer (IP, ICMP, ARP) | Foundation | 2.4 ping, extended ping, traceroute, packet capture output | High |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.3 IP addressing | 1.6 IPv4 addressing; 1.7 Private IPv4 | 1.3 Troubleshoot IPv4 configuration, assignment and subnetting (public and private) | Very high |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.4 IPv4 address types | 1.6 | 1.3 and foundation | High |"
+    },
+    {
+     "level": 0,
+     "text": "The book maps this chapter to objectives 1.5, 1.6, 1.7, 4.3 and 4.9 (original v1.0 numbering). I believe v1.1 kept these topics, but I could not open Cisco's own v1.1 PDF. Confirm on the Cisco Learning Network page before you book."
+    }
+   ],
+   "words": 530
+  },
+  {
+   "title": "Step 0: Pre-check (do this before you read)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Answer from memory with no looking up. Add a confidence tag: (K) I know it, (U) unsure, (G) guessing. The answer key is at the end (Answer Key A)."
+    },
+    {
+     "level": 0,
+     "text": "- Name the four layers of the DoD (TCP/IP) model and say which OSI layers each one covers."
+    },
+    {
+     "level": 0,
+     "text": "- Describe the TCP three-way handshake. Which flags are set in each step?"
+    },
+    {
+     "level": 0,
+     "text": "- Name one protocol that uses TCP only, one that uses UDP only, and one that uses both."
+    },
+    {
+     "level": 0,
+     "text": "- A PC shows the address 169.254.12.7. What does that tell you?"
+    },
+    {
+     "level": 0,
+     "text": "- Which of these is a private address: 172.15.4.1, 172.20.4.1, 172.32.4.1, 192.169.1.1?"
+    },
+    {
+     "level": 0,
+     "text": "Mark tracker rows only when your answers are real evidence. If you were not tested on a section, leave it as Not assessed."
+    }
+   ],
+   "words": 125
+  },
+  {
+   "title": "2.1 Introducing TCP/IP",
+   "content": [
+    {
+     "level": 2,
+     "text": "2.1.1 A Brief History of TCP/IP"
+    },
+    {
+     "level": 0,
+     "text": "BOOK TCP/IP was designed for the US Department of Defense (DoD) to keep data accurate and communications working even after serious damage to the network. TCP appeared in 1973. In 1978 it was split into two protocols, TCP and IP. In 1983 TCP/IP replaced the older NCP and became the official transport for ARPAnet, the ancestor of the Internet. Much of the development work happened at UC Berkeley, where TCP/IP was bundled into BSD Unix and passed to other universities. The open, standards-based approach is a big reason it won."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "For the exam, you only need the idea: TCP/IP is an open standard from the DoD era, so any vendor's hardware and software can use it."
+    }
+   ],
+   "words": 124
+  },
+  {
+   "title": "2.2 TCP/IP and the DoD Model",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK The DoD model is a shorter version of the OSI model. It has four layers instead of seven."
+    },
+    {
+     "level": 0,
+     "text": "| DoD layer | Other names | OSI layers it covers | What it does |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Process/Application | Application | Application, Presentation, Session (7, 6, 5) | Protocols for application-to-application communication and the user interface |"
+    },
+    {
+     "level": 0,
+     "text": "| Host-to-Host | Transport | Transport (4) | Reliable or fast end-to-end delivery, sequencing, ports |"
+    },
+    {
+     "level": 0,
+     "text": "| Internet | Network | Network (3) | IP addressing and routing |"
+    },
+    {
+     "level": 0,
+     "text": "| Network Access | Link | Data Link and Physical (2, 1) | Hardware addressing and physical transmission |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Top to bottom: Process/Application \u001a Host-to-Host \u001a Internet \u001a Network Access. The first letters spell PHIN. Cisco may use either name for a layer (Host-to-Host or Transport, Network Access or Link), so know both."
+    },
+    {
+     "level": 0,
+     "text": "WHY THIS MATTERS"
+    },
+    {
+     "level": 0,
+     "text": "TCP/IP became popular because the Network Access layer has no fixed physical specification. It can run over Ethernet, Wi-Fi, serial links or anything else that carries bits."
+    },
+    {
+     "level": 2,
+     "text": "2.2.1 The Process/Application Layer Protocols (book pp. 33-42)"
+    },
+    {
+     "level": 0,
+     "text": "The book covers these 11 protocols. Learn what each one does, its port and whether it uses TCP or UDP (the port table is in 2.2.2)."
+    },
+    {
+     "level": 0,
+     "text": "| Protocol | What it does | Key facts |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Telnet | Remote command-line access (terminal emulation) | Sends everything, including passwords, in clear text. Not for production. Uses TCP 23. |"
+    },
+    {
+     "level": 0,
+     "text": "| SSH | Secure, encrypted remote login and file movement | The replacement for Telnet, rsh and rlogin. TCP 22. |"
+    },
+    {
+     "level": 0,
+     "text": "| FTP | Transfer files between two machines; browse directories | Needs a username and password (or the user \"anonymous\"). TCP, connection-oriented, can resume after a dropped session. Ports 20 and 21. |"
+    },
+    {
+     "level": 0,
+     "text": "| TFTP | Stripped-down FTP | Only sends and receives a named file. No directory browsing, no authentication. UDP 69. Widely used to copy files to and from Cisco device flash memory. |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMP | Monitor and manage network devices | A network management station (NMS) polls agents on devices. Agents can send a trap when something goes wrong. UDP 161. |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTP | Web pages between browser and server | A URL gives the protocol, the server name and the page. TCP 80. |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTPS | Secure HTTP | Encrypts web traffic. TCP 443. |"
+    },
+    {
+     "level": 0,
+     "text": "| NTP | Synchronise clocks to one time source | Matters for logs and time-stamped transactions. UDP 123. |"
+    },
+    {
+     "level": 0,
+     "text": "| DNS | Turn names into IP addresses | Resolves a fully qualified domain name (FQDN) such as www.example.com. Uses UDP and TCP, port 53. |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP / BootP | Give hosts IP addresses and settings automatically | DHCP is the dynamic form of BootP. UDP 67 (server). |"
+    },
+    {
+     "level": 0,
+     "text": "| APIPA | Self-assigned address when no DHCP server answers | 169.254.0.1 to 169.254.255.254, mask 255.255.0.0. |"
+    },
+    {
+     "level": 3,
+     "text": "Telnet versus SSH: command example"
+    },
+    {
+     "level": 0,
+     "text": "From the book's examples (figures 2.3 and 2.4)"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> telnet 1.1.1.2 (clear text: anyone on the path can read your password)"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> ssh admin@1.1.1.2 (encrypted)"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "SNMP versions. BOOK v1 and v2 are mostly obsolete. v2 added GETBULK (get lots of data at once). SNMPv3 is the standard and adds authentication, message integrity and encryption."
+    },
+    {
+     "level": 0,
+     "text": "One detail to check. CHECK The book says v3 uses both TCP and UDP. In day-to-day practice SNMP runs over UDP 161 (polling) and 162 (traps). I did not verify the TCP claim against an RFC in this session, so for the exam answer UDP."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "HTTPS and SSL. UPDATED The book says HTTPS uses SSL (and lists SHTTP/S-HTTP). Today HTTPS uses TLS. SSL is old and deprecated, but people still say \"SSL\" out of habit. For the exam, treat \"SSL/TLS\" as the encryption behind HTTPS. (General knowledge, not checked against an RFC in this session.)"
+    },
+    {
+     "level": 3,
+     "text": "DNS: how a name becomes an address (book pp. 38-40)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK You type a URL. Your computer asks its DNS server (a UDP request). If that server does not know, it asks other servers, ending at a root server. The answer comes back and your computer connects to the real IP address. DNS lets a company change a server's IP address without telling every user."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "If you can ping an IP address but cannot use the name (FQDN), suspect a DNS problem. Pinging the IP proves the network works. The name lookup is what failed."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "DNS and TCP. ADDED CHECK The book says a DNS server forwards a TCP request to its root server. In normal operation DNS queries use UDP 53. TCP 53 is used when an answer is too big for one UDP packet and for zone transfers between DNS servers. This is general knowledge and I did not check it against an RFC in this session. Remember: DNS = UDP and TCP, port 53."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "DNS records (a v2.0 objective). ADDED v2.0 objective 4.4 asks you to diagnose problems with these record types. Short definitions (general knowledge):"
+    },
+    {
+     "level": 0,
+     "text": "A = name to IPv4 address. AAAA = name to IPv6 address. CNAME = an alias that points to another name. MX = the mail server for a domain. NS = the name server for a domain. PTR = reverse lookup, IP address back to name."
+    },
+    {
+     "level": 0,
+     "text": "On a Cisco router, ip domain-name example.com adds a domain suffix to short names, and ip name-server 8.8.8.8 tells the router which DNS server to use. CHECK"
+    },
+    {
+     "level": 3,
+     "text": "DHCP (book pp. 40-42)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK DHCP gives a host an IP address, subnet mask, default gateway, DNS server and other settings. The book lists these: IP address, subnet mask, domain name, default gateway, DNS server address and WINS server address. A Cisco router can act as a DHCP server."
+    },
+    {
+     "level": 0,
+     "text": "DORA, the four DHCP steps:"
+    },
+    {
+     "level": 0,
+     "text": "| Step | Message | Sent as | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Discover | Broadcast: Layer 2 ff:ff:ff:ff:ff:ff, Layer 3 255.255.255.255 | \"Is there a DHCP server? I need an address.\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Offer | Server reply (the book says Layer 2 unicast) | \"How about this address?\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Request | Broadcast | \"Yes, I would like that address.\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Acknowledgment | Server unicast | \"Confirmed. It is yours.\" |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "DORA: Discover, Offer, Request, Acknowledge. Client speaks first. Discover and Request are broadcasts."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Ports and relay. ADDED The book gives UDP 67 for the server. The DHCP client uses UDP 68. A broadcast Discover does not cross a router, so if the DHCP server is on another network the router needs a DHCP relay (ip helper-address). v2.0 objective 1.7 asks you to troubleshoot DHCPv4 client, server and relay on IOS devices. You will configure relay in the IP services chapter. (General knowledge.) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Offer detail. CHECK The book describes the Offer as a Layer 2 unicast. In practice a server may send the Offer as unicast or broadcast depending on the client. For the exam use the book's version."
+    },
+    {
+     "level": 3,
+     "text": "DHCP address conflicts and gratuitous ARP"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Before giving out an address, the DHCP server pings it to check nobody uses it. The client also sends a gratuitous ARP (an ARP broadcast for its own new address) to catch a duplicate. If a conflict is found, the address is removed from the DHCP pool and will not be assigned again until an administrator fixes the conflict by hand."
+    },
+    {
+     "level": 3,
+     "text": "APIPA: the 169.254 address (book p. 42)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK When a Windows host cannot reach a DHCP server, it gives itself an address from 169.254.0.1 to 169.254.255.254 with mask 255.255.0.0. In a company with a working DHCP server, seeing this address means the DHCP client is broken, the server is down, or the server cannot be reached."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Host has 169.254.x.x \u001a it did not get an address from DHCP. Check the cable and link, the VLAN, the DHCP server and the relay."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Other systems. ADDED Other operating systems also self-assign a 169.254.x.x \"link-local\" address when DHCP fails. General knowledge."
+    },
+    {
+     "level": 3,
+     "text": "Commands: check a host's IP settings (Windows / Linux)"
+    },
+    {
+     "level": 0,
+     "text": "Standard host commands CHECK (not run in this session)"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> ipconfig /all (Windows: address, mask, gateway, DNS, DHCP server, lease)"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> ipconfig /release (give up the current DHCP address)"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> ipconfig /renew (ask for a new one: runs DORA)"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> nslookup www.cisco.com (ask DNS for the address)"
+    },
+    {
+     "level": 0,
+     "text": "$ ip addr (Linux: addresses)"
+    },
+    {
+     "level": 0,
+     "text": "$ dig www.cisco.com (Linux: ask DNS)"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 2.2.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which protocol sends passwords in clear text and should not be used on production networks?"
+    },
+    {
+     "level": 0,
+     "text": "A. SSH"
+    },
+    {
+     "level": 0,
+     "text": "B. Telnet"
+    },
+    {
+     "level": 0,
+     "text": "C. HTTPS"
+    },
+    {
+     "level": 0,
+     "text": "D. SNMPv3"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Telnet has no encryption. SSH replaces it."
+    },
+    {
+     "level": 0,
+     "text": "Q2. You can ping 8.8.8.8 but ping www.example.com fails. What is the most likely problem?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A DNS problem - the network path works (the IP ping succeeded), so name resolution is failing."
+    },
+    {
+     "level": 0,
+     "text": "Q3. A host receives 169.254.33.8 in an office with a DHCP server. What does it mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The host could not get an address from DHCP - it assigned itself an APIPA address."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which DHCP message is sent in step 3 of DORA?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: DHCP Request (a broadcast) - Discover, Offer, Request, Acknowledgment."
+    },
+    {
+     "level": 2,
+     "text": "2.2.2 The Host-to-Host (Transport) Layer Protocols (book pp. 42-51)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The transport layer hides network complexity from applications. It has two protocols: TCP and UDP. Cisco likes to ask about Layer 4 acknowledgments, sequencing and flow control."
+    },
+    {
+     "level": 3,
+     "text": "TCP in plain words"
+    },
+    {
+     "level": 0,
+     "text": "TCP breaks data into segments, numbers them (sequencing), waits for acknowledgments and resends what is not acknowledged. Before sending data it sets up a connection (a virtual circuit). It is full-duplex, connection-oriented and reliable. This costs overhead, so TCP is slower than UDP."
+    },
+    {
+     "level": 3,
+     "text": "The three-way handshake"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The book shows it through two analyzer traces: a SYN from the client (code %000010) and a SYN + ACK reply (code %010010). Here is the full picture."
+    },
+    {
+     "level": 0,
+     "text": "| Step | From \u001a To | Flags | What it says |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Client \u001a Server | SYN | \"I want to open a session. My starting sequence number is X.\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Server \u001a Client | SYN + ACK | \"OK. Mine is Y. I got X.\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Client \u001a Server | ACK | \"I got Y.\" The session is open. |"
+    },
+    {
+     "level": 0,
+     "text": "The book does not list the third step in this chapter. I added it ADDED because it is standard TCP behaviour and a common exam question. When the session ends, each side sends a FIN and gets an ACK."
+    },
+    {
+     "level": 3,
+     "text": "The TCP header (book pp. 43-44)"
+    },
+    {
+     "level": 0,
+     "text": "The book says you do not need to memorise the header for the exam, but you should understand it."
+    },
+    {
+     "level": 0,
+     "text": "| Field | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Source port / Destination port | Identify the application on each host |"
+    },
+    {
+     "level": 0,
+     "text": "| Sequence number | Puts data back in order; used for retransmission |"
+    },
+    {
+     "level": 0,
+     "text": "| Acknowledgment number | The next byte the receiver expects |"
+    },
+    {
+     "level": 0,
+     "text": "| Header length | Where the data starts (in 32-bit words) |"
+    },
+    {
+     "level": 0,
+     "text": "| Flags (code bits) | Control set-up and tear-down (SYN, ACK, FIN, RST, PSH, URG) |"
+    },
+    {
+     "level": 0,
+     "text": "| Window size | How much data the receiver will accept before an ACK (flow control / windowing) |"
+    },
+    {
+     "level": 0,
+     "text": "| Checksum | Error check over header and data |"
+    },
+    {
+     "level": 0,
+     "text": "| Urgent pointer / Options | Rarely used; options include Maximum Segment Size (MSS) |"
+    },
+    {
+     "level": 0,
+     "text": "The header is 20 bytes, up to 24 with options (book)."
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Decode the book's flag values: the six code bits are URG, ACK, PSH, RST, SYN, FIN. %000010 = SYN. %010010 = ACK + SYN. %011000 = ACK + PSH (data being pushed to the application)."
+    },
+    {
+     "level": 3,
+     "text": "UDP in plain words"
+    },
+    {
+     "level": 0,
+     "text": "BOOK UDP is the \"thin\" economy protocol: connectionless, unreliable, no sequencing, no acknowledgments, no windowing. It just sends and forgets. Its header is only 8 bytes: source port, destination port, length, checksum. It is used when speed matters more than perfect delivery (voice, video) or when the application handles reliability itself (the book gives NFS as an example). Out-of-order UDP data is passed up in whatever order it arrives."
+    },
+    {
+     "level": 0,
+     "text": "| TCP | UDP |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Sequenced | Unsequenced |"
+    },
+    {
+     "level": 0,
+     "text": "| Reliable | Unreliable |"
+    },
+    {
+     "level": 0,
+     "text": "| Connection-oriented (virtual circuit) | Connectionless |"
+    },
+    {
+     "level": 0,
+     "text": "| Acknowledgments | No acknowledgment |"
+    },
+    {
+     "level": 0,
+     "text": "| Windowing flow control | No windowing or flow control |"
+    },
+    {
+     "level": 0,
+     "text": "| Higher overhead (20-byte header) | Low overhead (8-byte header) |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Phone call versus postcard. TCP = a phone call (connect, \"did you get that?\", goodbye). UDP = a postcard (write it, send it, hope)."
+    },
+    {
+     "level": 3,
+     "text": "Port numbers (book pp. 47-51)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Ports let one computer with one IP address run many conversations at once (session multiplexing). The source host picks a random source port. The destination port identifies the service. The server answers with the ports swapped."
+    },
+    {
+     "level": 0,
+     "text": "| Application | Port | Transport | Notes |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| FTP data / control | 20 / 21 | TCP |  |"
+    },
+    {
+     "level": 0,
+     "text": "| SSH | 22 | TCP | Encrypted remote access |"
+    },
+    {
+     "level": 0,
+     "text": "| Telnet | 23 | TCP | Clear text |"
+    },
+    {
+     "level": 0,
+     "text": "| SMTP | 25 | TCP | Sending mail |"
+    },
+    {
+     "level": 0,
+     "text": "| DNS | 53 | UDP and TCP | Both |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP / BootP server | 67 (client uses 68) | UDP | Port 68 ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| TFTP | 69 | UDP |  |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTP | 80 | TCP |  |"
+    },
+    {
+     "level": 0,
+     "text": "| POP3 | 110 | TCP | Receiving mail |"
+    },
+    {
+     "level": 0,
+     "text": "| NTP | 123 | UDP |  |"
+    },
+    {
+     "level": 0,
+     "text": "| IMAP4 | 143 | TCP | Receiving mail |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMP | 161 (traps 162) | UDP | Port 162 ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| HTTPS | 443 | TCP |  |"
+    },
+    {
+     "level": 0,
+     "text": "| Syslog | 514 | UDP | ADDED CHECK needed for v2.0 objective 5.6; covered in the IP services chapter |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Memorise this table. The book itself says it is \"a really good idea to memorize.\" DNS is the usual trick question: it uses both TCP and UDP."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Port ranges. UPDATED The book says ports 1023 and below are defined in \"RFC 3232\" and that source ports start at 1024. The IANA registry, which follows RFC 6335, now defines three ranges: System ports 0-1023, User ports 1024-49151 and Dynamic/Private ports 49152-65535. IANA states that dynamic ports are not assigned. (Verified on the IANA Service Name and Port Number Registry page.)"
+    },
+    {
+     "level": 0,
+     "text": "In practice. CHECK Which range an operating system uses for random source ports varies by OS. Do not memorise a single range for the exam; know that servers use well-known ports and clients pick a temporary high port."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 2.2.2"
+    },
+    {
+     "level": 0,
+     "text": "Q5. Which two features does TCP have that UDP does not?"
+    },
+    {
+     "level": 0,
+     "text": "A. Port numbers and checksums"
+    },
+    {
+     "level": 0,
+     "text": "B. Sequencing and acknowledgments"
+    },
+    {
+     "level": 0,
+     "text": "C. Source and destination ports"
+    },
+    {
+     "level": 0,
+     "text": "D. A length field"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - TCP adds sequencing, acknowledgments, windowing and connections. Both protocols use ports and checksums."
+    },
+    {
+     "level": 0,
+     "text": "Q6. How big is the UDP header, and which TCP field implements flow control?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 8 bytes; the Window field - UDP has no windowing or flow control."
+    },
+    {
+     "level": 0,
+     "text": "Q7. Which of these use UDP only? DNS, TFTP, SMTP, SNMP, HTTP."
+    },
+    {
+     "level": 0,
+     "text": "Answer: TFTP and SNMP - DNS uses both; SMTP and HTTP use TCP."
+    },
+    {
+     "level": 0,
+     "text": "Q8. A client connects to a web server. Give a realistic pair of source and destination ports."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Source: a high random port (for example 50123); destination: 80 (or 443 for HTTPS) - the server's port is well known; the client's port is temporary."
+    },
+    {
+     "level": 2,
+     "text": "2.2.3 The Internet Layer Protocols (book pp. 51-60)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK The Internet layer exists for two reasons: routing and giving the upper layers one single network interface. Its protocols are IP, ICMP and ARP. All paths through the DoD model go through IP."
+    },
+    {
+     "level": 3,
+     "text": "Internet Protocol (IP)"
+    },
+    {
+     "level": 0,
+     "text": "IP looks at each packet's destination address, checks its routing table and chooses where to send the packet next. IP breaks segments into packets (datagrams) if needed and re-builds them at the other end. Every datagram carries the sender's and receiver's IP address."
+    },
+    {
+     "level": 3,
+     "text": "The IPv4 header (book pp. 52-54)"
+    },
+    {
+     "level": 0,
+     "text": "| Field | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Version | 4 for IPv4 |"
+    },
+    {
+     "level": 0,
+     "text": "| Header length (HLEN) | Header length in 32-bit words |"
+    },
+    {
+     "level": 0,
+     "text": "| Type of Service | How the packet should be handled; the first bits are now called the differentiated services (DSCP) bits |"
+    },
+    {
+     "level": 0,
+     "text": "| Total length | Header plus data |"
+    },
+    {
+     "level": 0,
+     "text": "| Identification, Flags, Fragment offset | Fragmentation and reassembly when a packet is too big for a link (MTU) |"
+    },
+    {
+     "level": 0,
+     "text": "| Time to Live (TTL) | A counter that stops packets circling forever. If it reaches zero the packet is discarded. |"
+    },
+    {
+     "level": 0,
+     "text": "| Protocol | Which upper-layer protocol gets the data: TCP, UDP, ICMP and so on |"
+    },
+    {
+     "level": 0,
+     "text": "| Header checksum | Error check on the header only |"
+    },
+    {
+     "level": 0,
+     "text": "| Source / Destination IP address | 32 bits each |"
+    },
+    {
+     "level": 0,
+     "text": "| Options | Testing, debugging, security (rarely used) |"
+    },
+    {
+     "level": 0,
+     "text": "The IPv4 header is 20 bytes (more with options)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Protocol field. UPDATED The book says the Protocol field is the \"port of upper-layer protocol\". That wording is misleading. The Protocol field holds a protocol number, not a port. It tells IP which protocol the data belongs to. Ports live in the TCP and UDP headers, which are inside the IP packet."
+    },
+    {
+     "level": 0,
+     "text": "| Protocol | Number |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| ICMP | 1 |"
+    },
+    {
+     "level": 0,
+     "text": "| IP-in-IP (tunnelling) | 4 |"
+    },
+    {
+     "level": 0,
+     "text": "| TCP | 6 |"
+    },
+    {
+     "level": 0,
+     "text": "| UDP | 17 |"
+    },
+    {
+     "level": 0,
+     "text": "| IPv6 (tunnelling) | 41 |"
+    },
+    {
+     "level": 0,
+     "text": "| GRE | 47 |"
+    },
+    {
+     "level": 0,
+     "text": "| EIGRP | 88 |"
+    },
+    {
+     "level": 0,
+     "text": "| OSPF | 89 |"
+    },
+    {
+     "level": 0,
+     "text": "| L2TP | 115 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Remember TCP = 6, UDP = 17. For routing protocols: EIGRP = 88, OSPF = 89. They ride directly on IP, not on TCP or UDP."
+    },
+    {
+     "level": 3,
+     "text": "ICMP: IP's messenger (book pp. 54-58)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK ICMP works at the Internet layer and is carried inside IP packets. It reports problems and powers diagnostic tools."
+    },
+    {
+     "level": 0,
+     "text": "| Message or tool | What it does |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Destination unreachable | A router that cannot forward a packet tells the sender. Example: a router with no route to 10.1.1.0 sends back \"network unreachable\". |"
+    },
+    {
+     "level": 0,
+     "text": "| Time exceeded | The packet's hop limit (TTL) ran out; the last router deletes it and tells the sender. |"
+    },
+    {
+     "level": 0,
+     "text": "| Ping | Sends ICMP echo request and receives echo reply to test connectivity. |"
+    },
+    {
+     "level": 0,
+     "text": "| Traceroute | Uses time-exceeded messages to show every router along the path. Windows calls it tracert. |"
+    },
+    {
+     "level": 0,
+     "text": "| Buffer full / source quench | Told a sender to slow down (see the update below). |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Source quench is obsolete. UPDATED The book lists \"buffer full / source quench\" as a current ICMP message. It is not. RFC 6633 formally deprecated it. It says hosts must not send source quench messages, and IANA marks ICMP type 4 as deprecated. (Verified against RFC 6633.) For the exam, know it exists historically, but do not expect it in real networks."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Useful ICMP types. ADDED CHECK Echo request = type 8, echo reply = type 0, destination unreachable = type 3, time exceeded = type 11. These are the types you will see in a packet capture. (General knowledge, not re-checked in this session.) The book's own trace shows ICMP type 8 (echo request) with IP protocol 0x01."
+    },
+    {
+     "level": 3,
+     "text": "Commands: ping and traceroute"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router# ping 10.1.1.2"
+    },
+    {
+     "level": 0,
+     "text": "Type escape sequence to abort."
+    },
+    {
+     "level": 0,
+     "text": "Sending 5, 100-byte ICMP Echos to 10.1.1.2, timeout is 2 seconds:"
+    },
+    {
+     "level": 0,
+     "text": "!!!!!"
+    },
+    {
+     "level": 0,
+     "text": "Success rate is 100 percent (5/5), round-trip min/avg/max = 1/2/4 ms"
+    },
+    {
+     "level": 0,
+     "text": "Router# traceroute 10.1.5.2"
+    },
+    {
+     "level": 0,
+     "text": "- ! = a reply came back. . = timeout. U = destination unreachable came back from a router."
+    },
+    {
+     "level": 0,
+     "text": "- .!!!! (first one lost) is usual because the first ping waits for ARP to find the MAC address."
+    },
+    {
+     "level": 0,
+     "text": "- v2.0 objective 2.4 also mentions extended ping, which lets you choose the source, size and count."
+    },
+    {
+     "level": 3,
+     "text": "ARP: IP address to MAC address (book pp. 58-60)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Before sending a frame on the local network, the host needs the hardware (MAC) address of the next device. If it is not in the ARP cache, the host sends an ARP request as a Layer 2 broadcast (destination ff:ff:ff:ff:ff:ff): \"Who has 10.1.1.2? Tell 10.1.1.1.\" The owner answers with its MAC address. The book's example trace shows operation 1 (request), Layer 2 broadcast destination, and the target hardware address set to all zeros because it is unknown."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Destination MAC for a remote destination: a host sending to a different network uses the default gateway's MAC address as the frame destination, but the final destination's IP address in the packet. The IP address stays the same all the way. The MAC address changes at every hop."
+    },
+    {
+     "level": 0,
+     "text": "Commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "C:\\> arp -a (Windows: show the ARP cache)"
+    },
+    {
+     "level": 0,
+     "text": "Router# show ip arp (Cisco router: ARP table)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "RARP. BOOK The book's Exam Essentials mention Reverse ARP (find an IP address from a MAC address). It is obsolete; DHCP replaced it. Know the name only."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 2.2.3"
+    },
+    {
+     "level": 0,
+     "text": "Q9. Host A at 192.168.1.10/24 pings Host B on another subnet. What destination MAC address does Host A put on the first frame?"
+    },
+    {
+     "level": 0,
+     "text": "A. Host B's MAC"
+    },
+    {
+     "level": 0,
+     "text": "B. The default gateway's MAC"
+    },
+    {
+     "level": 0,
+     "text": "C. ff:ff:ff:ff:ff:ff"
+    },
+    {
+     "level": 0,
+     "text": "D. 00:00:00:00:00:00"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - for a remote destination the frame goes to the gateway. The IP packet inside still has Host B's address."
+    },
+    {
+     "level": 0,
+     "text": "Q10. Which protocol number identifies TCP in the IP header?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 6 - UDP is 17, ICMP is 1, OSPF is 89."
+    },
+    {
+     "level": 0,
+     "text": "Q11. A traceroute works by exploiting which IP header field?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Time to Live (TTL) - each router reduces it; at zero the router sends an ICMP time exceeded message."
+    },
+    {
+     "level": 0,
+     "text": "Q12. What does ARP find, and is the request unicast or broadcast?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A MAC address for a known IP address; a broadcast - the reply is a unicast from the owner."
+    }
+   ],
+   "words": 3724
+  },
+  {
+   "title": "2.3 IP Addressing",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK An IP address is a numeric identifier given to each machine on an IP network. It is a software (logical) address, unlike the MAC address which is a hardware address burned into the network card."
+    },
+    {
+     "level": 2,
+     "text": "2.3.1 IP Terminology"
+    },
+    {
+     "level": 0,
+     "text": "| Term | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Bit | One digit, 1 or 0 |"
+    },
+    {
+     "level": 0,
+     "text": "| Byte / Octet | 8 bits. In this chapter byte and octet mean the same. |"
+    },
+    {
+     "level": 0,
+     "text": "| Network address | The designation used in routing to reach a remote network, e.g. 10.0.0.0, 172.16.0.0, 192.168.10.0 |"
+    },
+    {
+     "level": 0,
+     "text": "| Broadcast address | Used to reach all nodes, e.g. 255.255.255.255 (any network, all nodes), 172.16.255.255 (all hosts on 172.16.0.0), 10.255.255.255 |"
+    },
+    {
+     "level": 2,
+     "text": "2.3.2 The Hierarchical IP Addressing Scheme"
+    },
+    {
+     "level": 0,
+     "text": "An IPv4 address has 32 bits, split into four octets. You can write it three ways:"
+    },
+    {
+     "level": 0,
+     "text": "| Format | Example |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Dotted decimal | 172.16.30.56 |"
+    },
+    {
+     "level": 0,
+     "text": "| Binary | 10101100.00010000.00011110.00111000 |"
+    },
+    {
+     "level": 0,
+     "text": "| Hexadecimal | AC.10.1E.38 |"
+    },
+    {
+     "level": 0,
+     "text": "There are 23� = 4,294,967,296 possible addresses. The address is hierarchical: part is the network and part is the host (or network, subnet and host). That keeps routing tables small, like a telephone number with an area code, a prefix and a line number."
+    },
+    {
+     "level": 3,
+     "text": "The classes (book pp. 62-66)"
+    },
+    {
+     "level": 0,
+     "text": "| Class | First octet | First bits | Default network/host split | Usable networks | Hosts per network |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| A | 1-126 (0 and 127 reserved) | 0 | N.H.H.H (8 / 24) | 126 | 16,777,214 |"
+    },
+    {
+     "level": 0,
+     "text": "| B | 128-191 | 10 | N.N.H.H (16 / 16) | 16,384 | 65,534 |"
+    },
+    {
+     "level": 0,
+     "text": "| C | 192-223 | 110 | N.N.N.H (24 / 8) | 2,097,152 | 254 |"
+    },
+    {
+     "level": 0,
+     "text": "| D | 224-239 | 1110 | Multicast | - | - |"
+    },
+    {
+     "level": 0,
+     "text": "| E | 240-255 | 1111 | Research / reserved | - | - |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Class ranges by first octet: A = 1-126, B = 128-191, C = 192-223. Hosts per network: \"2 to the power of host bits, minus 2\". 127 is loopback, not Class A host space."
+    },
+    {
+     "level": 3,
+     "text": "Valid hosts in each class (worked examples)"
+    },
+    {
+     "level": 0,
+     "text": "| Class | Example network | Network address (host bits all 0) | Broadcast (host bits all 1) | Valid hosts |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| A | 10.0.0.0 | 10.0.0.0 | 10.255.255.255 | 10.0.0.1 - 10.255.255.254 |"
+    },
+    {
+     "level": 0,
+     "text": "| B | 172.16.0.0 | 172.16.0.0 | 172.16.255.255 | 172.16.0.1 - 172.16.255.254 |"
+    },
+    {
+     "level": 0,
+     "text": "| C | 192.168.100.0 | 192.168.100.0 | 192.168.100.255 | 192.168.100.1 - 192.168.100.254 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "The host bits cannot be all 0s (that is the network address) and cannot be all 1s (that is the broadcast). A host ID of .0 or .255 in the *middle* of a range is allowed. For example, 10.0.255.0 is a valid Class A host."
+    },
+    {
+     "level": 3,
+     "text": "Reserved and special addresses (book Table 2.4, p. 63)"
+    },
+    {
+     "level": 0,
+     "text": "| Address | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Network address of all 0s | \"This network or segment\" |"
+    },
+    {
+     "level": 0,
+     "text": "| Network address of all 1s | \"All networks\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 127.0.0.1 (loopback) | Tests the TCP/IP stack on your own machine. The whole 127.0.0.0 range is reserved, 127.0.0.1 to 127.255.255.254. |"
+    },
+    {
+     "level": 0,
+     "text": "| Node address of all 0s | The network address, or any host on that network |"
+    },
+    {
+     "level": 0,
+     "text": "| Node address of all 1s | All nodes on that network, e.g. 128.2.255.255 |"
+    },
+    {
+     "level": 0,
+     "text": "| 0.0.0.0 | Used by Cisco routers as the default route; also \"any network\" |"
+    },
+    {
+     "level": 0,
+     "text": "| 255.255.255.255 | Broadcast to all nodes on the local network |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Classful versus classless. ADDED Real networks today use classless addressing (CIDR, Chapter 3) where the mask decides the network part, not the first octet. The exam still expects you to identify a class from the first octet and give the default mask, so learn both. A 10.x.x.x address is a Class A address but can be used with any mask."
+    },
+    {
+     "level": 2,
+     "text": "2.3.3 Private IP Addresses (RFC 1918)"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Private addresses are not routable on the Internet. They save public address space. With NAT (Chapter 11), many private hosts share a few public addresses."
+    },
+    {
+     "level": 0,
+     "text": "| Class | Range (book) | Prefix form ADDED |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| A | 10.0.0.0 - 10.255.255.255 | 10.0.0.0/8 |"
+    },
+    {
+     "level": 0,
+     "text": "| B | 172.16.0.0 - 172.31.255.255 | 172.16.0.0/12 |"
+    },
+    {
+     "level": 0,
+     "text": "| C | 192.168.0.0 - 192.168.255.255 | 192.168.0.0/16 |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Private Class B is 172.16 through 172.31 only. 172.15.x.x and 172.32.x.x are public. 192.169.x.x is public too. Cisco loves this trick."
+    },
+    {
+     "level": 0,
+     "text": "Which should you use? (book p. 67) The book says to use a Class A (10.0.0.0) network for a corporate network because it gives the most room to grow, for example 10.1.x.0 with a /24 mask where x is the department. For a home network, a Class C (192.168.x.0/24) is simplest."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Public versus private matters in v2.0. Objective 1.3 says \"subnetting (public and private)\". You must tell at a glance whether an address is private or public, and know that NAT is what lets private hosts reach the Internet."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 2.3"
+    },
+    {
+     "level": 0,
+     "text": "Q13. What class is 191.255.1.1? What is its default mask?"
+    },
+    {
+     "level": 0,
+     "text": "A. Class A, 255.0.0.0"
+    },
+    {
+     "level": 0,
+     "text": "B. Class B, 255.255.0.0"
+    },
+    {
+     "level": 0,
+     "text": "C. Class C, 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "D. Class D, none"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 128-191 is Class B."
+    },
+    {
+     "level": 0,
+     "text": "Q14. How many usable hosts are in a default Class C network?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 254 - 28 = 256 minus the network and broadcast addresses."
+    },
+    {
+     "level": 0,
+     "text": "Q15. Which of these is NOT a private address? 10.200.1.1, 172.31.5.5, 172.32.5.5, 192.168.50.1"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 172.32.5.5 - private Class B stops at 172.31.255.255."
+    },
+    {
+     "level": 0,
+     "text": "Q16. For 172.16.30.56 with a default Class B mask, what are the network and host portions?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Network 172.16; host 30.56 - the first two octets are network, the last two are host."
+    }
+   ],
+   "words": 982
+  },
+  {
+   "title": "2.4 IPv4 Address Types",
+   "content": [
+    {
+     "level": 0,
+     "text": "BOOK People say \"broadcast\" loosely. Use the correct terms. A DHCP client broadcasts; the router then forwards it as a unicast to the DHCP server (when relay is set up). IPv6 has no broadcasts at all."
+    },
+    {
+     "level": 0,
+     "text": "| Type | Goes to | Example |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Loopback | The local machine | 127.0.0.1 (any 127.x.x.x) |"
+    },
+    {
+     "level": 0,
+     "text": "| Layer 2 broadcast | All devices on the LAN (stays inside the LAN) | MAC ff:ff:ff:ff:ff:ff |"
+    },
+    {
+     "level": 0,
+     "text": "| Layer 3 broadcast | All nodes in a broadcast domain | 172.16.255.255 or 255.255.255.255 |"
+    },
+    {
+     "level": 0,
+     "text": "| Unicast | One interface | 10.1.1.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| Multicast | A group of subscribed hosts | 224.0.0.10 |"
+    },
+    {
+     "level": 2,
+     "text": "2.4.1 Layer 2 Broadcasts"
+    },
+    {
+     "level": 0,
+     "text": "Also called hardware broadcasts. The address is all 1s: ff:ff:ff:ff:ff:ff. Every NIC on the LAN receives and reads the frame, including the router, but the router never forwards it."
+    },
+    {
+     "level": 2,
+     "text": "2.4.2 Layer 3 Broadcasts"
+    },
+    {
+     "level": 0,
+     "text": "Sent to all hosts in a broadcast domain. Two forms: the directed (network) broadcast with all host bits on (e.g. 172.16.255.255 for 172.16.0.0/16), and the all-networks broadcast 255.255.255.255. All hosts on the LAN receive it, but by default routers do not forward it. A Layer 3 broadcast is normally carried in a Layer 2 broadcast frame."
+    },
+    {
+     "level": 2,
+     "text": "2.4.3 Unicast Address"
+    },
+    {
+     "level": 0,
+     "text": "A single address assigned to one interface. The frame carries the destination NIC's MAC address and the packet carries its IP address. Every NIC on the LAN may see the frame, but only the matching NIC accepts it; the others discard it."
+    },
+    {
+     "level": 2,
+     "text": "2.4.4 Multicast Address"
+    },
+    {
+     "level": 0,
+     "text": "BOOK Multicast sends one packet to a group of subscribed hosts (\"one-to-many\") without flooding the whole broadcast domain. Routers can forward multicast to interfaces that have subscribers. The range is 224.0.0.0 to 239.255.255.255 (Class D). The book's example is 224.0.0.10, used by EIGRP: every host on the LAN sees the frame but discards it unless it runs EIGRP."
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "The book warns that multicast saves PC processing, not LAN bandwidth, and can cause congestion if not planned carefully."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Routing protocol multicasts. ADDED CHECK You will see these again in the routing chapters: OSPF uses 224.0.0.5 (all OSPF routers) and 224.0.0.6 (DR and BDR); RIPv2 uses 224.0.0.9; EIGRP uses 224.0.0.10. The OSPF and RIP values are general knowledge, not verified in this session."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 2.4"
+    },
+    {
+     "level": 0,
+     "text": "Q17. Which address is a Layer 2 broadcast?"
+    },
+    {
+     "level": 0,
+     "text": "A. 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "B. ff:ff:ff:ff:ff:ff"
+    },
+    {
+     "level": 0,
+     "text": "C. 224.0.0.10"
+    },
+    {
+     "level": 0,
+     "text": "D. 127.0.0.1"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 255.255.255.255 is a Layer 3 broadcast; 224.0.0.10 is multicast; 127.0.0.1 is loopback."
+    },
+    {
+     "level": 0,
+     "text": "Q18. Does a router forward a Layer 2 broadcast by default? A Layer 3 broadcast?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No to both - broadcasts stop at the router unless you configure something like a DHCP relay."
+    },
+    {
+     "level": 0,
+     "text": "Q19. What is the multicast address range?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 224.0.0.0 - 239.255.255.255 - Class D."
+    }
+   ],
+   "words": 464
+  },
+  {
+   "title": "Troubleshooting: Addressing and Name Problems",
+   "content": [
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "ADDED The book teaches IP troubleshooting in Chapter 4, but these quick rules use what you learned in this chapter."
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Host has 169.254.x.x | DHCP failed | Cable and link, VLAN, DHCP server running, relay (ip helper-address) if the server is on another network, pool not exhausted, address conflict removed the address from the pool |"
+    },
+    {
+     "level": 0,
+     "text": "| Ping by IP works, ping by name fails | DNS | DNS server address on the host, DNS server reachable, correct record, domain suffix |"
+    },
+    {
+     "level": 0,
+     "text": "| Cannot reach another subnet but local ping works | Default gateway wrong or missing | ipconfig /all, correct gateway on the same subnet as the host |"
+    },
+    {
+     "level": 0,
+     "text": "| \"Destination host unreachable\" reply from the router | No route | show ip route on the router |"
+    },
+    {
+     "level": 0,
+     "text": "| Two hosts with the same address | Static address collides with DHCP pool | Exclude static addresses from the pool; clear the conflict on the server |"
+    },
+    {
+     "level": 0,
+     "text": "| First ping times out, later pings succeed | Normal: the first packet waited for ARP | No action |"
+    },
+    {
+     "level": 0,
+     "text": "| Request timed out on every ping | Device down, firewall blocking ICMP, wrong address, link down | Check link, address, then firewall rules |"
+    },
+    {
+     "level": 0,
+     "text": "CHECK These rules are standard practice. I did not test them on real hardware in this session."
+    }
+   ],
+   "words": 241
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| DoD model | Process/Application, Host-to-Host (Transport), Internet, Network Access. Four layers versus OSI's seven. |"
+    },
+    {
+     "level": 0,
+     "text": "| TCP | Connection-oriented, reliable, sequenced, acknowledgments, windowing. 20-byte header. Three-way handshake: SYN, SYN+ACK, ACK. |"
+    },
+    {
+     "level": 0,
+     "text": "| UDP | Connectionless, unreliable, 8-byte header. Used for voice, video, DNS queries, DHCP, TFTP, SNMP, NTP. |"
+    },
+    {
+     "level": 0,
+     "text": "| Ports | FTP 20/21, SSH 22, Telnet 23, SMTP 25, DNS 53 (both), DHCP 67/68, TFTP 69, HTTP 80, POP3 110, NTP 123, IMAP 143, SNMP 161/162, HTTPS 443, Syslog 514. |"
+    },
+    {
+     "level": 0,
+     "text": "| Port ranges | System 0-1023, User 1024-49151, Dynamic 49152-65535 (IANA, RFC 6335). |"
+    },
+    {
+     "level": 0,
+     "text": "| IP header | 20 bytes. TTL stops loops. Protocol 6 = TCP, 17 = UDP, 1 = ICMP, 88 = EIGRP, 89 = OSPF. |"
+    },
+    {
+     "level": 0,
+     "text": "| ICMP | Ping (echo request/reply), traceroute (time exceeded), destination unreachable. Source quench is deprecated. |"
+    },
+    {
+     "level": 0,
+     "text": "| ARP | IP to MAC, Layer 2 broadcast request, unicast reply. Remote destination: gateway MAC, remote IP. |"
+    },
+    {
+     "level": 0,
+     "text": "| DHCP | DORA: Discover, Offer, Request, Acknowledgment. UDP 67/68. Conflict removes the address from the pool until fixed by hand. |"
+    },
+    {
+     "level": 0,
+     "text": "| APIPA | 169.254.0.1 - 169.254.255.254, /16. Means DHCP failed. |"
+    },
+    {
+     "level": 0,
+     "text": "| DNS | Name to IP. UDP and TCP 53. IP ping works, name fails = DNS. Records: A, AAAA, CNAME, MX, NS, PTR. |"
+    },
+    {
+     "level": 0,
+     "text": "| Classes | A 1-126 (/8), B 128-191 (/16), C 192-223 (/24), D 224-239 multicast, E 240-255 reserved. 127 = loopback. |"
+    },
+    {
+     "level": 0,
+     "text": "| Hosts per class | A 16,777,214; B 65,534; C 254. Host bits cannot be all 0s or all 1s. |"
+    },
+    {
+     "level": 0,
+     "text": "| Private (RFC 1918) | 10.0.0.0/8, 172.16.0.0/12 (172.16-172.31), 192.168.0.0/16. |"
+    },
+    {
+     "level": 0,
+     "text": "| Address types | Unicast = one; broadcast = all (Layer 2 ff:ff:ff:ff:ff:ff, Layer 3 255.255.255.255 or all host bits on); multicast = group (224.0.0.0-239.255.255.255). IPv6 has no broadcast. |"
+    }
+   ],
+   "words": 309
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Fill this in after the pre-check, quick checks, labs and review questions. Then copy the result to the matching row in the Notion tracker. Leave a section as Not assessed if you have not been tested on it. Use Know only if you answered correctly without help or finished the lab without the answer in front of you."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status (pick one) | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.1 Introducing TCP/IP (history) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2 TCP/IP and the DoD model |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2.1 Application layer protocols |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2.2 Transport layer (TCP, UDP, ports) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.2.3 Internet layer (IP, ICMP, ARP) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.3.1 IP terminology |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.3.2 Hierarchical addressing, classes |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.3.3 Private addresses (RFC 1918) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.4.1-2.4.2 Layer 2 and Layer 3 broadcasts |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 2.4.3-2.4.4 Unicast and multicast |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "Status choices: Not assessed � Know � Partially understand � Need to learn � Needs revision."
+    }
+   ],
+   "words": 232
+  },
+  {
+   "title": "Answer Key A: Pre-Check",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Process/Application (OSI 7, 6, 5), Host-to-Host/Transport (OSI 4), Internet (OSI 3), Network Access/Link (OSI 2 and 1)."
+    },
+    {
+     "level": 0,
+     "text": "- SYN (client to server), SYN + ACK (server to client), ACK (client to server)."
+    },
+    {
+     "level": 0,
+     "text": "- TCP only: for example Telnet, SSH, HTTP, SMTP, FTP. UDP only: for example TFTP, SNMP, NTP. Both: DNS (port 53)."
+    },
+    {
+     "level": 0,
+     "text": "- The host did not get an address from DHCP and gave itself an APIPA address (169.254.x.x). Check cable, VLAN, DHCP server and relay."
+    },
+    {
+     "level": 0,
+     "text": "- 172.20.4.1. Private Class B is 172.16.0.0-172.31.255.255. 172.15.x.x, 172.32.x.x and 192.169.x.x are public."
+    }
+   ],
+   "words": 91
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "Do these after reading and the labs. Then do the book's own review questions on p. 73 and check them against the Appendix. I did not copy the book's questions here (I read only the first five of them for this document). Mark tracker rows from the evidence of your answers."
+    },
+    {
+     "level": 0,
+     "text": "undefined. HTTP"
+    },
+    {
+     "level": 0,
+     "text": "undefined. TFTP"
+    }
+   ],
+   "words": 55
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "Every place where this document differs from the book or adds to it is listed. Nothing was replaced silently."
+    },
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Ports 1023 and below are in \"RFC 3232\"; source ports start at 1024 (p. 48) | Gives the IANA three ranges (RFC 6335) and notes that OS source-port ranges vary | Ranges verified on the IANA registry page; OS behaviour marked CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Source quench listed as a current ICMP message (p. 56) | Marks it deprecated | Verified against RFC 6633 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | HTTPS \"uses SSL\" (p. 38) | Notes that TLS is used today | General knowledge, not checked against an RFC |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | SNMPv3 uses TCP and UDP (p. 37) | Says UDP 161/162 for the exam and flags the TCP claim | Not verified |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | DNS forwards a TCP request to the root server (p. 40) | Explains that queries normally use UDP, with TCP for large answers and zone transfers | General knowledge, not checked |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | DHCP port 67 only; Offer is a Layer 2 unicast (p. 41) | Adds UDP 68, DHCP relay and a note that real Offers can vary | General knowledge, flagged |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | Protocol field described as \"port of upper-layer protocol\" (p. 53) | Corrected to \"protocol number\" | Standard IP behaviour (the book's own Table 2.3 shows protocol numbers) |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | TCP handshake not spelled out (only SYN and SYN+ACK traces) | Adds the third step (ACK) and teardown note | Standard TCP behaviour |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | Private ranges given only as address ranges (p. 66) | Adds prefix lengths /8, /12, /16 | Arithmetic check: 172.16.0.0-172.31.255.255 = /12 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | No DNS record types, no SFTP/SCP, no AI or syslog topics | Adds short DNS record definitions; mentions SFTP/SCP only as a v2.0 objective; notes syslog port for later | v2.0 objective wording read from Cisco's PDF; definitions are general knowledge |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | WINS server in the DHCP list (p. 40) | Kept as in the book; WINS is obsolete | General knowledge |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | Class tables only | Adds a note that real networks are classless; CIDR comes in Chapter 3 | n/a |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | Routing-protocol multicast addresses (only EIGRP given) (p. 70) | Adds OSPF and RIPv2 addresses | General knowledge, flagged |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | v1.1 objective numbers | Uses the book's map; flags that v1.1 numbering could differ | Cisco's own v1.1 PDF was not opened |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | v2.0 objectives | Used for tags | Read directly from Cisco's v2.0 PDF |"
+    }
+   ],
+   "words": 472
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware. Commands, sample outputs and lab results are written from standard usage. Test them and correct anything that differs on your platform."
+    }
+   ],
+   "words": 31
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Before you start. I cannot run a Cisco simulator for you. Labs are written for Cisco Packet Tracer and your own PC. After each one, record what you actually saw in the tracker row (Practical lab, Evidence / mistakes). Simulators differ from real equipment, so write down your real results."
+    }
+   ]
+  },
+  {
+   "number": "2.1",
+   "title": "Port-number drill (paper, 10 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Cover the port table in 2.2.2. Write the port and the transport (TCP, UDP or both) for: SSH, Telnet, SMTP, DNS, DHCP server, TFTP, HTTP, POP3, NTP, IMAP, SNMP, HTTPS, FTP. Check your answers. Repeat tomorrow with the ones you missed. Record misses in the tracker."
+    }
+   ]
+  },
+  {
+   "number": "2.2",
+   "title": "Watch ARP and ICMP (Packet Tracer, 20 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Place two PCs and one 2960 switch. Connect with straight-through cables."
+    },
+    {
+     "level": 0,
+     "text": "- Set PC1 to 192.168.1.1/24 and PC2 to 192.168.1.2/24."
+    },
+    {
+     "level": 0,
+     "text": "- On PC1 open Command Prompt and run arp -a. Write down what you see (probably nothing)."
+    },
+    {
+     "level": 0,
+     "text": "- Switch to Simulation mode. Run ping 192.168.1.2 on PC1 and step through the events."
+    },
+    {
+     "level": 0,
+     "text": "- Click each packet and open PDU Information. Record the Layer 2 destination of the first packet, then of the ICMP packets."
+    },
+    {
+     "level": 0,
+     "text": "- Run arp -a again."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the first packet is an ARP request with destination MAC FFFF.FFFF.FFFF (broadcast). PC2 replies with a unicast ARP reply. Then the ICMP echo request and reply travel with unicast MAC addresses. After the ping, arp -a should list 192.168.1.2 with PC2's MAC. Why the first ping may time out: the PC had to ARP first. CHECK Packet Tracer timing varies."
+    }
+   ]
+  },
+  {
+   "number": "2.3",
+   "title": "DHCP and APIPA (Packet Tracer, 25 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Place a router, a switch and two PCs. Connect the PCs to the switch and the switch to the router interface G0/0. Give G0/0 the address 192.168.1.1/255.255.255.0 and run no shutdown."
+    },
+    {
+     "level": 0,
+     "text": "- Set both PCs to DHCP before the router has a DHCP pool. After a short wait, check their IP settings. You should see a 169.254.x.x address."
+    },
+    {
+     "level": 0,
+     "text": "- On the router, create the pool shown below. Then on each PC, turn DHCP off and on again (or run ipconfig /renew)."
+    },
+    {
+     "level": 0,
+     "text": "- In Simulation mode, filter on DHCP and step through one client. Identify Discover, Offer, Request and Acknowledgment."
+    },
+    {
+     "level": 0,
+     "text": "- On the router run show ip dhcp binding."
+    },
+    {
+     "level": 0,
+     "text": "Router DHCP server (standard IOS syntax) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# ip dhcp excluded-address 192.168.1.1 192.168.1.10"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# ip dhcp pool LAN"
+    },
+    {
+     "level": 0,
+     "text": "Router(dhcp-config)# network 192.168.1.0 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "Router(dhcp-config)# default-router 192.168.1.1"
+    },
+    {
+     "level": 0,
+     "text": "Router(dhcp-config)# dns-server 8.8.8.8"
+    },
+    {
+     "level": 0,
+     "text": "Router(dhcp-config)# end"
+    },
+    {
+     "level": 0,
+     "text": "Router# show ip dhcp binding"
+    },
+    {
+     "level": 0,
+     "text": "- ip dhcp excluded-address keeps the first ten addresses out of the pool (for the router and servers)."
+    },
+    {
+     "level": 0,
+     "text": "- ip dhcp pool LAN creates a pool named LAN and enters DHCP configuration mode."
+    },
+    {
+     "level": 0,
+     "text": "- network defines the addresses to hand out. default-router and dns-server are the settings clients receive."
+    },
+    {
+     "level": 0,
+     "text": "- show ip dhcp binding lists which MAC address got which IP address."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: before the pool exists, hosts show 169.254.x.x. After the pool exists and clients renew, they receive addresses from 192.168.1.11 upward, with 192.168.1.1 as the gateway. You should see the four DORA messages in the simulation. The book covers DHCP configuration in detail in the IP services chapter, so treat this as a preview."
+    }
+   ]
+  },
+  {
+   "number": "2.4",
+   "title": "DNS and the \"ping works but name fails\" test (Packet Tracer, 20 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Add a Server-PT to the lab. Give it 192.168.1.5/24. Turn on its DNS service and add an A record: name web.lab, address 192.168.1.5."
+    },
+    {
+     "level": 0,
+     "text": "- On PC1, set the DNS server address to 192.168.1.5. Run ping 192.168.1.5, then ping web.lab."
+    },
+    {
+     "level": 0,
+     "text": "- Now change the PC's DNS server to a wrong address such as 192.168.1.99. Run both pings again."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: with the correct DNS server, both work. With the wrong DNS server, the IP ping still works but the name ping fails. That is the book's rule: IP works, name fails = DNS problem. If the pings behave differently in your version, write down what happened. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2.5",
+   "title": "Classify the address (paper, 15 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "For each address give the class, whether it is public, private or special, and what kind of address it is. Write answers first."
+    },
+    {
+     "level": 0,
+     "text": "| # | Address |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | 10.14.3.7 |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | 172.31.255.254 |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | 172.32.0.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | 192.168.100.255 (default mask) |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | 127.5.5.5 |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | 169.254.20.9 |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | 224.0.0.10 |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | 128.0.0.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | 223.255.254.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | 240.0.0.1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | 255.255.255.255 |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | 0.0.0.0 |"
+    },
+    {
+     "level": 0,
+     "text": "**What the book says**"
+    },
+    {
+     "level": 0,
+     "text": "Solutions."
+    },
+    {
+     "level": 0,
+     "text": "1. Class A, private (10/8), unicast host."
+    },
+    {
+     "level": 0,
+     "text": "2. Class B, private (inside 172.16-172.31), valid host."
+    },
+    {
+     "level": 0,
+     "text": "3. Class B, public (outside 172.16-172.31)."
+    },
+    {
+     "level": 0,
+     "text": "4. Class C, private. With the default /24 mask this is the broadcast address, so it is not a valid host."
+    },
+    {
+     "level": 0,
+     "text": "5. Loopback (first octet 127 is reserved), not a normal Class A host."
+    },
+    {
+     "level": 0,
+     "text": "6. APIPA / link-local (169.254.0.0/16). The host did not get DHCP."
+    },
+    {
+     "level": 0,
+     "text": "7. Class D multicast (EIGRP routers)."
+    },
+    {
+     "level": 0,
+     "text": "8. Class B, public, valid host."
+    },
+    {
+     "level": 0,
+     "text": "9. Class C, public, valid host."
+    },
+    {
+     "level": 0,
+     "text": "10. Class E, reserved or experimental, not for normal hosts."
+    },
+    {
+     "level": 0,
+     "text": "11. Limited (all-networks) broadcast."
+    },
+    {
+     "level": 0,
+     "text": "12. All zeros: the default route on a router, or \"this host\" before it has an address."
+    }
+   ]
+  },
+  {
+   "number": "2.6",
+   "title": "Decode the header (paper, 10 minutes)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Use what you learned to answer, then check the solution."
+    },
+    {
+     "level": 0,
+     "text": "- A TCP trace shows code bits %000010. Which flag is set? What does it mean?"
+    },
+    {
+     "level": 0,
+     "text": "- A reply trace shows code bits %010010. Which flags are set?"
+    },
+    {
+     "level": 0,
+     "text": "- A packet has Protocol 0x06 in the IP header. Which protocol gets the data?"
+    },
+    {
+     "level": 0,
+     "text": "- The IP header Time To Live is 1 when a packet arrives at a router that is not the destination. What happens?"
+    },
+    {
+     "level": 0,
+     "text": "- A packet's source port is 51500 and destination port is 443. Which side is the server?"
+    },
+    {
+     "level": 0,
+     "text": "**What the book says**"
+    },
+    {
+     "level": 0,
+     "text": "Solutions. 1. SYN: the client wants to open a session. 2. SYN and ACK: the server accepts and acknowledges. 3. TCP (hex 6 = decimal 6). 4. The router reduces TTL to 0, discards the packet and sends an ICMP time-exceeded message to the sender. 5. The destination port 443 is HTTPS, so the destination is the server. The source port is a temporary client port."
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "TCP/IP — review questions",
+   "questions": [
+    {
+     "source": "Q1. Which protocol sends passwords in clear text and should not be used on production networks?",
+     "sourceNumber": "Q1",
+     "q": "Which protocol sends passwords in clear text and should not be used on production networks?",
+     "options": [
+      "SSH",
+      "Telnet",
+      "HTTPS",
+      "SNMPv3"
+     ],
+     "answer": "B",
+     "why": "Telnet has no encryption. SSH replaces it.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. You can ping 8.8.8.8 but ping www.example.com fails. What is the most likely problem?",
+     "sourceNumber": "Q2",
+     "q": "You can ping 8.8.8.8 but ping www.example.com fails. What is the most likely problem?",
+     "options": [],
+     "answer": "A",
+     "why": "DNS problem - the network path works (the IP ping succeeded), so name resolution is failing.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. A host receives 169.254.33.8 in an office with a DHCP server. What does it mean?",
+     "sourceNumber": "Q3",
+     "q": "A host receives 169.254.33.8 in an office with a DHCP server. What does it mean?",
+     "options": [],
+     "answer": null,
+     "why": "The host could not get an address from DHCP - it assigned itself an APIPA address.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which DHCP message is sent in step 3 of DORA?",
+     "sourceNumber": "Q4",
+     "q": "Which DHCP message is sent in step 3 of DORA?",
+     "options": [],
+     "answer": "D",
+     "why": "HCP Request (a broadcast) - Discover, Offer, Request, Acknowledgment.",
+     "kind": "open"
+    },
+    {
+     "source": "Q5. Which two features does TCP have that UDP does not?",
+     "sourceNumber": "Q5",
+     "q": "Which two features does TCP have that UDP does not?",
+     "options": [
+      "Port numbers and checksums",
+      "Sequencing and acknowledgments",
+      "Source and destination ports",
+      "A length field"
+     ],
+     "answer": "B",
+     "why": "TCP adds sequencing, acknowledgments, windowing and connections. Both protocols use ports and checksums.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q6. How big is the UDP header, and which TCP field implements flow control?",
+     "sourceNumber": "Q6",
+     "q": "How big is the UDP header, and which TCP field implements flow control?",
+     "options": [],
+     "answer": null,
+     "why": "8 bytes; the Window field - UDP has no windowing or flow control.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. Which of these use UDP only? DNS, TFTP, SMTP, SNMP, HTTP.",
+     "sourceNumber": "Q7",
+     "q": "Which of these use UDP only? DNS, TFTP, SMTP, SNMP, HTTP.",
+     "options": [],
+     "answer": null,
+     "why": "TFTP and SNMP - DNS uses both; SMTP and HTTP use TCP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. A client connects to a web server. Give a realistic pair of source and destination ports.",
+     "sourceNumber": "Q8",
+     "q": "A client connects to a web server. Give a realistic pair of source and destination ports.",
+     "options": [],
+     "answer": null,
+     "why": "Source: a high random port (for example 50123); destination: 80 (or 443 for HTTPS) - the server's port is well known; the client's port is temporary.",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. Host A at 192.168.1.10/24 pings Host B on another subnet. What destination MAC address does Host A put on the first frame?",
+     "sourceNumber": "Q9",
+     "q": "Host A at 192.168.1.10/24 pings Host B on another subnet. What destination MAC address does Host A put on the first frame?",
+     "options": [
+      "Host B's MAC",
+      "The default gateway's MAC",
+      "ff:ff:ff:ff:ff:ff",
+      "00:00:00:00:00:00"
+     ],
+     "answer": "B",
+     "why": "for a remote destination the frame goes to the gateway. The IP packet inside still has Host B's address.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q10. Which protocol number identifies TCP in the IP header?",
+     "sourceNumber": "Q10",
+     "q": "Which protocol number identifies TCP in the IP header?",
+     "options": [],
+     "answer": null,
+     "why": "6 - UDP is 17, ICMP is 1, OSPF is 89.",
+     "kind": "open"
+    },
+    {
+     "source": "Q11. A traceroute works by exploiting which IP header field?",
+     "sourceNumber": "Q11",
+     "q": "A traceroute works by exploiting which IP header field?",
+     "options": [],
+     "answer": null,
+     "why": "Time to Live (TTL) - each router reduces it; at zero the router sends an ICMP time exceeded message.",
+     "kind": "open"
+    },
+    {
+     "source": "Q12. What does ARP find, and is the request unicast or broadcast?",
+     "sourceNumber": "Q12",
+     "q": "What does ARP find, and is the request unicast or broadcast?",
+     "options": [],
+     "answer": "A",
+     "why": "MAC address for a known IP address; a broadcast - the reply is a unicast from the owner.",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. What class is 191.255.1.1? What is its default mask?",
+     "sourceNumber": "Q13",
+     "q": "What class is 191.255.1.1? What is its default mask?",
+     "options": [
+      "Class A, 255.0.0.0",
+      "Class B, 255.255.0.0",
+      "Class C, 255.255.255.0",
+      "Class D, none"
+     ],
+     "answer": "B",
+     "why": "128-191 is Class B.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q14. How many usable hosts are in a default Class C network?",
+     "sourceNumber": "Q14",
+     "q": "How many usable hosts are in a default Class C network?",
+     "options": [],
+     "answer": null,
+     "why": "254 - 28 = 256 minus the network and broadcast addresses.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. Which of these is NOT a private address? 10.200.1.1, 172.31.5.5, 172.32.5.5, 192.168.50.1",
+     "sourceNumber": "Q15",
+     "q": "Which of these is NOT a private address? 10.200.1.1, 172.31.5.5, 172.32.5.5, 192.168.50.1",
+     "options": [],
+     "answer": null,
+     "why": "172.32.5.5 - private Class B stops at 172.31.255.255.",
+     "kind": "open"
+    },
+    {
+     "source": "Q16. For 172.16.30.56 with a default Class B mask, what are the network and host portions?",
+     "sourceNumber": "Q16",
+     "q": "For 172.16.30.56 with a default Class B mask, what are the network and host portions?",
+     "options": [],
+     "answer": null,
+     "why": "Network 172.16; host 30.56 - the first two octets are network, the last two are host.",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. Which address is a Layer 2 broadcast?",
+     "sourceNumber": "Q17",
+     "q": "Which address is a Layer 2 broadcast?",
+     "options": [
+      "255.255.255.255",
+      "ff:ff:ff:ff:ff:ff",
+      "224.0.0.10",
+      "127.0.0.1"
+     ],
+     "answer": "B",
+     "why": "255.255.255.255 is a Layer 3 broadcast; 224.0.0.10 is multicast; 127.0.0.1 is loopback.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q18. Does a router forward a Layer 2 broadcast by default? A Layer 3 broadcast?",
+     "sourceNumber": "Q18",
+     "q": "Does a router forward a Layer 2 broadcast by default? A Layer 3 broadcast?",
+     "options": [],
+     "answer": null,
+     "why": "No to both - broadcasts stop at the router unless you configure something like a DHCP relay.",
+     "kind": "open"
+    },
+    {
+     "source": "Q19. What is the multicast address range?",
+     "sourceNumber": "Q19",
+     "q": "What is the multicast address range?",
+     "options": [],
+     "answer": null,
+     "why": "224.0.0.0 - 239.255.255.255 - Class D.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. What must happen after a DHCP IP conflict is detected?",
+     "sourceNumber": "Q20",
+     "q": "What must happen after a DHCP IP conflict is detected?",
+     "options": [
+      "Proxy ARP fixes it",
+      "The client uses a gratuitous ARP to fix it",
+      "An administrator must resolve it by hand before the address is reused",
+      "The server gives both hosts new addresses"
+     ],
+     "answer": "C",
+     "why": "the conflicting address is removed from the pool until an administrator fixes the conflict.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q21. Which protocol sets up a secure session similar to Telnet?",
+     "sourceNumber": "Q21",
+     "q": "Which protocol sets up a secure session similar to Telnet?",
+     "options": [
+      "FTP",
+      "SSH",
+      "DNS",
+      "DHCP"
+     ],
+     "answer": "B",
+     "why": "SSH encrypts the session.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q22. Which mechanism does a DHCP client use to check for a duplicate address?",
+     "sourceNumber": "Q22",
+     "q": "Which mechanism does a DHCP client use to check for a duplicate address?",
+     "options": [
+      "Traceroute",
+      "Gratuitous ARP",
+      "Pathping",
+      "Source quench"
+     ],
+     "answer": "B",
+     "why": "the client broadcasts an ARP for its own new address.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q23. Which two statements describe a DHCP Discover? (Choose two.)",
+     "sourceNumber": "Q23",
+     "q": "Which two statements describe a DHCP Discover? (Choose two.)",
+     "options": [
+      "Layer 2 broadcast ff:ff:ff:ff:ff:ff",
+      "Uses UDP",
+      "Uses TCP",
+      "Has no Layer 2 destination"
+     ],
+     "answer": "A",
+     "why": "and B - it is a broadcast at Layers 2 and 3 and uses UDP.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q24. Which three services use TCP? (Choose three.)",
+     "sourceNumber": "Q24",
+     "q": "Which three services use TCP? (Choose three.)",
+     "options": [
+      "DHCP",
+      "SMTP",
+      "SNMP",
+      "FTP"
+     ],
+     "answer": null,
+     "why": "SMTP, FTP, HTTP - DHCP, SNMP and TFTP use UDP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Which header field in IP tells the receiving host to hand the data to TCP or UDP?",
+     "sourceNumber": "Q25",
+     "q": "Which header field in IP tells the receiving host to hand the data to TCP or UDP?",
+     "options": [],
+     "answer": null,
+     "why": "Protocol - 6 for TCP, 17 for UDP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q26. Which address range is the APIPA range?",
+     "sourceNumber": "Q26",
+     "q": "Which address range is the APIPA range?",
+     "options": [],
+     "answer": null,
+     "why": "169.254.0.1 - 169.254.255.254 (mask 255.255.0.0) - it appears when DHCP fails.",
+     "kind": "open"
+    },
+    {
+     "source": "Q27. What is the default mask for 150.10.5.8?",
+     "sourceNumber": "Q27",
+     "q": "What is the default mask for 150.10.5.8?",
+     "options": [],
+     "answer": null,
+     "why": "255.255.0.0 (Class B) - 150 is in 128-191.",
+     "kind": "open"
+    },
+    {
+     "source": "Q28. How many usable host addresses are in a default Class B network?",
+     "sourceNumber": "Q28",
+     "q": "How many usable host addresses are in a default Class B network?",
+     "options": [],
+     "answer": null,
+     "why": "65,534 - 216 minus 2.",
+     "kind": "open"
+    },
+    {
+     "source": "Q29. What destination IP address and what destination MAC address leave a PC that pings a host on a remote network through its gateway?",
+     "sourceNumber": "Q29",
+     "q": "What destination IP address and what destination MAC address leave a PC that pings a host on a remote network through its gateway?",
+     "options": [],
+     "answer": null,
+     "why": "The remote host's IP address and the default gateway's MAC address - the MAC changes at each hop; the IP does not.",
+     "kind": "open"
+    },
+    {
+     "source": "Q30. Name two problems with ICMP source quench.",
+     "sourceNumber": "Q30",
+     "q": "Name two problems with ICMP source quench.",
+     "options": [],
+     "answer": null,
+     "why": "It is deprecated (RFC 6633) and was considered an ineffective way to handle congestion - modern hosts do not send it and TCP ignores it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q31. Why does UDP suit voice and video better than TCP?",
+     "sourceNumber": "Q31",
+     "q": "Why does UDP suit voice and video better than TCP?",
+     "options": [],
+     "answer": null,
+     "why": "Lower overhead and no retransmission delay - late retransmitted audio is worse than a small loss.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 Which protocol sends passwords in clear text and should not be used on production networks?"
+    },
+    {
+     "level": 0,
+     "text": "A. SSH"
+    },
+    {
+     "level": 0,
+     "text": "B. Telnet"
+    },
+    {
+     "level": 0,
+     "text": "C. HTTPS"
+    },
+    {
+     "level": 0,
+     "text": "D. SNMPv3"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Telnet has no encryption. SSH replaces it."
+    },
+    {
+     "level": 0,
+     "text": "Q2 You can ping 8.8.8.8 but ping www.example.com fails. What is the most likely problem?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - DNS problem - the network path works (the IP ping succeeded), so name resolution is failing."
+    },
+    {
+     "level": 0,
+     "text": "Q3 A host receives 169.254.33.8 in an office with a DHCP server. What does it mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The host could not get an address from DHCP - it assigned itself an APIPA address."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which DHCP message is sent in step 3 of DORA?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: D - HCP Request (a broadcast) - Discover, Offer, Request, Acknowledgment."
+    },
+    {
+     "level": 0,
+     "text": "Q5 Which two features does TCP have that UDP does not?"
+    },
+    {
+     "level": 0,
+     "text": "A. Port numbers and checksums"
+    },
+    {
+     "level": 0,
+     "text": "B. Sequencing and acknowledgments"
+    },
+    {
+     "level": 0,
+     "text": "C. Source and destination ports"
+    },
+    {
+     "level": 0,
+     "text": "D. A length field"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - TCP adds sequencing, acknowledgments, windowing and connections. Both protocols use ports and checksums."
+    },
+    {
+     "level": 0,
+     "text": "Q6 How big is the UDP header, and which TCP field implements flow control?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 8 bytes; the Window field - UDP has no windowing or flow control."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Which of these use UDP only? DNS, TFTP, SMTP, SNMP, HTTP."
+    },
+    {
+     "level": 0,
+     "text": "Answer: TFTP and SNMP - DNS uses both; SMTP and HTTP use TCP."
+    },
+    {
+     "level": 0,
+     "text": "Q8 A client connects to a web server. Give a realistic pair of source and destination ports."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Source: a high random port (for example 50123); destination: 80 (or 443 for HTTPS) - the server's port is well known; the client's port is temporary."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Host A at 192.168.1.10/24 pings Host B on another subnet. What destination MAC address does Host A put on the first frame?"
+    },
+    {
+     "level": 0,
+     "text": "A. Host B's MAC"
+    },
+    {
+     "level": 0,
+     "text": "B. The default gateway's MAC"
+    },
+    {
+     "level": 0,
+     "text": "C. ff:ff:ff:ff:ff:ff"
+    },
+    {
+     "level": 0,
+     "text": "D. 00:00:00:00:00:00"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - for a remote destination the frame goes to the gateway. The IP packet inside still has Host B's address."
+    },
+    {
+     "level": 0,
+     "text": "Q10 Which protocol number identifies TCP in the IP header?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 6 - UDP is 17, ICMP is 1, OSPF is 89."
+    },
+    {
+     "level": 0,
+     "text": "Q11 A traceroute works by exploiting which IP header field?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Time to Live (TTL) - each router reduces it; at zero the router sends an ICMP time exceeded message."
+    },
+    {
+     "level": 0,
+     "text": "Q12 What does ARP find, and is the request unicast or broadcast?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - MAC address for a known IP address; a broadcast - the reply is a unicast from the owner."
+    },
+    {
+     "level": 0,
+     "text": "Q13 What class is 191.255.1.1? What is its default mask?"
+    },
+    {
+     "level": 0,
+     "text": "A. Class A, 255.0.0.0"
+    },
+    {
+     "level": 0,
+     "text": "B. Class B, 255.255.0.0"
+    },
+    {
+     "level": 0,
+     "text": "C. Class C, 255.255.255.0"
+    },
+    {
+     "level": 0,
+     "text": "D. Class D, none"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 128-191 is Class B."
+    },
+    {
+     "level": 0,
+     "text": "Q14 How many usable hosts are in a default Class C network?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 254 - 28 = 256 minus the network and broadcast addresses."
+    },
+    {
+     "level": 0,
+     "text": "Q15 Which of these is NOT a private address? 10.200.1.1, 172.31.5.5, 172.32.5.5, 192.168.50.1"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 172.32.5.5 - private Class B stops at 172.31.255.255."
+    },
+    {
+     "level": 0,
+     "text": "Q16 For 172.16.30.56 with a default Class B mask, what are the network and host portions?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Network 172.16; host 30.56 - the first two octets are network, the last two are host."
+    },
+    {
+     "level": 0,
+     "text": "Q17 Which address is a Layer 2 broadcast?"
+    },
+    {
+     "level": 0,
+     "text": "A. 255.255.255.255"
+    },
+    {
+     "level": 0,
+     "text": "B. ff:ff:ff:ff:ff:ff"
+    },
+    {
+     "level": 0,
+     "text": "C. 224.0.0.10"
+    },
+    {
+     "level": 0,
+     "text": "D. 127.0.0.1"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 255.255.255.255 is a Layer 3 broadcast; 224.0.0.10 is multicast; 127.0.0.1 is loopback."
+    },
+    {
+     "level": 0,
+     "text": "Q18 Does a router forward a Layer 2 broadcast by default? A Layer 3 broadcast?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No to both - broadcasts stop at the router unless you configure something like a DHCP relay."
+    },
+    {
+     "level": 0,
+     "text": "Q19 What is the multicast address range?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 224.0.0.0 - 239.255.255.255 - Class D."
+    },
+    {
+     "level": 0,
+     "text": "Q20 What must happen after a DHCP IP conflict is detected?"
+    },
+    {
+     "level": 0,
+     "text": "A. Proxy ARP fixes it"
+    },
+    {
+     "level": 0,
+     "text": "B. The client uses a gratuitous ARP to fix it"
+    },
+    {
+     "level": 0,
+     "text": "C. An administrator must resolve it by hand before the address is reused"
+    },
+    {
+     "level": 0,
+     "text": "D. The server gives both hosts new addresses"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - the conflicting address is removed from the pool until an administrator fixes the conflict."
+    },
+    {
+     "level": 0,
+     "text": "Q21 Which protocol sets up a secure session similar to Telnet?"
+    },
+    {
+     "level": 0,
+     "text": "A. FTP"
+    },
+    {
+     "level": 0,
+     "text": "B. SSH"
+    },
+    {
+     "level": 0,
+     "text": "C. DNS"
+    },
+    {
+     "level": 0,
+     "text": "D. DHCP"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - SSH encrypts the session."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Which mechanism does a DHCP client use to check for a duplicate address?"
+    },
+    {
+     "level": 0,
+     "text": "A. Traceroute"
+    },
+    {
+     "level": 0,
+     "text": "B. Gratuitous ARP"
+    },
+    {
+     "level": 0,
+     "text": "C. Pathping"
+    },
+    {
+     "level": 0,
+     "text": "D. Source quench"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - the client broadcasts an ARP for its own new address."
+    },
+    {
+     "level": 0,
+     "text": "Q23 Which two statements describe a DHCP Discover? (Choose two.)"
+    },
+    {
+     "level": 0,
+     "text": "A. Layer 2 broadcast ff:ff:ff:ff:ff:ff"
+    },
+    {
+     "level": 0,
+     "text": "B. Uses UDP"
+    },
+    {
+     "level": 0,
+     "text": "C. Uses TCP"
+    },
+    {
+     "level": 0,
+     "text": "D. Has no Layer 2 destination"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - and B - it is a broadcast at Layers 2 and 3 and uses UDP."
+    },
+    {
+     "level": 0,
+     "text": "Q24 Which three services use TCP? (Choose three.)"
+    },
+    {
+     "level": 0,
+     "text": "A. DHCP"
+    },
+    {
+     "level": 0,
+     "text": "B. SMTP"
+    },
+    {
+     "level": 0,
+     "text": "C. SNMP"
+    },
+    {
+     "level": 0,
+     "text": "D. FTP"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SMTP, FTP, HTTP - DHCP, SNMP and TFTP use UDP."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Which header field in IP tells the receiving host to hand the data to TCP or UDP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Protocol - 6 for TCP, 17 for UDP."
+    },
+    {
+     "level": 0,
+     "text": "Q26 Which address range is the APIPA range?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 169.254.0.1 - 169.254.255.254 (mask 255.255.0.0) - it appears when DHCP fails."
+    },
+    {
+     "level": 0,
+     "text": "Q27 What is the default mask for 150.10.5.8?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 255.255.0.0 (Class B) - 150 is in 128-191."
+    },
+    {
+     "level": 0,
+     "text": "Q28 How many usable host addresses are in a default Class B network?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 65,534 - 216 minus 2."
+    },
+    {
+     "level": 0,
+     "text": "Q29 What destination IP address and what destination MAC address leave a PC that pings a host on a remote network through its gateway?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The remote host's IP address and the default gateway's MAC address - the MAC changes at each hop; the IP does not."
+    },
+    {
+     "level": 0,
+     "text": "Q30 Name two problems with ICMP source quench."
+    },
+    {
+     "level": 0,
+     "text": "Answer: It is deprecated (RFC 6633) and was considered an ineffective way to handle congestion - modern hosts do not send it and TCP ignores it."
+    },
+    {
+     "level": 0,
+     "text": "Q31 Why does UDP suit voice and video better than TCP?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Lower overhead and no retransmission delay - late retransmitted audio is worse than a small loss."
+    }
+   ],
+   "multipleChoice": 9,
+   "open": 22
+  }
+ ],
+ "generatedFrom": "CC02.docx",
+ "totalWords": 9121,
+ "wordBreakdown": {
+  "sections": 6822,
+  "labs": 985,
+  "quizzes": 864,
+  "currency": 339,
+  "sources": 111
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "Ports 1023 and below are in \"RFC 3232\"; source ports start at 1024 (p. 48)",
+   "current": "Gives the IANA three ranges (RFC 6335) and notes that OS source-port ranges vary",
+   "action": "",
+   "source": "Ranges verified on the IANA registry page; OS behaviour marked CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "high",
+   "title": "Gap 2",
+   "found": "Source quench listed as a current ICMP message (p. 56)",
+   "current": "Marks it deprecated",
+   "action": "",
+   "source": "Verified against RFC 6633",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "HTTPS \"uses SSL\" (p. 38)",
+   "current": "Notes that TLS is used today",
+   "action": "",
+   "source": "General knowledge, not checked against an RFC",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "SNMPv3 uses TCP and UDP (p. 37)",
+   "current": "Says UDP 161/162 for the exam and flags the TCP claim",
+   "action": "",
+   "source": "Not verified",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "DNS forwards a TCP request to the root server (p. 40)",
+   "current": "Explains that queries normally use UDP, with TCP for large answers and zone transfers",
+   "action": "",
+   "source": "General knowledge, not checked",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "DHCP port 67 only; Offer is a Layer 2 unicast (p. 41)",
+   "current": "Adds UDP 68, DHCP relay and a note that real Offers can vary",
+   "action": "",
+   "source": "General knowledge, flagged",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "Protocol field described as \"port of upper-layer protocol\" (p. 53)",
+   "current": "Corrected to \"protocol number\"",
+   "action": "",
+   "source": "Standard IP behaviour (the book's own Table 2.3 shows protocol numbers)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "TCP handshake not spelled out (only SYN and SYN+ACK traces)",
+   "current": "Adds the third step (ACK) and teardown note",
+   "action": "",
+   "source": "Standard TCP behaviour",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "Private ranges given only as address ranges (p. 66)",
+   "current": "Adds prefix lengths /8, /12, /16",
+   "action": "",
+   "source": "Arithmetic check: 172.16.0.0-172.31.255.255 = /12",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "No DNS record types, no SFTP/SCP, no AI or syslog topics",
+   "current": "Adds short DNS record definitions; mentions SFTP/SCP only as a v2.0 objective; notes syslog port for later",
+   "action": "",
+   "source": "v2.0 objective wording read from Cisco's PDF; definitions are general knowledge",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "WINS server in the DHCP list (p. 40)",
+   "current": "Kept as in the book; WINS is obsolete",
+   "action": "",
+   "source": "General knowledge",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "Class tables only",
+   "current": "Adds a note that real networks are classless; CIDR comes in Chapter 3",
+   "action": "",
+   "source": "n/a",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "Routing-protocol multicast addresses (only EIGRP given) (p. 70)",
+   "current": "Adds OSPF and RIPv2 addresses",
+   "action": "",
+   "source": "General knowledge, flagged",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "v1.1 objective numbers",
+   "current": "Uses the book's map; flags that v1.1 numbering could differ",
+   "action": "",
+   "source": "Cisco's own v1.1 PDF was not opened",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "v2.0 objectives",
+   "current": "Used for tags",
+   "action": "",
+   "source": "Read directly from Cisco's v2.0 PDF",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Todd Lammle, CCNA Certification Study Guide Vol 2 (2020), Chapter 2",
+   "usedFor": "All BOOK content",
+   "status": "Read in full from your PDF. Only the first five review questions were read."
+  },
+  {
+   "source": "Cisco, 200-301 CCNA v2.0 exam topics (PDF on learningcontent.cisco.com)",
+   "usedFor": "v2.0 tags and objective numbers",
+   "status": "Official source, read directly this session"
+  },
+  {
+   "source": "IANA, Service Name and Transport Protocol Port Number Registry",
+   "usedFor": "Port ranges (System, User, Dynamic)",
+   "status": "Official source, from search results"
+  },
+  {
+   "source": "IETF, RFC 6633, Deprecation of ICMP Source Quench Messages",
+   "usedFor": "Source quench is deprecated",
+   "status": "Official source, from search results"
+  },
+  {
+   "source": "Everything marked CHECK",
+   "usedFor": "TLS, SNMP transport, DNS over TCP, DHCP details, ICMP types, multicast addresses, host commands, lab results",
+   "status": "General knowledge, not verified in this session"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-1.2"
+  }
+ ],
+ "questionCount": 31,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log (book versus current)",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A: Pre-Check",
+  "Sources and Verification Status"
+ ]
+}

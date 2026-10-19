@@ -15,7 +15,7 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v6";
+const VERSION = "v7";
 // The app lives at the scope root. A navigation to any OTHER in-scope path
 // (e.g. /dashboard/) must not be stored under the shell's "index.html" key, or
 // it would overwrite the real shell and break offline navigation for the app.
@@ -64,6 +64,7 @@ const DATA = [
   "data/lessons/windows.json",
   "data/scenarios/index.json",
   "data/quizzes/index.json",
+  "data/quizzes/ccna.json",
   "data/projects/index.json",
   "data/exam-objectives.json",
   "data/knowledge-map.json",

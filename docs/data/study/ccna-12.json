@@ -1,0 +1,4356 @@
+{
+ "id": "ccna-12",
+ "n": 12,
+ "sourceNumber": "CC12",
+ "kind": "chapter",
+ "title": "IP Services",
+ "display": "Chapter 12: IP Services",
+ "exam": "CCNA 200-301",
+ "subject": "cisco",
+ "words": 7337,
+ "sections": [
+  {
+   "title": "About this chapter",
+   "content": [
+    {
+     "level": 0,
+     "text": "CCNA 200-301 STUDY MANUAL"
+    },
+    {
+     "level": 0,
+     "text": "Chapter 12"
+    },
+    {
+     "level": 0,
+     "text": "IP Services: CDP, LLDP, NTP, SNMP, Syslog and SSH"
+    },
+    {
+     "level": 0,
+     "text": "A personalised study document built from Todd Lammle, CCNA Certification Study Guide, Volume 2, Exam 200-301 (2020), Chapter 12, book pages 337 to 362. Use it instead of the book. Every difference from the book is tagged, and nothing here was run on real Cisco equipment."
+    },
+    {
+     "level": 0,
+     "text": "| Item | Detail |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Book pages | 337 to 362 (PDF pages 395 to 420; offset +58 confirmed) |"
+    },
+    {
+     "level": 0,
+     "text": "| Tracker rows | Chapter 12 - IP Services, and rows 12.1 to 12.5 with sub-rows (see the Self-Assessment table).Seq range: not assigned yet. Tracker rows for chapters 12 to 23 did not exist at the time of the first build, and I could not reach Notion in this chat. See the Self-Assessment table at the end. |"
+    },
+    {
+     "level": 0,
+     "text": "| Suggested time | About 4 to 5 hours including labs (a suggestion, not a measured need). |"
+    },
+    {
+     "level": 0,
+     "text": "| Exam versions | Original 200-301 (v1.0, the book), v1.1 (retires 2 Feb 2027), v2.0 (first exam 3 Feb 2027). Dates from a secondary source, checked 14 Oct 2026. |"
+    },
+    {
+     "level": 0,
+     "text": "| Status of your knowledge | Not assessed. Nothing in this document assumes you know any of it. |"
+    },
+    {
+     "level": 3,
+     "text": "Tag legend"
+    },
+    {
+     "level": 0,
+     "text": "| Tag | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| BOOK | Taken from the book as written. |"
+    },
+    {
+     "level": 0,
+     "text": "| UPDATED | The book is wrong, outdated or unclear. The note says what changed and why. |"
+    },
+    {
+     "level": 0,
+     "text": "| ADDED | Extra material that is not in the chapter. |"
+    },
+    {
+     "level": 0,
+     "text": "| CHECK | Not verified on real equipment. Treat as illustrative until you test it. |"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Learning objectives from the book (v1.0 numbering) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "2.3 Configure and verify Layer 2 discovery protocols (CDP and LLDP)."
+    },
+    {
+     "level": 0,
+     "text": "4.2 Configure and verify NTP operating in client and server mode."
+    },
+    {
+     "level": 0,
+     "text": "4.4 Explain the function of SNMP in network operations."
+    },
+    {
+     "level": 0,
+     "text": "4.5 Describe the use of syslog features including facilities and levels."
+    },
+    {
+     "level": 0,
+     "text": "4.8 Configure network devices for remote access using SSH."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Verification note. This chapter has almost no address maths. I used Python ipaddress to check the book's topology exercise (every \"next IP\" for the remote routers sits inside the right /24) and to compute the syslog PRI value shown in the added note. Both matched my manual working."
+    },
+    {
+     "level": 0,
+     "text": "Commands and outputs below were not run on real Cisco hardware. Items marked CHECK are illustrative."
+    }
+   ],
+   "words": 408
+  },
+  {
+   "title": "Where this chapter fits in the exam",
+   "content": [
+    {
+     "level": 0,
+     "text": "The book targets v1.0. Cisco's v2.0 outline (read directly from Cisco on 14 Oct 2026) moves most of this material to new places and changes some verbs. The v1.1 column comes from a secondary summary because I could not open Cisco's v1.1 PDF. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "| Section | v1.1 | v2.0 | Priority |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.1 CDP and LLDP | 2.3 Configure and verify CDP and LLDP | 2.3 Validate network documentation using CDP and LLDP; 2.4 show commands and logs | High (read output, compare with a diagram) |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.2 NTP | 4.2 Configure and verify NTP client and server | Not in the v2.0 outline. Related topics may still appear (Cisco says so). | Medium for v1.1; low for v2.0 |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.3 SNMP | 4.4 Explain the function of SNMP | 5.4 Describe the function of SNMP in network operations | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.4 Syslog | 4.5 Syslog facilities and levels | 5.6 Interpret syslog message content, severity levels and facilities; 2.4 show logs | High (severity table) |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.5 SSH | 4.8 Configure SSH (and 2.8 device management access, secondary source) | No standalone SSH objective. 4.1 local usernames and 4.2 SFTP/SCP are related. | Medium |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "What v2.0 changes for you. CDP/LLDP becomes a documentation-checking skill. SNMP and syslog move into a new Domain 5 (AI, and Network Operations and Management). NTP and the SSH how-to are no longer named. SFTP/SCP (secure file transfer, which rides on SSH) is new in v2.0 and is not taught in this book. UPDATED"
+    }
+   ],
+   "words": 270
+  },
+  {
+   "title": "Step 0: Pre-check (answer before reading)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Write your answer and a confidence tag next to each: K = I know it, U = I think so but am unsure, G = I am guessing. Answers are in Answer Key A at the end. This does not change any tracker status."
+    },
+    {
+     "level": 0,
+     "text": "- Which command shows a neighbor's management IP address and IOS version using CDP? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- What severity number is \"Warning\" in syslog? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- A device shows stratum 16 in show ntp status. What does that mean? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- What is the name of the unsolicited alert an SNMP agent sends to the manager? ____ (K / U / G)"
+    },
+    {
+     "level": 0,
+     "text": "- Which two settings must exist before crypto key generate rsa can create SSH keys? ____ (K / U / G)"
+    }
+   ],
+   "words": 141
+  },
+  {
+   "title": "12.1 Exploring Connected Devices Using CDP and LLDP",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 338 to 347. Discovery protocols let a device announce itself to its directly connected neighbors. You use them to build a map, check cabling and troubleshoot. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "|  | CDP | LLDP |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Full name | Cisco Discovery Protocol | Link Layer Discovery Protocol (IEEE 802.1AB) |"
+    },
+    {
+     "level": 0,
+     "text": "| Owner | Cisco only (proprietary) | Open standard, works across vendors |"
+    },
+    {
+     "level": 0,
+     "text": "| Default on Cisco IOS | Enabled | Disabled (needs lldp run) |"
+    },
+    {
+     "level": 0,
+     "text": "| Default timer / holdtime | 60 s / 180 s | 30 s / 120 s |"
+    },
+    {
+     "level": 0,
+     "text": "| Enable globally | cdp run (on already) | lldp run |"
+    },
+    {
+     "level": 0,
+     "text": "| Per interface | cdp enable / no cdp enable | lldp transmit and lldp receive |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbor list | show cdp neighbors | show lldp neighbors |"
+    },
+    {
+     "level": 0,
+     "text": "| Full detail | show cdp neighbors detail | show lldp neighbors detail |"
+    },
+    {
+     "level": 0,
+     "text": "Sources for the table: CDP values and the neighbor output are in the book BOOK ; the LLDP default-off state and 30/120 timers are not stated in the book and were added from Cisco documentation and secondary sources ADDED ."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "CDP and LLDP only show directly connected devices. A switch does not pass CDP frames on, so a router connected to a switch sees the switch, not the devices behind it. BOOK"
+    },
+    {
+     "level": 2,
+     "text": "12.1.1 Getting CDP Timers and Holdtime Information"
+    },
+    {
+     "level": 0,
+     "text": "Two global CDP values matter. The timer is how often CDP packets go out every active interface. The holdtime is how long a receiver keeps a neighbor's information before discarding it if no new packet arrives. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book output BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SW-3# show cdp"
+    },
+    {
+     "level": 0,
+     "text": "Global CDP information:"
+    },
+    {
+     "level": 0,
+     "text": "Sending CDP packets every 60 seconds"
+    },
+    {
+     "level": 0,
+     "text": "Sending a holdtime value of 180 seconds"
+    },
+    {
+     "level": 0,
+     "text": "Sending CDPv2 advertisements is enabled"
+    },
+    {
+     "level": 0,
+     "text": "- show cdp: shows the global timer, holdtime and CDP version."
+    },
+    {
+     "level": 0,
+     "text": "- Default timer 60 s and holdtime 180 s: the holdtime is three times the timer, so a neighbor survives two lost packets."
+    },
+    {
+     "level": 0,
+     "text": "- cdp timer <5-254>: change how often packets are sent (seconds)."
+    },
+    {
+     "level": 0,
+     "text": "- cdp holdtime <10-255>: change how long neighbors keep the information (seconds)."
+    },
+    {
+     "level": 0,
+     "text": "- no cdp run / cdp run: turn CDP off or on for the whole device."
+    },
+    {
+     "level": 0,
+     "text": "- no cdp enable / cdp enable: turn CDP off or on for one interface (interface mode)."
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Mixing up the two. The timer controls sending. The holdtime controls how long the receiver remembers. A short holdtime with a long timer makes neighbors flap in and out of the table."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says to configure CDP \"on a router\" but shows the prompt of a switch (SW-3). The commands are the same on routers and switches. Minor wording issue only. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Security and phones. CDP tells anyone on the link your hostname, model, IOS version and IP address. Many designs disable it on ports facing users or the Internet. Do not switch CDP off globally if you use Cisco IP phones, because the phone negotiation can depend on it. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.1.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What are the default CDP timer and holdtime?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 60 s and 180 s - the receiver keeps a neighbor for 180 s."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which command stops CDP on one interface only?"
+    },
+    {
+     "level": 0,
+     "text": "A. no cdp run"
+    },
+    {
+     "level": 0,
+     "text": "B. no cdp enable"
+    },
+    {
+     "level": 0,
+     "text": "C. cdp holdtime 0"
+    },
+    {
+     "level": 0,
+     "text": "D. no cdp timer"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - no cdp enable is per interface; no cdp run is global."
+    },
+    {
+     "level": 0,
+     "text": "Q3. A neighbor disappears from the CDP table after a while although the cable is fine. Which value expired?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The holdtime - no CDP packet arrived within the holdtime."
+    },
+    {
+     "level": 2,
+     "text": "12.1.2 Gathering Neighbor Information"
+    },
+    {
+     "level": 0,
+     "text": "show cdp neighbors (short form sh cdp nei) lists each directly connected device. Learn to read every column, because exam questions give you this output and ask what it means. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Based on the book's output (the book's PDF text is badly wrapped, so columns are re-aligned here) BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SW-3# show cdp neighbors"
+    },
+    {
+     "level": 0,
+     "text": "Device ID Local Intrfce Holdtme Capability Platform Port ID"
+    },
+    {
+     "level": 0,
+     "text": "SW-1 Fas 0/1 150 S I WS-C3560- Fas 0/15"
+    },
+    {
+     "level": 0,
+     "text": "SW-1 Fas 0/2 150 S I WS-C3560- Fas 0/16"
+    },
+    {
+     "level": 0,
+     "text": "SW-2 Fas 0/5 162 S I WS-C3560- Fas 0/5"
+    },
+    {
+     "level": 0,
+     "text": "SW-2 Fas 0/6 162 S I WS-C3560- Fas 0/6"
+    },
+    {
+     "level": 0,
+     "text": "| Column | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Device ID | Hostname of the neighbor. |"
+    },
+    {
+     "level": 0,
+     "text": "| Local Intrfce | Your port that the neighbor is connected to. |"
+    },
+    {
+     "level": 0,
+     "text": "| Holdtme | Seconds left before the entry is dropped if no new CDP packet arrives (it counts down). |"
+    },
+    {
+     "level": 0,
+     "text": "| Capability | Neighbor type code: R router, S switch, I IGMP, H host, P phone, r repeater and others (the legend is printed above the table). |"
+    },
+    {
+     "level": 0,
+     "text": "| Platform | Hardware model, for example WS-C3560. |"
+    },
+    {
+     "level": 0,
+     "text": "| Port ID | The neighbor's port, the other end of the cable. |"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Local = my port. Port ID = their port. Read each line as \"my Fas 0/1 connects to SW-1's Fas 0/15\"."
+    },
+    {
+     "level": 3,
+     "text": "show cdp neighbors detail"
+    },
+    {
+     "level": 0,
+     "text": "Shortened from the book's output BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SW-3# show cdp neighbors detail"
+    },
+    {
+     "level": 0,
+     "text": "-------------------------"
+    },
+    {
+     "level": 0,
+     "text": "Device ID: SW-1"
+    },
+    {
+     "level": 0,
+     "text": "Entry address(es):"
+    },
+    {
+     "level": 0,
+     "text": "IP address: 10.100.128.10"
+    },
+    {
+     "level": 0,
+     "text": "Platform: cisco WS-C3560-24TS, Capabilities: Switch IGMP"
+    },
+    {
+     "level": 0,
+     "text": "Interface: FastEthernet0/1, Port ID (outgoing port): FastEthernet0/15"
+    },
+    {
+     "level": 0,
+     "text": "Holdtime : 135 sec"
+    },
+    {
+     "level": 0,
+     "text": "Version :"
+    },
+    {
+     "level": 0,
+     "text": "Cisco IOS Software, C3560 Software ... Version 12.2(55)SE5, RELEASE SOFTWARE"
+    },
+    {
+     "level": 0,
+     "text": "advertisement version: 2"
+    },
+    {
+     "level": 0,
+     "text": "VTP Management Domain: 'NULL'"
+    },
+    {
+     "level": 0,
+     "text": "Native VLAN: 1"
+    },
+    {
+     "level": 0,
+     "text": "Duplex: full"
+    },
+    {
+     "level": 0,
+     "text": "Management address(es):"
+    },
+    {
+     "level": 0,
+     "text": "IP address: 10.100.128.10"
+    },
+    {
+     "level": 0,
+     "text": "- show cdp neighbors detail: everything in the summary plus IP address, IOS version, native VLAN, duplex and VTP domain."
+    },
+    {
+     "level": 0,
+     "text": "- show cdp entry *: gives the same result as the detail command BOOK . (show cdp entry <name> shows one neighbor.)"
+    },
+    {
+     "level": 0,
+     "text": "- Use detail when you need the neighbor's IP address. The summary command never shows it."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Which command gives the neighbor's IP address? show cdp neighbors detail. The book's own review question 4 tests exactly this. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "The book's \"CDP Can Save Lives\" story says an admin can rebuild a network map from CDP alone. True, but you still need login access to each device. CDP only helps if you can log in. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book text says SW-1 and SW-2 are \"3650 switches\", but the output shows WS-C3560. It is a typo for 3560. The book's detail output also repeats the line Device ID: SW-1 twice. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.1.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. In show cdp neighbors, which column is the neighbor's own interface?"
+    },
+    {
+     "level": 0,
+     "text": "A. Local Intrfce"
+    },
+    {
+     "level": 0,
+     "text": "B. Port ID"
+    },
+    {
+     "level": 0,
+     "text": "C. Platform"
+    },
+    {
+     "level": 0,
+     "text": "D. Holdtme"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Port ID is the remote port."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Why does your router not see the PCs and other routers behind a connected switch?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: CDP only reaches directly connected neighbors - a switch does not forward CDP frames."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which two commands show the same detailed neighbor information?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show cdp neighbors detail and show cdp entry * - the book states they are equivalent."
+    },
+    {
+     "level": 0,
+     "text": "Q4. On SW-3 you see SW-2 Fas 0/5 ... Fas 0/5. What does that tell you?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SW-3's Fas 0/5 is cabled to SW-2's Fas 0/5 - Local Intrfce is mine, Port ID is theirs."
+    },
+    {
+     "level": 2,
+     "text": "12.1.3 Documenting a Network Topology Using CDP"
+    },
+    {
+     "level": 0,
+     "text": "The book gives an exercise: you can only console into Lab_A. Use show running-config for the local IP addresses and show cdp neighbors for the neighbors, then draw the network. The rule: each remote router gets the next IP address in the link's range. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Lab_A port | Lab_A IP | Neighbor (CDP) | Platform | Neighbor port | Neighbor IP (next address) |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Fa0/0 | 192.168.21.1/24 | Lab_B | 2501 | E0 | 192.168.21.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| Fa0/1 | 192.168.18.1/24 | Lab_C | 2621 | Fa0/0 | 192.168.18.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| Se0/0 | 192.168.23.1/24 | Lab_D | 2514 | S1 | 192.168.23.2 |"
+    },
+    {
+     "level": 0,
+     "text": "| Se0/1 | 192.168.28.1/24 | Lab_E | 2620 | S0/1 | 192.168.28.2 |"
+    },
+    {
+     "level": 0,
+     "text": "Calculated by script: each local address is a /24 (mask 255.255.255.0, 254 hosts), and each \"next address\" ending in .2 lies inside the same subnet. Matches the book's Figure 12.3. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The routers in this exercise (2501, 2514, 2620, 2621) are very old hardware. The method is what matters: local config + CDP neighbor output = topology. Also, the exam in v2.0 asks you to validate documentation, so practise the reverse: given a diagram and CDP output, spot what does not match. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Documentation check (v2.0 skill). For every link in a diagram, compare: (1) hostname, (2) local port, (3) remote port, (4) platform. A mismatch means the diagram is wrong or the cable is in the wrong port. Use show cdp neighbors detail for IPs and software versions. ADDED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.1.3"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which two sources do you combine to document a router's links in this exercise?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show running-config and show cdp neighbors - the first gives your IPs, the second gives the neighbors."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Lab_A Fa0/1 is 192.168.18.1/24. What is the neighbor's address under the book's rule?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 192.168.18.2 - next IP in the /24."
+    },
+    {
+     "level": 0,
+     "text": "Q3. A diagram says SW-1 Gi0/1 connects to SW-2 Gi0/1, but CDP on SW-1 shows Port ID Gi0/2. What is the likely conclusion?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The diagram or the cabling is wrong - CDP reports the real port."
+    },
+    {
+     "level": 2,
+     "text": "12.1.4 Link Layer Discovery Protocol (LLDP)"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Tracker note. The book teaches LLDP on pages 346 to 347 but does not list it as its own heading in the table of contents. I numbered it 12.1.4 so it gets its own tracker row. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "LLDP is the IEEE 802.1AB standard. It gives about the same information as CDP but works with any vendor. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- LLDP-MED (Media Endpoint Discovery) is an enhanced version for voice. The book says LLDP and LLDP-MED are not compatible. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- LLDP must be enabled on the device before you can enable or disable it on an interface. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- LLDP works only on physical interfaces, and the book says it can discover up to one device per port. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- lldp run / no lldp run: turn LLDP on or off globally (affects all interfaces). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- lldp transmit / lldp receive (interface mode): control sending and receiving per port. Use the no form to stop. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Commands: the first lines are in the book; the show lines are added ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SW-3(config)# lldp run"
+    },
+    {
+     "level": 0,
+     "text": "SW-3(config)# interface gi0/1"
+    },
+    {
+     "level": 0,
+     "text": "SW-3(config-if)# no lldp transmit"
+    },
+    {
+     "level": 0,
+     "text": "SW-3(config-if)# lldp receive"
+    },
+    {
+     "level": 0,
+     "text": "SW-3(config-if)# end"
+    },
+    {
+     "level": 0,
+     "text": "SW-3# show lldp neighbors"
+    },
+    {
+     "level": 0,
+     "text": "SW-3# show lldp neighbors detail"
+    },
+    {
+     "level": 0,
+     "text": "- lldp run: starts LLDP on every interface. Needed first, because LLDP is off by default."
+    },
+    {
+     "level": 0,
+     "text": "- no lldp transmit: this port stops sending LLDP frames."
+    },
+    {
+     "level": 0,
+     "text": "- lldp receive: this port still listens for neighbors."
+    },
+    {
+     "level": 0,
+     "text": "- show lldp neighbors: summary list. detail adds IP, system description and capabilities."
+    },
+    {
+     "level": 0,
+     "text": "Illustrative output CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SW-3# show lldp"
+    },
+    {
+     "level": 0,
+     "text": "Global LLDP Information:"
+    },
+    {
+     "level": 0,
+     "text": "Status: ACTIVE"
+    },
+    {
+     "level": 0,
+     "text": "LLDP advertisements are sent every 30 seconds"
+    },
+    {
+     "level": 0,
+     "text": "LLDP hold time advertised is 120 seconds"
+    },
+    {
+     "level": 0,
+     "text": "LLDP interface reinitialisation delay is 2 seconds"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book never says LLDP is off by default on Cisco devices, but that is why show lldp neighbors is empty on a fresh switch. Cisco documentation lists default timer 30 s (range 5 to 65534), holdtime 120 s (0 to 65535) and reinit delay 2 s (2 to 5). You can change them with lldp timer, lldp holdtime and lldp reinit. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Expecting CDP and LLDP to talk to each other. A Cisco device can run both at the same time; a non-Cisco neighbor will only answer LLDP."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.1.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which discovery protocol works between Cisco and non-Cisco devices?"
+    },
+    {
+     "level": 0,
+     "text": "A. CDP"
+    },
+    {
+     "level": 0,
+     "text": "B. LLDP"
+    },
+    {
+     "level": 0,
+     "text": "C. VTP"
+    },
+    {
+     "level": 0,
+     "text": "D. DTP"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - LLDP is the IEEE standard 802.1AB."
+    },
+    {
+     "level": 0,
+     "text": "Q2. You typed show lldp neighbors on a new switch and it is empty although the link is up. First thing to check?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Whether lldp run was configured - LLDP is off by default."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which two commands set a port to listen for LLDP but not send it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: no lldp transmit and lldp receive - interface-mode commands."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Are LLDP and LLDP-MED compatible, according to the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - the book says they are not compatible."
+    }
+   ],
+   "words": 2054
+  },
+  {
+   "title": "12.2 Network Time Protocol (NTP)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 347 to 348. NTP synchronises device clocks from a time server. Correct time is needed for: putting events in the right order, reading syslog data correctly and digital certificates. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Why timestamps alone are not enough"
+    },
+    {
+     "level": 0,
+     "text": "The book shows service timestamps log datetime msec so log messages carry a date and time. But a router's own clock may be wrong, so the stamp may be wrong. NTP makes the clock correct. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# service timestamps log datetime msec"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# ntp server 172.16.10.1 version 4"
+    },
+    {
+     "level": 0,
+     "text": "- service timestamps log datetime msec: add the date, time and milliseconds to log messages."
+    },
+    {
+     "level": 0,
+     "text": "- ntp server 172.16.10.1: this device becomes an NTP client of the server at 172.16.10.1."
+    },
+    {
+     "level": 0,
+     "text": "- version 4: use NTP version 4. (Optional. NTPv4 is defined in RFC 5905.) CHECK"
+    },
+    {
+     "level": 0,
+     "text": "- ntp master: make this router or switch an NTP server that serves its own clock."
+    },
+    {
+     "level": 3,
+     "text": "Verify NTP"
+    },
+    {
+     "level": 0,
+     "text": "Book output, re-aligned: a client that has not synchronised BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SF# show ntp status"
+    },
+    {
+     "level": 0,
+     "text": "Clock is unsynchronized, stratum 16, no reference clock"
+    },
+    {
+     "level": 0,
+     "text": "SF# show ntp associations"
+    },
+    {
+     "level": 0,
+     "text": "address ref clock st when poll reach delay offset disp"
+    },
+    {
+     "level": 0,
+     "text": "~172.16.10.1 0.0.0.0 16 - 64 0 0.0 0.00 16000."
+    },
+    {
+     "level": 0,
+     "text": "* master (synced), # master (unsynced), + selected, - candidate, ~ configured"
+    },
+    {
+     "level": 0,
+     "text": "| Output | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Clock is unsynchronized | The device has not locked on to a time source. |"
+    },
+    {
+     "level": 0,
+     "text": "| stratum 16 | Unsynchronised. Valid synchronised values are 1 to 15; a lower number is closer to the reference clock. |"
+    },
+    {
+     "level": 0,
+     "text": "| ~172.16.10.1 | The tilde means this server is configured, not yet synchronised. |"
+    },
+    {
+     "level": 0,
+     "text": "| * before an address | This is the selected master and the clock is synced to it. |"
+    },
+    {
+     "level": 0,
+     "text": "| reach 0 | No replies received from that server. |"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Client = ntp server <ip>. Server = ntp master. Verify with show ntp status and show ntp associations. Stratum 16 = not synchronised. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Three clarifications that the book skips or states loosely. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "1. NTP uses UDP port 123. If an ACL or firewall blocks UDP 123, the client stays at stratum 16 with reach 0."
+    },
+    {
+     "level": 0,
+     "text": "2. ntp master with no number defaults to stratum 8 on Cisco IOS. Give it an explicit stratum, for example ntp master 3."
+    },
+    {
+     "level": 0,
+     "text": "3. The book says stratum is a number from 1 to 15. In the NTP standard a reference clock is stratum 0 and a server directly attached to it is stratum 1; an unsynchronised Cisco device shows 16."
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Security. By default a client trusts any server that answers. A rogue server can feed wrong time and break certificates and logs. The book only mentions NTP authentication in one sentence; it is beyond the scope of this chapter. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "v2.0 note. NTP configuration is no longer a named objective in the v2.0 outline. Learn the client/server commands and how to read show ntp status anyway: it is cheap to learn, part of v1.1 and useful in every lab. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which command makes a router an NTP client of 10.1.1.5?"
+    },
+    {
+     "level": 0,
+     "text": "A. ntp master 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "B. ntp server 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "C. clock sync 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "D. ntp client 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - ntp server points the device at a time source."
+    },
+    {
+     "level": 0,
+     "text": "Q2. show ntp status says stratum 16. What does it mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The clock is not synchronised - 16 means no valid time source."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Which UDP port does NTP use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 123 - blocked UDP 123 is a common reason NTP fails."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which command turns a router into an NTP server using its own clock?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ntp master - optionally with a stratum number."
+    }
+   ],
+   "words": 622
+  },
+  {
+   "title": "12.3 SNMP",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 348 to 352. Simple Network Management Protocol is an Application-layer protocol that lets agents on devices talk to a network management station (NMS). Examples of an NMS in the book: Cisco Prime and SolarWinds. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The NMS polls the agent (a GET message) to collect statistics such as interface status or CPU. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The agent sends a trap to the NMS when something happens, such as an interface going down. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- The NMS can also SET a value on the device. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- Data is stored in a MIB (Management Information Base). BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Version | Security | Book says | Notes |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMPv1 | Community string in plain text | Rarely implemented today | Oldest. |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMPv2c | Community string in plain text, no encryption | Adds GET BULK and INFORM; not really more secure than v1 | The \"c\" stands for community. |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMPv3 | Authentication (MD5 or SHA) and encryption | Says it uses TCP and DES or \"DES-256\" | See corrections below. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Corrections to the SNMP text. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "1. The book (page 349, Exam Essentials and review answer 3) says SNMPv3 uses TCP. SNMP uses UDP by default: UDP 161 for requests to the agent and UDP 162 for traps and informs sent to the NMS. Some implementations can run over TCP, but that is not what defines v3."
+    },
+    {
+     "level": 0,
+     "text": "2. \"DES-256\" is not a standard name. SNMPv3 privacy uses DES, 3DES or AES (AES-128, 192 or 256, depending on the platform)."
+    },
+    {
+     "level": 0,
+     "text": "3. SNMPv3 has three security levels: noAuthNoPriv (nothing), authNoPriv (authentication only), authPriv (authentication and encryption). v3 also uses user names, not community strings."
+    },
+    {
+     "level": 0,
+     "text": "4. SHA and AES are the modern choices; MD5 and DES are legacy. CHECK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "Remember: v2c introduced GET BULK and INFORM (the book's review answer 3 agrees). v3 = security (authentication and encryption). v1 and v2c are plain-text community strings. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says SNMP was created in 1988 (RFC 1065). RFC 1065 describes the structure of management information. The SNMPv1 protocol itself is RFC 1157 (1990). The exact RFC does not matter for the exam. UPDATED CHECK"
+    },
+    {
+     "level": 2,
+     "text": "12.3.1 Management Information Base (MIB)"
+    },
+    {
+     "level": 0,
+     "text": "A MIB is a hierarchical collection of manageable values. Each value has an OID (object identifier) that looks like a path through a tree, written in words or numbers. Top levels belong to standards bodies; vendors have private branches. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Cisco's branch, from the book's Figure 12.6 BOOK"
+    },
+    {
+     "level": 0,
+     "text": "iso (1) > org (3) > dod (6) > internet (1) > private (4) > enterprise (1) > cisco (9)"
+    },
+    {
+     "level": 0,
+     "text": "= 1.3.6.1.4.1.9"
+    },
+    {
+     "level": 0,
+     "text": "You do not need to memorise OIDs for the exam. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "| Operation | Direction | What it does |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| GET | Manager asks agent | Read a value from the MIB. |"
+    },
+    {
+     "level": 0,
+     "text": "| SET | Manager tells agent | Write a value on the device. |"
+    },
+    {
+     "level": 0,
+     "text": "| WALK | Manager asks agent | Read a range of successive MIB objects. |"
+    },
+    {
+     "level": 0,
+     "text": "| TRAP | Agent to manager | Unsolicited alert. No acknowledgement. |"
+    },
+    {
+     "level": 0,
+     "text": "| INFORM | Agent to manager | Like a trap but acknowledged by the manager. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book defines SET as \"get information to the MIB from an SNMP agent\". That is backwards. With SET the manager changes a value on the agent. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.3.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which SNMP message is acknowledged by the manager?"
+    },
+    {
+     "level": 0,
+     "text": "A. TRAP"
+    },
+    {
+     "level": 0,
+     "text": "B. GET"
+    },
+    {
+     "level": 0,
+     "text": "C. INFORM"
+    },
+    {
+     "level": 0,
+     "text": "D. WALK"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - INFORM adds acknowledgement; a trap does not."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which SNMP version first added GET BULK?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SNMPv2c - per the book and review answer 3."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What does the number string 1.3.6.1.4.1.9 point to?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Cisco's private enterprise branch of the MIB - the OID tree."
+    },
+    {
+     "level": 2,
+     "text": "12.3.2 Configuring SNMP"
+    },
+    {
+     "level": 0,
+     "text": "Four steps in the book: read-write access, contact, location, and an ACL to limit who can use the community string. Only the community string is required. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration (the exit line is added so the last command runs in global mode) BOOK CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# snmp-server community Todd rw"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# snmp-server location Boulder"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# snmp-server contact Todd Lammle"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# ip access-list standard Protect_NMS_Station"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-std-nacl)# permit host 192.168.10.254"
+    },
+    {
+     "level": 0,
+     "text": "Router(config-std-nacl)# exit"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# snmp-server community Todd Protect_NMS_Station rw"
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server community Todd rw: creates community string Todd with read-write access. Use ro for read-only."
+    },
+    {
+     "level": 0,
+     "text": "- snmp-server location Boulder and snmp-server contact Todd Lammle: text fields that help whoever troubleshoots later."
+    },
+    {
+     "level": 0,
+     "text": "- ip access-list standard Protect_NMS_Station + permit host 192.168.10.254: only the NMS at 192.168.10.254 may use the community."
+    },
+    {
+     "level": 0,
+     "text": "- ... community Todd Protect_NMS_Station rw: attach that ACL to the community string."
+    },
+    {
+     "level": 0,
+     "text": "| Access | What the NMS may do |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| Read-only (ro) | Read MIB objects (not the community strings). No changes. |"
+    },
+    {
+     "level": 0,
+     "text": "| Read-write (rw) | Read and change MIB objects (not the community strings). |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book gets the ACL purpose wrong. It says the ACL \"protects the NMS from access, not the actual devices with the agents\". In fact the ACL attached to the community string decides which NMS hosts may query the agent on this router. It protects the router's SNMP agent. The book's review answer 1 (put the ACL on the RO community string) is correct and matches this. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "Community strings are sent in clear text in v1 and v2c. rw with a guessable string lets anyone who reaches UDP 161 change the device. Prefer SNMPv3 with authPriv, and always use ro unless you really need writes. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says entering snmp-server enables SNMPv1 on the device. Current IOS versions support v1, v2c and v3, and the version used depends on how the manager is set up and what you configure. SNMPv3 needs snmp-server group and snmp-server user, which the book does not cover. UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.3.2"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which command is the only required SNMP command in the book's list?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: snmp-server community <string> - location, contact and ACL are optional."
+    },
+    {
+     "level": 0,
+     "text": "Q2. How do you restrict which NMS can use a read-only community?"
+    },
+    {
+     "level": 0,
+     "text": "A. ACL on the VTY line"
+    },
+    {
+     "level": 0,
+     "text": "B. ACL on the community string"
+    },
+    {
+     "level": 0,
+     "text": "C. ACL on every interface"
+    },
+    {
+     "level": 0,
+     "text": "D. ACL on the control plane"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - attach the ACL in the snmp-server community command."
+    },
+    {
+     "level": 0,
+     "text": "Q3. You use an SNMP manager to change a router's hostname. Which community access is needed?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Read-write (rw) - ro cannot change anything."
+    },
+    {
+     "level": 0,
+     "text": "Q4. Which direction does a TRAP travel?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Agent to NMS - unsolicited alert."
+    }
+   ],
+   "words": 1107
+  },
+  {
+   "title": "12.4 Syslog",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 352 to 356. Cisco devices produce messages for events such as an interface changing state. Syslog is the standard way to store them centrally. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Four places a device can send messages: logging buffer (RAM, on by default), console (on by default), terminal lines (needs terminal monitor), syslog server. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Message format"
+    },
+    {
+     "level": 0,
+     "text": "Format and the book's console example BOOK"
+    },
+    {
+     "level": 0,
+     "text": "seq no:timestamp: %facility-severity-MNEMONIC:description"
+    },
+    {
+     "level": 0,
+     "text": "*Oct 21 15:33:50.565: %LINK-5-CHANGED: Interface FastEthernet0/0, changed state to administratively down"
+    },
+    {
+     "level": 0,
+     "text": "| Part | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| seq no | Sequence number. Not shown unless service sequence-numbers is on. |"
+    },
+    {
+     "level": 0,
+     "text": "| timestamp | Date and time. Shown only if timestamps are configured. |"
+    },
+    {
+     "level": 0,
+     "text": "| facility | The part of the system that produced it (here LINK). |"
+    },
+    {
+     "level": 0,
+     "text": "| severity | One digit, 0 to 7 (see table). |"
+    },
+    {
+     "level": 0,
+     "text": "| MNEMONIC | Short text that identifies the message. |"
+    },
+    {
+     "level": 0,
+     "text": "| description | Details of the event. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says severity is \"a single-digit code from 0 to 5\". It is 0 to 7. UPDATED"
+    },
+    {
+     "level": 3,
+     "text": "Severity levels (memorise)"
+    },
+    {
+     "level": 0,
+     "text": "| Level | Name | Meaning |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 0 | Emergency | System is unusable. |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Alert | Immediate action needed. |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Critical | Critical condition. |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | Error | Error condition. |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | Warning | Warning condition. |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | Notification | Normal but significant condition. |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | Informational | Normal information message. |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | Debugging | Debugging messages. |"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Table 12.2 and the Exam Essentials table contain an error. The book lists \"Debugging (severity 5)\". Debugging is 7. The same mistake appears in the book's logging trap ? output (it shows <0-5> and \"debugging (severity=5)\"). The real range is <0-7> and debugging is 7. Do not memorise the book's table. This corrected table is the one to learn. Checked against Cisco community posts that show real IOS output (secondary). RFC 5424 uses the same 0 to 7 scale (general knowledge, not fetched). UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "MEMORY TIP"
+    },
+    {
+     "level": 0,
+     "text": "Every Awesome Cisco Engineer Will Need Icecream Daily: Emergency 0, Alert 1, Critical 2, Error 3, Warning 4, Notification 5, Informational 6, Debugging 7. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "A severity level shows messages at that level and all lower numbers. logging trap 4 sends levels 0, 1, 2, 3 and 4. A lower number is more severe. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book says \"Level 5 is the highest-level security option and displays everything\" and that it may hurt performance. In reality level 7 (debugging) shows everything, and debug output can strain a device. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "ADDED (NOT IN THE BOOK)"
+    },
+    {
+     "level": 0,
+     "text": "Facilities. Besides severity, a syslog message carries a facility value (for example local0 to local7). The Cisco default facility is local7. Severity says how serious; facility says which source or category. On the wire the two combine into one value: PRI = facility x 8 + severity. With local7 (23) and severity 6 (informational), PRI = 190. Calculated by script. The book's review question 7 expects local7. The v2.0 objective 5.6 names facilities explicitly. ADDED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book also says (page 355) \"The default trap level is debugging\", but its own show logging output says Trap logging: level informational. The Cisco default for syslog-server logging (logging trap) is informational (6), which is also what the book's configuration example uses. The default for console and buffer logging is debugging (7). UPDATED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.4"
+    },
+    {
+     "level": 0,
+     "text": "Q1. What is severity 4?"
+    },
+    {
+     "level": 0,
+     "text": "A. Error"
+    },
+    {
+     "level": 0,
+     "text": "B. Warning"
+    },
+    {
+     "level": 0,
+     "text": "C. Notification"
+    },
+    {
+     "level": 0,
+     "text": "D. Critical"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warning."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which severity numbers are sent after logging trap 3?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0, 1, 2, 3 - the level you set and all more severe levels."
+    },
+    {
+     "level": 0,
+     "text": "Q3. What is the severity number of Debugging?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 7 - not 5, as the book's table wrongly shows."
+    },
+    {
+     "level": 0,
+     "text": "Q4. In %LINK-5-CHANGED, what does the 5 mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Severity 5 (Notification) - second field after the facility."
+    },
+    {
+     "level": 2,
+     "text": "12.4.1 Configuring and Verifying Syslog"
+    },
+    {
+     "level": 0,
+     "text": "Book commands BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# logging console"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# logging buffered"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# no logging console"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# no logging buffered"
+    },
+    {
+     "level": 0,
+     "text": "Router# show logging"
+    },
+    {
+     "level": 0,
+     "text": "- logging console / logging buffered: send messages to the console or to the RAM buffer (both are on by default)."
+    },
+    {
+     "level": 0,
+     "text": "- no logging console / no logging buffered: turn them off."
+    },
+    {
+     "level": 0,
+     "text": "- show logging: shows what is enabled, each destination's level and the buffer contents."
+    },
+    {
+     "level": 0,
+     "text": "Shortened from the book's output BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Router# show logging"
+    },
+    {
+     "level": 0,
+     "text": "Syslog logging: enabled (11 messages dropped, 1 messages rate-limited, ...)"
+    },
+    {
+     "level": 0,
+     "text": "Console logging: level debugging, 29 messages logged ..."
+    },
+    {
+     "level": 0,
+     "text": "Monitor logging: level debugging, 0 messages logged ..."
+    },
+    {
+     "level": 0,
+     "text": "Buffer logging: level debugging, 1 messages logged ..."
+    },
+    {
+     "level": 0,
+     "text": "Trap logging: level informational, 33 message lines logged"
+    },
+    {
+     "level": 0,
+     "text": "Log Buffer (4096 bytes):"
+    },
+    {
+     "level": 0,
+     "text": "*Jun 21 23:09:35.822: %SYS-5-CONFIG_I: Configured from console by console"
+    },
+    {
+     "level": 3,
+     "text": "Send messages to a syslog server"
+    },
+    {
+     "level": 0,
+     "text": "Book configuration, with timestamps and sequence numbers BOOK"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# logging 172.16.10.1"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# logging trap informational"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# service timestamps log datetime msec"
+    },
+    {
+     "level": 0,
+     "text": "SF(config)# service sequence-numbers"
+    },
+    {
+     "level": 0,
+     "text": "- logging 172.16.10.1: send messages to the syslog server at that address. The book usually writes logging host 172.16.10.1; both work. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "- logging trap informational: only levels 0 to 6 go to the server. You can use the name or the number (logging trap 6)."
+    },
+    {
+     "level": 0,
+     "text": "- service timestamps log datetime msec: add a date and time to each message."
+    },
+    {
+     "level": 0,
+     "text": "- service sequence-numbers: add a sequence number (the book first runs no service timestamps, which then shows the number instead of the time)."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "The book calls the logging trap levels \"local levels (for example local6)\" and says there is no difference. That mixes two ideas. Local0 to local7 are facilities, not severity levels. The severity range 0 to 7 is separate. UPDATED"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Syslog transport is normally UDP port 514 (RFC 5424 defines the message format). Many servers also accept TCP or TLS. Port numbers and RFC details are general knowledge here, not verified against a Cisco page in this session. ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "COMMON MISTAKE"
+    },
+    {
+     "level": 0,
+     "text": "Setting a very high level (7) on a busy device sends a flood of debug messages. Also check that the router can reach the syslog server; a wrong IP means messages vanish with no error. Use terminal monitor if you are in a Telnet or SSH session and see nothing."
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.4.1"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which destinations are on by default?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Console and buffer - per the book."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which command shows the buffer and the level of each logging destination?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show logging - also shows the trap level."
+    },
+    {
+     "level": 0,
+     "text": "Q3. You are in an SSH session and no log messages appear on screen. Which command fixes that?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: terminal monitor - VTY lines do not get log messages unless enabled."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What does logging trap informational do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Sends severities 0 to 6 to the syslog server - levels at or more severe than informational."
+    }
+   ],
+   "words": 1161
+  },
+  {
+   "title": "12.5 Secure Shell (SSH)",
+   "content": [
+    {
+     "level": 0,
+     "text": "Book pages 357 to 358. Telnet sends everything, including the username and password, in clear text. SSH encrypts the session. The book strongly recommends SSH. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "The book's steps"
+    },
+    {
+     "level": 0,
+     "text": "Book commands BOOK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# hostname Todd"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config)# ip domain-name Lammle.com"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config)# username Todd password Lammle"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config)# crypto key generate rsa"
+    },
+    {
+     "level": 0,
+     "text": "How many bits in the modulus [512]: 1024"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config)# ip ssh version 2"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config)# line vty 0 15"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config-line)# login local"
+    },
+    {
+     "level": 0,
+     "text": "Todd(config-line)# transport input ssh"
+    },
+    {
+     "level": 0,
+     "text": "- hostname Todd: set a hostname other than the default. Needed to name the keys."
+    },
+    {
+     "level": 0,
+     "text": "- ip domain-name Lammle.com: set the domain. The key name becomes Todd.Lammle.com. Hostname and domain name are both required to generate the keys."
+    },
+    {
+     "level": 0,
+     "text": "- username Todd password Lammle: a local user for SSH login."
+    },
+    {
+     "level": 0,
+     "text": "- crypto key generate rsa: make the RSA key pair. Pick the modulus size when asked."
+    },
+    {
+     "level": 0,
+     "text": "- ip ssh version 2: allow only SSH version 2. Optional but recommended."
+    },
+    {
+     "level": 0,
+     "text": "- line vty 0 15: enter the 16 virtual terminal lines."
+    },
+    {
+     "level": 0,
+     "text": "- login local: check logins against the local username database."
+    },
+    {
+     "level": 0,
+     "text": "- transport input ssh: allow only SSH on those lines."
+    },
+    {
+     "level": 0,
+     "text": "EXAM CRITICAL"
+    },
+    {
+     "level": 0,
+     "text": "To generate SSH keys you need: a hostname (not the default), a domain name, then crypto key generate rsa. For logins you also need a local user and login local. The book's review answer 11 lists username, domain name, login local, transport input ssh and the crypto key command. BOOK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Key size. The book prompt suggests 512 bits and the book uses 1024. SSH version 2 needs a key of at least 768 bits (Cisco documentation). Use 2048 bits or more in real networks. The book's prompt shows a range of 360 to 4096; limits vary by IOS version. UPDATED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "Passwords. The book uses username Todd password Lammle, which is stored weakly. Use username Todd privilege 15 secret <password> so the password is hashed. Do not reuse a book password in a lab you keep. Also use a K9 (crypto) image: SSH is not available on images without crypto features. UPDATED ADDED"
+    },
+    {
+     "level": 0,
+     "text": "WARNING"
+    },
+    {
+     "level": 0,
+     "text": "The book warns against transport input all in production. transport input ssh telnet allows both. If you leave out telnet, only SSH works. BOOK"
+    },
+    {
+     "level": 3,
+     "text": "Verify SSH"
+    },
+    {
+     "level": 0,
+     "text": "Illustrative commands and output ADDED CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Todd# show ip ssh"
+    },
+    {
+     "level": 0,
+     "text": "SSH Enabled - version 2.0"
+    },
+    {
+     "level": 0,
+     "text": "Todd# show ssh"
+    },
+    {
+     "level": 0,
+     "text": "Todd# show crypto key mypubkey rsa"
+    },
+    {
+     "level": 0,
+     "text": "- show ip ssh: is SSH enabled, and which version."
+    },
+    {
+     "level": 0,
+     "text": "- show ssh: lists active SSH sessions."
+    },
+    {
+     "level": 0,
+     "text": "- show crypto key mypubkey rsa: shows the RSA key pair that was generated."
+    },
+    {
+     "level": 0,
+     "text": "UPDATED / MODERN NOTE"
+    },
+    {
+     "level": 0,
+     "text": "v2.0 note. SFTP and SCP (copying files over SSH) are new in v2.0 objective 4.2 and are not taught in this book. Learn SSH properly first. Then see the Cisco documentation for ip scp server enable and copy scp:. ADDED CHECK"
+    },
+    {
+     "level": 3,
+     "text": "Quick check 12.5"
+    },
+    {
+     "level": 0,
+     "text": "Q1. Which two settings are required before crypto key generate rsa works?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A non-default hostname and an IP domain name - the key name is built from both."
+    },
+    {
+     "level": 0,
+     "text": "Q2. Which VTY command allows only SSH?"
+    },
+    {
+     "level": 0,
+     "text": "A. transport input all"
+    },
+    {
+     "level": 0,
+     "text": "B. transport input telnet"
+    },
+    {
+     "level": 0,
+     "text": "C. transport input ssh"
+    },
+    {
+     "level": 0,
+     "text": "D. login local"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - login local only picks the authentication source."
+    },
+    {
+     "level": 0,
+     "text": "Q3. Why is SSH better than Telnet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It encrypts the session, including the password - Telnet sends data in clear text."
+    },
+    {
+     "level": 0,
+     "text": "Q4. What does login local do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Tells the line to authenticate against local usernames - created with username."
+    }
+   ],
+   "words": 578
+  },
+  {
+   "title": "Troubleshooting",
+   "content": [
+    {
+     "level": 0,
+     "text": "Symptom, likely cause, first check. Marked CHECK because not tested on hardware."
+    },
+    {
+     "level": 0,
+     "text": "| Symptom | Likely cause | First check |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| No CDP neighbors appear | CDP off globally or on the port; link down; neighbor is not Cisco | show cdp, show cdp interface, show interfaces status |"
+    },
+    {
+     "level": 0,
+     "text": "| CDP neighbor shows but no IP | You used the summary command | Use show cdp neighbors detail |"
+    },
+    {
+     "level": 0,
+     "text": "| Neighbor flaps in and out | Holdtime too short or packets lost on the link | show cdp; check cable and interface errors |"
+    },
+    {
+     "level": 0,
+     "text": "| show lldp neighbors empty | LLDP is off by default | show lldp, then lldp run; check per-port transmit and receive |"
+    },
+    {
+     "level": 0,
+     "text": "| CDP shows a different port than the diagram | Diagram is old or the cable moved | Compare Local Intrfce and Port ID with the diagram |"
+    },
+    {
+     "level": 0,
+     "text": "| NTP stuck at stratum 16 | Server unreachable, UDP 123 blocked, wrong server IP, server itself unsynchronised | ping the server, show ntp associations, check ACLs |"
+    },
+    {
+     "level": 0,
+     "text": "| Wrong time in logs | Clock never synchronised or no timestamps | show clock, show ntp status, service timestamps log datetime msec |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMP manager gets no answer | Wrong community, ACL does not permit the NMS, UDP 161 blocked | show snmp, show access-lists, check community spelling (case-sensitive) |"
+    },
+    {
+     "level": 0,
+     "text": "| No traps arrive at the NMS | No trap destination configured or UDP 162 blocked | show snmp host, show run \\| include snmp |"
+    },
+    {
+     "level": 0,
+     "text": "| No messages at the syslog server | Wrong IP, no route, trap level too low, server not listening | show logging, ping the server, logging trap level |"
+    },
+    {
+     "level": 0,
+     "text": "| Log messages missing in my SSH session | VTY sessions do not get them by default | terminal monitor |"
+    },
+    {
+     "level": 0,
+     "text": "| SSH connection refused | No keys, SSH not enabled on VTY, no K9 image, no local user | show ip ssh, show run \\| section line vty |"
+    },
+    {
+     "level": 0,
+     "text": "| crypto key generate rsa fails with a name error | Default hostname or no domain name | Set hostname and ip domain-name |"
+    },
+    {
+     "level": 0,
+     "text": "| SSHv2 will not enable | Key under 768 bits | Regenerate with 1024 or more |"
+    }
+   ],
+   "words": 379
+  },
+  {
+   "title": "Exam Essentials: One-Page Revision Sheet",
+   "content": [
+    {
+     "level": 0,
+     "text": "| Topic | Remember |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| CDP | Cisco proprietary, on by default, 60 s timer, 180 s holdtime, directly connected neighbors only. show cdp neighbors (summary), ... detail (IP and IOS). |"
+    },
+    {
+     "level": 0,
+     "text": "| Read the CDP table | Local Intrfce = my port. Port ID = their port. Capability: R router, S switch. |"
+    },
+    {
+     "level": 0,
+     "text": "| LLDP | IEEE 802.1AB, off by default, lldp run, 30 s / 120 s, per-port lldp transmit and lldp receive. LLDP-MED is not compatible with plain LLDP. |"
+    },
+    {
+     "level": 0,
+     "text": "| NTP | Client: ntp server <ip>. Server: ntp master. UDP 123. Stratum 16 = unsynchronised. Verify with show ntp status and show ntp associations. |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMP | Agent, NMS, MIB. GET, SET, WALK, TRAP, INFORM. v1 and v2c use clear-text communities; v2c adds GET BULK and INFORM; v3 adds authentication and encryption. UDP 161 and 162. |"
+    },
+    {
+     "level": 0,
+     "text": "| SNMP config | snmp-server community <string> ro\\|rw, location, contact. ACL on the community limits which NMS may query. |"
+    },
+    {
+     "level": 0,
+     "text": "| Syslog levels | 0 Emergency, 1 Alert, 2 Critical, 3 Error, 4 Warning, 5 Notification, 6 Informational, 7 Debugging. Setting a level shows it and all lower numbers. |"
+    },
+    {
+     "level": 0,
+     "text": "| Syslog format | %FACILITY-SEVERITY-MNEMONIC: description. Default facility local7. Console and buffer on by default; terminal monitor for VTY. |"
+    },
+    {
+     "level": 0,
+     "text": "| Syslog config | logging <ip> and logging trap <level>; service timestamps log datetime msec; show logging. |"
+    },
+    {
+     "level": 0,
+     "text": "| SSH | Needs hostname + domain name + RSA keys. login local, transport input ssh, ip ssh version 2. Key at least 768 bits for v2; prefer 2048 or more. |"
+    },
+    {
+     "level": 0,
+     "text": "| Book errors to avoid | Debugging is 7, not 5. Severity is 0 to 7. SNMP uses UDP. SET writes to the agent. The community ACL protects the agent. |"
+    }
+   ],
+   "words": 299
+  },
+  {
+   "title": "Self-Assessment and Tracker Update",
+   "content": [
+    {
+     "level": 0,
+     "text": "Allowed statuses: Not assessed, Know, Partially understand, Need to learn, Needs revision. Know needs unaided correct answers or a finished lab. Everything starts as Not assessed."
+    },
+    {
+     "level": 0,
+     "text": "| Tracker row | Evidence you have | Status | Confidence | Mistakes / gaps |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.1 CDP and LLDP |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.1.1 CDP Timers and Holdtime |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.1.2 Gathering Neighbor Information |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.1.3 Documenting a Topology Using CDP |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.1.4 LLDP |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.2 Network Time Protocol (NTP) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.3 SNMP |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.3.1 Management Information Base (MIB) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.3.2 Configuring SNMP |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.4 Syslog |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.4.1 Configuring and Verifying Syslog |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "| 12.5 Secure Shell (SSH) |  | Not assessed |  |  |"
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Tracker status. I could not update Notion in this chat: no Notion connector was available. The Chapter 12 rows still need to be created, and the chapter row's Doc status set to Built with Exam relevance Mixed (see doc). The row names in this table are the names to use. CHECK"
+    }
+   ],
+   "words": 248
+  },
+  {
+   "title": "Answer Key A (Pre-check)",
+   "content": [
+    {
+     "level": 0,
+     "text": "- show cdp neighbors detail (or show cdp entry *)."
+    },
+    {
+     "level": 0,
+     "text": "- 4. (0 Emergency, 1 Alert, 2 Critical, 3 Error, 4 Warning.)"
+    },
+    {
+     "level": 0,
+     "text": "- The clock is not synchronised to any time source."
+    },
+    {
+     "level": 0,
+     "text": "- A trap (an INFORM is the acknowledged version)."
+    },
+    {
+     "level": 0,
+     "text": "- A hostname other than the default, and an IP domain name."
+    },
+    {
+     "level": 0,
+     "text": "Tag your confidence honestly. A right answer tagged G is a gap to revise, not a pass."
+    }
+   ],
+   "words": 70
+  },
+  {
+   "title": "Before you answer",
+   "content": [
+    {
+     "level": 0,
+     "text": "WHAT THE BOOK SAYS"
+    },
+    {
+     "level": 0,
+     "text": "Also do the book's own 11 review questions (book pages 360 to 362) and check them in its appendix (pages 797 to 798). Beware of the answer key errors listed in the Changes and Gaps Log: answer 3 says SNMPv3 uses TCP, and answer 6 mixes up severity 7 and facility local7. These questions below are original. BOOK"
+    }
+   ],
+   "words": 62
+  },
+  {
+   "title": "About these gaps",
+   "content": [
+    {
+     "level": 0,
+     "text": "| # | In the book (page) | What this document does | Verification |"
+    },
+    {
+     "level": 0,
+     "text": "| --- | --- | --- | --- |"
+    },
+    {
+     "level": 0,
+     "text": "| 1 | Severity \"0 to 5\" (p. 353) | Corrected to 0 to 7 UPDATED | Cisco community posts showing real IOS output; RFC 5424 (secondary and general knowledge) |"
+    },
+    {
+     "level": 0,
+     "text": "| 2 | Table 12.2 and Exam Essentials list Debugging as severity 5; logging trap ? shows 0-5 (pp. 353, 356, 359) | Corrected: Debugging is 7; range 0-7 UPDATED | Cisco community posts (secondary) |"
+    },
+    {
+     "level": 0,
+     "text": "| 3 | \"Level 5 is the highest.displays everything\" (p. 353) | Level 7 shows everything UPDATED | Same as #1 |"
+    },
+    {
+     "level": 0,
+     "text": "| 4 | SNMPv3 uses TCP; also in Exam Essentials and review answer 3 (pp. 349, 359, 798) | SNMP uses UDP 161/162 by default UPDATED | SNMP tool documentation (secondary); not checked against the RFC text CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 5 | \"DES-256\" (p. 349) | SNMPv3 uses DES, 3DES or AES (128/192/256) UPDATED | SNMP tool documentation (secondary) |"
+    },
+    {
+     "level": 0,
+     "text": "| 6 | SET described backwards (p. 350) | Manager writes to agent UPDATED | General knowledge; consistent with SNMP tool documentation CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 7 | ACL \"protects the NMS\" (p. 351) | ACL limits which NMS may query the agent UPDATED | General knowledge; consistent with review answer 1 CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 8 | SNMP created 1988 (RFC 1065) (p. 348) | Noted: RFC 1157 defines SNMPv1 UPDATED | General knowledge CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 9 | \"Default trap level is debugging\" (p. 355) vs its own output showing informational | Informational (6) is the logging trap default UPDATED | Book's own output; Cisco-related secondary source |"
+    },
+    {
+     "level": 0,
+     "text": "| 10 | Local6 called a \"local level\" of severity (p. 356) and review answer 6 says \"level 7 (Debugging or local7)\" (p. 798) | Separated facility from severity UPDATED | Secondary sources; RFC 5424 general knowledge |"
+    },
+    {
+     "level": 0,
+     "text": "| 11 | LLDP default state and timers not given (p. 346) | Added: off by default, 30/120/2 ADDED | Cisco documentation page (older platform guide) and secondary sources |"
+    },
+    {
+     "level": 0,
+     "text": "| 12 | LLDP has no TOC entry (pp. 346 to 347) | Numbered 12.1.4 UPDATED | Compared with the book's contents |"
+    },
+    {
+     "level": 0,
+     "text": "| 13 | SSH key size: 512 suggested, 1024 used (p. 357) | SSHv2 needs at least 768; use 2048 or more UPDATED | Cisco support document; secondary sources |"
+    },
+    {
+     "level": 0,
+     "text": "| 14 | username ... password (p. 357) | Use secret UPDATED | General practice CHECK |"
+    },
+    {
+     "level": 0,
+     "text": "| 15 | \"3650\" typo; duplicate Device ID line (pp. 340, 341) | Noted UPDATED | Book's own output |"
+    },
+    {
+     "level": 0,
+     "text": "| 16 | NTP: no mention of UDP 123, ntp master default stratum 8, stratum 0 | Added ADDED | Secondary sources and a Cisco community knowledge-base article |"
+    },
+    {
+     "level": 0,
+     "text": "| 17 | No labs, no troubleshooting, no facilities detail | Added labs, troubleshooting and facility/PRI note ADDED | PRI computed by script |"
+    },
+    {
+     "level": 0,
+     "text": "| 18 | No SFTP/SCP (v2.0 4.2), no AAA, no device-management summary | Pointed to as v2.0 topics ADDED | Cisco v2.0 outline read directly |"
+    },
+    {
+     "level": 0,
+     "text": "| 19 | Book Chapter 12 objectives use v1.0 numbering | Mapped to v1.1 and v2.0 UPDATED | v2.0: Cisco PDF. v1.1: secondary page only; Cisco's v1.1 PDF not opened CHECK |"
+    }
+   ],
+   "words": 550
+  },
+  {
+   "title": "How far this has been tested",
+   "content": [
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Nothing in this document was run on real Cisco hardware. All commands and outputs marked CHECK are illustrative. Record what you actually see in your labs."
+    }
+   ],
+   "words": 27
+  }
+ ],
+ "labs": [
+  {
+   "number": "",
+   "title": "Before you start",
+   "content": [
+    {
+     "level": 0,
+     "text": "Default tool: Cisco Packet Tracer. Record what you actually saw in the Self-Assessment table. Packet Tracer does not behave exactly like real IOS, so every expected result is marked CHECK ."
+    },
+    {
+     "level": 0,
+     "text": "VERIFY"
+    },
+    {
+     "level": 0,
+     "text": "Packet Tracer limits (not tested by me): some versions have no LLDP commands, NTP and SNMP support is partial, and SSH key sizes or show output may differ. If a command is missing, say so in your notes and try it on virtual IOS (for example CML or GNS3) or real equipment. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "1",
+   "title": "CDP and LLDP",
+   "content": [
+    {
+     "level": 0,
+     "text": "Topology: two switches (SW1, SW2) joined by one cable, and a router R1 attached to SW1."
+    },
+    {
+     "level": 0,
+     "text": "- Give each device a hostname and a management address."
+    },
+    {
+     "level": 0,
+     "text": "- On SW1 run show cdp. Write the timer and holdtime."
+    },
+    {
+     "level": 0,
+     "text": "- Run show cdp neighbors and show cdp neighbors detail. Write which neighbors, ports and IPs you see."
+    },
+    {
+     "level": 0,
+     "text": "- On SW1 interface to SW2 run no cdp enable. Wait, then run show cdp neighbors on both switches."
+    },
+    {
+     "level": 0,
+     "text": "- Run cdp enable again. Try cdp timer 10 and cdp holdtime 30, then show cdp."
+    },
+    {
+     "level": 0,
+     "text": "- Enable LLDP: lldp run on both switches. Run show lldp neighbors and show lldp neighbors detail."
+    },
+    {
+     "level": 0,
+     "text": "- Draw the topology from the output only, then compare with the real cabling."
+    },
+    {
+     "level": 0,
+     "text": "Step 4 CHECK"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config)# interface gi0/1"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# no cdp enable"
+    },
+    {
+     "level": 0,
+     "text": "SW1(config-if)# end"
+    },
+    {
+     "level": 0,
+     "text": "SW1# show cdp neighbors"
+    },
+    {
+     "level": 0,
+     "text": "- no cdp enable: stops CDP on that port only."
+    },
+    {
+     "level": 0,
+     "text": "- show cdp neighbors: the neighbor should disappear on the other switch after its holdtime runs out."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: after step 3 you see SW2 and R1 with the correct local and remote ports. After step 4 SW2 drops out of SW1's table only when the holdtime expires (up to 180 s by default). In step 6 LLDP shows nothing until lldp run is entered. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "2",
+   "title": "NTP and syslog",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Router R1 will be the NTP server. Give it a clock: clock set in privileged mode, then ntp master 3."
+    },
+    {
+     "level": 0,
+     "text": "- Router R2 is the client. Configure ntp server <R1 address>. Ping R1 first."
+    },
+    {
+     "level": 0,
+     "text": "- On R2 run show ntp status and show ntp associations. Repeat every minute for a few minutes."
+    },
+    {
+     "level": 0,
+     "text": "- On R2 enable service timestamps log datetime msec."
+    },
+    {
+     "level": 0,
+     "text": "- Add a syslog server (a PC with the syslog service in Packet Tracer): logging <server IP> and logging trap informational."
+    },
+    {
+     "level": 0,
+     "text": "- Shut and re-enable an interface on R2 and look at the server log and show logging."
+    },
+    {
+     "level": 0,
+     "text": "- Change to logging trap errors, repeat, and notice which messages disappear."
+    },
+    {
+     "level": 0,
+     "text": "Key commands CHECK"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ntp master 3"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# ntp server 10.0.0.1"
+    },
+    {
+     "level": 0,
+     "text": "R2# show ntp status"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# logging 10.0.0.50"
+    },
+    {
+     "level": 0,
+     "text": "R2(config)# logging trap informational"
+    },
+    {
+     "level": 0,
+     "text": "- ntp master 3: R1 serves its own clock at stratum 3."
+    },
+    {
+     "level": 0,
+     "text": "- ntp server 10.0.0.1: R2 asks R1 for time."
+    },
+    {
+     "level": 0,
+     "text": "- logging 10.0.0.50: send syslog messages to the server."
+    },
+    {
+     "level": 0,
+     "text": "- logging trap informational: levels 0 to 6 are sent."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: R2 starts at stratum 16, then moves to stratum 4 (one more than R1) after some minutes if all works. Link up/down messages (level 5 notification) appear at the server with informational, but not with errors because 5 is less severe than 3. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "3",
+   "title": "SNMP",
+   "content": [
+    {
+     "level": 0,
+     "text": "- On a router configure snmp-server community cisco-ro ro, a location and a contact."
+    },
+    {
+     "level": 0,
+     "text": "- Run show snmp and show run | include snmp."
+    },
+    {
+     "level": 0,
+     "text": "- Create the ACL permit host <NMS IP> and attach it to the community string."
+    },
+    {
+     "level": 0,
+     "text": "- If your simulator has an SNMP manager, query the router with the correct and the wrong community string. Otherwise note that you only verified the configuration, not the polling."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: the configuration appears in show run; counters in show snmp change when a manager polls. CHECK"
+    }
+   ]
+  },
+  {
+   "number": "4",
+   "title": "SSH",
+   "content": [
+    {
+     "level": 0,
+     "text": "- Set hostname and domain name. Create a user with a secret."
+    },
+    {
+     "level": 0,
+     "text": "- Run crypto key generate rsa with 1024 bits. Confirm show ip ssh."
+    },
+    {
+     "level": 0,
+     "text": "- Set ip ssh version 2. Configure line vty 0 15 with login local and transport input ssh."
+    },
+    {
+     "level": 0,
+     "text": "- From a PC, try Telnet (should fail), then SSH (should work)."
+    },
+    {
+     "level": 0,
+     "text": "- Remove the domain name and try to generate keys again to see the error."
+    },
+    {
+     "level": 0,
+     "text": "Lab configuration CHECK"
+    },
+    {
+     "level": 0,
+     "text": "Router(config)# hostname R1"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ip domain-name lab.local"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# username admin privilege 15 secret LabPass123"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# crypto key generate rsa modulus 1024"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# ip ssh version 2"
+    },
+    {
+     "level": 0,
+     "text": "R1(config)# line vty 0 15"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-line)# login local"
+    },
+    {
+     "level": 0,
+     "text": "R1(config-line)# transport input ssh"
+    },
+    {
+     "level": 0,
+     "text": "- crypto key generate rsa modulus 1024: skips the question and sets the size directly."
+    },
+    {
+     "level": 0,
+     "text": "- username admin privilege 15 secret ...: a hashed password and full privilege."
+    },
+    {
+     "level": 0,
+     "text": "- transport input ssh: Telnet connections are now refused."
+    },
+    {
+     "level": 0,
+     "text": "Expected result: show ip ssh shows SSH enabled, version 2.0; Telnet is refused and SSH logs in. CHECK"
+    }
+   ]
+  }
+ ],
+ "quizzes": [
+  {
+   "title": "IP Services — review questions",
+   "questions": [
+    {
+     "source": "Q1. What are the default CDP timer and holdtime?",
+     "sourceNumber": "Q1",
+     "q": "What are the default CDP timer and holdtime?",
+     "options": [],
+     "answer": null,
+     "why": "60 s and 180 s - the receiver keeps a neighbor for 180 s.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which command stops CDP on one interface only?",
+     "sourceNumber": "Q2",
+     "q": "Which command stops CDP on one interface only?",
+     "options": [
+      "no cdp run",
+      "no cdp enable",
+      "cdp holdtime 0",
+      "no cdp timer"
+     ],
+     "answer": "B",
+     "why": "no cdp enable is per interface; no cdp run is global.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. A neighbor disappears from the CDP table after a while although the cable is fine. Which value expired?",
+     "sourceNumber": "Q3",
+     "q": "A neighbor disappears from the CDP table after a while although the cable is fine. Which value expired?",
+     "options": [],
+     "answer": null,
+     "why": "The holdtime - no CDP packet arrived within the holdtime.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. In show cdp neighbors, which column is the neighbor's own interface?",
+     "sourceNumber": "Q1",
+     "q": "In show cdp neighbors, which column is the neighbor's own interface?",
+     "options": [
+      "Local Intrfce",
+      "Port ID",
+      "Platform",
+      "Holdtme"
+     ],
+     "answer": "B",
+     "why": "Port ID is the remote port.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Why does your router not see the PCs and other routers behind a connected switch?",
+     "sourceNumber": "Q2",
+     "q": "Why does your router not see the PCs and other routers behind a connected switch?",
+     "options": [],
+     "answer": "C",
+     "why": "DP only reaches directly connected neighbors - a switch does not forward CDP frames.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which two commands show the same detailed neighbor information?",
+     "sourceNumber": "Q3",
+     "q": "Which two commands show the same detailed neighbor information?",
+     "options": [],
+     "answer": null,
+     "why": "show cdp neighbors detail and show cdp entry * - the book states they are equivalent.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. On SW-3 you see SW-2 Fas 0/5 ... Fas 0/5. What does that tell you?",
+     "sourceNumber": "Q4",
+     "q": "On SW-3 you see SW-2 Fas 0/5 ... Fas 0/5. What does that tell you?",
+     "options": [],
+     "answer": null,
+     "why": "SW-3's Fas 0/5 is cabled to SW-2's Fas 0/5 - Local Intrfce is mine, Port ID is theirs.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which two sources do you combine to document a router's links in this exercise?",
+     "sourceNumber": "Q1",
+     "q": "Which two sources do you combine to document a router's links in this exercise?",
+     "options": [],
+     "answer": null,
+     "why": "show running-config and show cdp neighbors - the first gives your IPs, the second gives the neighbors.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Lab_A Fa0/1 is 192.168.18.1/24. What is the neighbor's address under the book's rule?",
+     "sourceNumber": "Q2",
+     "q": "Lab_A Fa0/1 is 192.168.18.1/24. What is the neighbor's address under the book's rule?",
+     "options": [],
+     "answer": null,
+     "why": "192.168.18.2 - next IP in the /24.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. A diagram says SW-1 Gi0/1 connects to SW-2 Gi0/1, but CDP on SW-1 shows Port ID Gi0/2. What is the likely conclusion?",
+     "sourceNumber": "Q3",
+     "q": "A diagram says SW-1 Gi0/1 connects to SW-2 Gi0/1, but CDP on SW-1 shows Port ID Gi0/2. What is the likely conclusion?",
+     "options": [],
+     "answer": null,
+     "why": "The diagram or the cabling is wrong - CDP reports the real port.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which discovery protocol works between Cisco and non-Cisco devices?",
+     "sourceNumber": "Q1",
+     "q": "Which discovery protocol works between Cisco and non-Cisco devices?",
+     "options": [
+      "CDP",
+      "LLDP",
+      "VTP",
+      "DTP"
+     ],
+     "answer": "B",
+     "why": "LLDP is the IEEE standard 802.1AB.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. You typed show lldp neighbors on a new switch and it is empty although the link is up. First thing to check?",
+     "sourceNumber": "Q2",
+     "q": "You typed show lldp neighbors on a new switch and it is empty although the link is up. First thing to check?",
+     "options": [],
+     "answer": null,
+     "why": "Whether lldp run was configured - LLDP is off by default.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which two commands set a port to listen for LLDP but not send it?",
+     "sourceNumber": "Q3",
+     "q": "Which two commands set a port to listen for LLDP but not send it?",
+     "options": [],
+     "answer": null,
+     "why": "no lldp transmit and lldp receive - interface-mode commands.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Are LLDP and LLDP-MED compatible, according to the book?",
+     "sourceNumber": "Q4",
+     "q": "Are LLDP and LLDP-MED compatible, according to the book?",
+     "options": [],
+     "answer": null,
+     "why": "No - the book says they are not compatible.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which command makes a router an NTP client of 10.1.1.5?",
+     "sourceNumber": "Q1",
+     "q": "Which command makes a router an NTP client of 10.1.1.5?",
+     "options": [
+      "ntp master 10.1.1.5",
+      "ntp server 10.1.1.5",
+      "clock sync 10.1.1.5",
+      "ntp client 10.1.1.5"
+     ],
+     "answer": "B",
+     "why": "ntp server points the device at a time source.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. show ntp status says stratum 16. What does it mean?",
+     "sourceNumber": "Q2",
+     "q": "show ntp status says stratum 16. What does it mean?",
+     "options": [],
+     "answer": null,
+     "why": "The clock is not synchronised - 16 means no valid time source.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. Which UDP port does NTP use?",
+     "sourceNumber": "Q3",
+     "q": "Which UDP port does NTP use?",
+     "options": [],
+     "answer": null,
+     "why": "123 - blocked UDP 123 is a common reason NTP fails.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which command turns a router into an NTP server using its own clock?",
+     "sourceNumber": "Q4",
+     "q": "Which command turns a router into an NTP server using its own clock?",
+     "options": [],
+     "answer": null,
+     "why": "ntp master - optionally with a stratum number.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which SNMP message is acknowledged by the manager?",
+     "sourceNumber": "Q1",
+     "q": "Which SNMP message is acknowledged by the manager?",
+     "options": [
+      "TRAP",
+      "GET",
+      "INFORM",
+      "WALK"
+     ],
+     "answer": "C",
+     "why": "INFORM adds acknowledgement; a trap does not.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which SNMP version first added GET BULK?",
+     "sourceNumber": "Q2",
+     "q": "Which SNMP version first added GET BULK?",
+     "options": [],
+     "answer": null,
+     "why": "SNMPv2c - per the book and review answer 3.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What does the number string 1.3.6.1.4.1.9 point to?",
+     "sourceNumber": "Q3",
+     "q": "What does the number string 1.3.6.1.4.1.9 point to?",
+     "options": [],
+     "answer": "C",
+     "why": "isco's private enterprise branch of the MIB - the OID tree.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which command is the only required SNMP command in the book's list?",
+     "sourceNumber": "Q1",
+     "q": "Which command is the only required SNMP command in the book's list?",
+     "options": [],
+     "answer": null,
+     "why": "snmp-server community <string> - location, contact and ACL are optional.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. How do you restrict which NMS can use a read-only community?",
+     "sourceNumber": "Q2",
+     "q": "How do you restrict which NMS can use a read-only community?",
+     "options": [
+      "ACL on the VTY line",
+      "ACL on the community string",
+      "ACL on every interface",
+      "ACL on the control plane"
+     ],
+     "answer": "B",
+     "why": "attach the ACL in the snmp-server community command.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. You use an SNMP manager to change a router's hostname. Which community access is needed?",
+     "sourceNumber": "Q3",
+     "q": "You use an SNMP manager to change a router's hostname. Which community access is needed?",
+     "options": [],
+     "answer": null,
+     "why": "Read-write (rw) - ro cannot change anything.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. Which direction does a TRAP travel?",
+     "sourceNumber": "Q4",
+     "q": "Which direction does a TRAP travel?",
+     "options": [],
+     "answer": "A",
+     "why": "gent to NMS - unsolicited alert.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. What is severity 4?",
+     "sourceNumber": "Q1",
+     "q": "What is severity 4?",
+     "options": [
+      "Error",
+      "Warning",
+      "Notification",
+      "Critical"
+     ],
+     "answer": "B",
+     "why": "0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warning.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which severity numbers are sent after logging trap 3?",
+     "sourceNumber": "Q2",
+     "q": "Which severity numbers are sent after logging trap 3?",
+     "options": [],
+     "answer": null,
+     "why": "0, 1, 2, 3 - the level you set and all more severe levels.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. What is the severity number of Debugging?",
+     "sourceNumber": "Q3",
+     "q": "What is the severity number of Debugging?",
+     "options": [],
+     "answer": null,
+     "why": "7 - not 5, as the book's table wrongly shows.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. In %LINK-5-CHANGED, what does the 5 mean?",
+     "sourceNumber": "Q4",
+     "q": "In %LINK-5-CHANGED, what does the 5 mean?",
+     "options": [],
+     "answer": null,
+     "why": "Severity 5 (Notification) - second field after the facility.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which destinations are on by default?",
+     "sourceNumber": "Q1",
+     "q": "Which destinations are on by default?",
+     "options": [],
+     "answer": "C",
+     "why": "onsole and buffer - per the book.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which command shows the buffer and the level of each logging destination?",
+     "sourceNumber": "Q2",
+     "q": "Which command shows the buffer and the level of each logging destination?",
+     "options": [],
+     "answer": null,
+     "why": "show logging - also shows the trap level.",
+     "kind": "open"
+    },
+    {
+     "source": "Q3. You are in an SSH session and no log messages appear on screen. Which command fixes that?",
+     "sourceNumber": "Q3",
+     "q": "You are in an SSH session and no log messages appear on screen. Which command fixes that?",
+     "options": [],
+     "answer": null,
+     "why": "terminal monitor - VTY lines do not get log messages unless enabled.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What does logging trap informational do?",
+     "sourceNumber": "Q4",
+     "q": "What does logging trap informational do?",
+     "options": [],
+     "answer": null,
+     "why": "Sends severities 0 to 6 to the syslog server - levels at or more severe than informational.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which two settings are required before crypto key generate rsa works?",
+     "sourceNumber": "Q1",
+     "q": "Which two settings are required before crypto key generate rsa works?",
+     "options": [],
+     "answer": "A",
+     "why": "non-default hostname and an IP domain name - the key name is built from both.",
+     "kind": "open"
+    },
+    {
+     "source": "Q2. Which VTY command allows only SSH?",
+     "sourceNumber": "Q2",
+     "q": "Which VTY command allows only SSH?",
+     "options": [
+      "transport input all",
+      "transport input telnet",
+      "transport input ssh",
+      "login local"
+     ],
+     "answer": "C",
+     "why": "login local only picks the authentication source.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Why is SSH better than Telnet?",
+     "sourceNumber": "Q3",
+     "q": "Why is SSH better than Telnet?",
+     "options": [],
+     "answer": null,
+     "why": "It encrypts the session, including the password - Telnet sends data in clear text.",
+     "kind": "open"
+    },
+    {
+     "source": "Q4. What does login local do?",
+     "sourceNumber": "Q4",
+     "q": "What does login local do?",
+     "options": [],
+     "answer": null,
+     "why": "Tells the line to authenticate against local usernames - created with username.",
+     "kind": "open"
+    },
+    {
+     "source": "Q1. Which protocol is Cisco proprietary?",
+     "sourceNumber": "Q1",
+     "q": "Which protocol is Cisco proprietary?",
+     "options": [
+      "LLDP",
+      "CDP",
+      "NTP",
+      "SNMP"
+     ],
+     "answer": "B",
+     "why": "CDP only runs between Cisco devices.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q2. Which command lists the neighbor's IP address?",
+     "sourceNumber": "Q2",
+     "q": "Which command lists the neighbor's IP address?",
+     "options": [
+      "show cdp",
+      "show cdp neighbors",
+      "show cdp neighbors detail",
+      "show lldp"
+     ],
+     "answer": "C",
+     "why": "detail includes the IP address.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q3. Default CDP timer and holdtime?",
+     "sourceNumber": "Q3",
+     "q": "Default CDP timer and holdtime?",
+     "options": [
+      "30/120",
+      "60/180",
+      "60/120",
+      "10/30"
+     ],
+     "answer": "B",
+     "why": "60 s and 180 s.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q4. Which command enables LLDP globally?",
+     "sourceNumber": "Q4",
+     "q": "Which command enables LLDP globally?",
+     "options": [
+      "lldp enable",
+      "lldp run",
+      "cdp run lldp",
+      "lldp start"
+     ],
+     "answer": "B",
+     "why": "lldp run.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q5. A switch connects to a router. You run show cdp neighbors on the router. What do you see?",
+     "sourceNumber": "Q5",
+     "q": "A switch connects to a router. You run show cdp neighbors on the router. What do you see?",
+     "options": [],
+     "answer": null,
+     "why": "Only the switch (directly connected) - devices behind the switch are not shown.",
+     "kind": "open"
+    },
+    {
+     "source": "Q6. In show cdp neighbors, the Port ID column shows which port?",
+     "sourceNumber": "Q6",
+     "q": "In show cdp neighbors, the Port ID column shows which port?",
+     "options": [],
+     "answer": null,
+     "why": "The neighbor's port - Local Intrfce is yours.",
+     "kind": "open"
+    },
+    {
+     "source": "Q7. Which NTP command makes a router an NTP client?",
+     "sourceNumber": "Q7",
+     "q": "Which NTP command makes a router an NTP client?",
+     "options": [],
+     "answer": null,
+     "why": "ntp server <ip> - client points to a server.",
+     "kind": "open"
+    },
+    {
+     "source": "Q8. show ntp status says stratum 16. Name two possible causes.",
+     "sourceNumber": "Q8",
+     "q": "show ntp status says stratum 16. Name two possible causes.",
+     "options": [],
+     "answer": null,
+     "why": "Server unreachable; UDP 123 blocked; wrong server IP; server unsynchronised - any two.",
+     "kind": "open"
+    },
+    {
+     "source": "Q9. Which UDP port does NTP use?",
+     "sourceNumber": "Q9",
+     "q": "Which UDP port does NTP use?",
+     "options": [
+      "123",
+      "161",
+      "162",
+      "514"
+     ],
+     "answer": "A",
+     "why": "SNMP uses 161/162, syslog 514.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q10. Which SNMP message is sent by the agent without being asked and is not acknowledged?",
+     "sourceNumber": "Q10",
+     "q": "Which SNMP message is sent by the agent without being asked and is not acknowledged?",
+     "options": [
+      "GET",
+      "SET",
+      "TRAP",
+      "INFORM"
+     ],
+     "answer": "C",
+     "why": "INFORM is acknowledged.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q11. Which SNMP version first offers authentication and encryption?",
+     "sourceNumber": "Q11",
+     "q": "Which SNMP version first offers authentication and encryption?",
+     "options": [
+      "v1",
+      "v2c",
+      "v3",
+      "v2"
+     ],
+     "answer": "C",
+     "why": "authPriv in v3.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q12. Which transport does SNMP use by default?",
+     "sourceNumber": "Q12",
+     "q": "Which transport does SNMP use by default?",
+     "options": [],
+     "answer": null,
+     "why": "UDP (161 and 162) - the book wrongly says SNMPv3 uses TCP.",
+     "kind": "open"
+    },
+    {
+     "source": "Q13. True or false: the ACL on the community string protects the router's SNMP agent.",
+     "sourceNumber": "Q13",
+     "q": "True or false: the ACL on the community string protects the router's SNMP agent.",
+     "options": [],
+     "answer": null,
+     "why": "True - it restricts which NMS hosts may query the agent.",
+     "kind": "open"
+    },
+    {
+     "source": "Q14. Which community type gives read-only access?",
+     "sourceNumber": "Q14",
+     "q": "Which community type gives read-only access?",
+     "options": [],
+     "answer": null,
+     "why": "ro - rw allows changes.",
+     "kind": "open"
+    },
+    {
+     "source": "Q15. What severity is Notification?",
+     "sourceNumber": "Q15",
+     "q": "What severity is Notification?",
+     "options": [
+      "4",
+      "5",
+      "6",
+      "7"
+     ],
+     "answer": "B",
+     "why": "0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warn, 5 Notif, 6 Info, 7 Debug.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q16. After logging trap warnings, which severities reach the server?",
+     "sourceNumber": "Q16",
+     "q": "After logging trap warnings, which severities reach the server?",
+     "options": [],
+     "answer": null,
+     "why": "0 to 4 - levels at or more severe than 4.",
+     "kind": "open"
+    },
+    {
+     "source": "Q17. Which command shows what the buffer holds and each logging level?",
+     "sourceNumber": "Q17",
+     "q": "Which command shows what the buffer holds and each logging level?",
+     "options": [],
+     "answer": null,
+     "why": "show logging - it lists each destination and its level.",
+     "kind": "open"
+    },
+    {
+     "source": "Q18. What is the default syslog facility on Cisco IOS?",
+     "sourceNumber": "Q18",
+     "q": "What is the default syslog facility on Cisco IOS?",
+     "options": [
+      "local0",
+      "local4",
+      "local7",
+      "kern"
+     ],
+     "answer": "C",
+     "why": "local7.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q19. In the message %SYS-5-CONFIG_I, what is SYS?",
+     "sourceNumber": "Q19",
+     "q": "In the message %SYS-5-CONFIG_I, what is SYS?",
+     "options": [],
+     "answer": null,
+     "why": "The facility - 5 is the severity and CONFIG_I is the mnemonic.",
+     "kind": "open"
+    },
+    {
+     "source": "Q20. You are logged in over SSH and want to see log messages on your screen. Command?",
+     "sourceNumber": "Q20",
+     "q": "You are logged in over SSH and want to see log messages on your screen. Command?",
+     "options": [],
+     "answer": null,
+     "why": "terminal monitor - VTY sessions need it.",
+     "kind": "open"
+    },
+    {
+     "source": "Q21. What stops you from using crypto key generate rsa on a default-hostname router?",
+     "sourceNumber": "Q21",
+     "q": "What stops you from using crypto key generate rsa on a default-hostname router?",
+     "options": [],
+     "answer": null,
+     "why": "Missing hostname or domain name - both are needed for the key name.",
+     "kind": "open"
+    },
+    {
+     "source": "Q22. Which command line allows only SSH on the VTY lines?",
+     "sourceNumber": "Q22",
+     "q": "Which command line allows only SSH on the VTY lines?",
+     "options": [],
+     "answer": null,
+     "why": "transport input ssh - applied under the VTY lines.",
+     "kind": "open"
+    },
+    {
+     "source": "Q23. Minimum RSA key size for SSH version 2?",
+     "sourceNumber": "Q23",
+     "q": "Minimum RSA key size for SSH version 2?",
+     "options": [
+      "512",
+      "768",
+      "1024",
+      "4096"
+     ],
+     "answer": "B",
+     "why": "768 bits, but use 2048 or more.",
+     "kind": "multiple-choice"
+    },
+    {
+     "source": "Q24. Why use secret instead of password for a local user?",
+     "sourceNumber": "Q24",
+     "q": "Why use secret instead of password for a local user?",
+     "options": [],
+     "answer": null,
+     "why": "secret stores a hashed password - password is weaker.",
+     "kind": "open"
+    },
+    {
+     "source": "Q25. Which v2.0 objective covers syslog severity levels and facilities?",
+     "sourceNumber": "Q25",
+     "q": "Which v2.0 objective covers syslog severity levels and facilities?",
+     "options": [],
+     "answer": null,
+     "why": "5.6 - SNMP is 5.4; CDP/LLDP is 2.3.",
+     "kind": "open"
+    }
+   ],
+   "content": [
+    {
+     "level": 0,
+     "text": "Q1 What are the default CDP timer and holdtime?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 60 s and 180 s - the receiver keeps a neighbor for 180 s."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which command stops CDP on one interface only?"
+    },
+    {
+     "level": 0,
+     "text": "A. no cdp run"
+    },
+    {
+     "level": 0,
+     "text": "B. no cdp enable"
+    },
+    {
+     "level": 0,
+     "text": "C. cdp holdtime 0"
+    },
+    {
+     "level": 0,
+     "text": "D. no cdp timer"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - no cdp enable is per interface; no cdp run is global."
+    },
+    {
+     "level": 0,
+     "text": "Q3 A neighbor disappears from the CDP table after a while although the cable is fine. Which value expired?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The holdtime - no CDP packet arrived within the holdtime."
+    },
+    {
+     "level": 0,
+     "text": "Q1 In show cdp neighbors, which column is the neighbor's own interface?"
+    },
+    {
+     "level": 0,
+     "text": "A. Local Intrfce"
+    },
+    {
+     "level": 0,
+     "text": "B. Port ID"
+    },
+    {
+     "level": 0,
+     "text": "C. Platform"
+    },
+    {
+     "level": 0,
+     "text": "D. Holdtme"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - Port ID is the remote port."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Why does your router not see the PCs and other routers behind a connected switch?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - DP only reaches directly connected neighbors - a switch does not forward CDP frames."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which two commands show the same detailed neighbor information?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show cdp neighbors detail and show cdp entry * - the book states they are equivalent."
+    },
+    {
+     "level": 0,
+     "text": "Q4 On SW-3 you see SW-2 Fas 0/5 ... Fas 0/5. What does that tell you?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SW-3's Fas 0/5 is cabled to SW-2's Fas 0/5 - Local Intrfce is mine, Port ID is theirs."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which two sources do you combine to document a router's links in this exercise?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show running-config and show cdp neighbors - the first gives your IPs, the second gives the neighbors."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Lab_A Fa0/1 is 192.168.18.1/24. What is the neighbor's address under the book's rule?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 192.168.18.2 - next IP in the /24."
+    },
+    {
+     "level": 0,
+     "text": "Q3 A diagram says SW-1 Gi0/1 connects to SW-2 Gi0/1, but CDP on SW-1 shows Port ID Gi0/2. What is the likely conclusion?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The diagram or the cabling is wrong - CDP reports the real port."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which discovery protocol works between Cisco and non-Cisco devices?"
+    },
+    {
+     "level": 0,
+     "text": "A. CDP"
+    },
+    {
+     "level": 0,
+     "text": "B. LLDP"
+    },
+    {
+     "level": 0,
+     "text": "C. VTP"
+    },
+    {
+     "level": 0,
+     "text": "D. DTP"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - LLDP is the IEEE standard 802.1AB."
+    },
+    {
+     "level": 0,
+     "text": "Q2 You typed show lldp neighbors on a new switch and it is empty although the link is up. First thing to check?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Whether lldp run was configured - LLDP is off by default."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which two commands set a port to listen for LLDP but not send it?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: no lldp transmit and lldp receive - interface-mode commands."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Are LLDP and LLDP-MED compatible, according to the book?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: No - the book says they are not compatible."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which command makes a router an NTP client of 10.1.1.5?"
+    },
+    {
+     "level": 0,
+     "text": "A. ntp master 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "B. ntp server 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "C. clock sync 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "D. ntp client 10.1.1.5"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - ntp server points the device at a time source."
+    },
+    {
+     "level": 0,
+     "text": "Q2 show ntp status says stratum 16. What does it mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The clock is not synchronised - 16 means no valid time source."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Which UDP port does NTP use?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 123 - blocked UDP 123 is a common reason NTP fails."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which command turns a router into an NTP server using its own clock?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ntp master - optionally with a stratum number."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which SNMP message is acknowledged by the manager?"
+    },
+    {
+     "level": 0,
+     "text": "A. TRAP"
+    },
+    {
+     "level": 0,
+     "text": "B. GET"
+    },
+    {
+     "level": 0,
+     "text": "C. INFORM"
+    },
+    {
+     "level": 0,
+     "text": "D. WALK"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - INFORM adds acknowledgement; a trap does not."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which SNMP version first added GET BULK?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: SNMPv2c - per the book and review answer 3."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What does the number string 1.3.6.1.4.1.9 point to?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - isco's private enterprise branch of the MIB - the OID tree."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which command is the only required SNMP command in the book's list?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: snmp-server community <string> - location, contact and ACL are optional."
+    },
+    {
+     "level": 0,
+     "text": "Q2 How do you restrict which NMS can use a read-only community?"
+    },
+    {
+     "level": 0,
+     "text": "A. ACL on the VTY line"
+    },
+    {
+     "level": 0,
+     "text": "B. ACL on the community string"
+    },
+    {
+     "level": 0,
+     "text": "C. ACL on every interface"
+    },
+    {
+     "level": 0,
+     "text": "D. ACL on the control plane"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - attach the ACL in the snmp-server community command."
+    },
+    {
+     "level": 0,
+     "text": "Q3 You use an SNMP manager to change a router's hostname. Which community access is needed?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Read-write (rw) - ro cannot change anything."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which direction does a TRAP travel?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - gent to NMS - unsolicited alert."
+    },
+    {
+     "level": 0,
+     "text": "Q1 What is severity 4?"
+    },
+    {
+     "level": 0,
+     "text": "A. Error"
+    },
+    {
+     "level": 0,
+     "text": "B. Warning"
+    },
+    {
+     "level": 0,
+     "text": "C. Notification"
+    },
+    {
+     "level": 0,
+     "text": "D. Critical"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warning."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which severity numbers are sent after logging trap 3?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0, 1, 2, 3 - the level you set and all more severe levels."
+    },
+    {
+     "level": 0,
+     "text": "Q3 What is the severity number of Debugging?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 7 - not 5, as the book's table wrongly shows."
+    },
+    {
+     "level": 0,
+     "text": "Q4 In %LINK-5-CHANGED, what does the 5 mean?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Severity 5 (Notification) - second field after the facility."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which destinations are on by default?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - onsole and buffer - per the book."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which command shows the buffer and the level of each logging destination?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show logging - also shows the trap level."
+    },
+    {
+     "level": 0,
+     "text": "Q3 You are in an SSH session and no log messages appear on screen. Which command fixes that?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: terminal monitor - VTY lines do not get log messages unless enabled."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What does logging trap informational do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Sends severities 0 to 6 to the syslog server - levels at or more severe than informational."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which two settings are required before crypto key generate rsa works?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - non-default hostname and an IP domain name - the key name is built from both."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which VTY command allows only SSH?"
+    },
+    {
+     "level": 0,
+     "text": "A. transport input all"
+    },
+    {
+     "level": 0,
+     "text": "B. transport input telnet"
+    },
+    {
+     "level": 0,
+     "text": "C. transport input ssh"
+    },
+    {
+     "level": 0,
+     "text": "D. login local"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - login local only picks the authentication source."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Why is SSH better than Telnet?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: It encrypts the session, including the password - Telnet sends data in clear text."
+    },
+    {
+     "level": 0,
+     "text": "Q4 What does login local do?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Tells the line to authenticate against local usernames - created with username."
+    },
+    {
+     "level": 0,
+     "text": "Q1 Which protocol is Cisco proprietary?"
+    },
+    {
+     "level": 0,
+     "text": "A. LLDP"
+    },
+    {
+     "level": 0,
+     "text": "B. CDP"
+    },
+    {
+     "level": 0,
+     "text": "C. NTP"
+    },
+    {
+     "level": 0,
+     "text": "D. SNMP"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - CDP only runs between Cisco devices."
+    },
+    {
+     "level": 0,
+     "text": "Q2 Which command lists the neighbor's IP address?"
+    },
+    {
+     "level": 0,
+     "text": "A. show cdp"
+    },
+    {
+     "level": 0,
+     "text": "B. show cdp neighbors"
+    },
+    {
+     "level": 0,
+     "text": "C. show cdp neighbors detail"
+    },
+    {
+     "level": 0,
+     "text": "D. show lldp"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - detail includes the IP address."
+    },
+    {
+     "level": 0,
+     "text": "Q3 Default CDP timer and holdtime?"
+    },
+    {
+     "level": 0,
+     "text": "A. 30/120"
+    },
+    {
+     "level": 0,
+     "text": "B. 60/180"
+    },
+    {
+     "level": 0,
+     "text": "C. 60/120"
+    },
+    {
+     "level": 0,
+     "text": "D. 10/30"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 60 s and 180 s."
+    },
+    {
+     "level": 0,
+     "text": "Q4 Which command enables LLDP globally?"
+    },
+    {
+     "level": 0,
+     "text": "A. lldp enable"
+    },
+    {
+     "level": 0,
+     "text": "B. lldp run"
+    },
+    {
+     "level": 0,
+     "text": "C. cdp run lldp"
+    },
+    {
+     "level": 0,
+     "text": "D. lldp start"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - lldp run."
+    },
+    {
+     "level": 0,
+     "text": "Q5 A switch connects to a router. You run show cdp neighbors on the router. What do you see?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Only the switch (directly connected) - devices behind the switch are not shown."
+    },
+    {
+     "level": 0,
+     "text": "Q6 In show cdp neighbors, the Port ID column shows which port?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The neighbor's port - Local Intrfce is yours."
+    },
+    {
+     "level": 0,
+     "text": "Q7 Which NTP command makes a router an NTP client?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ntp server <ip> - client points to a server."
+    },
+    {
+     "level": 0,
+     "text": "Q8 show ntp status says stratum 16. Name two possible causes."
+    },
+    {
+     "level": 0,
+     "text": "Answer: Server unreachable; UDP 123 blocked; wrong server IP; server unsynchronised - any two."
+    },
+    {
+     "level": 0,
+     "text": "Q9 Which UDP port does NTP use?"
+    },
+    {
+     "level": 0,
+     "text": "A. 123"
+    },
+    {
+     "level": 0,
+     "text": "B. 161"
+    },
+    {
+     "level": 0,
+     "text": "C. 162"
+    },
+    {
+     "level": 0,
+     "text": "D. 514"
+    },
+    {
+     "level": 0,
+     "text": "Answer: A - SNMP uses 161/162, syslog 514."
+    },
+    {
+     "level": 0,
+     "text": "Q10 Which SNMP message is sent by the agent without being asked and is not acknowledged?"
+    },
+    {
+     "level": 0,
+     "text": "A. GET"
+    },
+    {
+     "level": 0,
+     "text": "B. SET"
+    },
+    {
+     "level": 0,
+     "text": "C. TRAP"
+    },
+    {
+     "level": 0,
+     "text": "D. INFORM"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - INFORM is acknowledged."
+    },
+    {
+     "level": 0,
+     "text": "Q11 Which SNMP version first offers authentication and encryption?"
+    },
+    {
+     "level": 0,
+     "text": "A. v1"
+    },
+    {
+     "level": 0,
+     "text": "B. v2c"
+    },
+    {
+     "level": 0,
+     "text": "C. v3"
+    },
+    {
+     "level": 0,
+     "text": "D. v2"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - authPriv in v3."
+    },
+    {
+     "level": 0,
+     "text": "Q12 Which transport does SNMP use by default?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: UDP (161 and 162) - the book wrongly says SNMPv3 uses TCP."
+    },
+    {
+     "level": 0,
+     "text": "Q13 True or false: the ACL on the community string protects the router's SNMP agent."
+    },
+    {
+     "level": 0,
+     "text": "Answer: True - it restricts which NMS hosts may query the agent."
+    },
+    {
+     "level": 0,
+     "text": "Q14 Which community type gives read-only access?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: ro - rw allows changes."
+    },
+    {
+     "level": 0,
+     "text": "Q15 What severity is Notification?"
+    },
+    {
+     "level": 0,
+     "text": "A. 4"
+    },
+    {
+     "level": 0,
+     "text": "B. 5"
+    },
+    {
+     "level": 0,
+     "text": "C. 6"
+    },
+    {
+     "level": 0,
+     "text": "D. 7"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 0 Emerg, 1 Alert, 2 Crit, 3 Err, 4 Warn, 5 Notif, 6 Info, 7 Debug."
+    },
+    {
+     "level": 0,
+     "text": "Q16 After logging trap warnings, which severities reach the server?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 0 to 4 - levels at or more severe than 4."
+    },
+    {
+     "level": 0,
+     "text": "Q17 Which command shows what the buffer holds and each logging level?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: show logging - it lists each destination and its level."
+    },
+    {
+     "level": 0,
+     "text": "Q18 What is the default syslog facility on Cisco IOS?"
+    },
+    {
+     "level": 0,
+     "text": "A. local0"
+    },
+    {
+     "level": 0,
+     "text": "B. local4"
+    },
+    {
+     "level": 0,
+     "text": "C. local7"
+    },
+    {
+     "level": 0,
+     "text": "D. kern"
+    },
+    {
+     "level": 0,
+     "text": "Answer: C - local7."
+    },
+    {
+     "level": 0,
+     "text": "Q19 In the message %SYS-5-CONFIG_I, what is SYS?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: The facility - 5 is the severity and CONFIG_I is the mnemonic."
+    },
+    {
+     "level": 0,
+     "text": "Q20 You are logged in over SSH and want to see log messages on your screen. Command?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: terminal monitor - VTY sessions need it."
+    },
+    {
+     "level": 0,
+     "text": "Q21 What stops you from using crypto key generate rsa on a default-hostname router?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: Missing hostname or domain name - both are needed for the key name."
+    },
+    {
+     "level": 0,
+     "text": "Q22 Which command line allows only SSH on the VTY lines?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: transport input ssh - applied under the VTY lines."
+    },
+    {
+     "level": 0,
+     "text": "Q23 Minimum RSA key size for SSH version 2?"
+    },
+    {
+     "level": 0,
+     "text": "A. 512"
+    },
+    {
+     "level": 0,
+     "text": "B. 768"
+    },
+    {
+     "level": 0,
+     "text": "C. 1024"
+    },
+    {
+     "level": 0,
+     "text": "D. 4096"
+    },
+    {
+     "level": 0,
+     "text": "Answer: B - 768 bits, but use 2048 or more."
+    },
+    {
+     "level": 0,
+     "text": "Q24 Why use secret instead of password for a local user?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: secret stores a hashed password - password is weaker."
+    },
+    {
+     "level": 0,
+     "text": "Q25 Which v2.0 objective covers syslog severity levels and facilities?"
+    },
+    {
+     "level": 0,
+     "text": "Answer: 5.6 - SNMP is 5.4; CDP/LLDP is 2.3."
+    }
+   ],
+   "multipleChoice": 18,
+   "open": 44
+  }
+ ],
+ "generatedFrom": "CC12.docx",
+ "totalWords": 10054,
+ "wordBreakdown": {
+  "sections": 7337,
+  "labs": 771,
+  "quizzes": 1342,
+  "currency": 412,
+  "sources": 192
+ },
+ "currency": [
+  {
+   "severity": "normal",
+   "title": "Gap 1",
+   "found": "Severity \"0 to 5\" (p. 353)",
+   "current": "Corrected to 0 to 7 UPDATED",
+   "action": "",
+   "source": "Cisco community posts showing real IOS output; RFC 5424 (secondary and general knowledge)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 2",
+   "found": "Table 12.2 and Exam Essentials list Debugging as severity 5; logging trap ? shows 0-5 (pp. 353, 356, 359)",
+   "current": "Corrected: Debugging is 7; range 0-7 UPDATED",
+   "action": "",
+   "source": "Cisco community posts (secondary)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 3",
+   "found": "\"Level 5 is the highest.displays everything\" (p. 353)",
+   "current": "Level 7 shows everything UPDATED",
+   "action": "",
+   "source": "Same as #1",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 4",
+   "found": "SNMPv3 uses TCP; also in Exam Essentials and review answer 3 (pp. 349, 359, 798)",
+   "current": "SNMP uses UDP 161/162 by default UPDATED",
+   "action": "",
+   "source": "SNMP tool documentation (secondary); not checked against the RFC text CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 5",
+   "found": "\"DES-256\" (p. 349)",
+   "current": "SNMPv3 uses DES, 3DES or AES (128/192/256) UPDATED",
+   "action": "",
+   "source": "SNMP tool documentation (secondary)",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 6",
+   "found": "SET described backwards (p. 350)",
+   "current": "Manager writes to agent UPDATED",
+   "action": "",
+   "source": "General knowledge; consistent with SNMP tool documentation CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 7",
+   "found": "ACL \"protects the NMS\" (p. 351)",
+   "current": "ACL limits which NMS may query the agent UPDATED",
+   "action": "",
+   "source": "General knowledge; consistent with review answer 1 CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 8",
+   "found": "SNMP created 1988 (RFC 1065) (p. 348)",
+   "current": "Noted: RFC 1157 defines SNMPv1 UPDATED",
+   "action": "",
+   "source": "General knowledge CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 9",
+   "found": "\"Default trap level is debugging\" (p. 355) vs its own output showing informational",
+   "current": "Informational (6) is the logging trap default UPDATED",
+   "action": "",
+   "source": "Book's own output; Cisco-related secondary source",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 10",
+   "found": "Local6 called a \"local level\" of severity (p. 356) and review answer 6 says \"level 7 (Debugging or local7)\" (p. 798)",
+   "current": "Separated facility from severity UPDATED",
+   "action": "",
+   "source": "Secondary sources; RFC 5424 general knowledge",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 11",
+   "found": "LLDP default state and timers not given (p. 346)",
+   "current": "Added: off by default, 30/120/2 ADDED",
+   "action": "",
+   "source": "Cisco documentation page (older platform guide) and secondary sources",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 12",
+   "found": "LLDP has no TOC entry (pp. 346 to 347)",
+   "current": "Numbered 12.1.4 UPDATED",
+   "action": "",
+   "source": "Compared with the book's contents",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 13",
+   "found": "SSH key size: 512 suggested, 1024 used (p. 357)",
+   "current": "SSHv2 needs at least 768; use 2048 or more UPDATED",
+   "action": "",
+   "source": "Cisco support document; secondary sources",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 14",
+   "found": "username ... password (p. 357)",
+   "current": "Use secret UPDATED",
+   "action": "",
+   "source": "General practice CHECK",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 15",
+   "found": "\"3650\" typo; duplicate Device ID line (pp. 340, 341)",
+   "current": "Noted UPDATED",
+   "action": "",
+   "source": "Book's own output",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 16",
+   "found": "NTP: no mention of UDP 123, ntp master default stratum 8, stratum 0",
+   "current": "Added ADDED",
+   "action": "",
+   "source": "Secondary sources and a Cisco community knowledge-base article",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 17",
+   "found": "No labs, no troubleshooting, no facilities detail",
+   "current": "Added labs, troubleshooting and facility/PRI note ADDED",
+   "action": "",
+   "source": "PRI computed by script",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 18",
+   "found": "No SFTP/SCP (v2.0 4.2), no AAA, no device-management summary",
+   "current": "Pointed to as v2.0 topics ADDED",
+   "action": "",
+   "source": "Cisco v2.0 outline read directly",
+   "verified": ""
+  },
+  {
+   "severity": "normal",
+   "title": "Gap 19",
+   "found": "Book Chapter 12 objectives use v1.0 numbering",
+   "current": "Mapped to v1.1 and v2.0 UPDATED",
+   "action": "",
+   "source": "v2.0: Cisco PDF. v1.1: secondary page only; Cisco's v1.1 PDF not opened CHECK",
+   "verified": ""
+  }
+ ],
+ "sources": [
+  {
+   "source": "Lammle, CCNA Study Guide Vol. 2, ch. 12 (pp. 337 to 362) and appendix answers (pp. 797 to 798)",
+   "usedFor": "All BOOK content, book errors",
+   "status": "Primary (the book)"
+  },
+  {
+   "source": "Cisco, CCNA 200-301 v2.0 Exam Topics PDF (learningcontent.cisco.com)",
+   "usedFor": "v2.0 objective numbers and wording",
+   "status": "Official"
+  },
+  {
+   "source": "ComputingForGeeks, CCNA 200-301 v1.1 topics page (Jul 2026)",
+   "usedFor": "v1.1 objectives, v1.1 and v2.0 dates",
+   "status": "Secondary; Cisco's v1.1 PDF not opened"
+  },
+  {
+   "source": "Cisco, SSH configuration support document (4145)",
+   "usedFor": "K9 image, ip ssh version 2, transport input ssh, 768-bit minimum",
+   "status": "Official"
+  },
+  {
+   "source": "Cisco platform guide page on LLDP defaults",
+   "usedFor": "LLDP off by default, 30 s / 120 s / 2 s",
+   "status": "Official (older platform guide)"
+  },
+  {
+   "source": "Cisco Community posts (logging levels, facilities, NTP troubleshooting, SSH)",
+   "usedFor": "Severity 0-7, default local7, stratum behaviour",
+   "status": "Secondary (Cisco forum)"
+  },
+  {
+   "source": "Ansible cisco.ios docs; NetVizura and other secondary guides",
+   "usedFor": "Default facility local7, default trap level",
+   "status": "Secondary"
+  },
+  {
+   "source": "SNMP tool documentation (Netdata, Elastic, NetBox)",
+   "usedFor": "UDP 161/162, SNMPv3 security levels and algorithms",
+   "status": "Secondary"
+  },
+  {
+   "source": "ComputingForGeeks CDP/LLDP and NTP guides",
+   "usedFor": "CDP/LLDP defaults, NTP UDP 123, ntp master stratum 8",
+   "status": "Secondary"
+  },
+  {
+   "source": "RFC 5424 (syslog), RFC 5905 (NTPv4), RFC 1157 (SNMPv1)",
+   "usedFor": "Mentioned from general knowledge",
+   "status": "Not fetched in this session"
+  },
+  {
+   "source": "Python ipaddress script",
+   "usedFor": "Topology addressing check, syslog PRI value",
+   "status": "Calculated"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "CCNA-4.4"
+  }
+ ],
+ "questionCount": 62,
+ "parts": [
+  "Hands-On Labs",
+  "Review Questions",
+  "Exam Essentials: One-Page Revision Sheet",
+  "Changes and Gaps Log",
+  "Self-Assessment and Tracker Update",
+  "Answer Key A (Pre-check)",
+  "Sources and Verification Status"
+ ]
+}

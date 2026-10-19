@@ -170,9 +170,16 @@ export function resourcesFor(tech) {
 
     notes: notes.filter((c) => BOOK_SUBJECT[idOfBook(c)] === t),
 
-    // Certification guides live in the library. The CCNA book is deliberately
-    // absent: it was removed at the owner's request, and the CCNA subject keeps
-    // its commands, lessons and syllabus.
+    // Certification guides live in the library.
+    //
+    // The CCNA book used to be deliberately absent - it had been removed at the
+    // owner's request, and the subject kept only its commands, lessons and
+    // syllabus. It is no longer absent: CCNA 200-301 arrived as 23 source .docx
+    // chapters and is now the subject's main content, as a study manual of 23
+    // units with 138 labs and 1,092 questions. Those chapters are generated
+    // study material, NOT Cisco courseware, and they have NOT been checked
+    // against Cisco's own documents - which is why every unit carries
+    // verification "not-source-checked" and the subject page says so.
     guides: (C.library && C.library.books ? C.library.books : [])
       .filter((b) => b.subject === t)
       .map((b) => ({ ...b, chapterCount: (b.chapters || []).length })),

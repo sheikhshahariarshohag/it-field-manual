@@ -75,6 +75,14 @@ jobs:
       #                            no exception and no empty state. That is how
       #                            the flashcards view shipped broken for an
       #                            hour.
+      #   check-ccna-content      every CCNA chapter matches the provenance
+      #                            manifest: same section, lab and question
+      #                            counts, and every claimed objective is real.
+      #                            The .docx sources are private and not in this
+      #                            repository, so without the manifest this gate
+      #                            could only run on the machine that did the
+      #                            conversion. It is what stops a regenerated
+      #                            chapter silently losing content.
       - name: Validate content and privacy
         run: |
           node scripts/validate.mjs
@@ -84,6 +92,7 @@ jobs:
           node scripts/check-chapter-titles.mjs
           node scripts/check-prose-contrast.mjs
           node scripts/check-routes.mjs
+          node scripts/check-ccna-content.mjs
 
   deploy:
     needs: validate
