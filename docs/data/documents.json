@@ -1,0 +1,7677 @@
+{
+ "note": "Documents reproduced as they are. Colour and shading are the document's own, carried in the JSON rather than mapped onto app theme tokens, so scripts/check-doc-contrast.mjs checks each (text colour, fill) pair the data actually uses. The source .docx files are private material and are not in this repository; each entry records the source name and its SHA-256.",
+ "sets": {
+  "cisco": {
+   "label": "CCNA 200-301",
+   "subject": "cisco",
+   "built": "2026-10-19",
+   "count": 23,
+   "docs": [
+    {
+     "id": "ccna-01",
+     "n": 1,
+     "title": "Network Fundamentals",
+     "display": "Chapter 1: Network Fundamentals",
+     "subject": "cisco",
+     "sourceFile": "CC01_Network_Fundamentals.docx",
+     "sourceSha256": "ad2727f2b37f9d29928c62c5d5a4233864e62d222cc7d57f2302686615cd7e9b",
+     "blocks": 285,
+     "words": 7710,
+     "tables": 47,
+     "boxes": 4,
+     "runs": 1187,
+     "shadedParas": 26,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "How to read the tags"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "1.1 Network Components (book pp. 2-6)"
+      },
+      {
+       "lvl": 3,
+       "text": "Three devices, three jobs"
+      },
+      {
+       "lvl": 3,
+       "text": "Why routers are used (book p. 5)"
+      },
+      {
+       "lvl": 3,
+       "text": "What a Layer 2 switch really does (book pp. 5-6)"
+      },
+      {
+       "lvl": 3,
+       "text": "Command breakdown: the MAC address table"
+      },
+      {
+       "lvl": 3,
+       "text": "The six steps of switch forwarding"
+      },
+      {
+       "lvl": 3,
+       "text": "Things that make a LAN slow (book p. 4)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 1.1"
+      },
+      {
+       "lvl": 1,
+       "text": "1.2 Next-Generation Firewalls and IPS (book pp. 6-10)"
+      },
+      {
+       "lvl": 3,
+       "text": "What an NGFW must do (book p. 8)"
+      },
+      {
+       "lvl": 3,
+       "text": "IPS in one minute"
+      },
+      {
+       "lvl": 3,
+       "text": "Where the firewall sits"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 1.2"
+      },
+      {
+       "lvl": 1,
+       "text": "1.3 Network Topology Architectures (book pp. 10-17)"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3.1 The Cisco Three-Layer Hierarchical Model (3-Tier), book p. 10"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3.2 Collapsed Core (2-Tier), book p. 13"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3.3 Spine-Leaf, book p. 14"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3.4 WAN, book p. 15"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3.5 Defining WAN Terms, book pp. 16-17"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3.6 WAN Connection Bandwidth, book p. 17"
+      },
+      {
+       "lvl": 2,
+       "text": "SOHO and on-premises versus cloud"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 1.3"
+      },
+      {
+       "lvl": 1,
+       "text": "1.4 Physical Interfaces and Cables (book pp. 17-19)"
+      },
+      {
+       "lvl": 3,
+       "text": "Three words you must know"
+      },
+      {
+       "lvl": 3,
+       "text": "Ethernet standards table (book pp. 18-19)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 1.4"
+      },
+      {
+       "lvl": 1,
+       "text": "1.5 Ethernet Cabling (book pp. 19-24)"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5.1 Straight-Through Cable, book p. 20"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5.2 Crossover Cable, book pp. 20-22"
+      },
+      {
+       "lvl": 3,
+       "text": "Cable cheat sheet"
+      },
+      {
+       "lvl": 3,
+       "text": "Gigabit wiring (1000Base-T), book pp. 21-22"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5.3 Fibre Optic, book p. 22"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5.4 Power over Ethernet (802.3af, 802.3at), book pp. 23-24"
+      },
+      {
+       "lvl": 3,
+       "text": "Command breakdown: PoE on a Catalyst switch"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 1.5"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting: Interface and Cable Problems"
+      },
+      {
+       "lvl": 3,
+       "text": "Read the interface status first"
+      },
+      {
+       "lvl": 3,
+       "text": "Command breakdown: show interfaces"
+      },
+      {
+       "lvl": 3,
+       "text": "Symptom guide"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1.1: Count the domains (paper, 10 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1.2: Watch a switch learn (Packet Tracer, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1.3: Which cable? (Packet Tracer, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1.4: Read an interface (Packet Tracer, 20 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1.5: PoE budget (paper, 10 minutes)"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-02",
+     "n": 2,
+     "title": "TCP/IP",
+     "display": "Chapter 2: TCP/IP",
+     "subject": "cisco",
+     "sourceFile": "CC02_TCP_IP.docx",
+     "sourceSha256": "30d7c88fd62e88d11ebd3d8d8159cbe20fb79a587c8b6f3c6b7d5286e532f204",
+     "blocks": 316,
+     "words": 8058,
+     "tables": 60,
+     "boxes": 5,
+     "runs": 1453,
+     "shadedParas": 24,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tags used in this document"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "2.1 Introducing TCP/IP (book pp. 30-31)"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1.1 A Brief History of TCP/IP"
+      },
+      {
+       "lvl": 1,
+       "text": "2.2 TCP/IP and the DoD Model (book pp. 31-60)"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2.1 The Process/Application Layer Protocols (book pp. 33-42)"
+      },
+      {
+       "lvl": 3,
+       "text": "Telnet versus SSH: command example"
+      },
+      {
+       "lvl": 3,
+       "text": "DNS: how a name becomes an address (book pp. 38-40)"
+      },
+      {
+       "lvl": 3,
+       "text": "DHCP (book pp. 40-42)"
+      },
+      {
+       "lvl": 3,
+       "text": "DHCP address conflicts and gratuitous ARP"
+      },
+      {
+       "lvl": 3,
+       "text": "APIPA: the 169.254 address (book p. 42)"
+      },
+      {
+       "lvl": 3,
+       "text": "Commands: check a host's IP settings (Windows / Linux)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 2.2.1"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2.2 The Host-to-Host (Transport) Layer Protocols (book pp. 42-51)"
+      },
+      {
+       "lvl": 3,
+       "text": "TCP in plain words"
+      },
+      {
+       "lvl": 3,
+       "text": "The three-way handshake"
+      },
+      {
+       "lvl": 3,
+       "text": "The TCP header (book pp. 43-44)"
+      },
+      {
+       "lvl": 3,
+       "text": "UDP in plain words"
+      },
+      {
+       "lvl": 3,
+       "text": "Port numbers (book pp. 47-51)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 2.2.2"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2.3 The Internet Layer Protocols (book pp. 51-60)"
+      },
+      {
+       "lvl": 3,
+       "text": "Internet Protocol (IP)"
+      },
+      {
+       "lvl": 3,
+       "text": "The IPv4 header (book pp. 52-54)"
+      },
+      {
+       "lvl": 3,
+       "text": "ICMP: IP's messenger (book pp. 54-58)"
+      },
+      {
+       "lvl": 3,
+       "text": "Commands: ping and traceroute"
+      },
+      {
+       "lvl": 3,
+       "text": "ARP: IP address to MAC address (book pp. 58-60)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 2.2.3"
+      },
+      {
+       "lvl": 1,
+       "text": "2.3 IP Addressing (book pp. 60-67)"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3.1 IP Terminology"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3.2 The Hierarchical IP Addressing Scheme"
+      },
+      {
+       "lvl": 3,
+       "text": "The classes (book pp. 62-66)"
+      },
+      {
+       "lvl": 3,
+       "text": "Valid hosts in each class (worked examples)"
+      },
+      {
+       "lvl": 3,
+       "text": "Reserved and special addresses (book Table 2.4, p. 63)"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3.3 Private IP Addresses (RFC 1918)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 2.3"
+      },
+      {
+       "lvl": 1,
+       "text": "2.4 IPv4 Address Types (book pp. 67-71)"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4.1 Layer 2 Broadcasts"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4.2 Layer 3 Broadcasts"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4.3 Unicast Address"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4.4 Multicast Address"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 2.4"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2.1: Port-number drill (paper, 10 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2.2: Watch ARP and ICMP (Packet Tracer, 20 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2.3: DHCP and APIPA (Packet Tracer, 25 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2.4: DNS and the \"ping works but name fails\" test (Packet Tracer, 20 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2.5: Classify the address (paper, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2.6: Decode the header (paper, 10 minutes)"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting: Addressing and Name Problems"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-03",
+     "n": 3,
+     "title": "Easy Subnetting",
+     "display": "Chapter 3: Easy Subnetting",
+     "subject": "cisco",
+     "sourceFile": "CC03_Easy_Subnetting.docx",
+     "sourceSha256": "afe725911ce847b4b36ab90107a7d0b548c3cb517a2ef42efd30c55c1b941931",
+     "blocks": 239,
+     "words": 6081,
+     "tables": 46,
+     "boxes": 3,
+     "runs": 1264,
+     "shadedParas": 18,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tags used in this document"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "3.1 Subnetting Basics (book pp. 76-82)"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1.1 How to Create Subnets (book p. 77-78)"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1.2 Subnet Masks (book pp. 78-79)"
+      },
+      {
+       "lvl": 3,
+       "text": "The pattern you must memorise"
+      },
+      {
+       "lvl": 3,
+       "text": "Powers of 2 (book p. 79)"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1.3 Classless Inter-Domain Routing (CIDR) (book pp. 80-81)"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1.4 IP Subnet-Zero (book pp. 81-82)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 3.1.1-3.1.4"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1.5 Subnetting Class C Addresses (book pp. 82-93)"
+      },
+      {
+       "lvl": 3,
+       "text": "The fast method: answer the Big Five"
+      },
+      {
+       "lvl": 3,
+       "text": "Worked example: 192.168.10.0 with a /26 (255.255.255.192)"
+      },
+      {
+       "lvl": 3,
+       "text": "Worked example: 192.168.10.0 with a /27 (255.255.255.224)"
+      },
+      {
+       "lvl": 3,
+       "text": "All Class C masks on one table (the book's \"What Do We Know?\", Table 3.3)"
+      },
+      {
+       "lvl": 3,
+       "text": "Subnetting in your head: Class C (book pp. 90-91)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 3.1.5"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1.6 Subnetting Class B Addresses (book pp. 93-103)"
+      },
+      {
+       "lvl": 3,
+       "text": "Subnetting in your head: Class B (book pp. 100-101)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 3.1.6"
+      },
+      {
+       "lvl": 1,
+       "text": "VLSM: Different Mask Sizes in One Network"
+      },
+      {
+       "lvl": 3,
+       "text": "Method: biggest first, no overlaps"
+      },
+      {
+       "lvl": 3,
+       "text": "Worked example: 192.168.50.0/24"
+      },
+      {
+       "lvl": 1,
+       "text": "Subnetting Drill Sheet"
+      },
+      {
+       "lvl": 3,
+       "text": "A. Find the subnet, broadcast and valid host range"
+      },
+      {
+       "lvl": 3,
+       "text": "B. Choose the mask"
+      },
+      {
+       "lvl": 3,
+       "text": "C. Is it a valid host address?"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3.1: The \"What do we know?\" table (paper, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3.2: Build a /25 network (Packet Tracer, 25 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3.3: VLSM addressing (Packet Tracer, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3.4: Daily 10-minute drill (any time)"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting: Common Subnetting Mistakes"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-04",
+     "n": 4,
+     "title": "Troubleshooting IP Addressing",
+     "display": "Chapter 4: Troubleshooting IP Addressing",
+     "subject": "cisco",
+     "sourceFile": "CC04_Troubleshooting_IP_Addressing.docx",
+     "sourceSha256": "794dc0d47da07767aa14d2bf7f51bb75e6cd26cba82852074d7e76c207898274",
+     "blocks": 184,
+     "words": 5069,
+     "tables": 36,
+     "boxes": 2,
+     "runs": 905,
+     "shadedParas": 11,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tags used in this document"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "4.1 Cisco's Way of Troubleshooting IP (book pp. 106-108)"
+      },
+      {
+       "lvl": 3,
+       "text": "The four steps"
+      },
+      {
+       "lvl": 3,
+       "text": "Example: what the output looks like"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 4.1"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1.1 Verify IP Parameters for Operating Systems (book pp. 108-109)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 4.1.1"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1.2 Determining IP Address Problems (book pp. 109-116)"
+      },
+      {
+       "lvl": 3,
+       "text": "A method that always works"
+      },
+      {
+       "lvl": 3,
+       "text": "Scenario 1 (book Figure 4.2): the sales user cannot reach ServerA"
+      },
+      {
+       "lvl": 3,
+       "text": "Scenario 2 (book Figure 4.3): the sales user cannot reach ServerB"
+      },
+      {
+       "lvl": 3,
+       "text": "Assigning valid addresses (book pp. 111-114)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 4.1.2"
+      },
+      {
+       "lvl": 1,
+       "text": "Route Summarization"
+      },
+      {
+       "lvl": 3,
+       "text": "Method"
+      },
+      {
+       "lvl": 3,
+       "text": "Worked examples"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: summarization"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4.1: Run the four steps on your own PC (10 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4.2: Rebuild Scenario 1 and fix it (Packet Tracer, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4.3: Find the injected faults (Packet Tracer, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4.4: Paper practice (15 minutes)"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting Quick Guide"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-05",
+     "n": 5,
+     "title": "IP Routing",
+     "display": "Chapter 5: IP Routing",
+     "subject": "cisco",
+     "sourceFile": "CC05_IP_Routing.docx",
+     "sourceSha256": "5d014ea1ab09766e9f6b096e95f0aee71a31cdb9cf5ee4ddcfe93bae3e988263",
+     "blocks": 342,
+     "words": 9801,
+     "tables": 52,
+     "boxes": 16,
+     "runs": 1826,
+     "shadedParas": 140,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tags used in this document"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "5.1 Routing Basics (book pp. 119-121)"
+      },
+      {
+       "lvl": 3,
+       "text": "Routing protocol versus routed protocol"
+      },
+      {
+       "lvl": 3,
+       "text": "What a router must know (book p. 119)"
+      },
+      {
+       "lvl": 3,
+       "text": "The longest match rule (book pp. 119-121)"
+      },
+      {
+       "lvl": 3,
+       "text": "Reading a routing table line"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 5.1"
+      },
+      {
+       "lvl": 1,
+       "text": "5.2 The IP Routing Process (book pp. 121-132)"
+      },
+      {
+       "lvl": 3,
+       "text": "The journey of one ping, in phases"
+      },
+      {
+       "lvl": 3,
+       "text": "Why a ping can fail on the way back (book pp. 124-126)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2.1 The Cisco Router Internal Process (book pp. 126-127)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2.2 Testing Your IP Routing Understanding (book pp. 127-132)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 5.2"
+      },
+      {
+       "lvl": 1,
+       "text": "5.3 Configuring IP Routing (book pp. 132-141)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3.1 Corp Configuration (book pp. 133-135)"
+      },
+      {
+       "lvl": 3,
+       "text": "What you will see in the routing table"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3.2 SF Configuration (book pp. 135-139)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3.3 LA Configuration (book pp. 139-141)"
+      },
+      {
+       "lvl": 3,
+       "text": "A DHCP server on the Corp router (book pp. 140-141)"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying DHCP (book pp. 148-150)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 5.3"
+      },
+      {
+       "lvl": 1,
+       "text": "5.4 Configuring IP Routing in Our Network (book pp. 141-150)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4.1 Static Routing (book pp. 142-147)"
+      },
+      {
+       "lvl": 3,
+       "text": "The static route command"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's static routes for Corp, SF and LA"
+      },
+      {
+       "lvl": 3,
+       "text": "Route types you must recognise (v1.1 3.3 and v2.0 3.2)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4.2 Default Routing (book pp. 147-150)"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying with ping (book pp. 148-149)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 5.4"
+      },
+      {
+       "lvl": 1,
+       "text": "5.5 Dynamic Routing (book pp. 150-152)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.5.1 Routing Protocol Basics"
+      },
+      {
+       "lvl": 3,
+       "text": "Administrative distance (AD)"
+      },
+      {
+       "lvl": 3,
+       "text": "Three classes of routing protocols"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 5.5"
+      },
+      {
+       "lvl": 1,
+       "text": "5.6 Routing Information Protocol (RIP) (book pp. 152-158)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.6.1 Configuring RIP Routing (book pp. 153-156)"
+      },
+      {
+       "lvl": 3,
+       "text": "Hop count growing (book p. 156)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.6.2 Holding Down RIP Propagations (book pp. 156-158)"
+      },
+      {
+       "lvl": 3,
+       "text": "Using RIP with old equipment (book p. 157)"
+      },
+      {
+       "lvl": 3,
+       "text": "Advertising a default route with RIP (book pp. 157-158)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 5.6"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.1: Longest match drill (paper, 10 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.2: Build the Corp, SF, LA network (Packet Tracer, 40 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.3: Static routes, then floating static (Packet Tracer, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.4: Default routes on the stub routers (Packet Tracer, 20 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.5: DHCP server and relay (Packet Tracer, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.6: RIPv2 and default-information originate (Packet Tracer, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5.7: Trace the frames (paper, 15 minutes)"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting: Routing Problems"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-06",
+     "n": 6,
+     "title": "Open Shortest Path First (OSPF)",
+     "display": "Chapter 6: Open Shortest Path First (OSPF)",
+     "subject": "cisco",
+     "sourceFile": "CC06_Open_Shortest_Path_First_OSPF.docx",
+     "sourceSha256": "a36b07165086b174269ddf1fe63d86832826f117029636b11d36a316f353ed9e",
+     "blocks": 413,
+     "words": 10010,
+     "tables": 61,
+     "boxes": 19,
+     "runs": 1924,
+     "shadedParas": 102,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (answer before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "6.1 Open Shortest Path First (OSPF) Basics"
+      },
+      {
+       "lvl": 3,
+       "text": "Why people like OSPF [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "OSPF compared with RIP (book Table 6.1) [BOOK] p165"
+      },
+      {
+       "lvl": 3,
+       "text": "Areas and the two special routers [BOOK] p166"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.1"
+      },
+      {
+       "lvl": 2,
+       "text": "6.1.1 OSPF Terminology"
+      },
+      {
+       "lvl": 3,
+       "text": "DR and BDR election: the rules [ADDED]"
+      },
+      {
+       "lvl": 3,
+       "text": "OSPF neighbor states [ADDED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.1.1"
+      },
+      {
+       "lvl": 2,
+       "text": "6.1.2 OSPF Operation"
+      },
+      {
+       "lvl": 3,
+       "text": "Hello and Dead timers"
+      },
+      {
+       "lvl": 3,
+       "text": "Multicast addresses [BOOK] [UPDATED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Cost: the OSPF metric [BOOK] p170"
+      },
+      {
+       "lvl": 3,
+       "text": "Other things worth knowing [ADDED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.1.2"
+      },
+      {
+       "lvl": 1,
+       "text": "6.2 Configuring OSPF"
+      },
+      {
+       "lvl": 2,
+       "text": "6.2.1 Enabling OSPF"
+      },
+      {
+       "lvl": 2,
+       "text": "6.2.2 Configuring OSPF Areas"
+      },
+      {
+       "lvl": 3,
+       "text": "Wildcard rule: block size minus one"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.2.1 and 6.2.2"
+      },
+      {
+       "lvl": 2,
+       "text": "6.2.3 Configuring Our Network with OSPF"
+      },
+      {
+       "lvl": 3,
+       "text": "Passive interface [BOOK] p177"
+      },
+      {
+       "lvl": 3,
+       "text": "Advertising a default route [BOOK] p178"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.2.3"
+      },
+      {
+       "lvl": 1,
+       "text": "6.3 OSPF and Loopback Interfaces"
+      },
+      {
+       "lvl": 3,
+       "text": "How the router ID is chosen [BOOK] [ADDED]"
+      },
+      {
+       "lvl": 2,
+       "text": "6.3.1 Configuring Loopback Interfaces"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.3"
+      },
+      {
+       "lvl": 1,
+       "text": "6.4 Verifying OSPF Configuration"
+      },
+      {
+       "lvl": 2,
+       "text": "6.4.1 The show ip ospf Command"
+      },
+      {
+       "lvl": 2,
+       "text": "6.4.2 The show ip ospf database Command"
+      },
+      {
+       "lvl": 2,
+       "text": "6.4.3 The show ip ospf interface Command"
+      },
+      {
+       "lvl": 2,
+       "text": "6.4.4 The show ip ospf neighbor Command"
+      },
+      {
+       "lvl": 2,
+       "text": "6.4.5 The show ip protocols Command"
+      },
+      {
+       "lvl": 3,
+       "text": "Other useful commands [ADDED] [CHECK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 6.4"
+      },
+      {
+       "lvl": 1,
+       "text": "OSPF Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "OSPFv3 for IPv6 (v2.0 addition)"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Single-area OSPF on three routers, then point-to-point"
+      },
+      {
+       "lvl": 3,
+       "text": "Step 1: Addresses"
+      },
+      {
+       "lvl": 3,
+       "text": "Step 2: OSPF on each router"
+      },
+      {
+       "lvl": 3,
+       "text": "Step 3: Verify (use all five commands)"
+      },
+      {
+       "lvl": 3,
+       "text": "Step 4: Make the R1-R2 link point-to-point (objective 3.4.b / 3.3.b)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: DR / BDR election and priority"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Router ID, cost and reference bandwidth (use the Lab 1 network)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Break and fix (use the Lab 1 network)"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-07",
+     "n": 7,
+     "title": "Layer 2 Switching",
+     "display": "Chapter 7: Layer 2 Switching",
+     "subject": "cisco",
+     "sourceFile": "CC07_Layer_2_Switching.docx",
+     "sourceSha256": "355bd78dff413fdabfd534c36bb89d27e22b1005c847b08c12a8081a4461c3d9",
+     "blocks": 266,
+     "words": 5916,
+     "tables": 32,
+     "boxes": 11,
+     "runs": 1203,
+     "shadedParas": 56,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (answer before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "7.1 Switching Services"
+      },
+      {
+       "lvl": 2,
+       "text": "7.1.1 Three Switch Functions at Layer 2"
+      },
+      {
+       "lvl": 3,
+       "text": "Address learning, step by step [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's table example [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Aging [ADDED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Loop avoidance: the problems [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 7.1.1"
+      },
+      {
+       "lvl": 2,
+       "text": "7.1.2 Port Security"
+      },
+      {
+       "lvl": 3,
+       "text": "Steps to configure"
+      },
+      {
+       "lvl": 3,
+       "text": "Violation modes [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Recovering an err-disabled port"
+      },
+      {
+       "lvl": 3,
+       "text": "The lobby PC example [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Verify port security [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 7.1.2"
+      },
+      {
+       "lvl": 1,
+       "text": "7.2 Configuring Catalyst Switches"
+      },
+      {
+       "lvl": 2,
+       "text": "7.2.1 Catalyst Switch Configuration"
+      },
+      {
+       "lvl": 3,
+       "text": "Cables, link lights and Spanning Tree [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Does a switch need an IP address? [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Port security in the lab [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 7.2.1"
+      },
+      {
+       "lvl": 2,
+       "text": "7.2.2 Verifying Cisco Catalyst Switches"
+      },
+      {
+       "lvl": 3,
+       "text": "Reading the book's MAC table output [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Static MAC address [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 7.2.2"
+      },
+      {
+       "lvl": 1,
+       "text": "Layer 2 Switching Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Watch the MAC table learn"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Port security"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Management IP and SSH"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-08",
+     "n": 8,
+     "title": "VLANs and Inter-VLAN Routing",
+     "display": "Chapter 8: VLANs and Inter-VLAN Routing",
+     "subject": "cisco",
+     "sourceFile": "CC08_VLANs_and_Inter_VLAN_Routing.docx",
+     "sourceSha256": "24b5e029769b7b9858a232adc1d6f85c390fa1b2284d634a3c84e854ed973c48",
+     "blocks": 479,
+     "words": 13938,
+     "tables": 78,
+     "boxes": 18,
+     "runs": 2304,
+     "shadedParas": 162,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "8.1 VLAN Basics"
+      },
+      {
+       "lvl": 2,
+       "text": "8.1.1 Broadcast Control"
+      },
+      {
+       "lvl": 2,
+       "text": "8.1.2 Security"
+      },
+      {
+       "lvl": 2,
+       "text": "8.1.3 Flexibility and Scalability"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 8.1"
+      },
+      {
+       "lvl": 1,
+       "text": "8.2 Identifying VLANs"
+      },
+      {
+       "lvl": 3,
+       "text": "Access ports"
+      },
+      {
+       "lvl": 3,
+       "text": "Voice access ports"
+      },
+      {
+       "lvl": 3,
+       "text": "Trunk ports"
+      },
+      {
+       "lvl": 2,
+       "text": "8.2.1 Frame Tagging"
+      },
+      {
+       "lvl": 2,
+       "text": "8.2.2 VLAN Identification Methods"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 8.2"
+      },
+      {
+       "lvl": 1,
+       "text": "8.3 Routing Between VLANs"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 8.3"
+      },
+      {
+       "lvl": 1,
+       "text": "8.4 Configuring VLANs"
+      },
+      {
+       "lvl": 3,
+       "text": "Creating VLANs"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying VLANs: show vlan"
+      },
+      {
+       "lvl": 3,
+       "text": "How trunks appear automatically: DTP"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying a port: show interfaces switchport"
+      },
+      {
+       "lvl": 2,
+       "text": "8.4.1 Assigning Switch Ports to VLANs"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 8.4 and 8.4.1"
+      },
+      {
+       "lvl": 2,
+       "text": "8.4.2 Configuring Trunk Ports"
+      },
+      {
+       "lvl": 3,
+       "text": "Making a port a trunk"
+      },
+      {
+       "lvl": 3,
+       "text": "Trunking modes and DTP"
+      },
+      {
+       "lvl": 3,
+       "text": "Defining the allowed VLANs on a trunk"
+      },
+      {
+       "lvl": 3,
+       "text": "Changing or modifying the trunk native VLAN"
+      },
+      {
+       "lvl": 3,
+       "text": "Trunk verification commands"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 8.4.2"
+      },
+      {
+       "lvl": 2,
+       "text": "8.4.3 Configuring Inter-VLAN Routing"
+      },
+      {
+       "lvl": 3,
+       "text": "Router on a stick (ROAS)"
+      },
+      {
+       "lvl": 3,
+       "text": "The native VLAN on the router"
+      },
+      {
+       "lvl": 3,
+       "text": "Worked examples from the book (Figures 8.12 to 8.15)"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 1 (Figure 8.12, p. 241)"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 2 (Figure 8.13, pp. 242 to 243)"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 3 (Figure 8.14, pp. 243 to 245)"
+      },
+      {
+       "lvl": 3,
+       "text": "Setting the IP address on the switch"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 4 (Figure 8.15, p. 245)"
+      },
+      {
+       "lvl": 3,
+       "text": "Inter-VLAN routing with a Layer 3 switch (SVI)"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying inter-VLAN routing"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 8.4.3"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting VLANs, Trunks and Inter-VLAN Routing"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 3,
+       "text": "Addressing plan used in all labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: VLANs and access ports on one switch"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Two switches, 802.1Q trunk, allowed VLANs, native VLAN"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Router on a stick"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Layer 3 switch with SVIs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5 (paper): Read a configuration, find the addresses"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Step 0 Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-09",
+     "n": 9,
+     "title": "Enhanced Switched Technologies",
+     "display": "Chapter 9: Enhanced Switched Technologies",
+     "subject": "cisco",
+     "sourceFile": "CC09_Enhanced_Switched_Technologies.docx",
+     "sourceSha256": "4186644fda0b08e2a8b87f3741f2c526d98301a0f4c3c8771b0a7617e1db57fd",
+     "blocks": 461,
+     "words": 11263,
+     "tables": 75,
+     "boxes": 18,
+     "runs": 2036,
+     "shadedParas": 108,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "9.1 Spanning Tree Protocol (STP)"
+      },
+      {
+       "lvl": 2,
+       "text": "9.1.1 Spanning-Tree Terms"
+      },
+      {
+       "lvl": 3,
+       "text": "Bridge port roles"
+      },
+      {
+       "lvl": 3,
+       "text": "Spanning-tree port states (802.1D)"
+      },
+      {
+       "lvl": 3,
+       "text": "Convergence"
+      },
+      {
+       "lvl": 3,
+       "text": "Link costs"
+      },
+      {
+       "lvl": 2,
+       "text": "9.1.2 Spanning-Tree Operations"
+      },
+      {
+       "lvl": 3,
+       "text": "The three-step method (book page 265, used for every problem)"
+      },
+      {
+       "lvl": 3,
+       "text": "Selecting the root bridge (bridge ID)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 9.1"
+      },
+      {
+       "lvl": 1,
+       "text": "9.2 Types of Spanning-Tree Protocols"
+      },
+      {
+       "lvl": 2,
+       "text": "9.2.1 Common Spanning Tree"
+      },
+      {
+       "lvl": 2,
+       "text": "9.2.2 Per-VLAN Spanning Tree+"
+      },
+      {
+       "lvl": 3,
+       "text": "The extended system ID (why priorities move in steps of 4096)"
+      },
+      {
+       "lvl": 3,
+       "text": "Rapid Spanning Tree Protocol 802.1w (RSTP)"
+      },
+      {
+       "lvl": 3,
+       "text": "RSTP example 1 (Figure 9.10 and 9.11)"
+      },
+      {
+       "lvl": 3,
+       "text": "RSTP example 2 (Figures 9.12 to 9.14)"
+      },
+      {
+       "lvl": 3,
+       "text": "The four designated-port tie-break rules (book page 266)"
+      },
+      {
+       "lvl": 3,
+       "text": "802.1s Multiple Spanning Tree (MSTP)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 9.2"
+      },
+      {
+       "lvl": 1,
+       "text": "9.3 Modifying and Verifying the Bridge ID"
+      },
+      {
+       "lvl": 2,
+       "text": "Reading show spanning-tree"
+      },
+      {
+       "lvl": 2,
+       "text": "Finding the root without a diagram"
+      },
+      {
+       "lvl": 2,
+       "text": "Changing the root bridge"
+      },
+      {
+       "lvl": 2,
+       "text": "Enabling Rapid PVST+"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 9.3"
+      },
+      {
+       "lvl": 1,
+       "text": "9.4 Spanning-Tree Failure Consequences"
+      },
+      {
+       "lvl": 3,
+       "text": "What a loop does (book list)"
+      },
+      {
+       "lvl": 3,
+       "text": "Recovery (book method)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 9.4"
+      },
+      {
+       "lvl": 1,
+       "text": "9.5 PortFast and BPDU Guard"
+      },
+      {
+       "lvl": 2,
+       "text": "Configuring PortFast"
+      },
+      {
+       "lvl": 2,
+       "text": "9.5.1 BPDU Guard"
+      },
+      {
+       "lvl": 2,
+       "text": "Root guard and loop guard (not in the book)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 9.5"
+      },
+      {
+       "lvl": 1,
+       "text": "9.6 EtherChannel"
+      },
+      {
+       "lvl": 3,
+       "text": "Negotiation protocols and terms"
+      },
+      {
+       "lvl": 3,
+       "text": "Which modes form a channel"
+      },
+      {
+       "lvl": 2,
+       "text": "9.6.1 Configuring and Verifying Port Channels"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying"
+      },
+      {
+       "lvl": 2,
+       "text": "9.6.2 Layer-3 EtherChannel"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 9.6"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Watch the default STP elect a root"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Control the root and turn on Rapid PVST+"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: PortFast and BPDU Guard"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Layer 2 EtherChannel with LACP"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5: Layer 3 EtherChannel (optional)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 6: Paper labs (no equipment)"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: one-page revision sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (pre-check answers)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-10",
+     "n": 10,
+     "title": "Access Lists",
+     "display": "Chapter 10: Access Lists",
+     "subject": "cisco",
+     "sourceFile": "CC10_Access_Lists.docx",
+     "sourceSha256": "73d910c6a11459baff1cb244d1fb5e7ceba6cdaddf71775565466cee7856d0ca",
+     "blocks": 488,
+     "words": 11958,
+     "tables": 72,
+     "boxes": 23,
+     "runs": 2252,
+     "shadedParas": 120,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "10.1 Perimeter, Firewall, and Internal Routers"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.1"
+      },
+      {
+       "lvl": 1,
+       "text": "10.2 Introduction to Access Lists"
+      },
+      {
+       "lvl": 2,
+       "text": "The three rules every packet follows"
+      },
+      {
+       "lvl": 2,
+       "text": "Types of ACL"
+      },
+      {
+       "lvl": 2,
+       "text": "Inbound and outbound"
+      },
+      {
+       "lvl": 2,
+       "text": "Rules and guidelines from the book"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.2"
+      },
+      {
+       "lvl": 2,
+       "text": "10.2.1 Mitigating Security Issues with ACLs"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.2.1"
+      },
+      {
+       "lvl": 1,
+       "text": "10.3 Standard Access Lists"
+      },
+      {
+       "lvl": 2,
+       "text": "Building a standard ACL line"
+      },
+      {
+       "lvl": 2,
+       "text": "10.3.1 Wildcard Masking"
+      },
+      {
+       "lvl": 3,
+       "text": "Ranges that are not a whole octet"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.3.1"
+      },
+      {
+       "lvl": 2,
+       "text": "10.3.2 Standard Access List Example"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 2 (Figure 10.3): Accounting and the HR server"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 3 (Figure 10.4): block four LANs from the Internet"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.3.2"
+      },
+      {
+       "lvl": 2,
+       "text": "10.3.3 Controlling VTY (Telnet/SSH) Access"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.3.3"
+      },
+      {
+       "lvl": 1,
+       "text": "10.4 Extended Access Lists"
+      },
+      {
+       "lvl": 2,
+       "text": "The extended ACL line, part by part"
+      },
+      {
+       "lvl": 3,
+       "text": "Port operators"
+      },
+      {
+       "lvl": 3,
+       "text": "Useful options"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.4"
+      },
+      {
+       "lvl": 2,
+       "text": "10.4.1 Extended Access List Example 1"
+      },
+      {
+       "lvl": 2,
+       "text": "10.4.2 Extended Access List Example 2"
+      },
+      {
+       "lvl": 2,
+       "text": "10.4.3 Extended Access List Example 3"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.4.1 to 10.4.3"
+      },
+      {
+       "lvl": 2,
+       "text": "10.4.4 Named ACLs"
+      },
+      {
+       "lvl": 3,
+       "text": "A number used as a name"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.4.4"
+      },
+      {
+       "lvl": 2,
+       "text": "10.4.5 Remarks"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.4.5"
+      },
+      {
+       "lvl": 1,
+       "text": "10.5 Monitoring Access Lists"
+      },
+      {
+       "lvl": 3,
+       "text": "Editing with a sequence number (the book's example)"
+      },
+      {
+       "lvl": 3,
+       "text": "show ip interface"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 10.5"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting ACLs"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Build the network and test a standard ACL"
+      },
+      {
+       "lvl": 3,
+       "text": "Steps"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Extended ACL"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Named ACL, sequence numbers and the order trap"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Protect the VTY lines"
+      },
+      {
+       "lvl": 2,
+       "text": "Paper lab: wildcard drill"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-11",
+     "n": 11,
+     "title": "Network Address Translation (NAT)",
+     "display": "Chapter 11: Network Address Translation (NAT)",
+     "subject": "cisco",
+     "sourceFile": "CC11_Network_Address_Translation_NAT.docx",
+     "sourceSha256": "4ad3fa2263fa36b51270f9714c80943b30a26a25ab1eb44a41ab6c68ad5b26f1",
+     "blocks": 370,
+     "words": 9467,
+     "tables": 61,
+     "boxes": 19,
+     "runs": 1793,
+     "shadedParas": 96,
+     "headings": [
+      {
+       "lvl": 2,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "11.1 When Do We Use NAT?"
+      },
+      {
+       "lvl": 3,
+       "text": "The private ranges (RFC 1918)"
+      },
+      {
+       "lvl": 3,
+       "text": "Where NAT goes"
+      },
+      {
+       "lvl": 3,
+       "text": "Advantages and disadvantages (Table 11.1)"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 11.1"
+      },
+      {
+       "lvl": 1,
+       "text": "11.2 Types of Network Address Translation"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 11.2"
+      },
+      {
+       "lvl": 1,
+       "text": "11.3 NAT Names"
+      },
+      {
+       "lvl": 3,
+       "text": "What the book says versus what Cisco says"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 11.3"
+      },
+      {
+       "lvl": 1,
+       "text": "11.4 How NAT Works"
+      },
+      {
+       "lvl": 3,
+       "text": "Basic translation (book Figure 11.2)"
+      },
+      {
+       "lvl": 3,
+       "text": "Overloading, or PAT (book Figure 11.3)"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 11.4"
+      },
+      {
+       "lvl": 2,
+       "text": "11.4.1 Static NAT Configuration"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 11.4.1"
+      },
+      {
+       "lvl": 2,
+       "text": "11.4.2 Dynamic NAT Configuration"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 11.4.2"
+      },
+      {
+       "lvl": 2,
+       "text": "11.4.3 PAT (Overloading) Configuration"
+      },
+      {
+       "lvl": 3,
+       "text": "Two ways to write PAT"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 11.4.3"
+      },
+      {
+       "lvl": 2,
+       "text": "11.4.4 Simple Verification of NAT"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 11.4.4"
+      },
+      {
+       "lvl": 1,
+       "text": "11.5 Testing and Troubleshooting NAT"
+      },
+      {
+       "lvl": 2,
+       "text": "The book's checklist"
+      },
+      {
+       "lvl": 2,
+       "text": "Reading the translation table"
+      },
+      {
+       "lvl": 2,
+       "text": "Limits, statistics, debug, and clearing"
+      },
+      {
+       "lvl": 2,
+       "text": "Timeouts"
+      },
+      {
+       "lvl": 2,
+       "text": "Worked examples from the book (pages 330 to 333)"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 1 (Figure 11.4): which type?"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 2 (Figure 11.5): 62 inside hosts, six public addresses"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 3 (Figure 11.6): 26 hosts, six public addresses"
+      },
+      {
+       "lvl": 3,
+       "text": "Example 4: the one-line version"
+      },
+      {
+       "lvl": 3,
+       "text": "Subnet maths for NAT questions"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 11.5"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting Guide"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 3,
+       "text": "Topology and addresses"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 0: Paper lab, name the four addresses"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Build the network and prove it fails without NAT"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Static NAT for SRV1"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Dynamic NAT with a two-address pool"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: PAT (overload)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5: Break it and fix it"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-12",
+     "n": 12,
+     "title": "IP Services: CDP, LLDP, NTP, SNMP, Syslog and SSH",
+     "display": "Chapter 12: IP Services: CDP, LLDP, NTP, SNMP, Syslog and SSH",
+     "subject": "cisco",
+     "sourceFile": "CC12_IP_Services.docx",
+     "sourceSha256": "4b0b8b5964241f1ec76a7e98d85bbe1a301cf44fbe03cd3adb364b3be9e1f90e",
+     "blocks": 461,
+     "words": 9029,
+     "tables": 63,
+     "boxes": 18,
+     "runs": 1935,
+     "shadedParas": 107,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (answer before reading)"
+      },
+      {
+       "lvl": 1,
+       "text": "12.1 Exploring Connected Devices Using CDP and LLDP"
+      },
+      {
+       "lvl": 2,
+       "text": "12.1.1 Getting CDP Timers and Holdtime Information"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.1.1"
+      },
+      {
+       "lvl": 2,
+       "text": "12.1.2 Gathering Neighbor Information"
+      },
+      {
+       "lvl": 3,
+       "text": "show cdp neighbors detail"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.1.2"
+      },
+      {
+       "lvl": 2,
+       "text": "12.1.3 Documenting a Network Topology Using CDP"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.1.3"
+      },
+      {
+       "lvl": 2,
+       "text": "12.1.4 Link Layer Discovery Protocol (LLDP)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.1.4"
+      },
+      {
+       "lvl": 1,
+       "text": "12.2 Network Time Protocol (NTP)"
+      },
+      {
+       "lvl": 3,
+       "text": "Why timestamps alone are not enough"
+      },
+      {
+       "lvl": 3,
+       "text": "Verify NTP"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.2"
+      },
+      {
+       "lvl": 1,
+       "text": "12.3 SNMP"
+      },
+      {
+       "lvl": 2,
+       "text": "12.3.1 Management Information Base (MIB)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.3.1"
+      },
+      {
+       "lvl": 2,
+       "text": "12.3.2 Configuring SNMP"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.3.2"
+      },
+      {
+       "lvl": 1,
+       "text": "12.4 Syslog"
+      },
+      {
+       "lvl": 3,
+       "text": "Message format"
+      },
+      {
+       "lvl": 3,
+       "text": "Severity levels (memorise)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.4"
+      },
+      {
+       "lvl": 2,
+       "text": "12.4.1 Configuring and Verifying Syslog"
+      },
+      {
+       "lvl": 3,
+       "text": "Send messages to a syslog server"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.4.1"
+      },
+      {
+       "lvl": 1,
+       "text": "12.5 Secure Shell (SSH)"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's steps"
+      },
+      {
+       "lvl": 3,
+       "text": "Verify SSH"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 12.5"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: CDP and LLDP"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: NTP and syslog"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: SNMP"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: SSH"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-13",
+     "n": 13,
+     "title": "Security: Threats, Layer 2 Security, AAA, Passwords",
+     "display": "Chapter 13: Security: Threats, Layer 2 Security, AAA, Passwords",
+     "subject": "cisco",
+     "sourceFile": "CC13_Security.docx",
+     "sourceSha256": "0821a8bbcb8c8e3ebfffc70716b0fff3464a36e482b068ef3bd7a9b98492d3d8",
+     "blocks": 473,
+     "words": 9685,
+     "tables": 65,
+     "boxes": 14,
+     "runs": 1966,
+     "shadedParas": 92,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (answer before reading)"
+      },
+      {
+       "lvl": 1,
+       "text": "13.1 Network Security Threats and the Three Primary Attacks"
+      },
+      {
+       "lvl": 3,
+       "text": "Four types of threat actor"
+      },
+      {
+       "lvl": 3,
+       "text": "Three primary attack categories"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.1"
+      },
+      {
+       "lvl": 1,
+       "text": "13.2 Network Attacks"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.2"
+      },
+      {
+       "lvl": 1,
+       "text": "13.3 Security Program Elements"
+      },
+      {
+       "lvl": 3,
+       "text": "User awareness: social engineering"
+      },
+      {
+       "lvl": 3,
+       "text": "Malware classes"
+      },
+      {
+       "lvl": 3,
+       "text": "Training"
+      },
+      {
+       "lvl": 3,
+       "text": "Physical access control"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.3"
+      },
+      {
+       "lvl": 1,
+       "text": "13.4 Layer 2 Security Features"
+      },
+      {
+       "lvl": 2,
+       "text": "DHCP snooping"
+      },
+      {
+       "lvl": 2,
+       "text": "Dynamic ARP Inspection (DAI)"
+      },
+      {
+       "lvl": 2,
+       "text": "Identity-based networking and 802.1X"
+      },
+      {
+       "lvl": 2,
+       "text": "Configuration commands the book omits"
+      },
+      {
+       "lvl": 3,
+       "text": "Port security"
+      },
+      {
+       "lvl": 3,
+       "text": "DHCP snooping"
+      },
+      {
+       "lvl": 3,
+       "text": "Dynamic ARP Inspection"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.4"
+      },
+      {
+       "lvl": 1,
+       "text": "13.5 Securing Network Access with Cisco AAA"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.5"
+      },
+      {
+       "lvl": 1,
+       "text": "13.6 Authentication Methods"
+      },
+      {
+       "lvl": 2,
+       "text": "Windows and security-server authentication"
+      },
+      {
+       "lvl": 2,
+       "text": "RADIUS"
+      },
+      {
+       "lvl": 3,
+       "text": "Book: configuring RADIUS"
+      },
+      {
+       "lvl": 2,
+       "text": "TACACS+"
+      },
+      {
+       "lvl": 3,
+       "text": "Book: configuring TACACS+ (as printed)"
+      },
+      {
+       "lvl": 2,
+       "text": "Kerberos (in the authentication list)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.6"
+      },
+      {
+       "lvl": 1,
+       "text": "13.7 Managing User Accounts"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.7"
+      },
+      {
+       "lvl": 1,
+       "text": "13.8 Security Password Policy Elements"
+      },
+      {
+       "lvl": 2,
+       "text": "Password management"
+      },
+      {
+       "lvl": 3,
+       "text": "How many possible passwords? (arithmetic checked by script)"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's password-history example"
+      },
+      {
+       "lvl": 2,
+       "text": "Single sign-on, local authentication, LDAP"
+      },
+      {
+       "lvl": 2,
+       "text": "Password alternatives"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.8"
+      },
+      {
+       "lvl": 1,
+       "text": "13.9 User-Authentication Methods: PKI and Kerberos"
+      },
+      {
+       "lvl": 2,
+       "text": "Public Key Infrastructure (PKI)"
+      },
+      {
+       "lvl": 2,
+       "text": "Kerberos"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.9"
+      },
+      {
+       "lvl": 1,
+       "text": "13.10 Setting Passwords on Cisco Devices"
+      },
+      {
+       "lvl": 2,
+       "text": "Enable passwords"
+      },
+      {
+       "lvl": 2,
+       "text": "Line passwords"
+      },
+      {
+       "lvl": 2,
+       "text": "Encrypting your passwords"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 13.10"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Device passwords"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Local AAA, then RADIUS or TACACS+"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Layer 2 security"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-14",
+     "n": 14,
+     "title": "First Hop Redundancy Protocol (HSRP)",
+     "display": "Chapter 14: First Hop Redundancy Protocol (HSRP)",
+     "subject": "cisco",
+     "sourceFile": "CC14_First_Hop_Redundancy_Protocol_HSRP.docx",
+     "sourceSha256": "6608df986a425dc10a494ae70ea5706e2e713af18ebb790263367cd4b1b2111f",
+     "blocks": 358,
+     "words": 9880,
+     "tables": 63,
+     "boxes": 15,
+     "runs": 1790,
+     "shadedParas": 88,
+     "headings": [
+      {
+       "lvl": 2,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "14.1 Client Redundancy Issues"
+      },
+      {
+       "lvl": 3,
+       "text": "Proxy ARP: the old, accidental fix"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 14.1"
+      },
+      {
+       "lvl": 1,
+       "text": "14.2 Introducing First Hop Redundancy Protocol (FHRP)"
+      },
+      {
+       "lvl": 3,
+       "text": "The three FHRPs"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 14.2"
+      },
+      {
+       "lvl": 1,
+       "text": "14.3 Hot Standby Router Protocol (HSRP)"
+      },
+      {
+       "lvl": 3,
+       "text": "Who becomes active?"
+      },
+      {
+       "lvl": 3,
+       "text": "HSRP version 1 and version 2"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 14.3"
+      },
+      {
+       "lvl": 2,
+       "text": "14.3.1 Virtual MAC Address"
+      },
+      {
+       "lvl": 3,
+       "text": "Decimal to hex for the last byte (version 1)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 14.3.1"
+      },
+      {
+       "lvl": 2,
+       "text": "14.3.2 HSRP Timers"
+      },
+      {
+       "lvl": 3,
+       "text": "Sub-second timers"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 14.3.2"
+      },
+      {
+       "lvl": 1,
+       "text": "14.3.3 Group Roles"
+      },
+      {
+       "lvl": 3,
+       "text": "Interface Tracking (book heading on page 422, not in the table of contents)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 14.3.3"
+      },
+      {
+       "lvl": 2,
+       "text": "14.3.4 Configuring and Verifying HSRP"
+      },
+      {
+       "lvl": 3,
+       "text": "The standby command options (page 423 to 424)"
+      },
+      {
+       "lvl": 3,
+       "text": "Preemption"
+      },
+      {
+       "lvl": 3,
+       "text": "HSRP verification: show standby and show standby brief"
+      },
+      {
+       "lvl": 3,
+       "text": "HSRP states (Table 14.1)"
+      },
+      {
+       "lvl": 3,
+       "text": "debug standby"
+      },
+      {
+       "lvl": 3,
+       "text": "HSRP load balancing (page 427 to 428, Figure 14.9)"
+      },
+      {
+       "lvl": 3,
+       "text": "HSRP troubleshooting (pages 428 to 429)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 14.3.4"
+      },
+      {
+       "lvl": 1,
+       "text": "Added: VRRP and GLBP Compared with HSRP"
+      },
+      {
+       "lvl": 3,
+       "text": "VRRP master-down time"
+      },
+      {
+       "lvl": 3,
+       "text": "VRRP configuration (illustrative)"
+      },
+      {
+       "lvl": 3,
+       "text": "Reading the output (objective 3.4)"
+      },
+      {
+       "lvl": 3,
+       "text": "GLBP in two lines"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting Guide"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 3,
+       "text": "Topology and addresses"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 0: Paper lab, MACs and elections"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Build the network without HSRP"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Basic HSRP and failover"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Preempt and timers"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Interface tracking"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5: Break it and fix it"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 6 (optional): VRRP"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-15",
+     "n": 15,
+     "title": "Virtual Private Networks (VPNs)",
+     "display": "Chapter 15: Virtual Private Networks (VPNs)",
+     "subject": "cisco",
+     "sourceFile": "CC15_Virtual_Private_Networks.docx",
+     "sourceSha256": "c21d6f12d03c7070b3cb5de26d457833cd0fa797c00232c6d16efd04bd8b059e",
+     "blocks": 455,
+     "words": 11459,
+     "tables": 72,
+     "boxes": 10,
+     "runs": 2068,
+     "shadedParas": 66,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "15.1 Virtual Private Networks"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.1"
+      },
+      {
+       "lvl": 2,
+       "text": "15.1.1 Benefits of VPNs"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.1.1"
+      },
+      {
+       "lvl": 2,
+       "text": "15.1.2 Enterprise- and Provider-Managed VPNs"
+      },
+      {
+       "lvl": 3,
+       "text": "Enterprise-managed VPNs (your company runs them)"
+      },
+      {
+       "lvl": 3,
+       "text": "Provider-managed VPNs (your service provider runs them)"
+      },
+      {
+       "lvl": 3,
+       "text": "Tunnelling protocols and IPsec: two ways to build a VPN"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.1.2"
+      },
+      {
+       "lvl": 2,
+       "text": "15.1.3 Introduction to Cisco IOS IPsec"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.1.3"
+      },
+      {
+       "lvl": 2,
+       "text": "15.1.4 IPsec Transforms"
+      },
+      {
+       "lvl": 3,
+       "text": "Security protocols: AH and ESP"
+      },
+      {
+       "lvl": 3,
+       "text": "Transport mode and tunnel mode"
+      },
+      {
+       "lvl": 3,
+       "text": "ESP's five big features"
+      },
+      {
+       "lvl": 3,
+       "text": "Encryption: symmetric and asymmetric"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.1.4"
+      },
+      {
+       "lvl": 1,
+       "text": "15.2 GRE Tunnels"
+      },
+      {
+       "lvl": 3,
+       "text": "GRE characteristics (book)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.2"
+      },
+      {
+       "lvl": 2,
+       "text": "15.2.1 GRE over IPsec"
+      },
+      {
+       "lvl": 3,
+       "text": "Cisco DMVPN (Cisco proprietary)"
+      },
+      {
+       "lvl": 3,
+       "text": "Cisco IPsec VTI (Cisco proprietary)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.2.1"
+      },
+      {
+       "lvl": 2,
+       "text": "15.2.2 Configuring GRE Tunnels"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.2.2"
+      },
+      {
+       "lvl": 2,
+       "text": "15.2.3 Verifying GRE Tunnels"
+      },
+      {
+       "lvl": 3,
+       "text": "The recursive routing error"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 15.2.3"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting VPNs and GRE Tunnels"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab topology (used by Labs 1 to 5)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Build the network and test the baseline"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Build a GRE tunnel and send LAN traffic through it"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Cause and fix the recursive routing error"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4 (optional): The tunnel stays up when the far end is gone"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5 (optional): Block GRE with an ACL (links to Chapter 10)"
+      },
+      {
+       "lvl": 2,
+       "text": "Paper lab 1: choose the IPsec protocol and mode"
+      },
+      {
+       "lvl": 2,
+       "text": "Paper lab 2: GRE MTU drill"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-16",
+     "n": 16,
+     "title": "Quality of Service (QoS)",
+     "display": "Chapter 16: Quality of Service (QoS)",
+     "subject": "cisco",
+     "sourceFile": "CC16_Quality_of_Service.docx",
+     "sourceSha256": "2fb1f73771c538e729b192b1052f6eaeeaa3a3d6c0f1c775dec22b212e4e3abc",
+     "blocks": 245,
+     "words": 6484,
+     "tables": 56,
+     "boxes": 1,
+     "runs": 1227,
+     "shadedParas": 20,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tags used in this document"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "16.1 Quality of Service (book pp. 452-454)"
+      },
+      {
+       "lvl": 3,
+       "text": "The five problems QoS addresses (book pp. 452-453)"
+      },
+      {
+       "lvl": 2,
+       "text": "16.1.1 Traffic Characteristics (book pp. 453-454)"
+      },
+      {
+       "lvl": 3,
+       "text": "Requirements for one-way traffic (book p. 454)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 16.1"
+      },
+      {
+       "lvl": 1,
+       "text": "16.2 Trust Boundary (book pp. 454-455)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 16.2"
+      },
+      {
+       "lvl": 1,
+       "text": "16.3 QoS Mechanisms (book pp. 455-461)"
+      },
+      {
+       "lvl": 2,
+       "text": "16.3.1 Classification and Marking (book pp. 455-456)"
+      },
+      {
+       "lvl": 3,
+       "text": "Marking fields"
+      },
+      {
+       "lvl": 3,
+       "text": "The ToS byte, bit by bit"
+      },
+      {
+       "lvl": 3,
+       "text": "Per-hop behaviours (PHBs) you should know"
+      },
+      {
+       "lvl": 3,
+       "text": "Three ways to classify traffic (book p. 456)"
+      },
+      {
+       "lvl": 3,
+       "text": "NBAR (Network Based Application Recognition)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 16.3.1"
+      },
+      {
+       "lvl": 2,
+       "text": "16.3.2 Policing, Shaping, and Re-marking (book pp. 456-457)"
+      },
+      {
+       "lvl": 3,
+       "text": "Re-marking"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 16.3.2"
+      },
+      {
+       "lvl": 2,
+       "text": "16.3.3 Tools for Managing Congestion (book pp. 457-460)"
+      },
+      {
+       "lvl": 3,
+       "text": "Queuing and scheduling are two separate jobs"
+      },
+      {
+       "lvl": 3,
+       "text": "Three scheduling mechanisms"
+      },
+      {
+       "lvl": 3,
+       "text": "Legacy queuing methods (book p. 459)"
+      },
+      {
+       "lvl": 3,
+       "text": "The two modern methods: CBWFQ and LLQ (book pp. 459-460)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 16.3.3"
+      },
+      {
+       "lvl": 2,
+       "text": "16.3.4 Tools for Congestion Avoidance (book pp. 460-461)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 16.3.4"
+      },
+      {
+       "lvl": 1,
+       "text": "A Look at How QoS Is Configured (MQC)"
+      },
+      {
+       "lvl": 1,
+       "text": "Which QoS Tool Solves Which Problem?"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 16.1: Choose the mechanism (paper, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 16.2: Decode DSCP and the ToS byte (paper, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 16.3: Policer or shaper? (paper, 10 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 16.4: Draw the trust boundary (paper, 10 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 16.5: Optional MQC lab (Packet Tracer or real device, 25 minutes)"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-17",
+     "n": 17,
+     "title": "Internet Protocol Version 6 (IPv6)",
+     "display": "Chapter 17: Internet Protocol Version 6 (IPv6)",
+     "subject": "cisco",
+     "sourceFile": "CC17_Internet_Protocol_Version_6_IPv6.docx",
+     "sourceSha256": "2c57f0db9044f7addf859c8d0d12f7c9079af21d4317fb245ead8246d820ee90",
+     "blocks": 493,
+     "words": 11168,
+     "tables": 80,
+     "boxes": 17,
+     "runs": 2391,
+     "shadedParas": 106,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "17.1 Why Do We Need IPv6?"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.1"
+      },
+      {
+       "lvl": 1,
+       "text": "17.2 The Benefits and Uses of IPv6"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.2"
+      },
+      {
+       "lvl": 1,
+       "text": "17.3 IPv6 Addressing and Expressions"
+      },
+      {
+       "lvl": 2,
+       "text": "17.3.1 Shortened Expression"
+      },
+      {
+       "lvl": 3,
+       "text": "Practice (answers calculated by script)"
+      },
+      {
+       "lvl": 3,
+       "text": "Prefix length"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.3.1"
+      },
+      {
+       "lvl": 2,
+       "text": "17.3.2 Address Types"
+      },
+      {
+       "lvl": 3,
+       "text": "Global unicast (2000::/3)"
+      },
+      {
+       "lvl": 3,
+       "text": "Link-local (FE80::/10)"
+      },
+      {
+       "lvl": 3,
+       "text": "Unique local (FC00::/7)"
+      },
+      {
+       "lvl": 3,
+       "text": "Multicast (FF00::/8)"
+      },
+      {
+       "lvl": 3,
+       "text": "Anycast"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.3.2"
+      },
+      {
+       "lvl": 2,
+       "text": "17.3.3 Special Addresses"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.3.3"
+      },
+      {
+       "lvl": 1,
+       "text": "17.4 How IPv6 Works in an Internetwork"
+      },
+      {
+       "lvl": 2,
+       "text": "17.4.1 Manual Address Assignment"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying addresses"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.4.1"
+      },
+      {
+       "lvl": 2,
+       "text": "17.4.2 Stateless Autoconfiguration (eui-64)"
+      },
+      {
+       "lvl": 3,
+       "text": "The EUI-64 interface ID"
+      },
+      {
+       "lvl": 3,
+       "text": "The two-step process (RS and RA)"
+      },
+      {
+       "lvl": 3,
+       "text": "ipv6 address autoconfig (Branch router)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.4.2"
+      },
+      {
+       "lvl": 2,
+       "text": "17.4.3 DHCPv6 (Stateful)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.4.3"
+      },
+      {
+       "lvl": 2,
+       "text": "17.4.4 IPv6 Header"
+      },
+      {
+       "lvl": 3,
+       "text": "What changed from IPv4 (book list)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.4.4"
+      },
+      {
+       "lvl": 2,
+       "text": "17.4.5 ICMPv6"
+      },
+      {
+       "lvl": 3,
+       "text": "Path MTU discovery"
+      },
+      {
+       "lvl": 3,
+       "text": "Neighbor discovery (NDP)"
+      },
+      {
+       "lvl": 3,
+       "text": "Solicited-node multicast and Ethernet mapping"
+      },
+      {
+       "lvl": 3,
+       "text": "Duplicate address detection (DAD)"
+      },
+      {
+       "lvl": 3,
+       "text": "Multicast listener discovery and default gateways"
+      },
+      {
+       "lvl": 3,
+       "text": "Migration methods (needed for the book's review question 4)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.4.5"
+      },
+      {
+       "lvl": 1,
+       "text": "17.5 IPv6 Routing Protocols"
+      },
+      {
+       "lvl": 3,
+       "text": "Single-area OSPFv3 (added)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.5"
+      },
+      {
+       "lvl": 2,
+       "text": "17.5.1 Static Routing with IPv6"
+      },
+      {
+       "lvl": 3,
+       "text": "The four types of static route (v2.0 objective 3.2)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.5.1"
+      },
+      {
+       "lvl": 1,
+       "text": "17.6 Configuring IPv6 on Our Internetwork"
+      },
+      {
+       "lvl": 3,
+       "text": "Reading the routing table"
+      },
+      {
+       "lvl": 3,
+       "text": "SF and LA, and the anycast error"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.6"
+      },
+      {
+       "lvl": 1,
+       "text": "17.7 Configuring Routing on Our Internetwork"
+      },
+      {
+       "lvl": 3,
+       "text": "Testing"
+      },
+      {
+       "lvl": 3,
+       "text": "The Boulder router"
+      },
+      {
+       "lvl": 3,
+       "text": "Verification commands (all in one place)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 17.7"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Manual IPv6 addressing and static routes"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: EUI-64 prediction"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Stateless autoconfiguration (SLAAC) on a PC"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Floating static route and default route"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5: Neighbor discovery and solicited-node groups"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 6 (optional): OSPFv3 instead of static routes"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 7: Paper labs (no equipment)"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: one-page revision sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (pre-check answers)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-18",
+     "n": 18,
+     "title": "Troubleshooting IP, IPv6, and VLANs",
+     "display": "Chapter 18: Troubleshooting IP, IPv6, and VLANs",
+     "subject": "cisco",
+     "sourceFile": "CC18_Troubleshooting_IP_IPv6_and_VLANs.docx",
+     "sourceSha256": "57b13c52cf80cf6fc3079f9f6a21632a8902f5646b8e80bd975f5047252e04e1",
+     "blocks": 571,
+     "words": 17545,
+     "tables": 85,
+     "boxes": 30,
+     "runs": 3391,
+     "shadedParas": 206,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "18.1 Endpoints"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.1"
+      },
+      {
+       "lvl": 1,
+       "text": "18.2 Servers"
+      },
+      {
+       "lvl": 2,
+       "text": "18.2.1 Server Roles"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.2"
+      },
+      {
+       "lvl": 1,
+       "text": "18.3 IP Config"
+      },
+      {
+       "lvl": 2,
+       "text": "18.3.1 Windows 10"
+      },
+      {
+       "lvl": 2,
+       "text": "18.3.2 macOS"
+      },
+      {
+       "lvl": 2,
+       "text": "18.3.3 Ubuntu/Red Hat"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.3"
+      },
+      {
+       "lvl": 1,
+       "text": "18.4 Troubleshooting IP Network Connectivity"
+      },
+      {
+       "lvl": 3,
+       "text": "Cisco's five troubleshooting steps"
+      },
+      {
+       "lvl": 3,
+       "text": "The four host tests"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's scenario (Figure 18.16)"
+      },
+      {
+       "lvl": 3,
+       "text": "Reading interface statistics"
+      },
+      {
+       "lvl": 3,
+       "text": "The show-command toolbox for this chapter"
+      },
+      {
+       "lvl": 3,
+       "text": "Extended ping"
+      },
+      {
+       "lvl": 3,
+       "text": "The scenario continues: ping works, Telnet does not"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.4"
+      },
+      {
+       "lvl": 2,
+       "text": "18.4.1 Using SPAN for Troubleshooting"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.4.1"
+      },
+      {
+       "lvl": 2,
+       "text": "18.4.2 Configuring and Verifying Extended Access Lists"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's bug: wrong source address"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.4.2"
+      },
+      {
+       "lvl": 1,
+       "text": "18.5 Troubleshooting IPv6 Network Connectivity"
+      },
+      {
+       "lvl": 3,
+       "text": "The same five steps, with an IPv6 twist"
+      },
+      {
+       "lvl": 3,
+       "text": "The walk-through"
+      },
+      {
+       "lvl": 3,
+       "text": "IPv4 and IPv6 commands side by side"
+      },
+      {
+       "lvl": 3,
+       "text": "Windows IPv6 details from the book"
+      },
+      {
+       "lvl": 3,
+       "text": "Worked example: modified EUI-64 (v2.0 objective 1.4)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.5"
+      },
+      {
+       "lvl": 2,
+       "text": "18.5.1 ICMPv6"
+      },
+      {
+       "lvl": 3,
+       "text": "Neighbor Discovery (NDP)"
+      },
+      {
+       "lvl": 3,
+       "text": "Solicited-node multicast address"
+      },
+      {
+       "lvl": 3,
+       "text": "The neighbor cache and its states"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.5.1"
+      },
+      {
+       "lvl": 1,
+       "text": "18.6 Troubleshooting VLAN Connectivity"
+      },
+      {
+       "lvl": 2,
+       "text": "18.6.1 VLAN Troubleshooting"
+      },
+      {
+       "lvl": 3,
+       "text": "The scenario"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.6.1"
+      },
+      {
+       "lvl": 2,
+       "text": "18.6.2 Trunk Troubleshooting"
+      },
+      {
+       "lvl": 3,
+       "text": "Finding the fault: the ports are access ports"
+      },
+      {
+       "lvl": 3,
+       "text": "The five DTP modes (book p. 540)"
+      },
+      {
+       "lvl": 3,
+       "text": "The fix: make one end desirable"
+      },
+      {
+       "lvl": 3,
+       "text": "Changing the native VLAN, and the mismatch"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 18.6.2"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting Table: IP, IPv6, VLANs and Trunks"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: IPv4 method with planted faults"
+      },
+      {
+       "lvl": 3,
+       "text": "Step A: build the working network"
+      },
+      {
+       "lvl": 3,
+       "text": "Step B: plant fault 1 (the book's routing fault)"
+      },
+      {
+       "lvl": 3,
+       "text": "Step C: plant fault 2 (an ACL that passes ICMP only)"
+      },
+      {
+       "lvl": 3,
+       "text": "Step D: plant fault 3 (wrong gateway on the server)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: A named extended ACL, with a planted bug"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: IPv6 routing and neighbour discovery"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: VLAN and trunk faults between two switches"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5 (paper): read the counters, calculate EUI-64"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Step 0 Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-19",
+     "n": 19,
+     "title": "Wireless Technologies",
+     "display": "Chapter 19: Wireless Technologies",
+     "subject": "cisco",
+     "sourceFile": "CC19_Wireless_Technologies.docx",
+     "sourceSha256": "744a03d700cf821f93bd5c20d1293912b8334fa9b306fcdb06f9eb4feb0017bf",
+     "blocks": 415,
+     "words": 9826,
+     "tables": 60,
+     "boxes": 2,
+     "runs": 1834,
+     "shadedParas": 8,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (answer before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "19.1 Wireless Networks"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 19.1"
+      },
+      {
+       "lvl": 1,
+       "text": "19.2 Basic Wireless Devices"
+      },
+      {
+       "lvl": 2,
+       "text": "19.2.1 Wireless Access Points"
+      },
+      {
+       "lvl": 3,
+       "text": "Autonomous and lightweight APs [BOOK]"
+      },
+      {
+       "lvl": 2,
+       "text": "19.2.2 Wireless Network Interface Card (NIC)"
+      },
+      {
+       "lvl": 2,
+       "text": "19.2.3 Wireless Antennas"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 19.2"
+      },
+      {
+       "lvl": 1,
+       "text": "19.3 Wireless Principles"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.1 Independent Basic Service Set (Ad Hoc)"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.2 Basic Service Set (BSS)"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.3 Infrastructure Basic Service Set"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.4 Service Set ID"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.5 Extended Service Set"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.6 Repeaters"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.7 Bridging"
+      },
+      {
+       "lvl": 3,
+       "text": "Root and non-root rules [BOOK]"
+      },
+      {
+       "lvl": 2,
+       "text": "19.3.8 Mesh Networks"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 19.3"
+      },
+      {
+       "lvl": 1,
+       "text": "19.4 Nonoverlapping Wi-Fi Channels"
+      },
+      {
+       "lvl": 2,
+       "text": "19.4.1 2.4GHz Band"
+      },
+      {
+       "lvl": 3,
+       "text": "What happens when APs overlap [BOOK]"
+      },
+      {
+       "lvl": 2,
+       "text": "19.4.2 5GHz Band"
+      },
+      {
+       "lvl": 3,
+       "text": "Using several APs in one area [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "802.11n (2.4 and 5 GHz) [BOOK] p569"
+      },
+      {
+       "lvl": 3,
+       "text": "Wi-Fi generations [ADDED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 19.4"
+      },
+      {
+       "lvl": 1,
+       "text": "19.5 Radio Frequency (RF)"
+      },
+      {
+       "lvl": 3,
+       "text": "The decibel and dBm: a short lesson the book promises and skips [ADDED]"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.1 Radio Frequency Behaviors"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.2 Free Space Path Loss"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.3 Absorption"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.4 Reflection"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.5 Multipath"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.6 Refraction"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.7 Diffraction"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.8 Scattering"
+      },
+      {
+       "lvl": 2,
+       "text": "19.5.9 RF Operational Requirements"
+      },
+      {
+       "lvl": 3,
+       "text": "Line of sight [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "Fresnel zone [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "RSSI and SNR [BOOK] p580"
+      },
+      {
+       "lvl": 3,
+       "text": "Causes of interference [ADDED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 19.5"
+      },
+      {
+       "lvl": 1,
+       "text": "19.6 Wireless Security"
+      },
+      {
+       "lvl": 2,
+       "text": "19.6.1 Authentication and Encryption"
+      },
+      {
+       "lvl": 3,
+       "text": "The six steps to join an AP (open authentication) [BOOK]"
+      },
+      {
+       "lvl": 2,
+       "text": "19.6.2 WEP"
+      },
+      {
+       "lvl": 2,
+       "text": "19.6.3 WPA and WPA2: An Overview"
+      },
+      {
+       "lvl": 3,
+       "text": "Personal (PSK) and Enterprise [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "What TKIP added over WEP [BOOK]"
+      },
+      {
+       "lvl": 3,
+       "text": "The key steps in WPA2-Enterprise [BOOK] p585"
+      },
+      {
+       "lvl": 3,
+       "text": "802.11i additions [BOOK] p585"
+      },
+      {
+       "lvl": 2,
+       "text": "19.6.4 WPA3"
+      },
+      {
+       "lvl": 3,
+       "text": "WPA3-Personal [BOOK] pp586-587"
+      },
+      {
+       "lvl": 3,
+       "text": "WPA3-Enterprise [BOOK] p587"
+      },
+      {
+       "lvl": 3,
+       "text": "WPA, WPA2 and WPA3 compared (book Table 19.1) [BOOK] [UPDATED]"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 19.6"
+      },
+      {
+       "lvl": 1,
+       "text": "Wireless Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Inspect real Wi-Fi on your own laptop"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: SOHO wireless router with WPA2 (Packet Tracer)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Two APs, one ESS (Packet Tracer)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Calculations (paper or a short script)"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-20",
+     "n": 20,
+     "title": "Configuring Wireless Technologies: WLC, APs and WLANs",
+     "display": "Chapter 20: Configuring Wireless Technologies: WLC, APs and WLANs",
+     "subject": "cisco",
+     "sourceFile": "CC20_Wireless_Config.docx",
+     "sourceSha256": "03abcf57699ac8b2d50ecddf9eddfe445a43af7d2ed5779636878527e4e805e4",
+     "blocks": 472,
+     "words": 9675,
+     "tables": 60,
+     "boxes": 16,
+     "runs": 1926,
+     "shadedParas": 90,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (answer before reading)"
+      },
+      {
+       "lvl": 1,
+       "text": "20.1 WLAN Deployment Models"
+      },
+      {
+       "lvl": 2,
+       "text": "20.1.1 Stand-Alone Model"
+      },
+      {
+       "lvl": 2,
+       "text": "20.1.2 Lightweight Model"
+      },
+      {
+       "lvl": 3,
+       "text": "Split MAC"
+      },
+      {
+       "lvl": 2,
+       "text": "20.1.3 Cloud Model"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.1"
+      },
+      {
+       "lvl": 1,
+       "text": "20.2 Setting Up a Wireless LAN Controller (WLC)"
+      },
+      {
+       "lvl": 2,
+       "text": "20.2.1 Configuring the Switch"
+      },
+      {
+       "lvl": 2,
+       "text": "20.2.2 WLC Initial Setup"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.2"
+      },
+      {
+       "lvl": 1,
+       "text": "20.3 Joining Access Points (APs)"
+      },
+      {
+       "lvl": 2,
+       "text": "20.3.1 Manual Method"
+      },
+      {
+       "lvl": 2,
+       "text": "20.3.2 DNS Method"
+      },
+      {
+       "lvl": 2,
+       "text": "20.3.3 DHCP Method (option 43)"
+      },
+      {
+       "lvl": 2,
+       "text": "20.3.4 Configuring the VLAN and 20.3.5 the Switchport"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.3"
+      },
+      {
+       "lvl": 1,
+       "text": "20.4 Wireless LAN Controllers (WLC)"
+      },
+      {
+       "lvl": 1,
+       "text": "20.5 WLC Port Types"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.5"
+      },
+      {
+       "lvl": 1,
+       "text": "20.6 WLC Interface Types"
+      },
+      {
+       "lvl": 3,
+       "text": "CLI for interfaces (AireOS)"
+      },
+      {
+       "lvl": 2,
+       "text": "Interface groups"
+      },
+      {
+       "lvl": 2,
+       "text": "Link Aggregation Group (LAG)"
+      },
+      {
+       "lvl": 2,
+       "text": "Configuring the AP on the WLC"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.6"
+      },
+      {
+       "lvl": 1,
+       "text": "20.7 AP Modes"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.7"
+      },
+      {
+       "lvl": 1,
+       "text": "20.8 AP and WLC Management Access Connections"
+      },
+      {
+       "lvl": 2,
+       "text": "RADIUS on the WLC"
+      },
+      {
+       "lvl": 2,
+       "text": "TACACS+ on the WLC"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.8"
+      },
+      {
+       "lvl": 1,
+       "text": "20.9 Configuring WLANs"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.1 WLAN creation"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.2 General settings"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.3 Security settings, Layer 2 (WPA2 PSK)"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.4 Security settings, AAA servers (WPA2-Enterprise)"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.5 QoS profiles"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.6 Policy mapping"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.7 Advanced WLAN settings"
+      },
+      {
+       "lvl": 2,
+       "text": "20.9.8 Connecting the client and verifying"
+      },
+      {
+       "lvl": 3,
+       "text": "Verifying a client's IP address (not in the chapter)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 20.9"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Switch side for a WLC and APs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Option 43 and DHCP for APs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Create a WPA2-PSK WLAN in the controller GUI"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Connect and verify a client"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A (Pre-check)"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-21",
+     "n": 21,
+     "title": "Virtualization, Automation, and Programmability",
+     "display": "Chapter 21: Virtualization, Automation, and Programmability",
+     "subject": "cisco",
+     "sourceFile": "CC21_Virtualization_Automation_and_Programmability.docx",
+     "sourceSha256": "d2461940ee48ffaa618ae116b45cfbe6d9574083385f11fe678c2e334f55c3f3",
+     "blocks": 455,
+     "words": 11978,
+     "tables": 74,
+     "boxes": 14,
+     "runs": 2539,
+     "shadedParas": 169,
+     "headings": [
+      {
+       "lvl": 2,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "21.1 Virtual Machine Fundamentals"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 21.1"
+      },
+      {
+       "lvl": 1,
+       "text": "21.2 Virtualization Components"
+      },
+      {
+       "lvl": 3,
+       "text": "Cisco virtual appliances named in the book"
+      },
+      {
+       "lvl": 3,
+       "text": "Standard and distributed virtual switches"
+      },
+      {
+       "lvl": 3,
+       "text": "Virtual storage products named in the book"
+      },
+      {
+       "lvl": 2,
+       "text": "Quick check: 21.2"
+      },
+      {
+       "lvl": 1,
+       "text": "21.3 Virtualization Features"
+      },
+      {
+       "lvl": 2,
+       "text": "21.3.1 Hardware Abstraction"
+      },
+      {
+       "lvl": 2,
+       "text": "21.3.2 Snapshots"
+      },
+      {
+       "lvl": 2,
+       "text": "21.3.3 Clones"
+      },
+      {
+       "lvl": 2,
+       "text": "21.3.4 Migrations"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.3"
+      },
+      {
+       "lvl": 1,
+       "text": "21.4 Virtualization Types"
+      },
+      {
+       "lvl": 2,
+       "text": "21.4.1 Type 1"
+      },
+      {
+       "lvl": 2,
+       "text": "21.4.2 Type 2"
+      },
+      {
+       "lvl": 2,
+       "text": "21.4.3 Hardware Virtualized Machine"
+      },
+      {
+       "lvl": 2,
+       "text": "21.4.4 Paravirtualization"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.4"
+      },
+      {
+       "lvl": 1,
+       "text": "21.5 Virtualization Solutions"
+      },
+      {
+       "lvl": 2,
+       "text": "21.5.1 VMware ESXi"
+      },
+      {
+       "lvl": 2,
+       "text": "21.5.2 Hyper-V"
+      },
+      {
+       "lvl": 2,
+       "text": "21.5.3 Xen/KVM"
+      },
+      {
+       "lvl": 2,
+       "text": "21.5.4 VMware Workstation/Fusion"
+      },
+      {
+       "lvl": 2,
+       "text": "21.5.5 VirtualBox"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.5"
+      },
+      {
+       "lvl": 1,
+       "text": "21.6 Automation Components"
+      },
+      {
+       "lvl": 2,
+       "text": "21.6.1 Python"
+      },
+      {
+       "lvl": 3,
+       "text": "What the book's script does"
+      },
+      {
+       "lvl": 3,
+       "text": "A shorter version that scales (my own)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.6.1"
+      },
+      {
+       "lvl": 2,
+       "text": "21.6.2 JSON"
+      },
+      {
+       "lvl": 3,
+       "text": "JSON data from a Cisco device"
+      },
+      {
+       "lvl": 3,
+       "text": "JSON compared with Python"
+      },
+      {
+       "lvl": 3,
+       "text": "The JSON value types"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.6.2"
+      },
+      {
+       "lvl": 2,
+       "text": "21.6.3 YAML"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's example is printed wrongly"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.6.3"
+      },
+      {
+       "lvl": 2,
+       "text": "21.6.4 REST API"
+      },
+      {
+       "lvl": 3,
+       "text": "The six REST constraints (book)"
+      },
+      {
+       "lvl": 3,
+       "text": "Parts of a REST URI (Figure 21.3)"
+      },
+      {
+       "lvl": 3,
+       "text": "HTTP verbs and CRUD (Table 21.1)"
+      },
+      {
+       "lvl": 3,
+       "text": "HTTP status codes (Table 21.2)"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's Catalyst Center lab, step by step"
+      },
+      {
+       "lvl": 3,
+       "text": "Authentication types for REST APIs"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: 21.6.4"
+      },
+      {
+       "lvl": 1,
+       "text": "Added: Containers and VRFs"
+      },
+      {
+       "lvl": 3,
+       "text": "Containers compared with virtual machines"
+      },
+      {
+       "lvl": 3,
+       "text": "VRFs: virtual routers inside one router"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check: containers and VRFs"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting Guide"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 0: Paper lab, read the JSON"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1 (optional): A VM, a snapshot, and a clone"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: JSON and YAML errors on your computer"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3: Dry run of the loopback automation"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 4: Practise a REST API offline"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 5: Break it and fix it"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-22",
+     "n": 22,
+     "title": "SDN Controllers",
+     "display": "Chapter 22: SDN Controllers",
+     "subject": "cisco",
+     "sourceFile": "CC22_SDN_Controllers.docx",
+     "sourceSha256": "71d0827eb93f45bc931213d2b7c85f9331215e176f0ca417fd0bca7f417ce9b2",
+     "blocks": 518,
+     "words": 13713,
+     "tables": 74,
+     "boxes": 14,
+     "runs": 2478,
+     "shadedParas": 85,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tag legend"
+      },
+      {
+       "lvl": 1,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "22.1 Traditional Network Monitoring Systems (NMS)"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.1 Configuring SNMP"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.2 Network Health"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.3 Central Syslog"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.4 Central SNMP Traps"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.5 Interface Information"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.6 Hardware Health"
+      },
+      {
+       "lvl": 2,
+       "text": "22.1.7 Network Information"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.1"
+      },
+      {
+       "lvl": 1,
+       "text": "22.2 Traditional Network Configuration Managers (NCM)"
+      },
+      {
+       "lvl": 3,
+       "text": "NMS, NCM and manual work"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.2"
+      },
+      {
+       "lvl": 1,
+       "text": "22.3 Traditional Networking"
+      },
+      {
+       "lvl": 2,
+       "text": "22.3.1 Management Plane"
+      },
+      {
+       "lvl": 2,
+       "text": "22.3.2 Control Plane"
+      },
+      {
+       "lvl": 2,
+       "text": "22.3.3 Data Plane"
+      },
+      {
+       "lvl": 2,
+       "text": "22.3.4 Forwarding"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.3"
+      },
+      {
+       "lvl": 1,
+       "text": "22.4 Introduction to SDN"
+      },
+      {
+       "lvl": 2,
+       "text": "22.4.1 Northbound Interfaces"
+      },
+      {
+       "lvl": 2,
+       "text": "22.4.2 Southbound Interfaces"
+      },
+      {
+       "lvl": 2,
+       "text": "22.4.3 SDN Solutions"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.4"
+      },
+      {
+       "lvl": 1,
+       "text": "22.5 Separating the Control Plane"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.5"
+      },
+      {
+       "lvl": 1,
+       "text": "22.6 Controller-Based Architectures"
+      },
+      {
+       "lvl": 2,
+       "text": "22.6.1 Campus Architecture"
+      },
+      {
+       "lvl": 2,
+       "text": "22.6.2 Spine/Leaf Architecture"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.6"
+      },
+      {
+       "lvl": 1,
+       "text": "22.7 SDN Network Components"
+      },
+      {
+       "lvl": 2,
+       "text": "22.7.1 Underlay"
+      },
+      {
+       "lvl": 3,
+       "text": "MTU"
+      },
+      {
+       "lvl": 3,
+       "text": "Interface configuration"
+      },
+      {
+       "lvl": 3,
+       "text": "OSPF configuration"
+      },
+      {
+       "lvl": 3,
+       "text": "Other underlay configuration and verification"
+      },
+      {
+       "lvl": 2,
+       "text": "22.7.2 Overlay"
+      },
+      {
+       "lvl": 2,
+       "text": "22.7.3 Fabric"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.7"
+      },
+      {
+       "lvl": 1,
+       "text": "22.8 DNA Center Overview"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.1 Discovery"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.2 Network Hierarchy"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.3 Templates"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.4 Topology"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.5 Upgrades"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.6 Command Runner"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.7 Assurance"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.8 Path Trace"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.9 EasyQoS"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.10 LAN Automation"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.11 SD-Access"
+      },
+      {
+       "lvl": 2,
+       "text": "22.8.12 Restful API"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 22.8"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting Monitoring, Underlays and Controllers"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 1: Build a spine/leaf Layer 3 underlay"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 2: Syslog and SNMP configuration"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 3 (optional): Call a controller's REST API"
+      },
+      {
+       "lvl": 2,
+       "text": "Paper lab 1: sort the items into planes"
+      },
+      {
+       "lvl": 2,
+       "text": "Paper lab 2: NMS, NCM or controller?"
+      },
+      {
+       "lvl": 2,
+       "text": "Paper lab 3: Clos link counts"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    },
+    {
+     "id": "ccna-23",
+     "n": 23,
+     "title": "Configuration Management",
+     "display": "Chapter 23: Configuration Management",
+     "subject": "cisco",
+     "sourceFile": "CC23_Configuration_Management.docx",
+     "sourceSha256": "d96d54c84b5ce6e596d5eddae4eb160b40450a356883f7cde6432f7aa2f876d1",
+     "blocks": 384,
+     "words": 10542,
+     "tables": 61,
+     "boxes": 14,
+     "runs": 2352,
+     "shadedParas": 134,
+     "headings": [
+      {
+       "lvl": 3,
+       "text": "Tags used in this document"
+      },
+      {
+       "lvl": 3,
+       "text": "Where this chapter fits in the exam"
+      },
+      {
+       "lvl": 1,
+       "text": "Step 0: Pre-check (do this before you read)"
+      },
+      {
+       "lvl": 1,
+       "text": "23.1 Team Silos (book pp. 744-748)"
+      },
+      {
+       "lvl": 3,
+       "text": "The book's example: a developer needs a new web server"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 23.1"
+      },
+      {
+       "lvl": 1,
+       "text": "23.2 DevOps (book p. 748)"
+      },
+      {
+       "lvl": 1,
+       "text": "23.3 Infrastructure as Code (IaC) (book pp. 748-750)"
+      },
+      {
+       "lvl": 3,
+       "text": "Configuration drift"
+      },
+      {
+       "lvl": 3,
+       "text": "Idempotence"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 23.2-23.3"
+      },
+      {
+       "lvl": 1,
+       "text": "23.4 Ansible (book pp. 750-763)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.1 Installation (book pp. 751-752)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.2 Settings (book p. 752)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.3 Inventory (book p. 753)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.4 Lab Setup (book pp. 753-755)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.5 Modules (book pp. 755-756)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.6 Ad-Hoc Example (book p. 756)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.4.7 Playbook Example (book pp. 756-763)"
+      },
+      {
+       "lvl": 3,
+       "text": "YAML rules (book review question 13)"
+      },
+      {
+       "lvl": 3,
+       "text": "The parts of a play"
+      },
+      {
+       "lvl": 3,
+       "text": "A modern version of the same idea"
+      },
+      {
+       "lvl": 3,
+       "text": "Running a playbook"
+      },
+      {
+       "lvl": 3,
+       "text": "What an Ansible error looks like (book p. 762)"
+      },
+      {
+       "lvl": 3,
+       "text": "Ansible terms (book p. 763)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 23.4"
+      },
+      {
+       "lvl": 1,
+       "text": "23.5 Ansible Tower / AWX (book p. 763)"
+      },
+      {
+       "lvl": 1,
+       "text": "23.6 Puppet (book pp. 764-772)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.1 Installation (book pp. 764-765)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.2 Lab Setup (book pp. 765-766)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.3 Site Manifest File (book pp. 766-767)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.4 DC Manifest File (book pp. 768-769)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.5 Installing the Puppet Agent (book pp. 769-770)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.6 Verifying the Results (book pp. 770-771)"
+      },
+      {
+       "lvl": 3,
+       "text": "Puppet terms (book p. 771)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.6.7 Puppet Enterprise (book pp. 771-772)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 23.6"
+      },
+      {
+       "lvl": 1,
+       "text": "23.7 Chef (book pp. 772-781)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.7.1 Installation - Server (book pp. 774-775)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.7.2 Installation - Workstation (book pp. 775-777)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.7.3 Lab Setup (book pp. 777-781)"
+      },
+      {
+       "lvl": 2,
+       "text": "23.7.4 Verifying the Results (book p. 781)"
+      },
+      {
+       "lvl": 3,
+       "text": "Quick check 23.7"
+      },
+      {
+       "lvl": 1,
+       "text": "Terraform: What the Book Leaves Out"
+      },
+      {
+       "lvl": 1,
+       "text": "Comparison Table: Ansible, Puppet, Chef, Terraform"
+      },
+      {
+       "lvl": 1,
+       "text": "Hands-On Labs"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.1: Which team does what? (paper, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.2: Fix the broken playbook (editor, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.3: Install Ansible and run an ad-hoc command (Linux or WSL, 25 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.4: Run a show command on a Cisco device with Ansible (CML, GNS3 or a lab router, 40 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.5: Prove idempotence with a VLAN playbook (CML, GNS3 or a lab switch, 30 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.6: Read a manifest and a recipe (paper, 15 minutes)"
+      },
+      {
+       "lvl": 2,
+       "text": "Lab 23.7: Terraform in five minutes (optional, any computer, 20 minutes)"
+      },
+      {
+       "lvl": 1,
+       "text": "Troubleshooting: Configuration Management Problems"
+      },
+      {
+       "lvl": 1,
+       "text": "Review Questions"
+      },
+      {
+       "lvl": 1,
+       "text": "Exam Essentials: One-Page Revision Sheet"
+      },
+      {
+       "lvl": 1,
+       "text": "Changes and Gaps Log (book versus current)"
+      },
+      {
+       "lvl": 1,
+       "text": "Self-Assessment and Tracker Update"
+      },
+      {
+       "lvl": 1,
+       "text": "Answer Key A: Pre-Check"
+      },
+      {
+       "lvl": 1,
+       "text": "Sources and Verification Status"
+      }
+     ]
+    }
+   ]
+  },
+  "rhel": {
+   "label": "Red Hat Enterprise Linux Administration I",
+   "subject": "rhel",
+   "built": "2026-10-19",
+   "count": 17,
+   "docs": [
+    {
+     "id": "rhel-01",
+     "n": 1,
+     "title": "Getting Started with Red Hat Enterprise Linux",
+     "display": "Chapter 1: Getting Started with Red Hat Enterprise Linux",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch01_Study.docx",
+     "sourceSha256": "c5625b84302fdeb6c13283d4f718503e1c194fafad7b1c9d40c169ad7d13fe64",
+     "blocks": 149,
+     "words": 2623,
+     "tables": 0,
+     "boxes": 37,
+     "runs": 281,
+     "shadedParas": 54,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "What is Linux?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 Why should you learn about Linux?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 What makes Linux great?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 What is open source software?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Types of open source licenses"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Who develops open source software?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Who is Red Hat?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 What is a Linux distribution?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.8 Development of Red Hat Enterprise Linux"
+      },
+      {
+       "lvl": 2,
+       "text": "1.9 Fedora"
+      },
+      {
+       "lvl": 2,
+       "text": "1.10 Red Hat Enterprise Linux"
+      },
+      {
+       "lvl": 2,
+       "text": "1.11 CentOS"
+      },
+      {
+       "lvl": 2,
+       "text": "1.12 Trying Out Red Hat Enterprise Linux"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-02",
+     "n": 2,
+     "title": "Accessing the Command Line",
+     "display": "Chapter 2: Accessing the Command Line",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch02_Study.docx",
+     "sourceSha256": "b6e791b908ec3f8ad21ef8af1efad983b86d9e9eaf327790141913560ab11816",
+     "blocks": 445,
+     "words": 7289,
+     "tables": 1,
+     "boxes": 105,
+     "runs": 1115,
+     "shadedParas": 259,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Accessing the Command Line"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 What the shell and bash are"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 The shell prompt: $ and #"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Command, options and arguments"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Terminals and virtual consoles"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 The graphical login and its console"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Headless servers and the serial console"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 Logging in over the network with SSH"
+      },
+      {
+       "lvl": 2,
+       "text": "1.8 Logging in with a key instead of a password"
+      },
+      {
+       "lvl": 2,
+       "text": "1.9 The first-login host key question"
+      },
+      {
+       "lvl": 2,
+       "text": "1.10 Logging out"
+      },
+      {
+       "lvl": 1,
+       "text": "Accessing the Command Line Using the Desktop"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 The GNOME desktop"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 The top bar and the Activities overview"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 The dash, windows overview and workspace selector"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 The message tray and keyboard shortcuts"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Sending special keys in a browser-based classroom"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 Workspaces"
+      },
+      {
+       "lvl": 2,
+       "text": "2.7 Starting a terminal"
+      },
+      {
+       "lvl": 2,
+       "text": "2.8 Locking, logging out and powering off"
+      },
+      {
+       "lvl": 1,
+       "text": "Executing Commands Using the Bash Shell"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Basic command syntax"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Running several commands on one line"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 The date command"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 The passwd command"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 The file command"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Viewing files with cat"
+      },
+      {
+       "lvl": 2,
+       "text": "3.7 Paging through files with less"
+      },
+      {
+       "lvl": 2,
+       "text": "3.8 Showing the start or end of a file: head and tail"
+      },
+      {
+       "lvl": 2,
+       "text": "3.9 Counting with wc"
+      },
+      {
+       "lvl": 2,
+       "text": "3.10 Tab completion"
+      },
+      {
+       "lvl": 2,
+       "text": "3.11 Continuing a long command on another line"
+      },
+      {
+       "lvl": 2,
+       "text": "3.12 Command history and the ! character"
+      },
+      {
+       "lvl": 2,
+       "text": "3.13 Arrow keys and Alt+. for earlier commands"
+      },
+      {
+       "lvl": 2,
+       "text": "3.14 Editing the command line"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-03",
+     "n": 3,
+     "title": "Managing Files From the Command Line",
+     "display": "Chapter 3: Managing Files From the Command Line",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch03_Study.docx",
+     "sourceSha256": "8078d79867f6b1cd5905907f9b5de2000dd6a229757a7124b0ee7cbf059bf774",
+     "blocks": 380,
+     "words": 5754,
+     "tables": 1,
+     "boxes": 99,
+     "runs": 1415,
+     "shadedParas": 227,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter 3: Managing Files From the Command Line"
+      },
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Describing Linux File System Hierarchy Concepts"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 Understanding the file-system hierarchy"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Where programs and settings live"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Where data lives and changes"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 /bin, /sbin, /lib and /lib64 are shortcuts"
+      },
+      {
+       "lvl": 1,
+       "text": "Specifying Files by Name"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Absolute paths"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Relative paths and the working directory"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Reading the shell prompt"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 Changing directory with cd"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Listing files with ls"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 The special directories . and .. and cd -"
+      },
+      {
+       "lvl": 2,
+       "text": "2.7 Creating empty practice files with touch"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing Files Using Command-line Tools"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Creating directories with mkdir"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Copying a file with cp"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Copying several files and whole directories"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Moving and renaming with mv"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Removing files with rm"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Removing directories with rm -r and rmdir"
+      },
+      {
+       "lvl": 1,
+       "text": "Making Links Between Files"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1 Hard links"
+      },
+      {
+       "lvl": 2,
+       "text": "4.2 Deleting one hard link"
+      },
+      {
+       "lvl": 2,
+       "text": "4.3 Limits of hard links"
+      },
+      {
+       "lvl": 2,
+       "text": "4.4 Soft (symbolic) links"
+      },
+      {
+       "lvl": 2,
+       "text": "4.5 Dangling soft links"
+      },
+      {
+       "lvl": 2,
+       "text": "4.6 Soft links to directories"
+      },
+      {
+       "lvl": 1,
+       "text": "Matching File Names with Shell Expansions"
+      },
+      {
+       "lvl": 2,
+       "text": "5.1 Wildcards (globbing)"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2 Using wildcards on real files"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3 Tilde expansion"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4 Brace expansion"
+      },
+      {
+       "lvl": 2,
+       "text": "5.5 Variable expansion"
+      },
+      {
+       "lvl": 2,
+       "text": "5.6 Command substitution"
+      },
+      {
+       "lvl": 2,
+       "text": "5.7 Protecting arguments from expansion"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-04",
+     "n": 4,
+     "title": "Getting Help in Red Hat Enterprise Linux",
+     "display": "Chapter 4: Getting Help in Red Hat Enterprise Linux",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch04_Study.docx",
+     "sourceSha256": "43595d59ec5c6eabe7cb19e8cc7b2b053fe594789526984352d7248040a0a15d",
+     "blocks": 105,
+     "words": 2356,
+     "tables": 4,
+     "boxes": 30,
+     "runs": 559,
+     "shadedParas": 49,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Reading Manual Pages"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 Opening a manual page with man"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Knowing the manual sections"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Choosing a section: man 5 passwd"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Moving around inside a man page"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Knowing the parts of a man page"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Searching man pages by keyword"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 Saving a man page as a printable file"
+      },
+      {
+       "lvl": 1,
+       "text": "Reading Info Documentation"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Understanding GNU Info"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Opening Info with pinfo"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Comparing pinfo and man keys"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-05",
+     "n": 5,
+     "title": "Creating, Viewing, and Editing Text Files",
+     "display": "Chapter 5: Creating, Viewing, and Editing Text Files",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch05_Study.docx",
+     "sourceSha256": "f7c33bb6d975af8b7e3e41c07d8ee5f841dd184c0a7a86400541b1ec5d998f3d",
+     "blocks": 235,
+     "words": 4517,
+     "tables": 4,
+     "boxes": 65,
+     "runs": 1025,
+     "shadedParas": 150,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Redirecting Output to a File or Program"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 Standard input, standard output, and standard error"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Saving output in a file with > and >>"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Saving or hiding error messages with 2>"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Why the order of redirections matters"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Building pipelines with |"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Saving and viewing at the same time with tee"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 Sending errors through a pipe"
+      },
+      {
+       "lvl": 1,
+       "text": "Editing Text Files from the Shell Prompt"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Why learn Vim"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Starting Vim: vi or vim"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Understanding Vim modes"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 The minimum Vim workflow"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Copying and moving text: yank, put, and visual mode"
+      },
+      {
+       "lvl": 1,
+       "text": "Changing the Shell Environment"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Creating shell variables"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Using a variable's value with $"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Changing how Bash behaves with shell variables"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Environment variables and export"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Useful environment variables: HOME and LANG"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 The PATH variable"
+      },
+      {
+       "lvl": 2,
+       "text": "3.7 Setting the default text editor"
+      },
+      {
+       "lvl": 2,
+       "text": "3.8 Setting variables automatically with ~/.bashrc"
+      },
+      {
+       "lvl": 2,
+       "text": "3.9 Unsetting and unexporting variables"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-06",
+     "n": 6,
+     "title": "Managing Local Users and Groups",
+     "display": "Chapter 6: Managing Local Users and Groups",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch06_Study.docx",
+     "sourceSha256": "9cd0a3c7dfa69ed18a7d05f4dec21a5fd1556a3d162e079ef24d54ba699f74c5",
+     "blocks": 272,
+     "words": 5270,
+     "tables": 5,
+     "boxes": 83,
+     "runs": 1171,
+     "shadedParas": 173,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Describing User and Group Concepts"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 What is a user?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 The three types of user accounts"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Seeing who owns files and processes"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 The /etc/passwd file"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 What is a group?"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Primary and supplementary groups"
+      },
+      {
+       "lvl": 1,
+       "text": "Gaining Superuser Access"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 The superuser"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Switching users with su and su -"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Running commands with sudo"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 The wheel group and sudo"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Getting an interactive root shell with sudo"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 Configuring sudo"
+      },
+      {
+       "lvl": 2,
+       "text": "2.7 sudo su - versus sudo -i"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing Local User Accounts"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Creating users with useradd"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Changing users with usermod"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Deleting users with userdel"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Setting passwords with passwd"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 UID ranges"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing Local Group Accounts"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1 Creating groups with groupadd"
+      },
+      {
+       "lvl": 2,
+       "text": "4.2 Changing groups with groupmod"
+      },
+      {
+       "lvl": 2,
+       "text": "4.3 Deleting groups with groupdel"
+      },
+      {
+       "lvl": 2,
+       "text": "4.4 Changing group membership"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing User Passwords"
+      },
+      {
+       "lvl": 2,
+       "text": "5.1 Shadow passwords and the /etc/shadow file"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2 The format of an encrypted password and how login checks it"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3 Configuring password aging with chage"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4 Locking and expiring accounts"
+      },
+      {
+       "lvl": 2,
+       "text": "5.5 The nologin shell"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-07",
+     "n": 7,
+     "title": "Controlling Access to Files",
+     "display": "Chapter 7: Controlling Access to Files",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch07_Study.docx",
+     "sourceSha256": "bffb63ed213026f418addcff89be0ad36b015f49babf719b05b0c9e2ffa90870",
+     "blocks": 144,
+     "words": 2898,
+     "tables": 2,
+     "boxes": 33,
+     "runs": 710,
+     "shadedParas": 87,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Interpreting Linux File System Permissions"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 The three categories: user, group, and other"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Read, write, and execute"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Viewing permissions and ownership with ls -l"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Working out who can do what"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing File System Permissions from the Command Line"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Changing permissions with the symbolic method"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Changing permissions with the numeric method"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Changing ownership with chown and chgrp"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing Default Permissions and File Access"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Special permissions"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Setting special permissions"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Default permissions and the umask"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Making umask changes permanent"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-08",
+     "n": 8,
+     "title": "Monitoring and Managing Linux Processes",
+     "display": "Chapter 8: Monitoring and Managing Linux Processes",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch08_Study.docx",
+     "sourceSha256": "50834dd245fd1ae1b469ff7b2619e9b3ae33c9f97b4f63a96904585925f05423",
+     "blocks": 261,
+     "words": 4505,
+     "tables": 3,
+     "boxes": 55,
+     "runs": 831,
+     "shadedParas": 102,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Listing Processes"
+      },
+      {
+       "lvl": 2,
+       "text": "8.1 Definition of a process"
+      },
+      {
+       "lvl": 2,
+       "text": "8.2 How a process is created: fork, exec and zombies"
+      },
+      {
+       "lvl": 2,
+       "text": "8.3 Describing process states"
+      },
+      {
+       "lvl": 2,
+       "text": "8.4 Why process states are important"
+      },
+      {
+       "lvl": 2,
+       "text": "8.5 Listing processes with ps"
+      },
+      {
+       "lvl": 1,
+       "text": "Controlling Jobs"
+      },
+      {
+       "lvl": 2,
+       "text": "8.6 Describing jobs and sessions"
+      },
+      {
+       "lvl": 2,
+       "text": "8.7 Running jobs in the background"
+      },
+      {
+       "lvl": 2,
+       "text": "8.8 Moving jobs between foreground and background"
+      },
+      {
+       "lvl": 1,
+       "text": "Killing Processes"
+      },
+      {
+       "lvl": 2,
+       "text": "8.9 Process control using signals"
+      },
+      {
+       "lvl": 2,
+       "text": "8.10 Sending signals with kill, killall and pkill"
+      },
+      {
+       "lvl": 2,
+       "text": "8.11 Logging users out administratively"
+      },
+      {
+       "lvl": 1,
+       "text": "Monitoring Process Activity"
+      },
+      {
+       "lvl": 2,
+       "text": "8.12 Describing load average"
+      },
+      {
+       "lvl": 2,
+       "text": "8.13 Interpreting displayed load average values"
+      },
+      {
+       "lvl": 2,
+       "text": "8.14 Real-time process monitoring with top"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-09",
+     "n": 9,
+     "title": "Controlling Services and Daemons",
+     "display": "Chapter 9: Controlling Services and Daemons",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch09_Study.docx",
+     "sourceSha256": "9a28590d2947a6a477c815e3949e1652cd87b244408a1fe3db6fe0ff305b4849",
+     "blocks": 192,
+     "words": 2789,
+     "tables": 2,
+     "boxes": 44,
+     "runs": 525,
+     "shadedParas": 89,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Identifying Automatically Started System Processes"
+      },
+      {
+       "lvl": 2,
+       "text": "9.1 Introduction to systemd"
+      },
+      {
+       "lvl": 2,
+       "text": "9.2 Describing service units"
+      },
+      {
+       "lvl": 2,
+       "text": "9.3 Listing service units"
+      },
+      {
+       "lvl": 2,
+       "text": "9.4 Viewing service states"
+      },
+      {
+       "lvl": 2,
+       "text": "9.5 Verifying the status of a service"
+      },
+      {
+       "lvl": 1,
+       "text": "Controlling System Services"
+      },
+      {
+       "lvl": 2,
+       "text": "9.6 Starting and stopping services"
+      },
+      {
+       "lvl": 2,
+       "text": "9.7 Restarting and reloading services"
+      },
+      {
+       "lvl": 2,
+       "text": "9.8 Listing unit dependencies"
+      },
+      {
+       "lvl": 2,
+       "text": "9.9 Masking and unmasking services"
+      },
+      {
+       "lvl": 2,
+       "text": "9.10 Enabling services to start or stop at boot"
+      },
+      {
+       "lvl": 2,
+       "text": "9.11 Summary of systemctl commands"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-10",
+     "n": 10,
+     "title": "Configuring and Securing SSH",
+     "display": "Chapter 10: Configuring and Securing SSH",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch10_Study.docx",
+     "sourceSha256": "b01d647ee5b633116ef2b22bd54122b1cf7179902d178cba7331f7434196760f",
+     "blocks": 210,
+     "words": 3397,
+     "tables": 0,
+     "boxes": 50,
+     "runs": 626,
+     "shadedParas": 102,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Accessing the Remote Command Line with SSH"
+      },
+      {
+       "lvl": 2,
+       "text": "10.1 What is OpenSSH?"
+      },
+      {
+       "lvl": 2,
+       "text": "10.2 Secure Shell examples"
+      },
+      {
+       "lvl": 2,
+       "text": "10.3 Identifying remote users"
+      },
+      {
+       "lvl": 2,
+       "text": "10.4 SSH host keys"
+      },
+      {
+       "lvl": 2,
+       "text": "10.5 SSH known hosts key management"
+      },
+      {
+       "lvl": 1,
+       "text": "Configuring SSH Key-based Authentication"
+      },
+      {
+       "lvl": 2,
+       "text": "10.6 SSH key-based authentication"
+      },
+      {
+       "lvl": 2,
+       "text": "10.7 Generating SSH keys"
+      },
+      {
+       "lvl": 2,
+       "text": "10.8 Sharing the public key"
+      },
+      {
+       "lvl": 2,
+       "text": "10.9 Using ssh-agent for non-interactive authentication"
+      },
+      {
+       "lvl": 1,
+       "text": "Customizing OpenSSH Service Configuration"
+      },
+      {
+       "lvl": 2,
+       "text": "10.10 Configuring the OpenSSH server"
+      },
+      {
+       "lvl": 2,
+       "text": "10.11 Prohibit the superuser from logging in using SSH"
+      },
+      {
+       "lvl": 2,
+       "text": "10.12 Prohibiting password-based authentication for SSH"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-11",
+     "n": 11,
+     "title": "Analyzing and Storing Logs",
+     "display": "Chapter 11: Analyzing and Storing Logs",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch11_Study.docx",
+     "sourceSha256": "88ffb5e297850c83cb5623b4350bd7db429e5f5fb4863b7ee676fb820e38091c",
+     "blocks": 331,
+     "words": 4772,
+     "tables": 0,
+     "boxes": 75,
+     "runs": 1110,
+     "shadedParas": 156,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter 11: Analyzing and Storing Logs"
+      },
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Describing System Log Architecture"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 What system logs are"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 The two logging services"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Selected log files in /var/log"
+      },
+      {
+       "lvl": 1,
+       "text": "Reviewing Syslog Files"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Facilities and priorities"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 How rsyslog rules work"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Log file rotation"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 Reading one syslog entry"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Watching a log live with tail -f"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 Sending syslog messages with logger"
+      },
+      {
+       "lvl": 1,
+       "text": "Reviewing System Journal Entries"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 The journal and journalctl"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Last entries and live view"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Filtering by priority"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Filtering by time"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Journal fields and verbose output"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Combining journal fields"
+      },
+      {
+       "lvl": 1,
+       "text": "Preserving the System Journal"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1 The Storage setting"
+      },
+      {
+       "lvl": 2,
+       "text": "4.2 Journal size and rotation limits"
+      },
+      {
+       "lvl": 2,
+       "text": "4.3 Configuring a persistent journal"
+      },
+      {
+       "lvl": 2,
+       "text": "4.4 Reading older boots with -b"
+      },
+      {
+       "lvl": 1,
+       "text": "Maintaining Accurate Time"
+      },
+      {
+       "lvl": 2,
+       "text": "5.1 Why time matters and timedatectl"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2 Time zones"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3 Changing the time zone"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4 Setting the time and turning NTP on"
+      },
+      {
+       "lvl": 2,
+       "text": "5.5 Configuring chronyd"
+      },
+      {
+       "lvl": 2,
+       "text": "5.6 Checking synchronization with chronyc"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-12",
+     "n": 12,
+     "title": "Managing Networking",
+     "display": "Chapter 12: Managing Networking",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch12_Study.docx",
+     "sourceSha256": "2051cc9bdee221d737889b1641bc497d2ba062702b8265a6d82c54a9e6edc420",
+     "blocks": 378,
+     "words": 6317,
+     "tables": 3,
+     "boxes": 102,
+     "runs": 1471,
+     "shadedParas": 197,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter 12: Managing Networking"
+      },
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Describing Networking Concepts"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 The TCP/IP network model"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Network interface names"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 IPv4 addresses and netmasks"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 IPv4 routing"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Setting IPv4 addresses: DHCP or static"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 IPv6 addresses"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 IPv6 subnets and special addresses"
+      },
+      {
+       "lvl": 2,
+       "text": "1.8 Link-local addresses and scope identifiers"
+      },
+      {
+       "lvl": 2,
+       "text": "1.9 IPv6 multicast"
+      },
+      {
+       "lvl": 2,
+       "text": "1.10 IPv6 address configuration"
+      },
+      {
+       "lvl": 2,
+       "text": "1.11 Host names and IP addresses"
+      },
+      {
+       "lvl": 1,
+       "text": "Validating Network Configuration"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Listing interfaces with ip link"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Showing IP addresses with ip addr"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Interface statistics"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 Testing connectivity with ping and ping6"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Pinging link-local and multicast addresses"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 Showing routes with ip route"
+      },
+      {
+       "lvl": 2,
+       "text": "2.7 Tracing the path with tracepath"
+      },
+      {
+       "lvl": 2,
+       "text": "2.8 Checking ports and services with ss"
+      },
+      {
+       "lvl": 1,
+       "text": "Configuring Networking from the Command Line"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 NetworkManager concepts"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Viewing networking information with nmcli"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Adding a network connection"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Activating and deactivating connections"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Viewing and modifying connection settings"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Deleting connections and who may change settings"
+      },
+      {
+       "lvl": 2,
+       "text": "3.7 Summary of key nmcli commands"
+      },
+      {
+       "lvl": 1,
+       "text": "Editing Network Configuration Files"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1 Connection configuration files"
+      },
+      {
+       "lvl": 2,
+       "text": "4.2 Matching nmcli settings with ifcfg directives"
+      },
+      {
+       "lvl": 2,
+       "text": "4.3 Editing an ifcfg file and applying it"
+      },
+      {
+       "lvl": 1,
+       "text": "Configuring Host Names and Name Resolution"
+      },
+      {
+       "lvl": 2,
+       "text": "5.1 Changing the system host name"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2 Name resolution with /etc/hosts"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3 DNS and /etc/resolv.conf"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4 Testing DNS and keeping the settings"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-13",
+     "n": 13,
+     "title": "Archiving and Transferring Files",
+     "display": "Chapter 13: Archiving and Transferring Files",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch13_Study.docx",
+     "sourceSha256": "f5d5d31874cf5ec185f504afba2a4d293d6116f1744d1655280f65355da6b561",
+     "blocks": 307,
+     "words": 4230,
+     "tables": 3,
+     "boxes": 80,
+     "runs": 1244,
+     "shadedParas": 156,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing Compressed tar Archives"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 What tar does"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 The tar options you need"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Creating an archive"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Archiving system directories as root"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Listing the contents of an archive"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Extracting an archive"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 Compression choices: gzip, bzip2 and xz"
+      },
+      {
+       "lvl": 2,
+       "text": "1.8 Creating a compressed archive"
+      },
+      {
+       "lvl": 2,
+       "text": "1.9 Extracting a compressed archive"
+      },
+      {
+       "lvl": 2,
+       "text": "1.10 Compressing a single file"
+      },
+      {
+       "lvl": 1,
+       "text": "Transferring Files Between Systems Securely"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Copying files with scp"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Copying files from a remote system"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Copying a whole directory with scp -r"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 Interactive transfers with sftp"
+      },
+      {
+       "lvl": 1,
+       "text": "Synchronizing Files Between Systems Securely"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Why use rsync"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Archive mode: rsync -a and -v"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 The trailing slash on the source"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Testing first with a dry run"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Synchronizing with a remote system"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Why the second sync is faster"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-14",
+     "n": 14,
+     "title": "Installing and Updating Software Packages",
+     "display": "Chapter 14: Installing and Updating Software Packages",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch14_Study.docx",
+     "sourceSha256": "098e7dbed0a00790e87c40783d2fa7467f3c8a912448e65210b7352026502547",
+     "blocks": 470,
+     "words": 6660,
+     "tables": 1,
+     "boxes": 137,
+     "runs": 1648,
+     "shadedParas": 280,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Registering Systems for Red Hat Support"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 What Red Hat Subscription Management does"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Registering a system from the command line"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Attaching and viewing subscriptions"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Registering with the graphical tool"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Entitlement certificates"
+      },
+      {
+       "lvl": 1,
+       "text": "Explaining and Investigating RPM Software Packages"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 What an RPM package is"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Reading a package name"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Signed packages"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 How RPM updates work"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Asking rpm about installed packages"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 Config files, documentation and scripts of a package"
+      },
+      {
+       "lvl": 2,
+       "text": "2.7 Querying a package file before installing"
+      },
+      {
+       "lvl": 2,
+       "text": "2.8 Installing a downloaded package with rpm"
+      },
+      {
+       "lvl": 2,
+       "text": "2.9 Extracting files from an RPM without installing"
+      },
+      {
+       "lvl": 1,
+       "text": "Installing and Updating Software Packages with Yum"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Why yum, not rpm"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Finding software: list and search"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Details and file owners: info and provides"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Installing a package"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Updating packages and the kernel"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Removing packages"
+      },
+      {
+       "lvl": 2,
+       "text": "3.7 Package groups: list and info"
+      },
+      {
+       "lvl": 2,
+       "text": "3.8 Installing a group"
+      },
+      {
+       "lvl": 2,
+       "text": "3.9 Transaction history and undo"
+      },
+      {
+       "lvl": 1,
+       "text": "Enabling Yum Software Repositories"
+      },
+      {
+       "lvl": 2,
+       "text": "4.1 Seeing which repositories are available"
+      },
+      {
+       "lvl": 2,
+       "text": "4.2 Enabling or disabling a repository"
+      },
+      {
+       "lvl": 2,
+       "text": "4.3 Third-party repositories and .repo files"
+      },
+      {
+       "lvl": 2,
+       "text": "4.4 Creating a repository file with a command"
+      },
+      {
+       "lvl": 2,
+       "text": "4.5 Repository packages and GPG keys"
+      },
+      {
+       "lvl": 2,
+       "text": "4.6 Defining, enabling and disabling temporarily"
+      },
+      {
+       "lvl": 1,
+       "text": "Managing Package Module Streams"
+      },
+      {
+       "lvl": 2,
+       "text": "5.1 BaseOS and AppStream"
+      },
+      {
+       "lvl": 2,
+       "text": "5.2 Modules, streams and profiles"
+      },
+      {
+       "lvl": 2,
+       "text": "5.3 Listing modules and streams"
+      },
+      {
+       "lvl": 2,
+       "text": "5.4 Module details"
+      },
+      {
+       "lvl": 2,
+       "text": "5.5 Enabling a stream and installing a module"
+      },
+      {
+       "lvl": 2,
+       "text": "5.6 Removing a module and disabling a stream"
+      },
+      {
+       "lvl": 2,
+       "text": "5.7 Switching module streams"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-15",
+     "n": 15,
+     "title": "Accessing Linux File Systems",
+     "display": "Chapter 15: Accessing Linux File Systems",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch15_Study.docx",
+     "sourceSha256": "d340438f93f8be45087d3eaca96691f73891d779a4db62d35d77c696cdbe0bd2",
+     "blocks": 265,
+     "words": 4638,
+     "tables": 4,
+     "boxes": 66,
+     "runs": 1094,
+     "shadedParas": 202,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter 15: Accessing Linux File Systems"
+      },
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Identifying File Systems and Devices"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 File systems and mount points"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Block devices and their names"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Disk partitions"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Logical volumes"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Checking free space with df"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Checking directory size with du"
+      },
+      {
+       "lvl": 1,
+       "text": "Mounting and Unmounting File Systems"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Mounting a file system by hand"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 Finding the right device with lsblk"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 Mounting by UUID"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 Automatic mounting of removable devices"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Unmounting file systems"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 When umount says target is busy"
+      },
+      {
+       "lvl": 1,
+       "text": "Locating Files on the System"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 Two tools for searching"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 Finding files by name with locate"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 The locate options -i and -n"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Finding files by name with find"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 Finding files by owner"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Finding files by permission"
+      },
+      {
+       "lvl": 2,
+       "text": "3.7 Finding files by size"
+      },
+      {
+       "lvl": 2,
+       "text": "3.8 Finding files by change time"
+      },
+      {
+       "lvl": 2,
+       "text": "3.9 Finding files by type and hard links"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-16",
+     "n": 16,
+     "title": "Analyzing Servers and Getting Support",
+     "display": "Chapter 16: Analyzing Servers and Getting Support",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch16_Study.docx",
+     "sourceSha256": "bb97907c36007477326428be3841ccbb6cbce4c5f55b4e190b4574111a8fc493",
+     "blocks": 345,
+     "words": 6387,
+     "tables": 4,
+     "boxes": 95,
+     "runs": 1046,
+     "shadedParas": 238,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter 16: Analyzing Servers and Getting Support"
+      },
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Analyzing and Managing Remote Servers"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 What Web Console is"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Enabling Web Console"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Logging in to Web Console"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Changing passwords"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Monitoring system statistics in real time"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Inspecting and filtering syslog events"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 Running commands from a terminal session"
+      },
+      {
+       "lvl": 2,
+       "text": "1.8 Creating diagnostic reports"
+      },
+      {
+       "lvl": 2,
+       "text": "1.9 System power options"
+      },
+      {
+       "lvl": 2,
+       "text": "1.10 Controlling running system services"
+      },
+      {
+       "lvl": 2,
+       "text": "1.11 Configuring network interfaces and firewalld"
+      },
+      {
+       "lvl": 2,
+       "text": "1.12 Administering user accounts"
+      },
+      {
+       "lvl": 1,
+       "text": "Getting Help from Red Hat Customer Portal"
+      },
+      {
+       "lvl": 2,
+       "text": "2.1 Customer Portal and Knowledgebase"
+      },
+      {
+       "lvl": 2,
+       "text": "2.2 The top navigation bar"
+      },
+      {
+       "lvl": 2,
+       "text": "2.3 The topics menus"
+      },
+      {
+       "lvl": 2,
+       "text": "2.4 Searching Knowledgebase with the Red Hat Support Tool"
+      },
+      {
+       "lvl": 2,
+       "text": "2.5 Reading a Knowledgebase article by ID"
+      },
+      {
+       "lvl": 2,
+       "text": "2.6 Preparing a bug report"
+      },
+      {
+       "lvl": 2,
+       "text": "2.7 Opening and managing support cases"
+      },
+      {
+       "lvl": 2,
+       "text": "2.8 Attaching diagnostic information with sosreport"
+      },
+      {
+       "lvl": 2,
+       "text": "2.9 Advanced analysis with the support tool"
+      },
+      {
+       "lvl": 2,
+       "text": "2.10 Joining Red Hat Developer"
+      },
+      {
+       "lvl": 1,
+       "text": "Detecting and Resolving Issues with Red Hat Insights"
+      },
+      {
+       "lvl": 2,
+       "text": "3.1 What Red Hat Insights is"
+      },
+      {
+       "lvl": 2,
+       "text": "3.2 How Insights works"
+      },
+      {
+       "lvl": 2,
+       "text": "3.3 Installing Insights clients"
+      },
+      {
+       "lvl": 2,
+       "text": "3.4 Registering a RHEL system with Red Hat Insights"
+      },
+      {
+       "lvl": 2,
+       "text": "3.5 The tabs of the Insights interface"
+      },
+      {
+       "lvl": 2,
+       "text": "3.6 Viewing issues reported by Red Hat Insights"
+      },
+      {
+       "lvl": 2,
+       "text": "3.7 Interpreting Red Hat Insights reports"
+      },
+      {
+       "lvl": 2,
+       "text": "3.8 Manually remediating an issue reported by Red Hat Insights"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    },
+    {
+     "id": "rhel-17",
+     "n": 17,
+     "title": "Comprehensive Review",
+     "display": "Chapter 17: Comprehensive Review",
+     "subject": "rhel",
+     "sourceFile": "RHEL_SysAdmin_I_Ch17_Study.docx",
+     "sourceSha256": "81835f9d94254cffcf26565955b387dbfa72d6fab09d4ac5336e8d0223c3b9e7",
+     "blocks": 104,
+     "words": 1802,
+     "tables": 0,
+     "boxes": 35,
+     "runs": 306,
+     "shadedParas": 39,
+     "headings": [
+      {
+       "lvl": 1,
+       "text": "Chapter goal"
+      },
+      {
+       "lvl": 1,
+       "text": "Comprehensive Review"
+      },
+      {
+       "lvl": 2,
+       "text": "1.1 Chapter 1: Getting Started with Red Hat Enterprise Linux"
+      },
+      {
+       "lvl": 2,
+       "text": "1.2 Chapter 2: Accessing the Command Line"
+      },
+      {
+       "lvl": 2,
+       "text": "1.3 Chapter 3: Managing Files From the Command Line"
+      },
+      {
+       "lvl": 2,
+       "text": "1.4 Chapter 4: Getting Help in Red Hat Enterprise Linux"
+      },
+      {
+       "lvl": 2,
+       "text": "1.5 Chapter 5: Creating, Viewing, and Editing Text Files"
+      },
+      {
+       "lvl": 2,
+       "text": "1.6 Chapter 6: Managing Local Users and Groups"
+      },
+      {
+       "lvl": 2,
+       "text": "1.7 Chapter 7: Controlling Access to Files"
+      },
+      {
+       "lvl": 2,
+       "text": "1.8 Chapter 8: Monitoring and Managing Linux Processes"
+      },
+      {
+       "lvl": 2,
+       "text": "1.9 Chapter 9: Controlling Services and Daemons"
+      },
+      {
+       "lvl": 2,
+       "text": "1.10 Chapter 10: Configuring and Securing SSH"
+      },
+      {
+       "lvl": 2,
+       "text": "1.11 Chapter 11: Analyzing and Storing Logs"
+      },
+      {
+       "lvl": 2,
+       "text": "1.12 Chapter 12: Managing Networking"
+      },
+      {
+       "lvl": 2,
+       "text": "1.13 Chapter 13: Archiving and Transferring Files"
+      },
+      {
+       "lvl": 2,
+       "text": "1.14 Chapter 14: Installing and Updating Software Packages"
+      },
+      {
+       "lvl": 2,
+       "text": "1.15 Chapter 15: Accessing Linux File Systems"
+      },
+      {
+       "lvl": 2,
+       "text": "1.16 Chapter 16: Analyzing Servers and Getting Support"
+      },
+      {
+       "lvl": 1,
+       "text": "Connecting the chapter"
+      },
+      {
+       "lvl": 1,
+       "text": "Skipped for clarity"
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

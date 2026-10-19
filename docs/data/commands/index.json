@@ -1,1259 +1,1504 @@
 [
- {
-  "id": "rhel-systemctl-status",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "systemctl status",
-  "task": "Check whether a service is running and read its last log lines",
-  "aliases": [
-   "service status",
-   "check if service is running",
-   "is my service up"
-  ],
-  "risk": "safe",
-  "where": "RHEL shell",
-  "privilege": "none for status; `systemctl --failed` needs no privilege",
-  "platform": "RHEL 9 / 10",
-  "changes": "No. Read-only.",
-  "undo": "n/a",
-  "commands": "systemctl status sshd\nsystemctl status sshd --no-pager\nsystemctl --failed\nsystemctl is-active sshd; echo $?",
-  "explain": [
-   "`status` is for humans: it prints the loaded unit, whether it is enabled, the PID, uptime, the cgroup, and roughly the last ten log lines.",
-   "`--no-pager` stops `less` taking over. Essential over SSH and in any script or capture.",
-   "`is-active` prints one word and sets the exit code: 0 active, 3 inactive, 4 unknown. That is what you want in automation."
-  ],
-  "example": [
-   "On a lab VM, `systemctl status sshd --no-pager` normally shows `Active: active (running)` with a `Main PID:` line. If it shows `Active: failed`, scroll up — the last few log lines above the status block are usually the reason."
-  ],
-  "output": "# systemctl status sshd --no-pager\n● sshd.service - OpenSSH server daemon\n   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)\n   Active: active (running) since Sat 2026-10-10 09:14:22 BST; 2min 11s ago\n     Docs: man:sshd(8) man:sshd_config(5)\n   Main PID: 1184 (sshd)\n      Tasks: 1 (limit: 61440)\n   Memory: 5.1M",
-  "verify": [
-   "$ systemctl status sshd\n● sshd.service - OpenSSH server daemon\n     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:24 +06; 1h 13min ago\n Invocation: 746f2b44bcb94a12b0e2128655ba1b2d\n       Docs: man:sshd(8)\n             man:sshd_config(5)\n   Main PID: 1373 (sshd)\n      Tasks: 1 (limit: 10105)\n     Memory: 5.3M (peak: 22.9M)\n        CPU: 7.337s\n     CGroup: /system.slice/sshd.service\n             └─1373 \"sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups\"\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "Unit sshd.service could not be found.",
-    "means": "The package is not installed. On RHEL the unit name is `sshd`, not `ssh` — this is the single most common cause of a learner believing SSH is missing when the package is `openssh-server`.",
-    "fix": "rpm -q openssh-server || sudo dnf install -y openssh-server"
-   },
-   {
-    "message": "Failed to connect to bus: No such file or directory",
-    "means": "systemd is not PID 1, so you are in a container. `systemctl` will not work at all here.",
-    "fix": "podman run ... --systemd  (or use a VM)"
-   }
-  ],
-  "sources": [
-   {
-    "title": "systemd.service(8) / RHEL 10 docs — Using systemd units",
-    "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_systemd_units/",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "systemd",
-   "services",
-   "rhq",
-   "beginner"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-7.2"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "systemctl status sshd",
-   "exit": 0
+  {
+    "id": "rhel-systemctl-status",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "systemctl status",
+    "task": "Check whether a service is running and read its last log lines",
+    "aliases": [
+      "service status",
+      "check if service is running",
+      "is my service up"
+    ],
+    "risk": "safe",
+    "where": "RHEL shell",
+    "privilege": "none for status; `systemctl --failed` needs no privilege",
+    "platform": "RHEL 9 / 10",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "systemctl status sshd\nsystemctl status sshd --no-pager\nsystemctl --failed\nsystemctl is-active sshd; echo $?",
+    "explain": [
+      "`status` is for humans: it prints the loaded unit, whether it is enabled, the PID, uptime, the cgroup, and roughly the last ten log lines.",
+      "`--no-pager` stops `less` taking over. Essential over SSH and in any script or capture.",
+      "`is-active` prints one word and sets the exit code: 0 active, 3 inactive, 4 unknown. That is what you want in automation."
+    ],
+    "example": [
+      "On a lab VM, `systemctl status sshd --no-pager` normally shows `Active: active (running)` with a `Main PID:` line. If it shows `Active: failed`, scroll up — the last few log lines above the status block are usually the reason."
+    ],
+    "output": "# systemctl status sshd --no-pager\n● sshd.service - OpenSSH server daemon\n   Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; vendor preset: enabled)\n   Active: active (running) since Sat 2026-10-10 09:14:22 BST; 2min 11s ago\n     Docs: man:sshd(8) man:sshd_config(5)\n   Main PID: 1184 (sshd)\n      Tasks: 1 (limit: 61440)\n   Memory: 5.1M",
+    "verify": [
+      "$ systemctl status sshd\n● sshd.service - OpenSSH server daemon\n     Loaded: loaded (/usr/lib/systemd/system/sshd.service; enabled; preset: enabled)\n     Active: active (running) since Mon 2026-10-12 09:33:24 +06; 1h 13min ago\n Invocation: 746f2b44bcb94a12b0e2128655ba1b2d\n       Docs: man:sshd(8)\n             man:sshd_config(5)\n   Main PID: 1373 (sshd)\n      Tasks: 1 (limit: 10105)\n     Memory: 5.3M (peak: 22.9M)\n        CPU: 7.337s\n     CGroup: /system.slice/sshd.service\n             └─1373 \"sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups\"\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "Unit sshd.service could not be found.",
+        "means": "The package is not installed. On RHEL the unit name is `sshd`, not `ssh` — this is the single most common cause of a learner believing SSH is missing when the package is `openssh-server`.",
+        "fix": "rpm -q openssh-server || sudo dnf install -y openssh-server"
+      },
+      {
+        "message": "Failed to connect to bus: No such file or directory",
+        "means": "systemd is not PID 1, so you are in a container. `systemctl` will not work at all here.",
+        "fix": "podman run ... --systemd  (or use a VM)"
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemd.service(8) / RHEL 10 docs — Using systemd units",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/using_systemd_units/",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "systemd",
+      "services",
+      "rhq",
+      "beginner"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-7.2"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "systemctl status sshd",
+      "exit": 0
+    }
+  },
+  {
+    "id": "rhel-systemctl-enable-now",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "systemctl enable --now",
+    "task": "Start a service now and make it start at every boot",
+    "aliases": [
+      "enable a service",
+      "persist service",
+      "start on boot",
+      "autostart service"
+    ],
+    "risk": "caution",
+    "where": "RHEL shell",
+    "privilege": "root (sudo)",
+    "platform": "RHEL 9 / 10",
+    "changes": "Yes. Starts the service and writes symlinks under /etc/systemd/system.",
+    "undo": "systemctl disable --now NAME   (stops it and removes the boot-time symlinks)",
+    "risks": "If you enable and start a service you did not mean to — a database, a file server — it becomes reachable on the network immediately.",
+    "commands": "sudo systemctl enable --now sshd\nsystemctl cat sshd | head -5\nsystemctl list-unit-files --state=enabled | grep sshd",
+    "explain": [
+      "`start` is runtime only and is forgotten at reboot. `enable` is boot-time only and does not start anything now. `--now` does both in one step, which is almost always what an administrator actually wants.",
+      "You can verify the boot-time half without trusting the message: `systemctl is-enabled sshd` must print `enabled`.",
+      "`systemctl cat` shows the unit file systemd actually loaded, including any drop-ins merged over the package default."
+    ],
+    "example": [
+      "Installing a package does not start it on RHEL in most cases. `sudo dnf install -y httpd` leaves httpd installed and stopped. The step people forget is `enable --now`."
+    ],
+    "verify": [
+      "systemctl is-enabled sshd\nsystemctl is-active sshd"
+    ],
+    "errors": [
+      {
+        "message": "Created symlink /etc/systemd/system/multi-user.target.wants/sshd.service → /usr/lib/systemd/system/sshd.service",
+        "means": "This is success, not an error. `enable` prints the symlink it created. Do not be alarmed by the arrow; it points at the vendor file, which is correct.",
+        "fix": ""
+      },
+      {
+        "message": "Failed to enable unit: Unit file sshd.service does not exist.",
+        "means": "The package is not installed. `enable` cannot enable a unit that does not exist.",
+        "fix": "sudo dnf install -y openssh-server && sudo systemctl enable --now sshd"
+      }
+    ],
+    "sources": [
+      {
+        "title": "systemctl(1) man page",
+        "checked": "2026-10-10",
+        "url": "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "systemd",
+      "boot",
+      "services"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-7.2",
+        "note": "enable --now is exactly the 'start now and at boot' pattern the exam wants"
+      }
+    ]
+  },
+  {
+    "id": "rhel-journalctl-unit",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "journalctl -u UNIT",
+    "task": "Read the log messages for one service",
+    "aliases": [
+      "service logs",
+      "read logs",
+      "why is the service failing",
+      "check logs"
+    ],
+    "risk": "safe",
+    "where": "RHEL shell",
+    "privilege": "none for your own units; some messages are root-only",
+    "platform": "RHEL 9 / 10",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "journalctl -u sshd -b --no-pager\njournalctl -u sshd --since '30 minutes ago' --no-pager\njournalctl -xe\njournalctl -u nginx -p err -b --no-pager",
+    "explain": [
+      "`-u` restricts to one unit. `-b` means \"since this boot\", which is almost always what you want — without it you are reading last week's crash too.",
+      "`-x` adds explanatory text and `-e` jumps to the end, so the newest (and usually most relevant) lines are visible immediately.",
+      "`-p err` filters by priority. Priorities are `emerg alert crit err warning notice info debug`, and `-p err` means err **and worse**."
+    ],
+    "example": [
+      "A service shows `Active: failed` in `systemctl status`. The cause is almost always in the last lines of `journalctl -u NAME -b`, not in the status block itself."
+    ],
+    "verify": [
+      "$ journalctl -u sshd -b --no-pager\nOct 12 09:33:24 localhost.localdomain systemd[1]: Starting sshd.service - OpenSSH server daemon...\nOct 12 09:33:24 localhost.localdomain sshd[1373]: Server listening on 0.0.0.0 port 22.\nOct 12 09:33:24 localhost.localdomain systemd[1]: Started sshd.service - OpenSSH server daemon.\nOct 12 09:33:24 localhost.localdomain sshd[1373]: Server listening on :: port 22.\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: Invalid user <lab-user> from <client-ip> port 54017\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=<client-ip>\nOct 12 09:35:13 localhost.localdomain sshd-session[3050]: Failed password for invalid user <lab-user> from <client-ip> port 54017 ssh2\nOct 12 09:35:13 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:15 localhost.localdomain sshd-session[3050]: Failed password for invalid user <lab-user> from <client-ip> port 54017 ssh2\nOct 12 09:35:16 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:18 localhost.localdomain sshd-session[3050]: Failed password for invalid user <lab-user> from <client-ip> port 54017 ssh2\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "No journal files were found. Run 'journalctl --flush' to rotate journals.",
+        "means": "The journal directory is empty — logs are not persistent, usually because /var/log/journal does not exist so everything went to a volatile store.",
+        "fix": "sudo mkdir -p /var/log/journal && sudo systemd-catalog-files  # then restart the service"
+      },
+      {
+        "message": "Hint: You are currently not seeing messages from the users of the system.",
+        "means": "Normal when running as a non-root user. You are seeing the system journal only.",
+        "fix": "sudo journalctl -u sshd -b --no-pager"
+      }
+    ],
+    "sources": [
+      {
+        "title": "RHEL 10 — Configuring system logging",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_system_logging/",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "journalctl",
+      "logs",
+      "troubleshooting",
+      "systemd"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-4.5",
+        "note": "Interpret system journals"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "journalctl -u sshd -b --no-pager",
+      "exit": 0
+    }
+  },
+  {
+    "id": "rhel-ss-lntup",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "ss -lntup",
+    "task": "See what is listening, on which address, and which process owns the port",
+    "aliases": [
+      "what port am i using",
+      "check listening ports",
+      "port in use",
+      "find process on port",
+      "netstat"
+    ],
+    "risk": "safe",
+    "where": "RHEL shell",
+    "privilege": "root shows process names for sockets you do not own",
+    "platform": "RHEL 9 / 10",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "ss -lntup\nss -lntup 'sport = :22'\nss -lntp state established\nss -lntup | grep -E 'nginx|sshd'",
+    "explain": [
+      "ss replaces netstat on modern RHEL. `-l` listening, `-n` numeric (skip the slow reverse DNS), `-t` TCP, `-u` UDP, `-p` process.",
+      "The address column is the most useful part of this output. `0.0.0.0:22` means reachable from every interface; `127.0.0.1:8080` means only from this machine. A service \"not working from another PC\" is very often bound to localhost.",
+      "Appending a filter such as `'sport = :22'` is much more reliable than grep when a port number appears inside an address."
+    ],
+    "example": [
+      "You started Apache and cannot reach it from your laptop. `ss -lntup` shows `:::80` and `:::443` — that is fine. If it showed `127.0.0.1:80` instead, that would explain it exactly."
+    ],
+    "verify": [
+      "$ ss -lntup\nNetid State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                                 \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=17))     \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=13))     \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=9))      \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=5))      \nudp   UNCONN 0      0            0.0.0.0:5353      0.0.0.0:*    users:((\"avahi-daemon\",pid=1177,fd=12))\nudp   UNCONN 0      0          127.0.0.1:323       0.0.0.0:*    users:((\"chronyd\",pid=1178,fd=4))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=3))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=7))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=11))     \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=15))     \nudp   UNCONN 0      0               [::]:5353         [::]:*    users:((\"avahi-daemon\",pid=1177,fd=13))\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "netstat: command not found (when using the old tool)",
+        "means": "netstat is not installed on a minimal RHEL 10 image. That is expected, not a fault. `ss` covers everything netstat did.",
+        "fix": "ss -lntup    # or: sudo dnf install -y iproute  (ss ships in iproute, usually already present)"
+      }
+    ],
+    "sources": [
+      {
+        "title": "ss(8) man page",
+        "url": "https://man7.org/linux/man-pages/man8/ss.8.html",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "RHEL 10 — Understanding basic networking",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "ss",
+      "netstat",
+      "ports",
+      "troubleshooting",
+      "iproute"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-4.6",
+        "note": "Start, stop and check the status of network services"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "ss -lntup",
+      "exit": 0
+    }
+  },
+  {
+    "id": "rhel-sudo-dnf",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "dnf",
+    "task": "Install, remove, update and query packages",
+    "aliases": [
+      "install package",
+      "yum",
+      "update system",
+      "patch",
+      "package manager"
+    ],
+    "risk": "caution",
+    "where": "RHEL shell",
+    "privilege": "root (sudo)",
+    "platform": "RHEL 9 / 10",
+    "changes": "Yes. Changes installed packages on disk.",
+    "undo": "dnf history undo <ID>   (dnf keeps a transaction log — this is the real undo)",
+    "risks": "A major-version update can pull a new kernel and change service behaviour. Never run a blanket `dnf update` on a production server without a plan and a rollback window.",
+    "commands": "dnf search nginx\ndnf info nginx\nsudo dnf install -y nginx\nrpm -q nginx\ndnf history list | head\nsudo dnf history undo <ID>",
+    "explain": [
+      "RHEL 10 ships **dnf4** as `dnf`. Some Fedora and derivative builds have moved to dnf5, which prints differently and parses some options differently — check `dnf --version` before copying a command from a blog.",
+      "`dnf history` is the feature most learners never find and it is the answer to \"I broke something with an update\". Every transaction has an ID and `dnf history undo ID` reverses it.",
+      "`dnf install` resolves dependencies for you. Reach for `rpm -i` only when you are deliberately installing a locally-built .rpm and you understand what it will not resolve for you."
+    ],
+    "example": [
+      "`dnf history undo 42` rolls back the whole transaction, including packages that were upgraded as a side effect. It is the fastest correct recovery from a bad `dnf update`."
+    ],
+    "verify": [
+      "$ dnf search nginx\nUpdating Subscription Management repositories.\n========================= Name Exactly Matched: nginx ==========================\nnginx.x86_64 : A high performance web server and reverse proxy server\n======================== Name & Summary Matched: nginx =========================\nnginx-all-modules.noarch : A meta package that installs all available Nginx modules\nnginx-core.x86_64 : nginx minimal core\nnginx-filesystem.noarch : The basic directory layout for the Nginx server\nnginx-mod-http-image-filter.x86_64 : Nginx HTTP image filter module\nnginx-mod-http-perl.x86_64 : Nginx HTTP perl module\nnginx-mod-http-xslt-filter.x86_64 : Nginx XSLT module\nnginx-mod-mail.x86_64 : Nginx mail modules\nnginx-mod-stream.x86_64 : Nginx stream modules\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "Error: Failed to download metadata for repo 'baseos'",
+        "means": "No working mirror, or a proxy/DNS problem. Nothing to do with the package name.",
+        "fix": "sudo dnf clean all && sudo dnf makecache\n# still failing: check connectivity and DNS — ping the mirror, then cat /etc/resolv.conf"
+      },
+      {
+        "message": "Error: package nginx is already installed",
+        "means": "It is installed but not started, or not enabled. Installing again does nothing useful.",
+        "fix": "sudo systemctl enable --now nginx"
+      }
+    ],
+    "sources": [
+      {
+        "title": "RHEL 10 — Working with DNF",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_packages/advanced-topics_using-dnf",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "dnf",
+      "yum",
+      "packages",
+      "rollback"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-2.3",
+        "note": "Install and update packages from a repository"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "dnf search nginx",
+      "exit": 0
+    }
+  },
+  {
+    "id": "rhel-getenforce-ausearch",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "ausearch -m avc",
+    "task": "Find out whether SELinux blocked something",
+    "aliases": [
+      "selinux denied",
+      "permission denied selinux",
+      "avc denial",
+      "why is selinux blocking me"
+    ],
+    "risk": "safe",
+    "where": "RHEL shell",
+    "privilege": "root to see all denials",
+    "platform": "RHEL 9 / 10",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "getenforce\nausearch -m avc -ts recent\nsudo ausearch -m avc -ts recent | tail -30\nsestatus",
+    "explain": [
+      "AVC = Access Vector Cache. Every SELinux denial produces one. It names the process's type, the target's type, and the exact permission that was refused — which is what you need, because it tells you what to relabel rather than guessing.",
+      "`-ts recent` limits to the current time window. Without a time bound an old denial from last week will be the first thing you read.",
+      "Never fix a SELinux problem by setting it to permissive and moving on. Use the boolean or the label fix shown in the denial — permissive teaches you nothing and leaves the system vulnerable."
+    ],
+    "example": [
+      "A web server can read `/srv/www` but Apache returns 403. `ausearch -m avc -ts recent` shows `denied { read } for ... scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:default_t:s0`. The fix is to give the files the right label, not to disable SELinux."
+    ],
+    "verify": [
+      "$ getenforce\nEnforcing\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "nothing matches (no output at all)",
+        "means": "Either there was no denial in that window, or auditd is not running and denials are not being recorded.",
+        "fix": "systemctl is-active auditd || sudo systemctl enable --now auditd"
+      }
+    ],
+    "sources": [
+      {
+        "title": "RHEL 10 — Working with SELinux",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/working_with_selinux/",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "selinux",
+      "ausearch",
+      "permissions",
+      "denied"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-10.5",
+        "note": "Identify SELinux context"
+      },
+      {
+        "id": "RHCSA-10.4"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "getenforce",
+      "exit": 0
+    }
+  },
+  {
+    "id": "rhel-firewall-cmd-list",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "firewall-cmd",
+    "task": "Inspect and change which ports firewalld allows",
+    "aliases": [
+      "open a port",
+      "firewall",
+      "allow port",
+      "firewalld",
+      "block port"
+    ],
+    "risk": "caution",
+    "where": "RHEL shell",
+    "privilege": "root (sudo)",
+    "platform": "RHEL 9 / 10 (nftables backend)",
+    "changes": "Yes, unless you pass --runtime or --permanent and forget to reload.",
+    "undo": "sudo firewall-cmd --remove-port=443/tcp   (or remove the rich rule you added)",
+    "risks": "Opening a port exposes the service beyond the machine. Removing the SSH port rule while connected over SSH will lock you out on the next reload.",
+    "commands": "sudo firewall-cmd --list-all\nsudo firewall-cmd --get-active-zones\nsudo firewall-cmd --add-port=443/tcp --permanent\nsudo firewall-cmd --reload\nfirewall-cmd --list-ports",
+    "explain": [
+      "firewalld keeps two rule sets. The **runtime** rules apply now and are lost on reload or reboot. The **permanent** rules are the stored config and only apply after `--reload` or a reboot. Passing `--permanent` alone changes nothing live, which is the single most common firewalld misunderstanding.",
+      "`--add-service=http` is shorthand for the predefined service definition (port + protocol + any default). Prefer it over `--add-port` when a service is already known to firewalld.",
+      "Zone matters: a network interface is bound to exactly one zone, and only that zone's rules apply to connections arriving on it."
+    ],
+    "example": [
+      "You run `firewall-cmd --add-port=8080/tcp --permanent`, test, and it does not work. This is expected: permanent rules are not live. Add it at runtime too, or reload."
+    ],
+    "verify": [
+      "$ sudo firewall-cmd --list-all\npublic (default, active)\n  target: default\n  ingress-priority: 0\n  egress-priority: 0\n  icmp-block-inversion: no\n  interfaces: \n  sources: \n  services: cockpit dhcpv6-client ssh\n  ports: \n  protocols: \n  forward: yes\n  masquerade: no\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "FirewallD is not running",
+        "means": "firewalld is stopped, so nothing is filtering. Another firewall layer (nftables rules, cloud security group) may be.",
+        "fix": "sudo systemctl enable --now firewalld"
+      },
+      {
+        "message": "Error: ZONE_CONFLICT: 'br0' already bound to zone 'X'",
+        "means": "An interface can only be in one zone. Use --change-interface instead of --add-interface.",
+        "fix": "sudo firewall-cmd --zone=X --change-interface=br0 --permanent && sudo firewall-cmd --reload"
+      }
+    ],
+    "sources": [
+      {
+        "title": "RHEL 10 — Configuring and using firewalld",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_using_firewalld/",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "firewalld",
+      "firewall",
+      "ports",
+      "nftables"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-10.1"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "sudo firewall-cmd --list-all",
+      "exit": 0
+    }
+  },
+  {
+    "id": "rhel-nmcli-connection",
+    "kind": "command",
+    "tech": "rhel",
+    "title": "nmcli connection",
+    "task": "Inspect and change network interface configuration",
+    "aliases": [
+      "set static ip",
+      "network configuration",
+      "nmcli",
+      "change ip address",
+      "no ip address"
+    ],
+    "risk": "caution",
+    "where": "RHEL shell",
+    "privilege": "root (sudo) to modify",
+    "platform": "RHEL 9 / 10",
+    "changes": "Yes. Modifies the connection profile and can drop the network.",
+    "undo": "Keep a console session open, or record the previous profile with `nmcli con show NAME` first. Changes to a connection started with `autoconnect no` are not applied until you do `nmcli con up NAME`.",
+    "risks": "Changing the address on the interface you are connected through will drop your SSH session immediately. Over a remote connection, always schedule the change with `nmcli con up` in the background, or use a two-minute revert timer.",
+    "commands": "nmcli device status\nnmcli connection show\nnmcli connection show 'System eth0'\nsudo nmcli connection modify 'System eth0' ipv4.method manual \\\n     ipv4.addresses 192.0.2.10/24 ipv4.gateway 192.0.2.1 \\\n     ipv4.dns '192.0.2.53' ipv4.dns-search example.lan\nnmcli -p connection show --active",
+    "explain": [
+      "NetworkManager stores settings as **connection profiles**, not as files per interface. The profile name (`System eth0`) is what you modify and activate; the device name (`eth0`) is just the plug it is currently on.",
+      "`ipv4.method` is the switch that matters: `auto` = DHCP, `manual` = static, `disabled` = no IPv4. Most \"my server has no IP\" problems are a profile still set to `auto` on a network with no DHCP server.",
+      "There are two ways to set an IP: `ipv4.addresses` on the profile (persistent) or `ip addr add` on the device (lost at reboot). Always use the profile."
+    ],
+    "example": [
+      "To make a change reversible over SSH, schedule the activation and a forced revert:\n  sudo nmcli con down 'System eth0' && sudo nmcli con up 'System eth0'\n  (sleep 120; sudo nmcli con mod 'System eth0' ipv4.method auto; sudo nmcli con up 'System eth0') &\nIf the new address works, the revert is still scheduled — cancel it with `kill %1`."
+    ],
+    "verify": [
+      "$ nmcli device status\nDEVICE  TYPE      STATE                   CONNECTION \nens160  ethernet  connected               ens160     \nens224  ethernet  connected               internal   \nlo      loopback  connected (externally)  lo\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
+    ],
+    "errors": [
+      {
+        "message": "Error: Failed to add IPv4 address: File exists",
+        "means": "The address is already on that device. You are adding rather than replacing.",
+        "fix": "sudo nmcli connection modify 'System eth0' ipv4.addresses '192.0.2.10/24'   # no comma = replace the list"
+      },
+      {
+        "message": "Connection activation failed: No suitable device found",
+        "means": "The profile's `connection.interface-name` does not match any device. Common after a hardware change or in a VM where the NIC name differs.",
+        "fix": "nmcli device status   # then correct interface-name, or delete the constraint entirely"
+      }
+    ],
+    "sources": [
+      {
+        "title": "RHEL 10 — Configuring a basic network",
+        "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_a_basic_network/",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "execution-tested",
+    "tags": [
+      "nmcli",
+      "networkmanager",
+      "static ip",
+      "networking"
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-8.1",
+        "note": "Configure IPv4 and IPv6 addresses"
+      }
+    ],
+    "tested_on": {
+      "date": "2026-10-12",
+      "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
+      "kernel": "6.12.0-211.7.3.el10_2.x86_64",
+      "arch": "x86_64",
+      "command": "nmcli device status",
+      "exit": 0
+    }
+  },
+  {
+    "id": "cisco-show-ip-interface-brief",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "show ip interface brief",
+    "task": "See every interface, its IP address, status and protocol state",
+    "aliases": [
+      "interface status",
+      "which ports are up",
+      "ip address",
+      "brief",
+      "show ip int brief"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable (privileged EXEC mode)",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "enable\nshow ip interface brief",
+    "explain": [
+      "Two status columns matter and people conflate them. **Status** is the physical/line protocol up-down. **Protocol** is whether the software protocol is up (has an IP, is not shut).",
+      "`administratively down` in the Status column means someone issued `shutdown` on the interface. That is a configuration fact, not a hardware fault.",
+      "This is the first command for any \"it is not working\" question on a switch or router. It answers: do I have an address, and is the port actually enabled."
+    ],
+    "example": [
+      "On an unconfigured access switch, Gi0/1 might read `down  down  unassigned` — status down because nothing is plugged in, protocol down because there is no IP. That is normal and not an error on a Layer-2 access port."
+    ],
+    "verify": [
+      "show ip interface brief\nshow interfaces status"
+    ],
+    "errors": [
+      {
+        "message": "% Invalid input detected at '^' marker.",
+        "means": "You are in the wrong mode. `show` is a privileged-EXEC command, not a config command.",
+        "fix": "enable      # then run it again"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — show ip interface brief",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "ios",
+      "interface",
+      "status",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1",
+        "note": "Interface addresses are what the routing table is built from"
+      }
+    ]
+  },
+  {
+    "id": "cisco-show-run-interface",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "show running-config interface",
+    "task": "Read the exact configuration of one interface",
+    "aliases": [
+      "interface config",
+      "show int",
+      "read interface config",
+      "why is the port down"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "enable\nshow running-config interface GigabitEthernet0/1\nshow interfaces GigabitEthernet0/1\nshow interfaces GigabitEthernet0/1 switchport",
+    "explain": [
+      "Configuration tells you what is *supposed* to be true; `show interfaces` tells you what is *actually* happening (rate, errors, resets, queue drops). You need both before you blame hardware.",
+      "The line-protocol-down line in `show interfaces` usually names the reason outright: `err-disabled`, `access VLAN does not exist`, `no such interface`, or `administratively down`.",
+      "`show interfaces <x> switchport` is the one to run when a port is up but a client cannot get an address. It shows mode, VLAN, and whether it is a trunk."
+    ],
+    "example": [
+      "A client is on Gi0/3 and gets no DHCP offer. `show interfaces gi0/3 switchport` shows `Administrative Mode: access` and `Operational Mode: down` — the port is shut, so nothing can pass."
+    ],
+    "verify": [
+      "show interfaces status\nshow interfaces GigabitEthernet0/1 counters errors"
+    ],
+    "errors": [
+      {
+        "message": "% Invalid input detected",
+        "means": "On many platforms the short form `show run int Gi0/1` works but `Gi0/1` must match the actual name. Catalyst 2960-X uses `GigabitEthernet0/1`; a Catalyst 9300 stack member may use `GigabitEthernet1/0/1`.",
+        "fix": "show interfaces status | include Gi0/1   # find the real name first"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "ios",
+      "interface",
+      "config",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1",
+        "note": "Port state and switchport configuration"
+      }
+    ]
+  },
+  {
+    "id": "cisco-vlan-database",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "vlan database / configure terminal",
+    "task": "Create a VLAN and put an access port into it",
+    "aliases": [
+      "create vlan",
+      "add vlan",
+      "assign port to vlan",
+      "vlan",
+      "switchport access vlan"
+    ],
+    "risk": "caution",
+    "where": "Cisco IOS privileged EXEC then config",
+    "privilege": "enable",
+    "platform": "IOS 15.x (IOS XE 17.x on Catalyst 9000 uses global config)",
+    "changes": "Yes. Creates a VLAN and moves the port into it.",
+    "undo": "The port keeps the VLAN until reassigned. Removing the VLAN: `no vlan 20` (from vlan database). Removing the last port in a VLAN deletes it automatically on most platforms.",
+    "risks": "Moving a live port between VLANs drops its connectivity for a second or two. Never change a port a user is actively on without saying so.",
+    "commands": "enable\nvlan database\n vlan 20\n  name USERS\n exit\ninterface GigabitEthernet0/3\n switchport mode access\n switchport access vlan 20\n spanning-tree portfast\nend\nwrite memory\nshow vlan brief\nshow interfaces status",
+    "explain": [
+      "On a Catalyst 2960-class switch, VLANs are created in `vlan database` mode, **not** in `configure terminal`. On Catalyst 9000 running IOS XE, the modern form `configure terminal` then `vlan 20` is used. Knowing which platform you are on is the whole point of this entry.",
+      "`switchport mode access` is required in addition to `switchport access vlan 20`. The access VLAN does not take effect on a trunk port.",
+      "`write memory` (or `copy running-config startup-config`) persists. In Packet Tracer and in a live switch, skipping it is why the VLAN vanished after a reload in the lab."
+    ],
+    "example": [
+      "Two ports in the same VLAN can reach each other; two ports in different VLANs cannot, without routing. If a client is isolated in its own VLAN, check the access VLAN on both the port and the uplink port on the other switch."
+    ],
+    "verify": [
+      "show vlan brief\nshow interfaces gi0/3 switchport\nshow mac address-table interface gi0/3"
+    ],
+    "errors": [
+      {
+        "message": "% Invalid input detected at '^' marker.",
+        "means": "You typed `vlan 20` in `configure terminal` on a 2960-class switch.",
+        "fix": "enable → vlan database → vlan 20 → name USERS → exit"
+      },
+      {
+        "message": "% Default VLAN 1 may not be deleted.",
+        "means": "VLAN 1 is the default and always exists.",
+        "fix": "Choose a different VLAN number."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "vlan",
+      "switching",
+      "ccna",
+      "ios"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1",
+        "note": "Configure and verify VLANs"
+      }
+    ]
+  },
+  {
+    "id": "cisco-ping-traceroute",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "ping / traceroute",
+    "task": "Test reachability and find where a path breaks",
+    "aliases": [
+      "test connectivity",
+      "can i reach",
+      "tracert",
+      "where does it stop"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS privileged EXEC",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "enable\nping 10.0.0.1 repeat 5\nping 10.0.0.1 source 10.0.0.9\ntraceroute 8.8.8.8\nshow ip route",
+    "explain": [
+      "`repeat 5` stops Cisco ping from running forever — always use it over a console, or you will have to interrupt.",
+      "`source` matters more than people expect. A ping from a router uses the IP of the interface the traffic exits. If a server is allowed to be pinged only from one address and the router picks another, you get a false negative.",
+      "Traceroute answers a routing question, not a reachability question. ICMP time-exceeded responses are frequently filtered, so `*` in the middle of a trace is not by itself a fault — look at the last responding hop and confirm with pings."
+    ],
+    "example": [
+      "A path works from your PC but not from the server. Before touching the firewall, compare `ping <host> source <server-ip>` from the router — that isolates routing from the host itself."
+    ],
+    "verify": [
+      "show ip route 8.8.8.8"
+    ],
+    "errors": [
+      {
+        "message": "..... 100% loss (5 echo requests sent, 0 received)",
+        "means": "No ICMP reply. This is **not** proof the host is down — ICMP is frequently rate-limited or blocked. Check `show ip route` for a route to the destination first.",
+        "fix": "show ip route <destination>\nshow arp | include <next-hop>"
+      },
+      {
+        "message": "Type escape sequence to abort.",
+        "means": "Normal. You can interrupt the command.",
+        "fix": ""
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — ping",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "ping",
+      "traceroute",
+      "reachability",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1",
+        "note": "Confirming a path and its next hop"
+      }
+    ]
+  },
+  {
+    "id": "mikrotik-ip-address-print",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/ip address print",
+    "task": "List every IP address assigned to the router",
+    "aliases": [
+      "what ip do i have",
+      "router ip",
+      "ip addresses",
+      "list interfaces"
+    ],
+    "risk": "safe",
+    "where": "RouterOS CLI or WinBox terminal",
+    "privilege": "none to read",
+    "platform": "RouterOS 7.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "/ip/address/print\n/ip/address/print detail\n/ip/interface/print\n/ip/interface/print type=ether",
+    "explain": [
+      "RouterOS uses a **menu path**, not a Linux-style command. The leading `/` means \"jump to this menu\"; everything before the last `/` navigates and the last word is the operation. Typing `/ip/address/print` is equivalent to pressing `/ip address` then `print`.",
+      "`print` shows the set. `print detail` shows every field including the disabled flag and comment — which is often where the answer is.",
+      "In RouterOS 7, `/interface/bridge/port` and `/interface/ethernet` are separate menus; in v6 they were all under `/interface`. This is the main practical difference worth remembering."
+    ],
+    "example": [
+      "An interface with a correct address shows `D` for dynamic in the flags column. If you expected a static address and see D, someone (or the DHCP client) created it dynamically and it may change."
+    ],
+    "verify": [
+      "/ip/address/print\n/ip/route/print where dst-address=0.0.0.0/0"
+    ],
+    "errors": [
+      {
+        "message": "unknown command",
+        "means": "A typo, or a menu path that does not exist in your version. RouterOS 6 and 7 differ on `/interface`.",
+        "fix": "Press `/` then Tab to browse the menu tree. Or `/interface/print` to see what exists."
+      },
+      {
+        "message": "failure: address already exists",
+        "means": "That address is already assigned to another interface.",
+        "fix": "/ip/address/print   # find who holds it"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — IP Addressing",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328059/IP+Addressing",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "ip",
+      "address",
+      "mtcna"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M1.2",
+        "note": "RouterOS CLI principles"
+      },
+      {
+        "id": "MTCRE-M2",
+        "note": "Point to point addressing"
+      }
+    ]
+  },
+  {
+    "id": "mikrotik-ip-firewall-filter",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/ip firewall filter",
+    "task": "Add a rule that allows or denies traffic and see what is already there",
+    "aliases": [
+      "firewall rule",
+      "block traffic",
+      "allow port",
+      "nat",
+      "drop rule"
+    ],
+    "risk": "caution",
+    "where": "RouterOS CLI",
+    "privilege": "admin-level for changes",
+    "platform": "RouterOS 7.x",
+    "changes": "Yes. Changes packet filtering immediately, with no confirmation prompt.",
+    "undo": "/ip/firewall/filter/remove <number>   or remove by comment: ... where comment=\"...\"",
+    "risks": "A filter rule that drops established connections can cut your own management session. Read the existing rules with `print` before you add anything, and keep a way back in (WinBox from the LAN, or the console port).",
+    "commands": "/ip/firewall/filter/print\n/ip/firewall/filter/add chain=input action=accept \\\n   protocol=icmp comment=\"accept ping to router\"\n/ip/firewall/filter/add chain=input action=drop \\\n   in-interface-list=!WAN connection-state=established,related \\\n   comment=\"default drop invalid\"\n/ip/firewall/filter/print stats",
+    "explain": [
+      "MikroTik's model is **three separate chains**: `input` (traffic to the router itself), `forward` (traffic passing through it), and `output` (traffic from the router). Choosing the wrong chain is the single most common reason a rule appears to do nothing.",
+      "Order is evaluated top to bottom, first match wins, exactly like an ACL. Put accepts above drops.",
+      "The default configuration ships with rules allowing established/related through `forward`. Adding a drop in the wrong place silently overrides them.",
+      "In RouterOS 7, the modern drop-in replacement for a bare port filter is the **address list + connection tracking** pattern, but `filter` is still the right tool for core filtering and is what exams and most lab work expect."
+    ],
+    "example": [
+      "To see whether a rule is actually matching anything, add `stats` and re-run `print` — the `packets` column shows the hit count. A rule with zero hits after a test is not doing what you think."
+    ],
+    "verify": [
+      "/ip/firewall/filter/print stats\n/ip/firewall/filter/print stats where packets>0"
+    ],
+    "errors": [
+      {
+        "message": "failure: already have such address",
+        "means": "Duplicate address-list entry.",
+        "fix": "/ip/firewall/address-list/print   # remove the old entry first"
+      },
+      {
+        "message": "Rule matched but nothing happens to the client",
+        "means": "Usually the rule is in the wrong chain, or a NAT rule is required in addition to a filter rule. Filtering without masquerading drops outbound replies.",
+        "fix": "/ip/firewall/nat/print   # confirm a masquerade or srcnat rule exists on the WAN interface"
+      }
+    ],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — Firewall",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2465019/Firewall",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "firewall",
+      "filter",
+      "mtcna",
+      "nat"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M6.2"
+      }
+    ]
+  },
+  {
+    "id": "mikrotik-ip-dhcp-server-network",
+    "kind": "command",
+    "tech": "mikrotik",
+    "title": "/ip dhcp-server network",
+    "task": "Define and enable the DHCP scope the router hands out",
+    "aliases": [
+      "dhcp",
+      "clients get no ip",
+      "address pool",
+      "dhcp server",
+      "scope"
+    ],
+    "risk": "caution",
+    "where": "RouterOS CLI",
+    "privilege": "admin-level",
+    "platform": "RouterOS 7.x",
+    "changes": "Yes. Starts handing out addresses.",
+    "undo": "/ip/dhcp-server/remove <name>   /   /ip/dhcp-server/network/remove <name>",
+    "risks": "A DHCP scope whose gateway or DNS points somewhere wrong produces clients that appear to work but cannot reach anything. Always check `network=` before enabling.",
+    "commands": "/ip/dhcp-server/network/print\n/ip/dhcp-server/network/add name=LAN address=10.10.20.1/24 \\\n   gateway=10.10.20.1 dns-server=10.10.20.1\n/ip/dhcp-server/add name=lan-dhcp interface=bridge-lan \\\n   address-pool=lan-pool lease-time=1h disabled=no\n/ip/dhcp-server/print\n/ip/dhcp-server/lease/print\n/ip/pool/print",
+    "explain": [
+      "DHCP needs four separate pieces and a beginner usually configures three: a **pool** (the address range), a **network** (gateway, DNS, domain, netmask), and a **server** (which interface it answers on). The server also needs a `lease-time`.",
+      "The gateway is usually the router's own address on that bridge. If clients get an address but no route out, this is why.",
+      "`/ip/dhcp-server/lease/print` is the diagnostic command. No leases while a client is failing means the client never reached the server; leases with the wrong gateway means the scope is misconfigured.",
+      "In RouterOS 7 the DHCP server is under `/ip/dhcp-server` with options under `/ip/dhcp-server/network/<name>/set` — not the older v6 `/ip/dhcp-server/network` combined layout. Check your version."
+    ],
+    "example": [
+      "Client says 'Unable to obtain an IP address'. If DHCP is on the bridge and the client is on a bridge port, it works. If the client is on a physical port not in the bridge, it never sees the DHCP offer — that is a bridge membership problem, not a DHCP problem."
+    ],
+    "verify": [
+      "/ip/dhcp-server/lease/print detail\n/ip/dhcp-server/network/print detail"
+    ],
+    "errors": [
+      {
+        "message": "failure: could not add address ... already exists",
+        "means": "The pool overlaps the network range or the bridge address.",
+        "fix": "/ip/pool/print   # make the pool exclude the gateway address"
+      },
+      {
+        "message": "Client gets 169.254.x.x",
+        "means": "The client fell back to APIPA, meaning it never got an offer at all.",
+        "fix": "Check the DHCP server is enabled, is bound to the right interface, and that a firewall rule is not dropping UDP 67."
+      }
+    ],
+    "sources": [
+      {
+        "title": "MikroTik official documentation — DHCP",
+        "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "mikrotik",
+      "routeros",
+      "dhcp",
+      "mtcna",
+      "addressing"
+    ],
+    "objectives": [
+      {
+        "id": "MTCNA-M2.3"
+      }
+    ]
+  },
+  {
+    "id": "win11-ipconfig-all",
+    "kind": "command",
+    "tech": "win11",
+    "title": "ipconfig /all",
+    "task": "See the full network configuration of every adapter",
+    "aliases": [
+      "ip config",
+      "my ip address",
+      "network settings",
+      "adapter config",
+      "dns"
+    ],
+    "risk": "safe",
+    "where": "Windows 11 Command Prompt or PowerShell",
+    "privilege": "none",
+    "platform": "Windows 10 / 11",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "ipconfig /all\nipconfig /renew\nipconfig /release\nipconfig /flushdns\nnslookup example.lan",
+    "explain": [
+      "`/all` is the useful one. Plain `ipconfig` only shows address, mask and gateway; `/all` adds DHCP status, DNS servers, MAC, and the adapter description — the MAC and description are what you need when a switch port shows the wrong device.",
+      "A `169.254.x.x` address means DHCP failed and Windows self-assigned. That is a symptom, not a cause: either no DHCP server on that segment, or the link is down.",
+      "`ipconfig /flushdns` is the first thing to try for \"it worked yesterday\" name-resolution problems, and it is harmless.",
+      "In PowerShell, `ipconfig` is still an external command; `Clear-DnsClientCache` and `Get-DnsClientServerAddress` are the native equivalents."
+    ],
+    "example": [
+      "A Windows 11 client on a network with DHCP shows `DHCP Enabled: Yes`. If it shows `No`, someone set a static address. That single line explains a lot of otherwise mysterious failures."
+    ],
+    "verify": [
+      "ipconfig /all | findstr /i \"dhcp dns\"",
+      "Test-NetConnection -ComputerName dc01.lab -Port 389"
+    ],
+    "errors": [
+      {
+        "message": "Media State ... Media disconnected",
+        "means": "The adapter has no carrier — cable, switch port, or the adapter is disabled.",
+        "fix": "Check the cable and the switch port LED first. Nothing above the physical layer will work until this is fixed."
+      },
+      {
+        "message": "The requested operation requires elevation",
+        "means": "You are in a standard prompt and the command needs administrator rights.",
+        "fix": "Start → Terminal (Administrator)"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — ipconfig command",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "windows",
+      "ipconfig",
+      "networking",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-2.1",
+        "note": "IPv4 addressing, gateway, DNS"
+      }
+    ]
+  },
+  {
+    "id": "win11-flags-bcdedit",
+    "kind": "command",
+    "tech": "win11",
+    "title": "bcdedit",
+    "task": "Inspect and change Windows boot options such as safe mode",
+    "aliases": [
+      "safe mode",
+      "boot options",
+      "startup recovery",
+      "bcd",
+      "boot loop"
+    ],
+    "risk": "risk",
+    "where": "Elevated Command Prompt",
+    "privilege": "Administrator",
+    "platform": "Windows 10 / 11",
+    "changes": "Yes. Modifies the boot configuration, which can prevent Windows from starting.",
+    "undo": "bcdedit /deletevalue {current} safeboot    — or from the recovery console, bcdedit /set {default} safeboot no",
+    "risks": "Setting the wrong value can leave a machine unbootable. Always record `bcdedit /enum {current}` output before changing anything, and prefer `/set {current}` over `/set {default}` when the machine has multiple entries.",
+    "commands": "bcdedit /enum {current}\nbcdedit /set {current} safeboot minimal\n# reboot, fix the problem, then:\nbcdedit /deletevalue {current} safeboot\nbcdedit /enum {current}",
+    "explain": [
+      "Safe mode loads a minimal driver set. It is the standard next step for a machine that will not boot, because it distinguishes 'a driver is broken' from 'Windows itself is broken'.",
+      "`{current}` targets the boot entry this operating system was started from. `{default}` targets the entry Windows will use next. On a machine with multiple boot entries these are different.",
+      "`bcdedit` must run in an elevated prompt. A normal prompt gives 'The requested operation requires elevation'.",
+      "The modern equivalent for most people is holding Shift while clicking Restart, which builds the same environment from the recovery menu without typing anything."
+    ],
+    "example": [
+      "Windows updates repeatedly fail with a rollback: enter safe mode, uninstall the last update or driver, remove the safeboot value, and reboot."
+    ],
+    "verify": [
+      "bcdedit /enum {current}"
+    ],
+    "errors": [
+      {
+        "message": "Access is denied.",
+        "means": "Not elevated.",
+        "fix": "Run the terminal as Administrator"
+      },
+      {
+        "message": "The boot entry is not found",
+        "means": "The GUID in braces does not exist on this machine — usually {default} vs {current} mismatch after an OS upgrade.",
+        "fix": "bcdedit /enum   # list all entries and their identifiers"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — bcdedit",
+        "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/bcdedit--boot-configuration-data-editor",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — Windows Recovery Environment",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "windows",
+      "boot",
+      "safe mode",
+      "bcdedit",
+      "troubleshooting",
+      "bcd"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C2-3.2",
+        "note": "Safe mode and boot options"
+      }
+    ]
+  },
+  {
+    "id": "win11-sfc-dism",
+    "kind": "command",
+    "tech": "win11",
+    "title": "DISM /Online /Cleanup-Image /RestoreHealth",
+    "task": "Repair a corrupted Windows component store, then verify system files",
+    "aliases": [
+      "fix windows",
+      "corrupt system files",
+      "sfc",
+      "dism",
+      "repair windows",
+      "missing dll"
+    ],
+    "risk": "caution",
+    "where": "Elevated Command Prompt",
+    "privilege": "Administrator",
+    "platform": "Windows 10 / 11",
+    "changes": "Yes. Rewrites system component files. Needs internet access to fetch replacements.",
+    "undo": "No direct undo. Take a restore point or full backup first.",
+    "risks": "On a machine that boots but misbehaves, run these before anything destructive. On a machine that will not boot, they need WinRE.",
+    "commands": "DISM /Online /Cleanup-Image /CheckHealth\nDISM /Online /Cleanup-Image /ScanHealth\nDISM /Online /Cleanup-Image /RestoreHealth\nsfc /scannow\nDISM /Online /Cleanup-Image /AnalyzeComponentStore",
+    "explain": [
+      "Run DISM **first**, then SFC. DISM repairs the source of the component files from which SFC copies replacements; running SFC first on a corrupted store often fails with 'found corrupt files but was unable to fix some of them'.",
+      "`/CheckHealth` is a fast, near-instant check that answers 'is the component store corrupt at all'. Run it before the 10-minute `/RestoreHealth`.",
+      "`/RestoreHealth` normally pulls replacement files from Windows Update, so it needs a working network connection and working TLS. Behind a proxy it fails with 0x800f081f.",
+      "After a successful DISM, `sfc /scannow` replaces the actual system files. Its output is one of: no integrity violations; repaired; or could not repair — which means the underlying problem is not a file problem."
+    ],
+    "example": [
+      "A Windows 11 machine that blue-screens on boot, or where random DLLs are missing, is fixed by DISM then SFC about nine times out of ten. Record the exact DISM exit code: 0 is success, 3010 is success but a reboot is needed."
+    ],
+    "verify": [
+      "DISM /Online /Cleanup-Image /CheckHealth\nsfc /scannow"
+    ],
+    "errors": [
+      {
+        "message": "Error: 0x800f081f — The source files could not be found.",
+        "means": "Windows Update could not supply the replacement files. Common on a machine with no internet, a broken cert store, or a hard-coded bad WSUS setting.",
+        "fix": "Test connectivity to Windows Update. Then check: reg query \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\"  # a PolicyURL pointing at a dead WSUS is the usual culprit"
+      },
+      {
+        "message": "Windows Resource Protection found corrupt files but was unable to fix some of them.",
+        "means": "SFC ran before DISM, or DISM itself failed. Do not keep re-running SFC.",
+        "fix": "Run DISM /RestoreHealth, then sfc /scannow again."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — DISM and SFC",
+        "url": "https://support.microsoft.com/en-us/windows/using-dism-or-sfc-to-repair-corrupted-windows-system-files-09a255d1-0533-42cd-8807-0dd0378f10f8",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "windows",
+      "dism",
+      "sfc",
+      "repair",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C2-3.2",
+        "note": "Windows recovery and repair"
+      }
+    ]
+  },
+  {
+    "id": "winserver-install-addfeature",
+    "kind": "command",
+    "tech": "winserver",
+    "title": "Install-WindowsFeature",
+    "task": "Install a Windows Server role or feature from the command line",
+    "aliases": [
+      "install ad ds",
+      "install dcs",
+      "install dhcp",
+      "install dns",
+      "add role",
+      "server manager powershell"
+    ],
+    "risk": "caution",
+    "where": "PowerShell on the server (elevated)",
+    "privilege": "Administrator / Domain Admin during promotion",
+    "platform": "Windows Server 2019, 2022, 2025",
+    "changes": "Yes. Installs roles, creates the corresponding services, and can promote a server to a domain controller.",
+    "undo": "Uninstall-WindowsFeature -Name <feature> -IncludeManagementTools",
+    "risks": "Promoting to a domain controller is not cleanly reversible: the promotion writes to the AD database and creates the NTDS settings. Demoting is possible but is a documented, careful procedure, not a rollback.",
+    "commands": "Get-WindowsFeature\nGet-WindowsFeature -Name AD-Domain-Services\nInstall-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools\nInstall-WindowsFeature -Name RSAT-AD-Tools\nInstall-WindowsFeature AD-Domain-Services,DHCP -IncludeManagementTools\nGet-WindowsFeature | Where-Object Installed -eq $true",
+    "explain": [
+      "The feature names are exact strings and case does not matter but spelling does. Common ones: `AD-Domain-Services` (Active Directory), `DHCP`, `DNS`, `FileServices`, `FS-FileServer`, `RSAT-AD-Tools` (the AD PowerShell tools, which are NOT installed by default and which you will need).",
+      "`-IncludeManagementTools` installs the matching MMC snap-in. Without it the feature works but you get no graphical manager, and the default is to omit it — a frequent surprise.",
+      "`RSAT-AD-Tools` is the one people forget. `Get-ADUser` fails with 'The term is not recognised' until it is installed, which people misdiagnose as 'PowerShell is broken'.",
+      "`Install-WindowsFeature` handles dependencies. Installing `AD-Domain-Services` pulls in `AD-Domain-Services-Deployment` and the DNS server role automatically.",
+      "Installing a role does not configure it. After installing DHCP or DNS you still have to create the scope or the zone — that is the separate, more instructive step."
+    ],
+    "example": [
+      "A first domain controller: Install-WindowsFeature AD-Domain-Services -IncludeManagementTools, then Install-ADDSForest with `-DomainName` and `-InstallDns` to create DNS in the same pass."
+    ],
+    "verify": [
+      "Get-WindowsFeature -Name AD-Domain-Services | Select-Object Name, InstallState\nGet-Service -Name NTDS, Dhcp, DNS"
+    ],
+    "errors": [
+      {
+        "message": "The term 'Get-ADUser' is not recognized",
+        "means": "The AD PowerShell module is not installed. Windows Server does not include it by default.",
+        "fix": "Install-WindowsFeature RSAT-AD-Tools"
+      },
+      {
+        "message": "Install-WindowsFeature : Operation is not supported on this platform",
+        "means": "You are on a client SKU, or the feature is not valid for this installation type (e.g. a container).",
+        "fix": "Get-WindowsFeature | Where-Object Name -like 'AD*'   # confirm what this SKU supports"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Install-WindowsFeature",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/servermanager/install-windowsfeature",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — AD DS Deployment Overview",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "windows server",
+      "powershell",
+      "active directory",
+      "dhcp",
+      "dns",
+      "roles"
+    ],
+    "objectives": [
+      {
+        "id": "AZ800-1.1",
+        "note": "Installing the AD DS role"
+      }
+    ]
+  },
+  {
+    "id": "winserver-dhcp-scope-create",
+    "kind": "command",
+    "tech": "winserver",
+    "title": "Add-DhcpServerv4Scope",
+    "task": "Create a DHCP IPv4 scope with a pool, options and a reservation",
+    "aliases": [
+      "dhcp scope",
+      "dhcp pool",
+      "dhcp reservation",
+      "create dhcp"
+    ],
+    "risk": "caution",
+    "where": "PowerShell on the DHCP server (elevated)",
+    "privilege": "Administrator, or a DHCP admin group",
+    "platform": "Windows Server 2019, 2022, 2025",
+    "changes": "Yes. Starts handing out addresses in the scope.",
+    "undo": "Remove-DhcpServerv4Scope -ScopeId <id>",
+    "risks": "A scope with a bad router (option 3) or DNS (option 6) hands out leases that look perfect and cannot reach anything. Verify both before you enable it broadly.",
+    "commands": "Get-DhcpServerv4Scope\nAdd-DhcpServerv4Scope -ScopeAddress 10.20.30.0 -PrefixLength 24 \\\n  -Name 'Sales' -StartRange 10.20.30.100 -EndRange 10.20.30.199\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.20.30.0 -OptionId 3 -Value '10.20.30.1'\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.20.30.0 -OptionId 6 -Value '10.20.30.53'\nAdd-DhcpServerv4Reservation -ScopeId 10.20.30.0 -IPAddress 10.20.30.50 -ClientId 'AABBCCDDEEFF'\nSet-DhcpServerv4Scope -ScopeId 10.20.30.0 -State Active\nGet-DhcpServerv4Lease -ScopeId 10.20.30.0",
+    "explain": [
+      "A scope has four parts: the network (`-ScopeAddress` + `-PrefixLength`), the pool range, the **options** (router, DNS, domain), and the state. A scope in state `Inactive` stores the config but hands out nothing.",
+      "Option 3 is the default router / gateway. Option 6 is DNS server. Option 15 is the DNS domain name. Setting only the pool is the classic beginner mistake.",
+      "A reservation needs the client's **MAC address** as `-ClientId`, not its hostname. `Get-NetNeighbor` or `arp -a` on the client gives it.",
+      "The scope address is the network address (all host bits zero) — `10.20.30.0` for a /24. Passing `10.20.30.1` will be rejected.",
+      "Verify by lease, not by assumption: `Get-DhcpServerv4Lease` proves a client actually took an address and shows what it was told."
+    ],
+    "example": [
+      "A client gets an address but cannot resolve names: the scope exists and leases, but option 6 was never set. `Get-DhcpServerv4OptionValue -ScopeId 10.20.30.0` will show option 3 present and option 6 missing."
+    ],
+    "verify": [
+      "Get-DhcpServerv4Lease -ScopeId 10.20.30.0\nGet-DhcpServerv4OptionValue -ScopeId 10.20.30.0"
+    ],
+    "errors": [
+      {
+        "message": "Scope already exists",
+        "means": "A scope for that network is already present — possibly from a different server, which is a split-brain DHCP problem.",
+        "fix": "Get-DhcpServerv4Scope   # check which server holds it before deleting anything"
+      },
+      {
+        "message": "StartRange and EndRange must be within the scope",
+        "means": "The range falls outside the prefix, or includes the network/broadcast address.",
+        "fix": "For a /24, valid hosts are .1 to .254. Never make .0 or .255 part of the pool."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — Add-DhcpServerv4Scope",
+        "url": "https://learn.microsoft.com/en-us/powershell/module/dhcp/add-dhcpserverv4scope",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "windows server",
+      "dhcp",
+      "scope",
+      "powershell",
+      "networking"
+    ],
+    "objectives": [
+      {
+        "id": "AZ800-4.1",
+        "note": "Scopes, options and reservations"
+      }
+    ]
+  },
+  {
+    "id": "aplus-disk-management",
+    "kind": "command",
+    "tech": "aplus",
+    "title": "diskpart",
+    "task": "Inspect, initialise, partition and format a disk from the command line",
+    "aliases": [
+      "format a drive",
+      "partition",
+      "storage",
+      "disk not recognised",
+      "init disk",
+      "mbr",
+      "gpt"
+    ],
+    "risk": "risk",
+    "where": "Windows Command Prompt, elevated",
+    "privilege": "Administrator",
+    "platform": "Windows 10 / 11",
+    "changes": "Yes, irreversibly for the operations that write to a disk.",
+    "undo": "There is no undo for `clean`, `convert`, or creating a partition over existing data. Confirm the disk number with `list disk` before every write operation.",
+    "risks": "`clean`, `clean all` and `create partition` destroy data. Disk numbering is not stable across reboots on some hardware — re-run `list disk` every single time.",
+    "commands": "diskpart\nlist disk\nselect disk 2\ndetail disk\nlist partition\nselect partition 1\nformat fs=ntfs quick label=Data\nassign letter=E\ncreate partition primary\nconvert mbr",
+    "explain": [
+      "The order matters and every step is verified before the next: `list disk` to see what is there, `select disk N`, `detail disk` to confirm you picked the right one by size and model, then act.",
+      "A disk shows as **Online** but uninitialised means it has raw capacity the OS refuses to touch until it gets an init record. `select disk N` then `initialize disk` fixes it.",
+      "MBR is a real limitation, not a preference: MBR partitions max at 2 TB and there can be at most four primary partitions. Anything larger needs GPT.",
+      "`format fs=ntfs quick` skips the zero pass. That is correct for a nearly empty disk and wrong as a data-wiping exercise — say which one you mean.",
+      "`list volume` and `list partition` are different views. A disk with no partition table shows a volume list with nothing on it."
+    ],
+    "example": [
+      "A new 2 TB drive does not appear in File Explorer. `list disk` shows it as `Online`, 1863 GB, with no partitions. `initialize disk` then `convert gpt` then `create partition primary` then `format` and `assign` makes it appear."
+    ],
+    "verify": [
+      "diskpart\nlist disk\nlist volume",
+      "Get-Disk | Format-Table Number,FriendlyName,PartitionStyle,OperationalStatus"
+    ],
+    "errors": [
+      {
+        "message": "The media is write protected",
+        "means": "The device or a controller flag is preventing writes. Common on a USB stick with a physical lock, or a card reader.",
+        "fix": "Check the physical lock switch. A write-protected controller cannot be fixed in software."
+      },
+      {
+        "message": "Virtual Disk Service error: The media is write protected / The disk is offline",
+        "means": "Windows has marked the disk offline, often because it believes it was removed uncleanly.",
+        "fix": "Set-Disk -Number N -IsOffline $false   # then re-run list disk"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — DiskPart command reference",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/diskpart",
+        "checked": "2026-10-10"
+      },
+      {
+        "title": "Microsoft Learn — Initialize, format, and partition data disks",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "aplus",
+      "storage",
+      "diskpart",
+      "partition",
+      "mbr",
+      "gpt"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-3.5",
+        "note": "Partitioning, MBR vs GPT"
+      }
+    ]
+  },
+  {
+    "id": "aplus-chkdsk-sfc",
+    "kind": "command",
+    "tech": "aplus",
+    "title": "chkdsk",
+    "task": "Check a volume for file-system errors and repair it",
+    "aliases": [
+      "fix disk",
+      "bad sectors",
+      "chkdsk",
+      "file system",
+      "ntfs",
+      "repair volume"
+    ],
+    "risk": "risk",
+    "where": "Windows Command Prompt, elevated",
+    "privilege": "Administrator",
+    "platform": "Windows 10 / 11",
+    "changes": "Yes. Repairs the file system; /r also attempts to recover bad sectors.",
+    "undo": "No. The changes are corrective repairs, not reversible edits.",
+    "risks": "Running chkdsk on a volume with a synchronisation tool (ReFS with Storage Spaces, some databases, a File Replication Service member) can corrupt data. A scheduled chkdsk at boot while holding a volume lock can also fail.",
+    "commands": "chkdsk C: /scan\nchkdsk D: /f\nchkdsk E: /r\nchkdsk D: /f /spotfix",
+    "explain": [
+      "/scan is an online scan that needs no reboot and is safe to run while the volume is in use. It is the right first command.",
+      "/f fixes file-system errors. It requires the volume to be dismounted, so on the system volume it will offer to run at next boot.",
+      "/r adds a surface scan for bad sectors and can take hours on a large or failing disk. `/x` forces the dismount even when dirty, and is more disruptive than you usually want.",
+      "`/spotfix` queues a repair of what `/scan` found, to run at next boot. `/f /spotfix` together is the modern equivalent of the old scheduled chkdsk.",
+      "Before `/r` on a failing drive, image the disk first. Chkdsk can make recovery harder once it starts moving clusters around."
+    ],
+    "example": [
+      "A drive that keeps saying 'found problems with the file system' at every boot: `chkdsk C: /scan` to confirm, then `chkdsk C: /f /spotfix` to repair at the next restart."
+    ],
+    "verify": [
+      "chkdsk C: /scan",
+      "fsutil dirty query C:"
+    ],
+    "errors": [
+      {
+        "message": "Cannot lock current drive. Chkdsk was run because the volume may have been left dirty by an unclean shutdown.",
+        "means": "The OS has marked the volume dirty and wants to run offline. This is normal after a hard power-off.",
+        "fix": "Allow it to run at next boot, or run: chkdsk C: /f /spotfix"
+      },
+      {
+        "message": "Chkdsk is not available for RAW CD or DVD drives",
+        "means": "Optical media. Chkdsk applies to hard-disk volumes only.",
+        "fix": "n/a"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Microsoft Learn — chkdsk command",
+        "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chkdsk",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "aplus",
+      "storage",
+      "chkdsk",
+      "ntfs",
+      "repair"
+    ],
+    "objectives": [
+      {
+        "id": "APLUS-C1-3.5",
+        "note": "File system repair"
+      }
+    ]
   }
- },
- {
-  "id": "rhel-systemctl-enable-now",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "systemctl enable --now",
-  "task": "Start a service now and make it start at every boot",
-  "aliases": [
-   "enable a service",
-   "persist service",
-   "start on boot",
-   "autostart service"
-  ],
-  "risk": "caution",
-  "where": "RHEL shell",
-  "privilege": "root (sudo)",
-  "platform": "RHEL 9 / 10",
-  "changes": "Yes. Starts the service and writes symlinks under /etc/systemd/system.",
-  "undo": "systemctl disable --now NAME   (stops it and removes the boot-time symlinks)",
-  "risks": "If you enable and start a service you did not mean to — a database, a file server — it becomes reachable on the network immediately.",
-  "commands": "sudo systemctl enable --now sshd\nsystemctl cat sshd | head -5\nsystemctl list-unit-files --state=enabled | grep sshd",
-  "explain": [
-   "`start` is runtime only and is forgotten at reboot. `enable` is boot-time only and does not start anything now. `--now` does both in one step, which is almost always what an administrator actually wants.",
-   "You can verify the boot-time half without trusting the message: `systemctl is-enabled sshd` must print `enabled`.",
-   "`systemctl cat` shows the unit file systemd actually loaded, including any drop-ins merged over the package default."
-  ],
-  "example": [
-   "Installing a package does not start it on RHEL in most cases. `sudo dnf install -y httpd` leaves httpd installed and stopped. The step people forget is `enable --now`."
-  ],
-  "verify": [
-   "systemctl is-enabled sshd\nsystemctl is-active sshd"
-  ],
-  "errors": [
-   {
-    "message": "Created symlink /etc/systemd/system/multi-user.target.wants/sshd.service → /usr/lib/systemd/system/sshd.service",
-    "means": "This is success, not an error. `enable` prints the symlink it created. Do not be alarmed by the arrow; it points at the vendor file, which is correct.",
-    "fix": ""
-   },
-   {
-    "message": "Failed to enable unit: Unit file sshd.service does not exist.",
-    "means": "The package is not installed. `enable` cannot enable a unit that does not exist.",
-    "fix": "sudo dnf install -y openssh-server && sudo systemctl enable --now sshd"
-   }
-  ],
-  "sources": [
-   {
-    "title": "systemctl(1) man page",
-    "checked": "2026-10-10",
-    "url": "https://www.freedesktop.org/software/systemd/man/latest/systemctl.html"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "systemd",
-   "boot",
-   "services"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-7.2",
-    "note": "enable --now is exactly the 'start now and at boot' pattern the exam wants"
-   }
-  ]
- },
- {
-  "id": "rhel-journalctl-unit",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "journalctl -u UNIT",
-  "task": "Read the log messages for one service",
-  "aliases": [
-   "service logs",
-   "read logs",
-   "why is the service failing",
-   "check logs"
-  ],
-  "risk": "safe",
-  "where": "RHEL shell",
-  "privilege": "none for your own units; some messages are root-only",
-  "platform": "RHEL 9 / 10",
-  "changes": "No. Read-only.",
-  "undo": "n/a",
-  "commands": "journalctl -u sshd -b --no-pager\njournalctl -u sshd --since '30 minutes ago' --no-pager\njournalctl -xe\njournalctl -u nginx -p err -b --no-pager",
-  "explain": [
-   "`-u` restricts to one unit. `-b` means \"since this boot\", which is almost always what you want — without it you are reading last week's crash too.",
-   "`-x` adds explanatory text and `-e` jumps to the end, so the newest (and usually most relevant) lines are visible immediately.",
-   "`-p err` filters by priority. Priorities are `emerg alert crit err warning notice info debug`, and `-p err` means err **and worse**."
-  ],
-  "example": [
-   "A service shows `Active: failed` in `systemctl status`. The cause is almost always in the last lines of `journalctl -u NAME -b`, not in the status block itself."
-  ],
-  "verify": [
-   "$ journalctl -u sshd -b --no-pager\nOct 12 09:33:24 localhost.localdomain systemd[1]: Starting sshd.service - OpenSSH server daemon...\nOct 12 09:33:24 localhost.localdomain sshd[1373]: Server listening on 0.0.0.0 port 22.\nOct 12 09:33:24 localhost.localdomain systemd[1]: Started sshd.service - OpenSSH server daemon.\nOct 12 09:33:24 localhost.localdomain sshd[1373]: Server listening on :: port 22.\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: Invalid user <lab-user> from <client-ip> port 54017\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:11 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): authentication failure; logname= uid=0 euid=0 tty=ssh ruser= rhost=<client-ip>\nOct 12 09:35:13 localhost.localdomain sshd-session[3050]: Failed password for invalid user <lab-user> from <client-ip> port 54017 ssh2\nOct 12 09:35:13 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:15 localhost.localdomain sshd-session[3050]: Failed password for invalid user <lab-user> from <client-ip> port 54017 ssh2\nOct 12 09:35:16 localhost.localdomain sshd-session[3050]: pam_unix(sshd:auth): check pass; user unknown\nOct 12 09:35:18 localhost.localdomain sshd-session[3050]: Failed password for invalid user <lab-user> from <client-ip> port 54017 ssh2\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "No journal files were found. Run 'journalctl --flush' to rotate journals.",
-    "means": "The journal directory is empty — logs are not persistent, usually because /var/log/journal does not exist so everything went to a volatile store.",
-    "fix": "sudo mkdir -p /var/log/journal && sudo systemd-catalog-files  # then restart the service"
-   },
-   {
-    "message": "Hint: You are currently not seeing messages from the users of the system.",
-    "means": "Normal when running as a non-root user. You are seeing the system journal only.",
-    "fix": "sudo journalctl -u sshd -b --no-pager"
-   }
-  ],
-  "sources": [
-   {
-    "title": "RHEL 10 — Configuring system logging",
-    "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_system_logging/",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "journalctl",
-   "logs",
-   "troubleshooting",
-   "systemd"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-4.5",
-    "note": "Interpret system journals"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "journalctl -u sshd -b --no-pager",
-   "exit": 0
-  }
- },
- {
-  "id": "rhel-ss-lntup",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "ss -lntup",
-  "task": "See what is listening, on which address, and which process owns the port",
-  "aliases": [
-   "what port am i using",
-   "check listening ports",
-   "port in use",
-   "find process on port",
-   "netstat"
-  ],
-  "risk": "safe",
-  "where": "RHEL shell",
-  "privilege": "root shows process names for sockets you do not own",
-  "platform": "RHEL 9 / 10",
-  "changes": "No. Read-only.",
-  "undo": "n/a",
-  "commands": "ss -lntup\nss -lntup 'sport = :22'\nss -lntp state established\nss -lntup | grep -E 'nginx|sshd'",
-  "explain": [
-   "ss replaces netstat on modern RHEL. `-l` listening, `-n` numeric (skip the slow reverse DNS), `-t` TCP, `-u` UDP, `-p` process.",
-   "The address column is the most useful part of this output. `0.0.0.0:22` means reachable from every interface; `127.0.0.1:8080` means only from this machine. A service \"not working from another PC\" is very often bound to localhost.",
-   "Appending a filter such as `'sport = :22'` is much more reliable than grep when a port number appears inside an address."
-  ],
-  "example": [
-   "You started Apache and cannot reach it from your laptop. `ss -lntup` shows `:::80` and `:::443` — that is fine. If it showed `127.0.0.1:80` instead, that would explain it exactly."
-  ],
-  "verify": [
-   "$ ss -lntup\nNetid State  Recv-Q Send-Q Local Address:Port Peer Address:PortProcess                                 \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=17))     \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=13))     \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=9))      \nudp   UNCONN 0      0          127.0.0.1:53        0.0.0.0:*    users:((\"unbound\",pid=1407,fd=5))      \nudp   UNCONN 0      0            0.0.0.0:5353      0.0.0.0:*    users:((\"avahi-daemon\",pid=1177,fd=12))\nudp   UNCONN 0      0          127.0.0.1:323       0.0.0.0:*    users:((\"chronyd\",pid=1178,fd=4))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=3))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=7))      \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=11))     \nudp   UNCONN 0      0              [::1]:53           [::]:*    users:((\"unbound\",pid=1407,fd=15))     \nudp   UNCONN 0      0               [::]:5353         [::]:*    users:((\"avahi-daemon\",pid=1177,fd=13))\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "netstat: command not found (when using the old tool)",
-    "means": "netstat is not installed on a minimal RHEL 10 image. That is expected, not a fault. `ss` covers everything netstat did.",
-    "fix": "ss -lntup    # or: sudo dnf install -y iproute  (ss ships in iproute, usually already present)"
-   }
-  ],
-  "sources": [
-   {
-    "title": "ss(8) man page",
-    "url": "https://man7.org/linux/man-pages/man8/ss.8.html",
-    "checked": "2026-10-10"
-   },
-   {
-    "title": "RHEL 10 — Understanding basic networking",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "ss",
-   "netstat",
-   "ports",
-   "troubleshooting",
-   "iproute"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-4.6",
-    "note": "Start, stop and check the status of network services"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "ss -lntup",
-   "exit": 0
-  }
- },
- {
-  "id": "rhel-sudo-dnf",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "dnf",
-  "task": "Install, remove, update and query packages",
-  "aliases": [
-   "install package",
-   "yum",
-   "update system",
-   "patch",
-   "package manager"
-  ],
-  "risk": "caution",
-  "where": "RHEL shell",
-  "privilege": "root (sudo)",
-  "platform": "RHEL 9 / 10",
-  "changes": "Yes. Changes installed packages on disk.",
-  "undo": "dnf history undo <ID>   (dnf keeps a transaction log — this is the real undo)",
-  "risks": "A major-version update can pull a new kernel and change service behaviour. Never run a blanket `dnf update` on a production server without a plan and a rollback window.",
-  "commands": "dnf search nginx\ndnf info nginx\nsudo dnf install -y nginx\nrpm -q nginx\ndnf history list | head\nsudo dnf history undo <ID>",
-  "explain": [
-   "RHEL 10 ships **dnf4** as `dnf`. Some Fedora and derivative builds have moved to dnf5, which prints differently and parses some options differently — check `dnf --version` before copying a command from a blog.",
-   "`dnf history` is the feature most learners never find and it is the answer to \"I broke something with an update\". Every transaction has an ID and `dnf history undo ID` reverses it.",
-   "`dnf install` resolves dependencies for you. Reach for `rpm -i` only when you are deliberately installing a locally-built .rpm and you understand what it will not resolve for you."
-  ],
-  "example": [
-   "`dnf history undo 42` rolls back the whole transaction, including packages that were upgraded as a side effect. It is the fastest correct recovery from a bad `dnf update`."
-  ],
-  "verify": [
-   "$ dnf search nginx\nUpdating Subscription Management repositories.\n========================= Name Exactly Matched: nginx ==========================\nnginx.x86_64 : A high performance web server and reverse proxy server\n======================== Name & Summary Matched: nginx =========================\nnginx-all-modules.noarch : A meta package that installs all available Nginx modules\nnginx-core.x86_64 : nginx minimal core\nnginx-filesystem.noarch : The basic directory layout for the Nginx server\nnginx-mod-http-image-filter.x86_64 : Nginx HTTP image filter module\nnginx-mod-http-perl.x86_64 : Nginx HTTP perl module\nnginx-mod-http-xslt-filter.x86_64 : Nginx XSLT module\nnginx-mod-mail.x86_64 : Nginx mail modules\nnginx-mod-stream.x86_64 : Nginx stream modules\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "Error: Failed to download metadata for repo 'baseos'",
-    "means": "No working mirror, or a proxy/DNS problem. Nothing to do with the package name.",
-    "fix": "sudo dnf clean all && sudo dnf makecache\n# still failing: check connectivity and DNS — ping the mirror, then cat /etc/resolv.conf"
-   },
-   {
-    "message": "Error: package nginx is already installed",
-    "means": "It is installed but not started, or not enabled. Installing again does nothing useful.",
-    "fix": "sudo systemctl enable --now nginx"
-   }
-  ],
-  "sources": [
-   {
-    "title": "RHEL 10 — Working with DNF",
-    "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/managing_software_packages/advanced-topics_using-dnf",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "dnf",
-   "yum",
-   "packages",
-   "rollback"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-2.3",
-    "note": "Install and update packages from a repository"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "dnf search nginx",
-   "exit": 0
-  }
- },
- {
-  "id": "rhel-getenforce-ausearch",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "ausearch -m avc",
-  "task": "Find out whether SELinux blocked something",
-  "aliases": [
-   "selinux denied",
-   "permission denied selinux",
-   "avc denial",
-   "why is selinux blocking me"
-  ],
-  "risk": "safe",
-  "where": "RHEL shell",
-  "privilege": "root to see all denials",
-  "platform": "RHEL 9 / 10",
-  "changes": "No. Read-only.",
-  "undo": "n/a",
-  "commands": "getenforce\nausearch -m avc -ts recent\nsudo ausearch -m avc -ts recent | tail -30\nsestatus",
-  "explain": [
-   "AVC = Access Vector Cache. Every SELinux denial produces one. It names the process's type, the target's type, and the exact permission that was refused — which is what you need, because it tells you what to relabel rather than guessing.",
-   "`-ts recent` limits to the current time window. Without a time bound an old denial from last week will be the first thing you read.",
-   "Never fix a SELinux problem by setting it to permissive and moving on. Use the boolean or the label fix shown in the denial — permissive teaches you nothing and leaves the system vulnerable."
-  ],
-  "example": [
-   "A web server can read `/srv/www` but Apache returns 403. `ausearch -m avc -ts recent` shows `denied { read } for ... scontext=system_u:system_r:httpd_t:s0 tcontext=unconfined_u:object_r:default_t:s0`. The fix is to give the files the right label, not to disable SELinux."
-  ],
-  "verify": [
-   "$ getenforce\nEnforcing\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "nothing matches (no output at all)",
-    "means": "Either there was no denial in that window, or auditd is not running and denials are not being recorded.",
-    "fix": "systemctl is-active auditd || sudo systemctl enable --now auditd"
-   }
-  ],
-  "sources": [
-   {
-    "title": "RHEL 10 — Working with SELinux",
-    "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/working_with_selinux/",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "selinux",
-   "ausearch",
-   "permissions",
-   "denied"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-10.5",
-    "note": "Identify SELinux context"
-   },
-   {
-    "id": "RHCSA-10.4"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "getenforce",
-   "exit": 0
-  }
- },
- {
-  "id": "rhel-firewall-cmd-list",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "firewall-cmd",
-  "task": "Inspect and change which ports firewalld allows",
-  "aliases": [
-   "open a port",
-   "firewall",
-   "allow port",
-   "firewalld",
-   "block port"
-  ],
-  "risk": "caution",
-  "where": "RHEL shell",
-  "privilege": "root (sudo)",
-  "platform": "RHEL 9 / 10 (nftables backend)",
-  "changes": "Yes, unless you pass --runtime or --permanent and forget to reload.",
-  "undo": "sudo firewall-cmd --remove-port=443/tcp   (or remove the rich rule you added)",
-  "risks": "Opening a port exposes the service beyond the machine. Removing the SSH port rule while connected over SSH will lock you out on the next reload.",
-  "commands": "sudo firewall-cmd --list-all\nsudo firewall-cmd --get-active-zones\nsudo firewall-cmd --add-port=443/tcp --permanent\nsudo firewall-cmd --reload\nfirewall-cmd --list-ports",
-  "explain": [
-   "firewalld keeps two rule sets. The **runtime** rules apply now and are lost on reload or reboot. The **permanent** rules are the stored config and only apply after `--reload` or a reboot. Passing `--permanent` alone changes nothing live, which is the single most common firewalld misunderstanding.",
-   "`--add-service=http` is shorthand for the predefined service definition (port + protocol + any default). Prefer it over `--add-port` when a service is already known to firewalld.",
-   "Zone matters: a network interface is bound to exactly one zone, and only that zone's rules apply to connections arriving on it."
-  ],
-  "example": [
-   "You run `firewall-cmd --add-port=8080/tcp --permanent`, test, and it does not work. This is expected: permanent rules are not live. Add it at runtime too, or reload."
-  ],
-  "verify": [
-   "$ sudo firewall-cmd --list-all\npublic (default, active)\n  target: default\n  ingress-priority: 0\n  egress-priority: 0\n  icmp-block-inversion: no\n  interfaces: \n  sources: \n  services: cockpit dhcpv6-client ssh\n  ports: \n  protocols: \n  forward: yes\n  masquerade: no\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "FirewallD is not running",
-    "means": "firewalld is stopped, so nothing is filtering. Another firewall layer (nftables rules, cloud security group) may be.",
-    "fix": "sudo systemctl enable --now firewalld"
-   },
-   {
-    "message": "Error: ZONE_CONFLICT: 'br0' already bound to zone 'X'",
-    "means": "An interface can only be in one zone. Use --change-interface instead of --add-interface.",
-    "fix": "sudo firewall-cmd --zone=X --change-interface=br0 --permanent && sudo firewall-cmd --reload"
-   }
-  ],
-  "sources": [
-   {
-    "title": "RHEL 10 — Configuring and using firewalld",
-    "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_and_using_firewalld/",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "firewalld",
-   "firewall",
-   "ports",
-   "nftables"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-10.1"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "sudo firewall-cmd --list-all",
-   "exit": 0
-  }
- },
- {
-  "id": "rhel-nmcli-connection",
-  "kind": "command",
-  "tech": "rhel",
-  "title": "nmcli connection",
-  "task": "Inspect and change network interface configuration",
-  "aliases": [
-   "set static ip",
-   "network configuration",
-   "nmcli",
-   "change ip address",
-   "no ip address"
-  ],
-  "risk": "caution",
-  "where": "RHEL shell",
-  "privilege": "root (sudo) to modify",
-  "platform": "RHEL 9 / 10",
-  "changes": "Yes. Modifies the connection profile and can drop the network.",
-  "undo": "Keep a console session open, or record the previous profile with `nmcli con show NAME` first. Changes to a connection started with `autoconnect no` are not applied until you do `nmcli con up NAME`.",
-  "risks": "Changing the address on the interface you are connected through will drop your SSH session immediately. Over a remote connection, always schedule the change with `nmcli con up` in the background, or use a two-minute revert timer.",
-  "commands": "nmcli device status\nnmcli connection show\nnmcli connection show 'System eth0'\nsudo nmcli connection modify 'System eth0' ipv4.method manual \\\n     ipv4.addresses 192.0.2.10/24 ipv4.gateway 192.0.2.1 \\\n     ipv4.dns '192.0.2.53' ipv4.dns-search example.lan\nnmcli -p connection show --active",
-  "explain": [
-   "NetworkManager stores settings as **connection profiles**, not as files per interface. The profile name (`System eth0`) is what you modify and activate; the device name (`eth0`) is just the plug it is currently on.",
-   "`ipv4.method` is the switch that matters: `auto` = DHCP, `manual` = static, `disabled` = no IPv4. Most \"my server has no IP\" problems are a profile still set to `auto` on a network with no DHCP server.",
-   "There are two ways to set an IP: `ipv4.addresses` on the profile (persistent) or `ip addr add` on the device (lost at reboot). Always use the profile."
-  ],
-  "example": [
-   "To make a change reversible over SSH, schedule the activation and a forced revert:\n  sudo nmcli con down 'System eth0' && sudo nmcli con up 'System eth0'\n  (sleep 120; sudo nmcli con mod 'System eth0' ipv4.method auto; sudo nmcli con up 'System eth0') &\nIf the new address works, the revert is still scheduled — cancel it with `kill %1`."
-  ],
-  "verify": [
-   "$ nmcli device status\nDEVICE  TYPE      STATE                   CONNECTION \nens160  ethernet  connected               ens160     \nens224  ethernet  connected               internal   \nlo      loopback  connected (externally)  lo\n\n[executed 2026-10-12 on Red Hat Enterprise Linux release 10.2 (Coughlan), kernel 6.12.0-211.7.3.el10_2.x86_64]"
-  ],
-  "errors": [
-   {
-    "message": "Error: Failed to add IPv4 address: File exists",
-    "means": "The address is already on that device. You are adding rather than replacing.",
-    "fix": "sudo nmcli connection modify 'System eth0' ipv4.addresses '192.0.2.10/24'   # no comma = replace the list"
-   },
-   {
-    "message": "Connection activation failed: No suitable device found",
-    "means": "The profile's `connection.interface-name` does not match any device. Common after a hardware change or in a VM where the NIC name differs.",
-    "fix": "nmcli device status   # then correct interface-name, or delete the constraint entirely"
-   }
-  ],
-  "sources": [
-   {
-    "title": "RHEL 10 — Configuring a basic network",
-    "url": "https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/10/html/configuring_a_basic_network/",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "execution-tested",
-  "tags": [
-   "nmcli",
-   "networkmanager",
-   "static ip",
-   "networking"
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-8.1",
-    "note": "Configure IPv4 and IPv6 addresses"
-   }
-  ],
-  "tested_on": {
-   "date": "2026-10-12",
-   "os": "Red Hat Enterprise Linux release 10.2 (Coughlan)",
-   "kernel": "6.12.0-211.7.3.el10_2.x86_64",
-   "arch": "x86_64",
-   "command": "nmcli device status",
-   "exit": 0
-  }
- },
- {
-  "id": "mikrotik-ip-address-print",
-  "kind": "command",
-  "tech": "mikrotik",
-  "title": "/ip address print",
-  "task": "List every IP address assigned to the router",
-  "aliases": [
-   "what ip do i have",
-   "router ip",
-   "ip addresses",
-   "list interfaces"
-  ],
-  "risk": "safe",
-  "where": "RouterOS CLI or WinBox terminal",
-  "privilege": "none to read",
-  "platform": "RouterOS 7.x",
-  "changes": "No. Read-only.",
-  "undo": "n/a",
-  "commands": "/ip/address/print\n/ip/address/print detail\n/ip/interface/print\n/ip/interface/print type=ether",
-  "explain": [
-   "RouterOS uses a **menu path**, not a Linux-style command. The leading `/` means \"jump to this menu\"; everything before the last `/` navigates and the last word is the operation. Typing `/ip/address/print` is equivalent to pressing `/ip address` then `print`.",
-   "`print` shows the set. `print detail` shows every field including the disabled flag and comment — which is often where the answer is.",
-   "In RouterOS 7, `/interface/bridge/port` and `/interface/ethernet` are separate menus; in v6 they were all under `/interface`. This is the main practical difference worth remembering."
-  ],
-  "example": [
-   "An interface with a correct address shows `D` for dynamic in the flags column. If you expected a static address and see D, someone (or the DHCP client) created it dynamically and it may change."
-  ],
-  "verify": [
-   "/ip/address/print\n/ip/route/print where dst-address=0.0.0.0/0"
-  ],
-  "errors": [
-   {
-    "message": "unknown command",
-    "means": "A typo, or a menu path that does not exist in your version. RouterOS 6 and 7 differ on `/interface`.",
-    "fix": "Press `/` then Tab to browse the menu tree. Or `/interface/print` to see what exists."
-   },
-   {
-    "message": "failure: address already exists",
-    "means": "That address is already assigned to another interface.",
-    "fix": "/ip/address/print   # find who holds it"
-   }
-  ],
-  "sources": [
-   {
-    "title": "MikroTik official documentation — IP Addressing",
-    "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/328059/IP+Addressing",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "mikrotik",
-   "routeros",
-   "ip",
-   "address",
-   "mtcna"
-  ],
-  "objectives": [
-   {
-    "id": "MTCNA-M1.2",
-    "note": "RouterOS CLI principles"
-   },
-   {
-    "id": "MTCRE-M2",
-    "note": "Point to point addressing"
-   }
-  ]
- },
- {
-  "id": "mikrotik-ip-firewall-filter",
-  "kind": "command",
-  "tech": "mikrotik",
-  "title": "/ip firewall filter",
-  "task": "Add a rule that allows or denies traffic and see what is already there",
-  "aliases": [
-   "firewall rule",
-   "block traffic",
-   "allow port",
-   "nat",
-   "drop rule"
-  ],
-  "risk": "caution",
-  "where": "RouterOS CLI",
-  "privilege": "admin-level for changes",
-  "platform": "RouterOS 7.x",
-  "changes": "Yes. Changes packet filtering immediately, with no confirmation prompt.",
-  "undo": "/ip/firewall/filter/remove <number>   or remove by comment: ... where comment=\"...\"",
-  "risks": "A filter rule that drops established connections can cut your own management session. Read the existing rules with `print` before you add anything, and keep a way back in (WinBox from the LAN, or the console port).",
-  "commands": "/ip/firewall/filter/print\n/ip/firewall/filter/add chain=input action=accept \\\n   protocol=icmp comment=\"accept ping to router\"\n/ip/firewall/filter/add chain=input action=drop \\\n   in-interface-list=!WAN connection-state=established,related \\\n   comment=\"default drop invalid\"\n/ip/firewall/filter/print stats",
-  "explain": [
-   "MikroTik's model is **three separate chains**: `input` (traffic to the router itself), `forward` (traffic passing through it), and `output` (traffic from the router). Choosing the wrong chain is the single most common reason a rule appears to do nothing.",
-   "Order is evaluated top to bottom, first match wins, exactly like an ACL. Put accepts above drops.",
-   "The default configuration ships with rules allowing established/related through `forward`. Adding a drop in the wrong place silently overrides them.",
-   "In RouterOS 7, the modern drop-in replacement for a bare port filter is the **address list + connection tracking** pattern, but `filter` is still the right tool for core filtering and is what exams and most lab work expect."
-  ],
-  "example": [
-   "To see whether a rule is actually matching anything, add `stats` and re-run `print` — the `packets` column shows the hit count. A rule with zero hits after a test is not doing what you think."
-  ],
-  "verify": [
-   "/ip/firewall/filter/print stats\n/ip/firewall/filter/print stats where packets>0"
-  ],
-  "errors": [
-   {
-    "message": "failure: already have such address",
-    "means": "Duplicate address-list entry.",
-    "fix": "/ip/firewall/address-list/print   # remove the old entry first"
-   },
-   {
-    "message": "Rule matched but nothing happens to the client",
-    "means": "Usually the rule is in the wrong chain, or a NAT rule is required in addition to a filter rule. Filtering without masquerading drops outbound replies.",
-    "fix": "/ip/firewall/nat/print   # confirm a masquerade or srcnat rule exists on the WAN interface"
-   }
-  ],
-  "sources": [
-   {
-    "title": "MikroTik official documentation — Firewall",
-    "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/2465019/Firewall",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "mikrotik",
-   "routeros",
-   "firewall",
-   "filter",
-   "mtcna",
-   "nat"
-  ],
-  "objectives": [
-   {
-    "id": "MTCNA-M6.2"
-   }
-  ]
- },
- {
-  "id": "mikrotik-ip-dhcp-server-network",
-  "kind": "command",
-  "tech": "mikrotik",
-  "title": "/ip dhcp-server network",
-  "task": "Define and enable the DHCP scope the router hands out",
-  "aliases": [
-   "dhcp",
-   "clients get no ip",
-   "address pool",
-   "dhcp server",
-   "scope"
-  ],
-  "risk": "caution",
-  "where": "RouterOS CLI",
-  "privilege": "admin-level",
-  "platform": "RouterOS 7.x",
-  "changes": "Yes. Starts handing out addresses.",
-  "undo": "/ip/dhcp-server/remove <name>   /   /ip/dhcp-server/network/remove <name>",
-  "risks": "A DHCP scope whose gateway or DNS points somewhere wrong produces clients that appear to work but cannot reach anything. Always check `network=` before enabling.",
-  "commands": "/ip/dhcp-server/network/print\n/ip/dhcp-server/network/add name=LAN address=10.10.20.1/24 \\\n   gateway=10.10.20.1 dns-server=10.10.20.1\n/ip/dhcp-server/add name=lan-dhcp interface=bridge-lan \\\n   address-pool=lan-pool lease-time=1h disabled=no\n/ip/dhcp-server/print\n/ip/dhcp-server/lease/print\n/ip/pool/print",
-  "explain": [
-   "DHCP needs four separate pieces and a beginner usually configures three: a **pool** (the address range), a **network** (gateway, DNS, domain, netmask), and a **server** (which interface it answers on). The server also needs a `lease-time`.",
-   "The gateway is usually the router's own address on that bridge. If clients get an address but no route out, this is why.",
-   "`/ip/dhcp-server/lease/print` is the diagnostic command. No leases while a client is failing means the client never reached the server; leases with the wrong gateway means the scope is misconfigured.",
-   "In RouterOS 7 the DHCP server is under `/ip/dhcp-server` with options under `/ip/dhcp-server/network/<name>/set` — not the older v6 `/ip/dhcp-server/network` combined layout. Check your version."
-  ],
-  "example": [
-   "Client says 'Unable to obtain an IP address'. If DHCP is on the bridge and the client is on a bridge port, it works. If the client is on a physical port not in the bridge, it never sees the DHCP offer — that is a bridge membership problem, not a DHCP problem."
-  ],
-  "verify": [
-   "/ip/dhcp-server/lease/print detail\n/ip/dhcp-server/network/print detail"
-  ],
-  "errors": [
-   {
-    "message": "failure: could not add address ... already exists",
-    "means": "The pool overlaps the network range or the bridge address.",
-    "fix": "/ip/pool/print   # make the pool exclude the gateway address"
-   },
-   {
-    "message": "Client gets 169.254.x.x",
-    "means": "The client fell back to APIPA, meaning it never got an offer at all.",
-    "fix": "Check the DHCP server is enabled, is bound to the right interface, and that a firewall rule is not dropping UDP 67."
-   }
-  ],
-  "sources": [
-   {
-    "title": "MikroTik official documentation — DHCP",
-    "url": "https://help.mikrotik.com/docs/spaces/ROS/pages/24805500/DHCP",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "mikrotik",
-   "routeros",
-   "dhcp",
-   "mtcna",
-   "addressing"
-  ],
-  "objectives": [
-   {
-    "id": "MTCNA-M2.3"
-   }
-  ]
- },
- {
-  "id": "win11-ipconfig-all",
-  "kind": "command",
-  "tech": "win11",
-  "title": "ipconfig /all",
-  "task": "See the full network configuration of every adapter",
-  "aliases": [
-   "ip config",
-   "my ip address",
-   "network settings",
-   "adapter config",
-   "dns"
-  ],
-  "risk": "safe",
-  "where": "Windows 11 Command Prompt or PowerShell",
-  "privilege": "none",
-  "platform": "Windows 10 / 11",
-  "changes": "No. Read-only.",
-  "undo": "n/a",
-  "commands": "ipconfig /all\nipconfig /renew\nipconfig /release\nipconfig /flushdns\nnslookup example.lan",
-  "explain": [
-   "`/all` is the useful one. Plain `ipconfig` only shows address, mask and gateway; `/all` adds DHCP status, DNS servers, MAC, and the adapter description — the MAC and description are what you need when a switch port shows the wrong device.",
-   "A `169.254.x.x` address means DHCP failed and Windows self-assigned. That is a symptom, not a cause: either no DHCP server on that segment, or the link is down.",
-   "`ipconfig /flushdns` is the first thing to try for \"it worked yesterday\" name-resolution problems, and it is harmless.",
-   "In PowerShell, `ipconfig` is still an external command; `Clear-DnsClientCache` and `Get-DnsClientServerAddress` are the native equivalents."
-  ],
-  "example": [
-   "A Windows 11 client on a network with DHCP shows `DHCP Enabled: Yes`. If it shows `No`, someone set a static address. That single line explains a lot of otherwise mysterious failures."
-  ],
-  "verify": [
-   "ipconfig /all | findstr /i \"dhcp dns\"",
-   "Test-NetConnection -ComputerName dc01.lab -Port 389"
-  ],
-  "errors": [
-   {
-    "message": "Media State ... Media disconnected",
-    "means": "The adapter has no carrier — cable, switch port, or the adapter is disabled.",
-    "fix": "Check the cable and the switch port LED first. Nothing above the physical layer will work until this is fixed."
-   },
-   {
-    "message": "The requested operation requires elevation",
-    "means": "You are in a standard prompt and the command needs administrator rights.",
-    "fix": "Start → Terminal (Administrator)"
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — ipconfig command",
-    "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/ipconfig",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "windows",
-   "ipconfig",
-   "networking",
-   "troubleshooting"
-  ],
-  "objectives": [
-   {
-    "id": "APLUS-C1-2.1",
-    "note": "IPv4 addressing, gateway, DNS"
-   }
-  ]
- },
- {
-  "id": "win11-flags-bcdedit",
-  "kind": "command",
-  "tech": "win11",
-  "title": "bcdedit",
-  "task": "Inspect and change Windows boot options such as safe mode",
-  "aliases": [
-   "safe mode",
-   "boot options",
-   "startup recovery",
-   "bcd",
-   "boot loop"
-  ],
-  "risk": "risk",
-  "where": "Elevated Command Prompt",
-  "privilege": "Administrator",
-  "platform": "Windows 10 / 11",
-  "changes": "Yes. Modifies the boot configuration, which can prevent Windows from starting.",
-  "undo": "bcdedit /deletevalue {current} safeboot    — or from the recovery console, bcdedit /set {default} safeboot no",
-  "risks": "Setting the wrong value can leave a machine unbootable. Always record `bcdedit /enum {current}` output before changing anything, and prefer `/set {current}` over `/set {default}` when the machine has multiple entries.",
-  "commands": "bcdedit /enum {current}\nbcdedit /set {current} safeboot minimal\n# reboot, fix the problem, then:\nbcdedit /deletevalue {current} safeboot\nbcdedit /enum {current}",
-  "explain": [
-   "Safe mode loads a minimal driver set. It is the standard next step for a machine that will not boot, because it distinguishes 'a driver is broken' from 'Windows itself is broken'.",
-   "`{current}` targets the boot entry this operating system was started from. `{default}` targets the entry Windows will use next. On a machine with multiple boot entries these are different.",
-   "`bcdedit` must run in an elevated prompt. A normal prompt gives 'The requested operation requires elevation'.",
-   "The modern equivalent for most people is holding Shift while clicking Restart, which builds the same environment from the recovery menu without typing anything."
-  ],
-  "example": [
-   "Windows updates repeatedly fail with a rollback: enter safe mode, uninstall the last update or driver, remove the safeboot value, and reboot."
-  ],
-  "verify": [
-   "bcdedit /enum {current}"
-  ],
-  "errors": [
-   {
-    "message": "Access is denied.",
-    "means": "Not elevated.",
-    "fix": "Run the terminal as Administrator"
-   },
-   {
-    "message": "The boot entry is not found",
-    "means": "The GUID in braces does not exist on this machine — usually {default} vs {current} mismatch after an OS upgrade.",
-    "fix": "bcdedit /enum   # list all entries and their identifiers"
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — bcdedit",
-    "url": "https://learn.microsoft.com/en-us/windows-hardware/drivers/devtest/bcdedit--boot-configuration-data-editor",
-    "checked": "2026-10-10"
-   },
-   {
-    "title": "Microsoft Learn — Windows Recovery Environment",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "windows",
-   "boot",
-   "safe mode",
-   "bcdedit",
-   "troubleshooting",
-   "bcd"
-  ],
-  "objectives": [
-   {
-    "id": "APLUS-C2-3.2",
-    "note": "Safe mode and boot options"
-   }
-  ]
- },
- {
-  "id": "win11-sfc-dism",
-  "kind": "command",
-  "tech": "win11",
-  "title": "DISM /Online /Cleanup-Image /RestoreHealth",
-  "task": "Repair a corrupted Windows component store, then verify system files",
-  "aliases": [
-   "fix windows",
-   "corrupt system files",
-   "sfc",
-   "dism",
-   "repair windows",
-   "missing dll"
-  ],
-  "risk": "caution",
-  "where": "Elevated Command Prompt",
-  "privilege": "Administrator",
-  "platform": "Windows 10 / 11",
-  "changes": "Yes. Rewrites system component files. Needs internet access to fetch replacements.",
-  "undo": "No direct undo. Take a restore point or full backup first.",
-  "risks": "On a machine that boots but misbehaves, run these before anything destructive. On a machine that will not boot, they need WinRE.",
-  "commands": "DISM /Online /Cleanup-Image /CheckHealth\nDISM /Online /Cleanup-Image /ScanHealth\nDISM /Online /Cleanup-Image /RestoreHealth\nsfc /scannow\nDISM /Online /Cleanup-Image /AnalyzeComponentStore",
-  "explain": [
-   "Run DISM **first**, then SFC. DISM repairs the source of the component files from which SFC copies replacements; running SFC first on a corrupted store often fails with 'found corrupt files but was unable to fix some of them'.",
-   "`/CheckHealth` is a fast, near-instant check that answers 'is the component store corrupt at all'. Run it before the 10-minute `/RestoreHealth`.",
-   "`/RestoreHealth` normally pulls replacement files from Windows Update, so it needs a working network connection and working TLS. Behind a proxy it fails with 0x800f081f.",
-   "After a successful DISM, `sfc /scannow` replaces the actual system files. Its output is one of: no integrity violations; repaired; or could not repair — which means the underlying problem is not a file problem."
-  ],
-  "example": [
-   "A Windows 11 machine that blue-screens on boot, or where random DLLs are missing, is fixed by DISM then SFC about nine times out of ten. Record the exact DISM exit code: 0 is success, 3010 is success but a reboot is needed."
-  ],
-  "verify": [
-   "DISM /Online /Cleanup-Image /CheckHealth\nsfc /scannow"
-  ],
-  "errors": [
-   {
-    "message": "Error: 0x800f081f — The source files could not be found.",
-    "means": "Windows Update could not supply the replacement files. Common on a machine with no internet, a broken cert store, or a hard-coded bad WSUS setting.",
-    "fix": "Test connectivity to Windows Update. Then check: reg query \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\"  # a PolicyURL pointing at a dead WSUS is the usual culprit"
-   },
-   {
-    "message": "Windows Resource Protection found corrupt files but was unable to fix some of them.",
-    "means": "SFC ran before DISM, or DISM itself failed. Do not keep re-running SFC.",
-    "fix": "Run DISM /RestoreHealth, then sfc /scannow again."
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — DISM and SFC",
-    "url": "https://support.microsoft.com/en-us/windows/using-dism-or-sfc-to-repair-corrupted-windows-system-files-09a255d1-0533-42cd-8807-0dd0378f10f8",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "windows",
-   "dism",
-   "sfc",
-   "repair",
-   "troubleshooting"
-  ],
-  "objectives": [
-   {
-    "id": "APLUS-C2-3.2",
-    "note": "Windows recovery and repair"
-   }
-  ]
- },
- {
-  "id": "winserver-install-addfeature",
-  "kind": "command",
-  "tech": "winserver",
-  "title": "Install-WindowsFeature",
-  "task": "Install a Windows Server role or feature from the command line",
-  "aliases": [
-   "install ad ds",
-   "install dcs",
-   "install dhcp",
-   "install dns",
-   "add role",
-   "server manager powershell"
-  ],
-  "risk": "caution",
-  "where": "PowerShell on the server (elevated)",
-  "privilege": "Administrator / Domain Admin during promotion",
-  "platform": "Windows Server 2019, 2022, 2025",
-  "changes": "Yes. Installs roles, creates the corresponding services, and can promote a server to a domain controller.",
-  "undo": "Uninstall-WindowsFeature -Name <feature> -IncludeManagementTools",
-  "risks": "Promoting to a domain controller is not cleanly reversible: the promotion writes to the AD database and creates the NTDS settings. Demoting is possible but is a documented, careful procedure, not a rollback.",
-  "commands": "Get-WindowsFeature\nGet-WindowsFeature -Name AD-Domain-Services\nInstall-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools\nInstall-WindowsFeature -Name RSAT-AD-Tools\nInstall-WindowsFeature AD-Domain-Services,DHCP -IncludeManagementTools\nGet-WindowsFeature | Where-Object Installed -eq $true",
-  "explain": [
-   "The feature names are exact strings and case does not matter but spelling does. Common ones: `AD-Domain-Services` (Active Directory), `DHCP`, `DNS`, `FileServices`, `FS-FileServer`, `RSAT-AD-Tools` (the AD PowerShell tools, which are NOT installed by default and which you will need).",
-   "`-IncludeManagementTools` installs the matching MMC snap-in. Without it the feature works but you get no graphical manager, and the default is to omit it — a frequent surprise.",
-   "`RSAT-AD-Tools` is the one people forget. `Get-ADUser` fails with 'The term is not recognised' until it is installed, which people misdiagnose as 'PowerShell is broken'.",
-   "`Install-WindowsFeature` handles dependencies. Installing `AD-Domain-Services` pulls in `AD-Domain-Services-Deployment` and the DNS server role automatically.",
-   "Installing a role does not configure it. After installing DHCP or DNS you still have to create the scope or the zone — that is the separate, more instructive step."
-  ],
-  "example": [
-   "A first domain controller: Install-WindowsFeature AD-Domain-Services -IncludeManagementTools, then Install-ADDSForest with `-DomainName` and `-InstallDns` to create DNS in the same pass."
-  ],
-  "verify": [
-   "Get-WindowsFeature -Name AD-Domain-Services | Select-Object Name, InstallState\nGet-Service -Name NTDS, Dhcp, DNS"
-  ],
-  "errors": [
-   {
-    "message": "The term 'Get-ADUser' is not recognized",
-    "means": "The AD PowerShell module is not installed. Windows Server does not include it by default.",
-    "fix": "Install-WindowsFeature RSAT-AD-Tools"
-   },
-   {
-    "message": "Install-WindowsFeature : Operation is not supported on this platform",
-    "means": "You are on a client SKU, or the feature is not valid for this installation type (e.g. a container).",
-    "fix": "Get-WindowsFeature | Where-Object Name -like 'AD*'   # confirm what this SKU supports"
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — Install-WindowsFeature",
-    "url": "https://learn.microsoft.com/en-us/powershell/module/servermanager/install-windowsfeature",
-    "checked": "2026-10-10"
-   },
-   {
-    "title": "Microsoft Learn — AD DS Deployment Overview",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "windows server",
-   "powershell",
-   "active directory",
-   "dhcp",
-   "dns",
-   "roles"
-  ],
-  "objectives": [
-   {
-    "id": "AZ800-1.1",
-    "note": "Installing the AD DS role"
-   }
-  ]
- },
- {
-  "id": "winserver-dhcp-scope-create",
-  "kind": "command",
-  "tech": "winserver",
-  "title": "Add-DhcpServerv4Scope",
-  "task": "Create a DHCP IPv4 scope with a pool, options and a reservation",
-  "aliases": [
-   "dhcp scope",
-   "dhcp pool",
-   "dhcp reservation",
-   "create dhcp"
-  ],
-  "risk": "caution",
-  "where": "PowerShell on the DHCP server (elevated)",
-  "privilege": "Administrator, or a DHCP admin group",
-  "platform": "Windows Server 2019, 2022, 2025",
-  "changes": "Yes. Starts handing out addresses in the scope.",
-  "undo": "Remove-DhcpServerv4Scope -ScopeId <id>",
-  "risks": "A scope with a bad router (option 3) or DNS (option 6) hands out leases that look perfect and cannot reach anything. Verify both before you enable it broadly.",
-  "commands": "Get-DhcpServerv4Scope\nAdd-DhcpServerv4Scope -ScopeAddress 10.20.30.0 -PrefixLength 24 \\\n  -Name 'Sales' -StartRange 10.20.30.100 -EndRange 10.20.30.199\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.20.30.0 -OptionId 3 -Value '10.20.30.1'\nSet-DhcpServerv4ScopeOptionValue -ScopeId 10.20.30.0 -OptionId 6 -Value '10.20.30.53'\nAdd-DhcpServerv4Reservation -ScopeId 10.20.30.0 -IPAddress 10.20.30.50 -ClientId 'AABBCCDDEEFF'\nSet-DhcpServerv4Scope -ScopeId 10.20.30.0 -State Active\nGet-DhcpServerv4Lease -ScopeId 10.20.30.0",
-  "explain": [
-   "A scope has four parts: the network (`-ScopeAddress` + `-PrefixLength`), the pool range, the **options** (router, DNS, domain), and the state. A scope in state `Inactive` stores the config but hands out nothing.",
-   "Option 3 is the default router / gateway. Option 6 is DNS server. Option 15 is the DNS domain name. Setting only the pool is the classic beginner mistake.",
-   "A reservation needs the client's **MAC address** as `-ClientId`, not its hostname. `Get-NetNeighbor` or `arp -a` on the client gives it.",
-   "The scope address is the network address (all host bits zero) — `10.20.30.0` for a /24. Passing `10.20.30.1` will be rejected.",
-   "Verify by lease, not by assumption: `Get-DhcpServerv4Lease` proves a client actually took an address and shows what it was told."
-  ],
-  "example": [
-   "A client gets an address but cannot resolve names: the scope exists and leases, but option 6 was never set. `Get-DhcpServerv4OptionValue -ScopeId 10.20.30.0` will show option 3 present and option 6 missing."
-  ],
-  "verify": [
-   "Get-DhcpServerv4Lease -ScopeId 10.20.30.0\nGet-DhcpServerv4OptionValue -ScopeId 10.20.30.0"
-  ],
-  "errors": [
-   {
-    "message": "Scope already exists",
-    "means": "A scope for that network is already present — possibly from a different server, which is a split-brain DHCP problem.",
-    "fix": "Get-DhcpServerv4Scope   # check which server holds it before deleting anything"
-   },
-   {
-    "message": "StartRange and EndRange must be within the scope",
-    "means": "The range falls outside the prefix, or includes the network/broadcast address.",
-    "fix": "For a /24, valid hosts are .1 to .254. Never make .0 or .255 part of the pool."
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — Add-DhcpServerv4Scope",
-    "url": "https://learn.microsoft.com/en-us/powershell/module/dhcp/add-dhcpserverv4scope",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "windows server",
-   "dhcp",
-   "scope",
-   "powershell",
-   "networking"
-  ],
-  "objectives": [
-   {
-    "id": "AZ800-4.1",
-    "note": "Scopes, options and reservations"
-   }
-  ]
- },
- {
-  "id": "aplus-disk-management",
-  "kind": "command",
-  "tech": "aplus",
-  "title": "diskpart",
-  "task": "Inspect, initialise, partition and format a disk from the command line",
-  "aliases": [
-   "format a drive",
-   "partition",
-   "storage",
-   "disk not recognised",
-   "init disk",
-   "mbr",
-   "gpt"
-  ],
-  "risk": "risk",
-  "where": "Windows Command Prompt, elevated",
-  "privilege": "Administrator",
-  "platform": "Windows 10 / 11",
-  "changes": "Yes, irreversibly for the operations that write to a disk.",
-  "undo": "There is no undo for `clean`, `convert`, or creating a partition over existing data. Confirm the disk number with `list disk` before every write operation.",
-  "risks": "`clean`, `clean all` and `create partition` destroy data. Disk numbering is not stable across reboots on some hardware — re-run `list disk` every single time.",
-  "commands": "diskpart\nlist disk\nselect disk 2\ndetail disk\nlist partition\nselect partition 1\nformat fs=ntfs quick label=Data\nassign letter=E\ncreate partition primary\nconvert mbr",
-  "explain": [
-   "The order matters and every step is verified before the next: `list disk` to see what is there, `select disk N`, `detail disk` to confirm you picked the right one by size and model, then act.",
-   "A disk shows as **Online** but uninitialised means it has raw capacity the OS refuses to touch until it gets an init record. `select disk N` then `initialize disk` fixes it.",
-   "MBR is a real limitation, not a preference: MBR partitions max at 2 TB and there can be at most four primary partitions. Anything larger needs GPT.",
-   "`format fs=ntfs quick` skips the zero pass. That is correct for a nearly empty disk and wrong as a data-wiping exercise — say which one you mean.",
-   "`list volume` and `list partition` are different views. A disk with no partition table shows a volume list with nothing on it."
-  ],
-  "example": [
-   "A new 2 TB drive does not appear in File Explorer. `list disk` shows it as `Online`, 1863 GB, with no partitions. `initialize disk` then `convert gpt` then `create partition primary` then `format` and `assign` makes it appear."
-  ],
-  "verify": [
-   "diskpart\nlist disk\nlist volume",
-   "Get-Disk | Format-Table Number,FriendlyName,PartitionStyle,OperationalStatus"
-  ],
-  "errors": [
-   {
-    "message": "The media is write protected",
-    "means": "The device or a controller flag is preventing writes. Common on a USB stick with a physical lock, or a card reader.",
-    "fix": "Check the physical lock switch. A write-protected controller cannot be fixed in software."
-   },
-   {
-    "message": "Virtual Disk Service error: The media is write protected / The disk is offline",
-    "means": "Windows has marked the disk offline, often because it believes it was removed uncleanly.",
-    "fix": "Set-Disk -Number N -IsOffline $false   # then re-run list disk"
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — DiskPart command reference",
-    "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/diskpart",
-    "checked": "2026-10-10"
-   },
-   {
-    "title": "Microsoft Learn — Initialize, format, and partition data disks",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "aplus",
-   "storage",
-   "diskpart",
-   "partition",
-   "mbr",
-   "gpt"
-  ],
-  "objectives": [
-   {
-    "id": "APLUS-C1-3.5",
-    "note": "Partitioning, MBR vs GPT"
-   }
-  ]
- },
- {
-  "id": "aplus-chkdsk-sfc",
-  "kind": "command",
-  "tech": "aplus",
-  "title": "chkdsk",
-  "task": "Check a volume for file-system errors and repair it",
-  "aliases": [
-   "fix disk",
-   "bad sectors",
-   "chkdsk",
-   "file system",
-   "ntfs",
-   "repair volume"
-  ],
-  "risk": "risk",
-  "where": "Windows Command Prompt, elevated",
-  "privilege": "Administrator",
-  "platform": "Windows 10 / 11",
-  "changes": "Yes. Repairs the file system; /r also attempts to recover bad sectors.",
-  "undo": "No. The changes are corrective repairs, not reversible edits.",
-  "risks": "Running chkdsk on a volume with a synchronisation tool (ReFS with Storage Spaces, some databases, a File Replication Service member) can corrupt data. A scheduled chkdsk at boot while holding a volume lock can also fail.",
-  "commands": "chkdsk C: /scan\nchkdsk D: /f\nchkdsk E: /r\nchkdsk D: /f /spotfix",
-  "explain": [
-   "/scan is an online scan that needs no reboot and is safe to run while the volume is in use. It is the right first command.",
-   "/f fixes file-system errors. It requires the volume to be dismounted, so on the system volume it will offer to run at next boot.",
-   "/r adds a surface scan for bad sectors and can take hours on a large or failing disk. `/x` forces the dismount even when dirty, and is more disruptive than you usually want.",
-   "`/spotfix` queues a repair of what `/scan` found, to run at next boot. `/f /spotfix` together is the modern equivalent of the old scheduled chkdsk.",
-   "Before `/r` on a failing drive, image the disk first. Chkdsk can make recovery harder once it starts moving clusters around."
-  ],
-  "example": [
-   "A drive that keeps saying 'found problems with the file system' at every boot: `chkdsk C: /scan` to confirm, then `chkdsk C: /f /spotfix` to repair at the next restart."
-  ],
-  "verify": [
-   "chkdsk C: /scan",
-   "fsutil dirty query C:"
-  ],
-  "errors": [
-   {
-    "message": "Cannot lock current drive. Chkdsk was run because the volume may have been left dirty by an unclean shutdown.",
-    "means": "The OS has marked the volume dirty and wants to run offline. This is normal after a hard power-off.",
-    "fix": "Allow it to run at next boot, or run: chkdsk C: /f /spotfix"
-   },
-   {
-    "message": "Chkdsk is not available for RAW CD or DVD drives",
-    "means": "Optical media. Chkdsk applies to hard-disk volumes only.",
-    "fix": "n/a"
-   }
-  ],
-  "sources": [
-   {
-    "title": "Microsoft Learn — chkdsk command",
-    "url": "https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chkdsk",
-    "checked": "2026-10-10"
-   }
-  ],
-  "verification": "source-checked",
-  "tags": [
-   "aplus",
-   "storage",
-   "chkdsk",
-   "ntfs",
-   "repair"
-  ],
-  "objectives": [
-   {
-    "id": "APLUS-C1-3.5",
-    "note": "File system repair"
-   }
-  ]
- }
 ]

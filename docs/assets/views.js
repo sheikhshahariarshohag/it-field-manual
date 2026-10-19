@@ -13,6 +13,7 @@ import * as prose from "./prose.js";
 import { chapterReader } from "./reader.js";
 import { chapterTitle } from "./titles.js";
 import { viewModeToggle } from "./viewmode.js";
+import * as docview from "./docview.js";
 
 export const TECH = {
   aplus:    { label: "CompTIA A+",     varName: "--tech-aplus" },
@@ -94,6 +95,7 @@ const ROUTE_FOR_KIND = {
   unit: "study",          // Study Manual chapters
   notes: "notes",         // Simple Notes chapters
   library: "library",     // Book locators
+    document: "doc",      // The .docx files, reproduced as they are
 };
 
 /** The label shown on a search result row. */
@@ -101,6 +103,7 @@ const KIND_LABEL = {
   command: "Command", lesson: "Lesson", scenario: "Scenario",
   quiz: "Quiz", project: "Project", session: "Knowledge Map",
   unit: "Study chapter", notes: "Simple Notes", library: "Book",
+    document: "Document",
 };
 
 /** The canonical URL for any content item. */
@@ -3134,3 +3137,155 @@ function notFound() {
 }
 
 export { resultRow, paraTokens, notFound };
+
+/* ================================================================ documents ==
+   The .docx files, reproduced as they are.
+
+   The CCNA chapters and the RHEL chapters are documents, not lessons. They are
+   not reorganised into sections, labs and quizzes, and they are not restyled
+   onto the app palette: the colour and shading you see is the colour and
+   shading in the file, because that is what was asked for.
+
+   One page here, one list on the subject page, one route. There is no second
+   reader and no separate document shell.
+*/
+
+const docCache = new Map();
+
+async function loadDocument(id) {
+  if (docCache.has(id)) return docCache.get(id);
+  const res = await fetch(`data/docs/${id}.json`, { cache: "default" });
+  if (!res.ok) return null;
+  const j = await res.json();
+  docCache.set(id, j);
+  return j;
+}
+
+/** The document sets in the index, keyed by subject id. */
+function documentSet(subjectId) {
+  const idx = search.CORPUS && search.CORPUS.documents;
+  if (!idx || !idx.sets) return null;
+  for (const set of Object.values(idx.sets)) {
+    if (set.subject === subjectId) return set;
+  }
+  return null;
+}
+
+/**
+ * One document's contents, on its own paper.
+ *
+ * The table of contents is generated from the document's own headings, the
+ * same rule the study reader uses - so it cannot drift from the content.
+ */
+export async function docView(params) {
+  const wrap = h("div");
+  const meta = (search.CORPUS && search.CORPUS.documents) || { sets: {} };
+  let entry = null;
+  for (const set of Object.values(meta.sets || {})) {
+    const hit = (set.docs || []).find((d) => d.id === params.id);
+    if (hit) { entry = { ...hit, set }; break; }
+  }
+  if (!entry) return notFound("Document", params.id);
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", entry.display),
+    h("p", `Reproduced as it is from ${entry.sourceFile}. Colour, shading and ` +
+      `bold are the document's own, not the app's.`),
+    h("div.card__meta",
+      h("span.badge", entry.set.label),
+      h("span.srcref", `${entry.words.toLocaleString()} words`),
+      entry.tables ? h("span.srcref", `${entry.tables} tables`) : null,
+    ),
+  ));
+
+  const tocBox = h("div");
+  const body = h("div.doc-paper");
+
+  const loaded = await loadDocument(entry.id);
+  if (!loaded) {
+    body.appendChild(h("p.doc-p", "This document could not be loaded."));
+  } else {
+    const heads = [];
+    body.appendChild(docview.renderDocBlocks(loaded.blocks, (lvl, text, el) => {
+      const id = `d-${heads.length}`;
+      el.id = id;
+      heads.push({ id, lvl, text });
+    }));
+    if (heads.length > 2) {
+      tocBox.appendChild(h("p.rd-toc__hd", "In this document"));
+      const ul = h("ul.rd-toc__list");
+      for (const hd of heads) {
+        ul.appendChild(h("li", h("a", { href: `#${hd.id}` }, hd.text)));
+      }
+      tocBox.appendChild(ul);
+    }
+  }
+
+  wrap.appendChild(h("div.doc-split", tocBox, body));
+  return wrap;
+}
+
+/** The list of documents for one subject, rendered on its subject page. */
+export function documentsFor(subjectId) {
+  const set = documentSet(subjectId);
+  if (!set || !(set.docs || []).length) return null;
+
+  const box = h("section.doc-list-panel");
+  const words = set.docs.reduce((a, d) => a + d.words, 0);
+  box.appendChild(h("h2", `${set.label} documents`));
+  box.appendChild(h("p.srcref",
+    `${set.docs.length} documents, ${words.toLocaleString()} words, reproduced as they are ` +
+    `from the source files. Formatting and colour are the document's own.`));
+
+  const grid = h("div.coursegrid");
+  for (const d of set.docs) {
+    grid.appendChild(h("a.doc-card", { href: href(`doc/${d.id}`) },
+      h("span.doc-card__t", d.display),
+      h("span.doc-card__m",
+        `${d.words.toLocaleString()} words` +
+        (d.tables ? ` · ${d.tables} tables` : "") +
+        (d.boxes ? ` · ${d.boxes} shaded notes` : "")),
+    ));
+  }
+  box.appendChild(grid);
+  return box;
+}
+
+/**
+ * Every document set in one place.
+ *
+ * The same list appears on each subject page, because the subject page is where
+ * someone looking for CCNA actually starts. This one exists for the "what is
+ * actually in here" question - how many documents, how many words, how they
+ * were produced - rather than as a second way in.
+ */
+export function documentsView() {
+  const wrap = h("div");
+  const idx = (search.CORPUS && search.CORPUS.documents) || { sets: {} };
+  const sets = Object.values(idx.sets || {});
+
+  wrap.appendChild(h("header.page-head",
+    h("h1", "Documents"),
+    h("p", "Source documents reproduced as they are: same colour, same shading, " +
+      "same bold. Nothing here is reorganised into lessons or rewritten."),
+  ));
+
+  if (!sets.length) {
+    wrap.appendChild(h("div.empty", h("h2", "No documents yet"),
+      h("p", "Run scripts/build-docs.mjs against a folder of .docx files.")));
+    return wrap;
+  }
+
+  for (const set of sets) {
+    const words = set.docs.reduce((a, d) => a + d.words, 0);
+    const tables = set.docs.reduce((a, d) => a + (d.tables || 0), 0);
+    wrap.appendChild(h("h2", set.label));
+    wrap.appendChild(h("div.stat-row",
+      h("div.stat", h("div.stat__n", String(set.docs.length)), h("div.stat__l", "documents")),
+      h("div.stat", h("div.stat__n", words > 9999 ? (words / 1000).toFixed(0) + "k" : String(words)), h("div.stat__l", "words")),
+      h("div.stat", h("div.stat__n", String(tables)), h("div.stat__l", "tables")),
+    ));
+    wrap.appendChild(documentsFor(set.subject));
+  }
+  return wrap;
+}

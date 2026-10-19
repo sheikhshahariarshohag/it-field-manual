@@ -47,7 +47,7 @@ async function loadCorpus() {
     // converted RHEL service profiles, and the networking / Windows lessons.
     lessons: ["lessons/index", "lessons/services", "lessons/networking", "lessons/windows"],
     scenarios: ["scenarios/index"],
-    quizzes: ["quizzes/index", "quizzes/ccna"],
+    quizzes: ["quizzes/index"],
     projects: ["projects/index"],
   };
   const out = { commands: [], lessons: [], scenarios: [], quizzes: [], projects: [] };
@@ -69,7 +69,7 @@ async function loadCorpus() {
 
     // Exam objectives and the Knowledge Map are single objects, not lists, so
   // they are loaded separately from the per-kind groups.
-  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"], ["study", "study-manual"], ["notes", "simple-notes"], ["library", "library"]]) {
+  for (const [key, file] of [["objectives", "exam-objectives"], ["km", "knowledge-map"], ["study", "study-manual"], ["notes", "simple-notes"], ["library", "library"], ["documents", "documents"]]) {
     try {
       const res = await fetch(`${base}/${file}.json`, { cache: "no-cache" });
       if (res.ok) out[key] = await res.json();
@@ -653,7 +653,9 @@ async function render(restoreTo) {
     case "verify": node = V.verifyView(); break;
     case "objectives": node = V.objectivesView(); break;
     case "km": node = rest.length ? V.knowledgeSessionView({ id: rest[0], query: cur.query }) : V.knowledgeMapView(); break;
-    case "study": node = rest.length ? await V.studyUnitView({ id: rest[0] }, cur.query) : await V.studyManualView(); break;
+    case "documents": node = V.documentsView(); break;
+case "doc": node = await V.docView({ id: rest[0] }); break;
+case "study": node = rest.length ? await V.studyUnitView({ id: rest[0] }, cur.query) : await V.studyManualView(); break;
     case "assessment": node = V.selfCheckView(); break;
     case "notes": node = rest.length ? V.notesChapterView({ id: rest[0] }) : V.notesIndexView(); break;
     case "library": node = rest.length ? (rest[1] ? V.libraryChapterView({ book: rest[0], id: rest[1] }) : V.libraryBookView({ id: rest[0] })) : V.libraryView(); break;
@@ -765,6 +767,8 @@ async function boot() {
   route("objectives", ({ recalled }) => render(recalled));
   route("km", ({ recalled }) => render(recalled));
   route("km/:id", ({ recalled }) => render(recalled));
+  route("documents", ({ recalled }) => render(recalled));
+  route("doc/:id", ({ recalled }) => render(recalled));
   route("study", ({ recalled }) => render(recalled));
   route("study/:id", ({ recalled }) => render(recalled));
   route("assessment", ({ recalled }) => render(recalled));

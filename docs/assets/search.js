@@ -145,6 +145,32 @@ function buildIndex() {
           aliases: [book.code || book.id, book.title].filter(Boolean),
         }, 2);
       }
+
+  /*
+   * Documents - the .docx files reproduced as they are.
+   *
+   * Indexed from documents.json rather than from the bodies, because the bodies
+   * are 3.5 MB across 40 files and search cannot read them without loading all
+   * of it. What it CAN index for free is each document's own headings, which the
+   * builder copies into the index: 1,744 of them, in a 160 KB index file.
+   *
+   * So "subnetting" finds "Chapter 3: Easy Subnetting" and lands on it. Full-text
+   * search INSIDE a document is not available - that is a real limitation, not a
+   * rounding error, and it is stated here rather than implied by silence.
+   */
+  for (const set of Object.values((CORPUS.documents || {}).sets || {})) {
+    for (const d of set.docs || []) {
+      const headings = (d.headings || []).map((x) => x.text);
+      push({
+        id: d.id, kind: "document", _doc: true,
+        title: d.display || d.title,
+        summary: `${set.label} — reproduced from ${d.sourceFile}`,
+        tech: set.subject,
+        terms: headings,
+        aliases: [d.title, set.label].filter(Boolean),
+      }, 3);
+    }
+  }
     }
   }
 

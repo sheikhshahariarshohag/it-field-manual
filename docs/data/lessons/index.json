@@ -1,229 +1,364 @@
 [
- {
-  "id": "linux-dns-resolution",
-  "kind": "lesson",
-  "tech": "rhel",
-  "title": "How a name becomes an address",
-  "summary": "What /etc/hosts, systemd-resolved, nsswitch and a DNS server each actually do, and which one to blame when a name will not resolve.",
-  "analogy": "Before you can post a letter you need an address. The hosts file is a scribbled note of one address. The resolver is the phone book. systemd-resolved is the receptionist who decides which phone book to open.",
-  "time": "10 min",
-  "verification": "source-checked",
-  "prerequisites": [
-   {
-    "id": "rhel-systemctl-status",
-    "label": "Check a service state"
-   }
-  ],
-  "related": [
-   {
-    "id": "rhel-nmcli-connection",
-    "label": "Where the DNS server setting actually comes from"
-   },
-   {
-    "id": "winserver-dhcp-scope-create",
-    "label": "Option 6 handing out a DNS server"
-   }
-  ],
-  "tags": [
-   "dns",
-   "name resolution",
-   "systemd-resolved",
-   "nsswitch",
-   "networking"
-  ],
-  "sections": [
-   {
-    "h": "The order a name is looked up in",
-    "p": [
-     "On RHEL 9 and 10 the answer is not simply \"the hosts file, then DNS\". The order is controlled by `/etc/nsswitch.conf`, and systemd-resolved sits in the middle of it."
+  {
+    "id": "linux-vlan-troubleshooting",
+    "kind": "lesson",
+    "tech": "cisco",
+    "title": "Why two devices on the same VLAN cannot talk",
+    "summary": "The most common switching fault, and the order in which to look for it. VLAN membership is usually not the first thing wrong.",
+    "analogy": "A VLAN is a set of rooms in a building that share a phone line. Two people in the same room can call each other; someone in a different room needs the switchboard.",
+    "time": "8 min",
+    "verification": "source-checked",
+    "time_label": "8",
+    "prerequisites": [
+      {
+        "id": "cisco-vlan-database",
+        "label": "Create a VLAN and put an access port into it"
+      }
     ],
-    "code": "getent hosts example.lab\ncat /etc/nsswitch.conf | grep '^hosts:'\nresolvectl status\nls -l /etc/resolv.conf",
-    "where": "RHEL shell",
-    "p2": []
-   },
-   {
-    "h": "The four files and what each one really controls",
-    "list": [
-     "`/etc/hosts` — a static local list. Highest priority, and completely bypasses DNS. Useful for lab pinning, and a common cause of \"DNS is broken\" that is actually a stale hosts entry.",
-     "`/etc/nsswitch.conf` — the `hosts:` line decides which sources are consulted and in what order. This is the file that actually controls resolution order.",
-     "`/etc/resolv.conf` — the nameserver list. On RHEL with systemd-resolved it is normally a symlink to a stub resolver, and editing it directly is wrong: the next resolvectl command regenerates it.",
-     "`/run/systemd/resolve/resolv.conf` — the real upstream list, fed by NetworkManager from the DHCP lease or the connection profile."
+    "related": [
+      {
+        "id": "mikrotik-ip-dhcp-server-network",
+        "label": "Same fault on MikroTik: bridge membership before DHCP config"
+      },
+      {
+        "id": "winserver-dhcp-scope-create",
+        "label": "When the VLAN is fine and DHCP is not"
+      }
+    ],
+    "quiz": "quiz-switching",
+    "tags": [
+      "vlan",
+      "switching",
+      "troubleshooting",
+      "ccna"
+    ],
+    "sections": [
+      {
+        "h": "The mental model",
+        "p": [
+          "A switch does not understand IP addresses. It learns which MAC address is reachable out of which port, and it forwards frames within a VLAN using that table. A VLAN is a broadcast boundary and a MAC-table boundary.",
+          "So \"they are both in VLAN 20 and cannot talk\" can only mean one of a small number of things, and it is worth learning the list because it is short."
+        ],
+        "list": [
+          "They are not actually in the same VLAN. Check the access VLAN on both ports.",
+          "They are in the same VLAN but on different switches, and the trunk between them is not carrying VLAN 20.",
+          "They are in the same VLAN and it is a working link, and the problem is above Layer 2: IP addressing, mask, gateway, or a firewall.",
+          "One port is administratively down, or err-disabled, so nothing is ever received."
+        ]
+      },
+      {
+        "h": "Check membership on both ends",
+        "p": [
+          "Do not assume the configuration is symmetric. The single highest-value command in this whole lesson is the one that shows you the port's *operational* VLAN, because that is what the switch is actually doing, not what you typed."
+        ],
+        "code": "show interfaces gi0/3 switchport\nshow interfaces gi0/3 switchport | include Operational\nshow vlan brief\nshow vlan id 20\nshow mac address-table interface gi0/3",
+        "where": "Cisco IOS privileged EXEC",
+        "p2": []
+      },
+      {
+        "h": "Read the two lines that matter",
+        "p": [
+          "`Administrative Mode` says what you configured. `Operational Mode` says what the port negotiated. A port can be configured `access` and operating as `trunk`, and on some platforms a trunk that is down negotiating reverts to the default VLAN 1 while the access VLAN stays at 20.",
+          "If `Operational Mode` reads `down`, the port is not carrying any traffic at all, whatever you configured. Fix that before investigating anything else."
+        ]
+      },
+      {
+        "h": "If there is a trunk in the way",
+        "p": [
+          "Two access ports in VLAN 20 on two different switches need a trunk carrying VLAN 20 between them. This is where a working local setup stops working.",
+          "Check both ends of the trunk. A trunk with VLAN 20 removed on the far end is silent — there is no error message, the frames simply do not arrive."
+        ],
+        "code": "show interfaces trunk\nshow interfaces gi0/1 switchport | include Trunking\nshow spanning-tree vlan 20",
+        "where": "Cisco IOS privileged EXEC"
+      },
+      {
+        "h": "It is working. The problem is Layer 3.",
+        "p": [
+          "If the MAC table shows entries for both devices in the same VLAN on the same switch, and frames are still not reaching the application, the switch is doing its job. Move up.",
+          "On the devices: are the addresses in the same subnet? Is the subnet mask right? Is the default gateway set? Is there a host firewall dropping the traffic?"
+        ],
+        "code": "ping 10.0.0.1\nping 10.0.0.2\n# on Linux: ip -br addr; ip route\n# on Windows: ipconfig /all",
+        "where": "client devices"
+      }
+    ],
+    "lab": [
+      {
+        "text": "In Packet Tracer or a virtual lab, build a switch with two PCs. Put both access ports in VLAN 10.",
+        "cmd": "enable\nconfigure terminal\nvlan 10\n name LAB\n exit\ninterface gi0/1\n switchport mode access\n switchport access vlan 10\ninterface gi0/2\n switchport mode access\n switchport access vlan 10\nend\nwrite memory",
+        "where": "switch"
+      },
+      {
+        "text": "Give the PCs addresses in the same subnet and ping each other.",
+        "expect": "Replies. If not, the problem is one of the four above."
+      },
+      {
+        "text": "Now change PC1's port to VLAN 20 and ping again.",
+        "expect": "Fails. Confirm with `show mac address-table interface gi0/1` — PC1's MAC is no longer there, because the frame never left in the right VLAN."
+      },
+      {
+        "text": "Add a second switch with a trunk between them, put PC2 on the far switch, and verify it works.",
+        "expect": "PC1 and PC2 talk across the trunk while in VLAN 10."
+      },
+      {
+        "text": "Break it deliberately: remove VLAN 10 from the trunk on the far switch.",
+        "cmd": "interface gi0/1\n switchport trunk vlan 1,20\nexit\nshow interfaces trunk",
+        "expect": "The trunk allowed list no longer contains 10. PC1 can no longer reach PC2, and nothing reports an error."
+      },
+      {
+        "text": "Confirm the MAC table tells the story.",
+        "cmd": "show mac address-table vlan 10",
+        "expect": "PC1 appears; PC2 does not. That asymmetry is the signature of a trunk that is not carrying the VLAN."
+      }
+    ],
+    "failures": [
+      {
+        "why": "The port is `access` VLAN 20 but Operational Mode is `down`.",
+        "fix": "Configuration alone will not change this. Check `show interfaces status` for the physical state first, then look for err-disabled or a spanning-tree restriction."
+      },
+      {
+        "why": "Both devices are in the same VLAN but with different subnet masks (e.g. /24 and /16).",
+        "fix": "The hosts treat each other as being on the local link, ARPs instead of sending traffic, and never use the gateway. Compare the masks, not just the addresses."
+      },
+      {
+        "why": "A VLAN with only one member port.",
+        "fix": "That is not inherently wrong, but it means no device can reach any other. Check whether the second port really is in the VLAN."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1"
+      },
+      {
+        "id": "MTCNA-M3.1",
+        "note": "The same problem on MikroTik"
+      }
     ]
-   },
-   {
-    "h": "systemd-resolved in one paragraph",
-    "p": [
-     "NetworkManager accepts the DNS configuration that comes from the DHCP lease or the static profile and writes it into systemd-resolved. systemd-resolved caches it and answers queries locally. That is why `/etc/resolv.conf` points at `127.0.0.53` — it is not a real DNS server, it is the local stub.",
-     "You can therefore be in a position where the nameserver you *configured* is correct, the resolver has it, and the resolver still cannot reach it. Those are three different failures and `resolvectl` shows you which layer is wrong."
+  },
+  {
+    "id": "linux-dns-resolution",
+    "kind": "lesson",
+    "tech": "rhel",
+    "title": "How a name becomes an address",
+    "summary": "What /etc/hosts, systemd-resolved, nsswitch and a DNS server each actually do, and which one to blame when a name will not resolve.",
+    "analogy": "Before you can post a letter you need an address. The hosts file is a scribbled note of one address. The resolver is the phone book. systemd-resolved is the receptionist who decides which phone book to open.",
+    "time": "10 min",
+    "verification": "source-checked",
+    "prerequisites": [
+      {
+        "id": "rhel-systemctl-status",
+        "label": "Check a service state"
+      }
     ],
-    "code": "resolvectl status eth0\nresolvectl query example.lab\nresolvectl statistics\nsystemctl status systemd-resolved --no-pager",
-    "where": "RHEL shell"
-   },
-   {
-    "h": "Reading the failure instead of guessing",
-    "p": [
-     "Distinguish three failures. They look identical from an application and have completely different fixes."
+    "related": [
+      {
+        "id": "rhel-nmcli-connection",
+        "label": "Where the DNS server setting actually comes from"
+      },
+      {
+        "id": "winserver-dhcp-scope-create",
+        "label": "Option 6 handing out a DNS server"
+      }
     ],
-    "list": [
-     "**Name does not resolve at all** — the resolver has no server or no answer. Fix the DNS server or the zone.",
-     "**Name resolves to the wrong address** — resolution worked; the data is wrong. Look at the zone, at DNS caching, and at a stale `/etc/hosts` entry.",
-     "**Name resolves but the connection times out** — DNS is fine. This is a firewall or routing problem wearing a DNS costume. Many \"DNS is broken\" tickets are actually `firewalld` or an ACL."
+    "tags": [
+      "dns",
+      "name resolution",
+      "systemd-resolved",
+      "nsswitch",
+      "networking"
+    ],
+    "sections": [
+      {
+        "h": "The order a name is looked up in",
+        "p": [
+          "On RHEL 9 and 10 the answer is not simply \"the hosts file, then DNS\". The order is controlled by `/etc/nsswitch.conf`, and systemd-resolved sits in the middle of it."
+        ],
+        "code": "getent hosts example.lab\ncat /etc/nsswitch.conf | grep '^hosts:'\nresolvectl status\nls -l /etc/resolv.conf",
+        "where": "RHEL shell",
+        "p2": []
+      },
+      {
+        "h": "The four files and what each one really controls",
+        "list": [
+          "`/etc/hosts` — a static local list. Highest priority, and completely bypasses DNS. Useful for lab pinning, and a common cause of \"DNS is broken\" that is actually a stale hosts entry.",
+          "`/etc/nsswitch.conf` — the `hosts:` line decides which sources are consulted and in what order. This is the file that actually controls resolution order.",
+          "`/etc/resolv.conf` — the nameserver list. On RHEL with systemd-resolved it is normally a symlink to a stub resolver, and editing it directly is wrong: the next resolvectl command regenerates it.",
+          "`/run/systemd/resolve/resolv.conf` — the real upstream list, fed by NetworkManager from the DHCP lease or the connection profile."
+        ]
+      },
+      {
+        "h": "systemd-resolved in one paragraph",
+        "p": [
+          "NetworkManager accepts the DNS configuration that comes from the DHCP lease or the static profile and writes it into systemd-resolved. systemd-resolved caches it and answers queries locally. That is why `/etc/resolv.conf` points at `127.0.0.53` — it is not a real DNS server, it is the local stub.",
+          "You can therefore be in a position where the nameserver you *configured* is correct, the resolver has it, and the resolver still cannot reach it. Those are three different failures and `resolvectl` shows you which layer is wrong."
+        ],
+        "code": "resolvectl status eth0\nresolvectl query example.lab\nresolvectl statistics\nsystemctl status systemd-resolved --no-pager",
+        "where": "RHEL shell"
+      },
+      {
+        "h": "Reading the failure instead of guessing",
+        "p": [
+          "Distinguish three failures. They look identical from an application and have completely different fixes."
+        ],
+        "list": [
+          "**Name does not resolve at all** — the resolver has no server or no answer. Fix the DNS server or the zone.",
+          "**Name resolves to the wrong address** — resolution worked; the data is wrong. Look at the zone, at DNS caching, and at a stale `/etc/hosts` entry.",
+          "**Name resolves but the connection times out** — DNS is fine. This is a firewall or routing problem wearing a DNS costume. Many \"DNS is broken\" tickets are actually `firewalld` or an ACL."
+        ]
+      }
+    ],
+    "lab": [
+      {
+        "text": "Confirm the resolver is running and see what it knows.",
+        "cmd": "systemctl is-active systemd-resolved\nresolvectl status",
+        "expect": "`active` and a DNS Servers line for your active interface."
+      },
+      {
+        "text": "Look up a name you know should work.",
+        "cmd": "resolvectl query example.lab\ndig example.lab\ngetent hosts example.lab",
+        "expect": "An address, or a clear NXDOMAIN/SERVFAIL distinction."
+      },
+      {
+        "text": "Prove that /etc/hosts outranks DNS by pinning a name that does not exist in DNS.",
+        "cmd": "echo '127.0.0.99 nonexistent.lab' | sudo tee -a /etc/hosts\nresolvectl query nonexistent.lab",
+        "expect": "Returns 127.0.0.99 even though no such record exists upstream. This is why stale hosts entries hide real DNS faults."
+      },
+      {
+        "text": "Remove the entry again so it does not confuse you later.",
+        "cmd": "sudo sed -i '/nonexistent.lab/d' /etc/hosts",
+        "expect": "The name stops resolving."
+      },
+      {
+        "text": "Test the resolver with a name that must go to the internet, with the firewall temporarily open.",
+        "cmd": "dig +short example.com\nsudo firewall-cmd --list-ports",
+        "expect": "An answer. If dig times out but the port list shows no DNS service rule, add one — this is the classic local failure."
+      }
+    ],
+    "failures": [
+      {
+        "why": "Editing /etc/resolv.conf directly and the change disappears.",
+        "fix": "It is a symlink into `/run`. Configure DNS on the NetworkManager profile or the DHCP scope instead; `nmcli connection modify 'System eth0' ipv4.dns '10.0.0.53' ipv4.dns-search example.lan` survives a reboot."
+      },
+      {
+        "why": "Resolution works for root but not for a service user.",
+        "fix": "Not a DNS problem. Check the service's sandbox: systemd units with `PrivateUsers=`, `ProtectSystem=` or a `ResolvConf=` override can see a different view. Check `systemctl cat <unit>`."
+      },
+      {
+        "why": "`getent hosts` fails but `dig` succeeds.",
+        "fix": "getent consults NSS, not just DNS. Something in the `hosts:` line of nsswitch.conf is failing, or a module is missing. Compare with `getent ahosts`."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "RHCSA-8.2",
+        "note": "Configure hostname resolution"
+      }
     ]
-   }
-  ],
-  "lab": [
-   {
-    "text": "Confirm the resolver is running and see what it knows.",
-    "cmd": "systemctl is-active systemd-resolved\nresolvectl status",
-    "expect": "`active` and a DNS Servers line for your active interface."
-   },
-   {
-    "text": "Look up a name you know should work.",
-    "cmd": "resolvectl query example.lab\ndig example.lab\ngetent hosts example.lab",
-    "expect": "An address, or a clear NXDOMAIN/SERVFAIL distinction."
-   },
-   {
-    "text": "Prove that /etc/hosts outranks DNS by pinning a name that does not exist in DNS.",
-    "cmd": "echo '127.0.0.99 nonexistent.lab' | sudo tee -a /etc/hosts\nresolvectl query nonexistent.lab",
-    "expect": "Returns 127.0.0.99 even though no such record exists upstream. This is why stale hosts entries hide real DNS faults."
-   },
-   {
-    "text": "Remove the entry again so it does not confuse you later.",
-    "cmd": "sudo sed -i '/nonexistent.lab/d' /etc/hosts",
-    "expect": "The name stops resolving."
-   },
-   {
-    "text": "Test the resolver with a name that must go to the internet, with the firewall temporarily open.",
-    "cmd": "dig +short example.com\nsudo firewall-cmd --list-ports",
-    "expect": "An answer. If dig times out but the port list shows no DNS service rule, add one — this is the classic local failure."
-   }
-  ],
-  "failures": [
-   {
-    "why": "Editing /etc/resolv.conf directly and the change disappears.",
-    "fix": "It is a symlink into `/run`. Configure DNS on the NetworkManager profile or the DHCP scope instead; `nmcli connection modify 'System eth0' ipv4.dns '10.0.0.53' ipv4.dns-search example.lan` survives a reboot."
-   },
-   {
-    "why": "Resolution works for root but not for a service user.",
-    "fix": "Not a DNS problem. Check the service's sandbox: systemd units with `PrivateUsers=`, `ProtectSystem=` or a `ResolvConf=` override can see a different view. Check `systemctl cat <unit>`."
-   },
-   {
-    "why": "`getent hosts` fails but `dig` succeeds.",
-    "fix": "getent consults NSS, not just DNS. Something in the `hosts:` line of nsswitch.conf is failing, or a module is missing. Compare with `getent ahosts`."
-   }
-  ],
-  "objectives": [
-   {
-    "id": "RHCSA-8.2",
-    "note": "Configure hostname resolution"
-   }
-  ]
- },
- {
-  "id": "win11-domain-join",
-  "kind": "lesson",
-  "tech": "win11",
-  "title": "Joining a Windows 11 client to a domain, and what to check when it fails",
-  "summary": "The join command, the five prerequisites that must be true first, and how to diagnose each failure from the error message.",
-  "analogy": "Joining a domain is like being issued an ID card by an office. The office has to exist, have a directory of who you are, and be reachable. If any of those three fail, you get no card and no useful error message.",
-  "time": "9 min",
-  "verification": "source-checked",
-  "prerequisites": [
-   {
-    "id": "win11-ipconfig-all",
-    "label": "Read the client's network configuration"
-   }
-  ],
-  "related": [
-   {
-    "id": "winserver-install-addfeature",
-    "label": "Install AD DS on the server"
-   }
-  ],
-  "tags": [
-   "active directory",
-   "domain join",
-   "windows",
-   "troubleshooting"
-  ],
-  "sections": [
-   {
-    "h": "What actually has to be true before the join will work",
-    "p": [
-     "Nearly every failed domain join is one of these five. Check them in order, because each is cheaper to verify than the one after it."
+  },
+  {
+    "id": "win11-domain-join",
+    "kind": "lesson",
+    "tech": "win11",
+    "title": "Joining a Windows 11 client to a domain, and what to check when it fails",
+    "summary": "The join command, the five prerequisites that must be true first, and how to diagnose each failure from the error message.",
+    "analogy": "Joining a domain is like being issued an ID card by an office. The office has to exist, have a directory of who you are, and be reachable. If any of those three fail, you get no card and no useful error message.",
+    "time": "9 min",
+    "verification": "source-checked",
+    "prerequisites": [
+      {
+        "id": "win11-ipconfig-all",
+        "label": "Read the client's network configuration"
+      }
     ],
-    "list": [
-     "**The DNS client is pointed at a domain controller**, not at a router or a public resolver. This is the number one cause and it accounts for most of the rest.",
-     "**The domain controller answers on 389 (LDAP) and 88 (Kerberos)** from this machine, and port 53 for DNS.",
-     "**Time is synchronised.** Kerberos requires the clocks to be within five minutes of each other. A client whose clock is wrong gets an error about tickets that makes no sense.",
-     "**The machine name is unique and valid** — no spaces, 15 characters or fewer.",
-     "**A computer account can be created.** Either the account does not already exist, or the join runs as an account with permission to create one."
+    "related": [
+      {
+        "id": "winserver-install-addfeature",
+        "label": "Install AD DS on the server"
+      }
+    ],
+    "tags": [
+      "active directory",
+      "domain join",
+      "windows",
+      "troubleshooting"
+    ],
+    "sections": [
+      {
+        "h": "What actually has to be true before the join will work",
+        "p": [
+          "Nearly every failed domain join is one of these five. Check them in order, because each is cheaper to verify than the one after it."
+        ],
+        "list": [
+          "**The DNS client is pointed at a domain controller**, not at a router or a public resolver. This is the number one cause and it accounts for most of the rest.",
+          "**The domain controller answers on 389 (LDAP) and 88 (Kerberos)** from this machine, and port 53 for DNS.",
+          "**Time is synchronised.** Kerberos requires the clocks to be within five minutes of each other. A client whose clock is wrong gets an error about tickets that makes no sense.",
+          "**The machine name is unique and valid** — no spaces, 15 characters or fewer.",
+          "**A computer account can be created.** Either the account does not already exist, or the join runs as an account with permission to create one."
+        ]
+      },
+      {
+        "h": "Verifying the prerequisites before you try",
+        "p": [
+          "Test from the client, not from the server. A server that can reach itself proves nothing about whether the client can."
+        ],
+        "code": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389\nTest-NetConnection dc01.example.lan -Port 88\nw32tm /query /status\nhostname",
+        "where": "Windows 11 client, normal prompt is fine for all of these"
+      },
+      {
+        "h": "The join itself",
+        "p": [
+          "There are two ways. Both need a restart afterwards; the difference is only which prompt appears."
+        ],
+        "code": "# GUI\nsysdm.cpl  ->  Computer name -> Change -> Domain -> example.lan\n\n# Command line (requires a restart afterwards)\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential) -Restart",
+        "where": "Elevated PowerShell on the client"
+      },
+      {
+        "h": "Reading the failure",
+        "list": [
+          "**`The specified domain either does not exist or could not be contacted`** — DNS. `nslookup dc01.example.lan` either fails or returns something that is not a domain controller. Check option 6 in the DHCP scope, not the firewall first.",
+          "**`The network path was not found` / `0x80070035`** — the DC is resolvable but unreachable. Firewalld has no equivalent here, but a third-party host firewall on the client or DC will do it.",
+          "**`The time difference between the client and server is too great`** — Kerberos. `w32tm /resync` on the client, and check that the client is pointed at a real NTP source.",
+          "**`The account is not authorized to log on`** — either a pre-created computer object exists in AD with no reset permission for you, or the join account lacks domain-join rights. Check the computer object in `Get-ADComputer -Identity WS11-001`.",
+          "**`The specified account name does not exist`** — the credential is wrong, or you passed a local account instead of a domain one. Use `DOMAIN\\user` or `user@example.lan`."
+        ]
+      }
+    ],
+    "lab": [
+      {
+        "text": "From the client, confirm you can resolve and reach the domain controller.",
+        "cmd": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389",
+        "expect": "Name resolves to the DC's IP, and TcpTestSucceeded is True."
+      },
+      {
+        "text": "Deliberately break DNS and observe the exact error the join produces.",
+        "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 1.1.1.1\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential)",
+        "expect": "`The specified domain either does not exist or could not be contacted` — proving the error text you will see later really does mean DNS."
+      },
+      {
+        "text": "Put DNS back and join for real.",
+        "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 10.0.0.10\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential) -Restart",
+        "expect": "The client restarts, and the user signs in with a domain account."
+      },
+      {
+        "text": "After the restart, confirm the machine account exists and is enabled.",
+        "cmd": "hostname\nnltest /dsgetdc:example.lan\nwhoami /user",
+        "expect": "`nltest` prints a DC name and a GUID with status 0, and `whoami` shows `EXAMPLE\\user`."
+      }
+    ],
+    "failures": [
+      {
+        "why": "The join succeeds but Group Policy never applies.",
+        "fix": "The join is not the whole story. Check `gpresult /r` for error codes, and `klist` to confirm the machine account has a Kerberos ticket. A GPO link to a site with no matching subnet is the usual cause."
+      },
+      {
+        "why": "The client can ping the DC but cannot resolve names.",
+        "fix": "ICMP is allowed and LDAP is not, or vice versa. Test the actual port with Test-NetConnection rather than assuming ping tells you anything."
+      }
+    ],
+    "objectives": [
+      {
+        "id": "AZ800-1.1",
+        "note": "Joining a computer to the domain"
+      }
     ]
-   },
-   {
-    "h": "Verifying the prerequisites before you try",
-    "p": [
-     "Test from the client, not from the server. A server that can reach itself proves nothing about whether the client can."
-    ],
-    "code": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389\nTest-NetConnection dc01.example.lan -Port 88\nw32tm /query /status\nhostname",
-    "where": "Windows 11 client, normal prompt is fine for all of these"
-   },
-   {
-    "h": "The join itself",
-    "p": [
-     "There are two ways. Both need a restart afterwards; the difference is only which prompt appears."
-    ],
-    "code": "# GUI\nsysdm.cpl  ->  Computer name -> Change -> Domain -> example.lan\n\n# Command line (requires a restart afterwards)\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential) -Restart",
-    "where": "Elevated PowerShell on the client"
-   },
-   {
-    "h": "Reading the failure",
-    "list": [
-     "**`The specified domain either does not exist or could not be contacted`** — DNS. `nslookup dc01.example.lan` either fails or returns something that is not a domain controller. Check option 6 in the DHCP scope, not the firewall first.",
-     "**`The network path was not found` / `0x80070035`** — the DC is resolvable but unreachable. Firewalld has no equivalent here, but a third-party host firewall on the client or DC will do it.",
-     "**`The time difference between the client and server is too great`** — Kerberos. `w32tm /resync` on the client, and check that the client is pointed at a real NTP source.",
-     "**`The account is not authorized to log on`** — either a pre-created computer object exists in AD with no reset permission for you, or the join account lacks domain-join rights. Check the computer object in `Get-ADComputer -Identity WS11-001`.",
-     "**`The specified account name does not exist`** — the credential is wrong, or you passed a local account instead of a domain one. Use `DOMAIN\\user` or `user@example.lan`."
-    ]
-   }
-  ],
-  "lab": [
-   {
-    "text": "From the client, confirm you can resolve and reach the domain controller.",
-    "cmd": "nslookup dc01.example.lan\nTest-NetConnection dc01.example.lan -Port 389",
-    "expect": "Name resolves to the DC's IP, and TcpTestSucceeded is True."
-   },
-   {
-    "text": "Deliberately break DNS and observe the exact error the join produces.",
-    "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 1.1.1.1\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential)",
-    "expect": "`The specified domain either does not exist or could not be contacted` — proving the error text you will see later really does mean DNS."
-   },
-   {
-    "text": "Put DNS back and join for real.",
-    "cmd": "Set-DnsClientServerAddress -InterfaceAlias 'Ethernet' -ServerAddresses 10.0.0.10\nAdd-Computer -DomainName 'example.lan' -Credential (Get-Credential) -Restart",
-    "expect": "The client restarts, and the user signs in with a domain account."
-   },
-   {
-    "text": "After the restart, confirm the machine account exists and is enabled.",
-    "cmd": "hostname\nnltest /dsgetdc:example.lan\nwhoami /user",
-    "expect": "`nltest` prints a DC name and a GUID with status 0, and `whoami` shows `EXAMPLE\\user`."
-   }
-  ],
-  "failures": [
-   {
-    "why": "The join succeeds but Group Policy never applies.",
-    "fix": "The join is not the whole story. Check `gpresult /r` for error codes, and `klist` to confirm the machine account has a Kerberos ticket. A GPO link to a site with no matching subnet is the usual cause."
-   },
-   {
-    "why": "The client can ping the DC but cannot resolve names.",
-    "fix": "ICMP is allowed and LDAP is not, or vice versa. Test the actual port with Test-NetConnection rather than assuming ping tells you anything."
-   }
-  ],
-  "objectives": [
-   {
-    "id": "AZ800-1.1",
-    "note": "Joining a computer to the domain"
-   }
-  ]
- }
+  }
 ]

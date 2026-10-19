@@ -1,1 +1,505 @@
-[]
+[
+  {
+    "id": "cisco-show-ip-route",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "show ip route",
+    "task": "Read the routing table and find which next hop a destination will use",
+    "aliases": [
+      "routing table",
+      "how does traffic get there",
+      "next hop",
+      "default route",
+      "why no route"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "show ip route\nshow ip route 8.8.8.8\nshow ip route static\nshow ip route vlan 20\nshow ip protocols",
+    "explain": [
+      "Routing is **longest-prefix match**, not shortest path. The entry whose mask is most specific wins, regardless of metric.",
+      "Codes matter: `C` connected, `L` local, `S` static, `R` RIP, `O` OSPF, `D` EIGRP, `B` BGP, `*` candidate default, `Gateway of last resort` is the fallback when nothing matches.",
+      "A connected route appears the moment an interface has an address and is up. If you expect one and it is missing, the interface is down or has no address — that is usually the actual fault.",
+      "`show ip protocols` is the one to run when an OSPF adjacency is missing: it shows which networks the process is configured to advertise on which interfaces."
+    ],
+    "example": [
+      "Two routes to the same destination: `S 10.0.0.0/8` and `O 10.1.0.0/16`. Traffic for 10.1.2.3 uses the OSPF route, because /16 is longer than /8. Metrics are irrelevant at this step."
+    ],
+    "verify": [
+      "show ip route <destination>"
+    ],
+    "errors": [
+      {
+        "message": "% Network not in table",
+        "means": "There is no route matching that destination and no default route. The router has nowhere to send the packet.",
+        "fix": "show ip route static\nip route 0.0.0.0 0.0.0.0 <next-hop>"
+      },
+      {
+        "message": "Route is present but traffic still fails",
+        "means": "Routing is not the problem. The packet is leaving and dying further along, or an ACL is dropping it.",
+        "fix": "show ip interface <if> | include line protocol\nshow access-lists"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — show ip route",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "routing",
+      "longest prefix",
+      "ccna",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.1"
+      }
+    ]
+  },
+  {
+    "id": "cisco-ip-route",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "ip route",
+    "task": "Add a static route, a default route, or a floating backup route",
+    "aliases": [
+      "static route",
+      "add a route",
+      "default route",
+      "floating static",
+      "backup route"
+    ],
+    "risk": "caution",
+    "where": "Cisco IOS / IOS XE global configuration",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "Yes. Adds an entry to the routing table and to running-config.",
+    "undo": "no ip route <network> <mask> <next-hop>    (exact match required)",
+    "risks": "A wrong next hop silently blackholes traffic. Over SSH, keep a console session open and use a two-minute revert timer.",
+    "commands": "enable\nconfigure terminal\nip route 10.20.30.0 255.255.255.0 10.10.10.1\nip route 0.0.0.0 0.0.0.0 192.168.1.254\nip route 192.168.5.0 255.255.255.0 10.10.10.1 200\nip route 192.168.5.0 255.255.255.0 10.10.10.9\nend\nwrite memory",
+    "explain": [
+      "The mask is always the **full dotted quad**, never a prefix length. `255.255.255.0`, not `/24`. This is the single most common beginner error.",
+      "A **floating static route** has an administrative distance higher than the primary (200 is conventional). It sits in the table but is never used while the primary exists — which is exactly the point, and it does not need `track` on most platforms.",
+      "Every static route needs a **reverse path** back, or replies are dropped. If you add a route toward a network and replies do not come back, check that the far end has a route to your source.",
+      "Verify with `show ip route` before you leave config mode. A route that is not in the table is not in the router, whatever config says."
+    ],
+    "example": [
+      "Primary link to the ISP via 192.168.1.254, backup via a second circuit. The backup uses AD 200 so it only appears if the primary disappears."
+    ],
+    "verify": [
+      "show ip route static\nshow running-config | include ^ip route"
+    ],
+    "errors": [
+      {
+        "message": "% Invalid input detected at '^' marker",
+        "means": "You used a prefix length (`ip route 10.20.30.0/24 ...`) or ran it in the wrong mode.",
+        "fix": "Use: ip route 10.20.30.0 255.255.255.0 <next-hop>, from config mode."
+      },
+      {
+        "message": "Route appears but traffic does not flow",
+        "means": "Usually a missing return route on the far side, not a problem with this router.",
+        "fix": "Test both directions: ping from the source, then from the destination back to the source."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — ip route",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "static route",
+      "default route",
+      "floating",
+      "ccna",
+      "redundancy"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-3.2",
+        "note": "Default, network, host and floating static routes"
+      }
+    ]
+  },
+  {
+    "id": "cisco-show-spanning-tree",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "show spanning-tree",
+    "task": "Find which port the spanning tree has blocked, and why",
+    "aliases": [
+      "stp",
+      "loop",
+      "blocking port",
+      "root bridge",
+      "why is this port blocked"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "show spanning-tree\nshow spanning-tree vlan 20\nshow spanning-tree vlan 20 detail\nshow spanning-tree root",
+    "explain": [
+      "STP blocks redundant paths **on purpose**. A blocked port is not a fault — it is the algorithm working. Chasing it is a classic beginner mistake.",
+      "The root bridge is elected by lowest bridge ID, which is priority then MAC. A blocking port forwards normally the moment the primary link fails; that is convergence.",
+      "`show spanning-tree vlan X detail` is the one that explains the decision: it prints the root path cost and the priority values that produced the choice.",
+      "On a healthy access port you should see `edge` / `portfast` and rapid transition. If it is not edge and the port takes ~30 seconds to forward, portfast was missed."
+    ],
+    "example": [
+      "A workstation on Gi0/5 takes 30 seconds to get an IP address after a reboot. That delay is STP listening/learning. `show spanning-tree interface gi0/5` shows the port is not an edge port."
+    ],
+    "verify": [
+      "show spanning-tree interface GigabitEthernet0/5"
+    ],
+    "errors": [
+      {
+        "message": "A port shows Blocking and you think it is broken",
+        "means": "It is the redundancy mechanism. Only investigate if the *expected* forwarding port is blocked.",
+        "fix": "Compare both ends of the link with show spanning-tree vlan <id> detail"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "stp",
+      "spanning tree",
+      "loop",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.3"
+      }
+    ]
+  },
+  {
+    "id": "cisco-ip-access-list",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "ip access-list",
+    "task": "Write an ACL that permits or denies traffic, and place it in the right direction",
+    "aliases": [
+      "acl",
+      "firewall",
+      "block traffic",
+      "permit",
+      "deny",
+      "extended acl"
+    ],
+    "risk": "caution",
+    "where": "Cisco IOS / IOS XE global configuration",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "Yes. Once applied, traffic may start or stop flowing immediately.",
+    "undo": "no ip access-list extended NAME   /   no ip access-list standard NAME",
+    "risks": "**There is an implicit deny any at the end of every ACL.** Apply an ACL that you have not finished writing and you will cut yourself off. Test with a `permit ip any any` first over SSH, then tighten it.",
+    "commands": "enable\nconfigure terminal\nip access-list extended BLOCK-GUEST\n permit tcp 10.10.30.0 0.0.0.255 any eq 443\n permit tcp 10.10.30.0 0.0.0.255 any eq 53\n deny   ip any any log\n exit\ninterface GigabitEthernet0/3\n ip access-group BLOCK-GUEST in\nend\nwrite memory\nshow access-lists",
+    "explain": [
+      "**Wildcard masks, not subnet masks.** `0.0.0.255` is \"any host in this /24\"; `0.0.0.0` is a single host. People swap these constantly. The rule is: 0 means *must match*, 1 means *don't care*.",
+      "Order is evaluated top to bottom, first match wins, and evaluation stops there. Putting `deny ip any any` at the top silently overrides everything below it.",
+      "Direction matters more than the rule. `in` filters traffic arriving at the interface, `out` filters traffic leaving it. Putting an outbound filter on an interface facing the internet can break your own management session.",
+      "ACLs do not log by default. Add `log` when you are diagnosing, and expect it to be noisy on a busy interface — `log-input` is worse.",
+      "Always finish an extended ACL with an explicit `deny ip any any log` even though it is implicit, so the intent is visible in the config."
+    ],
+    "example": [
+      "Guest VLAN 10.10.30.0/24 should reach the internet and nothing internal. Permit 443 and 53 outbound, then deny everything. Applied `in` on the guest port this enforces both directions of the rule because ACLs are stateless."
+    ],
+    "verify": [
+      "show access-lists\nshow ip interface GigabitEthernet0/3 | include access list"
+    ],
+    "errors": [
+      {
+        "message": "Everything stopped working after applying an ACL",
+        "means": "The implicit `deny any` caught traffic you did not think about, quite possibly your own management session.",
+        "fix": "From a console: no ip access-group NAME in\nThen rebuild with explicit permits for what you actually need."
+      },
+      {
+        "message": "The ACL looks right but has no effect",
+        "means": "Usually applied to the wrong interface or the wrong direction, or the traffic is NATed so the source no longer matches.",
+        "fix": "show ip interface <if> | include access list\nConfirm the address in the ACL is the address on the wire."
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — ip access-list",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "acl",
+      "security",
+      "wildcard mask",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-4.6",
+        "note": "Standard and extended IPv4 ACLs"
+      }
+    ]
+  },
+  {
+    "id": "cisco-show-interfaces-switchport",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "show interfaces switchport",
+    "task": "See the access or trunk mode, the VLAN, and whether the port is actually forwarding",
+    "aliases": [
+      "port mode",
+      "access vlan",
+      "trunk",
+      "port is down",
+      "vlan not working"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable",
+    "platform": "Catalyst 2960-class (IOS 15.x), Catalyst 9000 (IOS XE)",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "show interfaces GigabitEthernet0/5 switchport\nshow interfaces GigabitEthernet0/5 switchport | include Mode|VLAN|edge\nshow interfaces status",
+    "explain": [
+      "Two lines decide most port faults: **Administrative Mode** is what you configured, **Operational Mode** is what the port negotiated. They can disagree.",
+      "`Operational Mode: down` means the port carries nothing at all, whatever the configuration says. Fix that before investigating anything else.",
+      "If `Access Mode VLAN` shows `1` when you configured something else, the config did not apply or the VLAN does not exist on this switch.",
+      "On trunk ports, `Trunking Native Mode VLAN` and `Trunking VLANs Enabled` tell you what is actually allowed. A VLAN missing from that list is silently dropped, with no error."
+    ],
+    "example": [
+      "A client on Gi0/5 gets 169.254.x.x. `show interfaces gi0/5 switchport` shows `Operational Mode: down`. The port never carried a DHCP request, so this is not a DHCP problem."
+    ],
+    "verify": [
+      "show interfaces status\nshow mac address-table interface GigabitEthernet0/5"
+    ],
+    "errors": [
+      {
+        "message": "Access VLAN shows 1 instead of the configured VLAN",
+        "means": "Either `switchport access vlan` was never applied, or the VLAN does not exist on this switch.",
+        "fix": "show vlan brief\nRe-apply: switchport access vlan <id>"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco Catalyst 2960-X Series Switch Command Reference",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "switchport",
+      "trunk",
+      "access vlan",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1"
+      }
+    ]
+  },
+  {
+    "id": "cisco-interface-no-shutdown",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "interface / no shutdown",
+    "task": "Bring a switchport up and give an interface an address",
+    "aliases": [
+      "port is administratively down",
+      "enable the port",
+      "set ip address",
+      "interface is down"
+    ],
+    "risk": "caution",
+    "where": "Cisco IOS / IOS XE configuration",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "Yes. Brings the interface up and enables routing on it.",
+    "undo": "shutdown    (inside the interface)",
+    "risks": "On a router interface, `no shutdown` alone starts routing on a link you may not want routed. On a switch, enabling a previously shutdown port exposes whatever is plugged into it.",
+    "commands": "enable\nconfigure terminal\ninterface GigabitEthernet0/5\n switchport mode access\n switchport access vlan 10\n no shutdown\ninterface GigabitEthernet0/1\n description UPLINK-TO-ROUTER-Gi0/1\n no ip address\n no shutdown\n ip address 10.10.99.2 255.255.255.0\n ip default-gateway 10.10.99.1\nend\nwrite memory\nshow ip interface brief",
+    "explain": [
+      "**Interfaces are administratively shut by default on routers**, and `no shutdown` is required before anything works. Switchports on a Layer-2 switch are usually enabled by default — which is why the habit transfers badly.",
+      "`no ip address` on a routed interface removes any address before you set the new one. Without it you can end up with two addresses and confusing routing.",
+      "`switchport` on a router interface switches it back to Layer 2 — this is a **Layer-3-to-Layer-2 conversion** and it silently changes every behaviour.",
+      "Add a `description` to every port you touch. It is the only thing that will tell you what is plugged in six months from now."
+    ],
+    "example": [
+      "A router's WAN interface shows `down, administratively down`. The cable is fine; nobody has run `no shutdown`. This is the single most common first-lab fault."
+    ],
+    "verify": [
+      "show ip interface brief\nshow interfaces description"
+    ],
+    "errors": [
+      {
+        "message": "Interface is up but protocol is down",
+        "means": "No IP address, or the far end is down. Layer 2 works but Layer 3 has nothing to work with.",
+        "fix": "show ip interface brief   → the Protocol column\nip address <addr> <mask>"
+      },
+      {
+        "message": "`switchport` accepted on a router interface",
+        "means": "It did — and it just turned a routed port into a switched one. Check `show ip interface` before and after.",
+        "fix": "no switchport   to return it to Layer 3"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — interface",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "interface",
+      "shutdown",
+      "ip address",
+      "ccna",
+      "beginner"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.1",
+        "note": "Port state"
+      }
+    ]
+  },
+  {
+    "id": "cisco-show-mac-address-table",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "show mac address-table",
+    "task": "See which MAC address the switch learned on which port and VLAN",
+    "aliases": [
+      "mac table",
+      "which port is the pc on",
+      "cam table",
+      "flooding",
+      "where is this device"
+    ],
+    "risk": "safe",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "No. Read-only.",
+    "undo": "n/a",
+    "commands": "show mac address-table\nshow mac address-table interface GigabitEthernet0/5\nshow mac address-table vlan 20\nshow mac address-table count\nshow mac address-table dynamic",
+    "explain": [
+      "This is the switch's forwarding table and it is the most useful command in Layer-2 troubleshooting. It is MAC address, port, VLAN.",
+      "An entry **flapping between two ports** means a duplicate MAC address somewhere — two devices claiming the same address, or a loop.",
+      "No entry for a device that is switched on means its frames are not arriving: check the port, the VLAN and whether anything is bridging.",
+      "The table ages out after ~5 minutes of silence, so it reflects *recent* traffic, not the whole network. An idle device legitimately has no entry."
+    ],
+    "example": [
+      "PC1 and PC2 are in VLAN 20 on the same switch but cannot reach each other. `show mac address-table vlan 20` shows PC1's MAC but not PC2's. PC2's frames are not arriving — look at its port, not at IP settings."
+    ],
+    "verify": [
+      "show mac address-table | include <mac>"
+    ],
+    "errors": [
+      {
+        "message": "A MAC keeps moving between two ports",
+        "means": "Duplicate MAC, or a Layer-2 loop. Check for a switch plugged into itself, or an unmanaged switch bridging two segments.",
+        "fix": "show spanning-tree   (a loop shows as repeated TCN/ topology changes)\nThen isolate the offending segment"
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — show mac address-table",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "mac",
+      "switching",
+      "layer2",
+      "ccna",
+      "troubleshooting"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-2.6"
+      }
+    ]
+  },
+  {
+    "id": "cisco-copy-running-config",
+    "kind": "command",
+    "tech": "cisco",
+    "title": "copy running-config startup-config",
+    "task": "Save the running configuration so it survives a reboot",
+    "aliases": [
+      "save config",
+      "write memory",
+      "persist config",
+      "changes disappear after reboot"
+    ],
+    "risk": "caution",
+    "where": "Cisco IOS / IOS XE privileged EXEC",
+    "privilege": "enable",
+    "platform": "IOS 15.x, IOS XE 17.x",
+    "changes": "Yes. Writes running-config to NVRAM.",
+    "undo": "No undo. That is the point — once saved, the change is permanent across reboots.",
+    "risks": "Saving a configuration you have not verified turns a temporary lab mistake into a permanent one. In production, change control means an unreviewed save is a process failure even when the config is correct.",
+    "commands": "enable\nshow running-config\ncopy running-config startup-config\nshow startup-config | include hostname\nwrite memory",
+    "explain": [
+      "`running-config` is RAM and is lost on reboot. `startup-config` is NVRAM and survives. **Nothing is saved until you copy.**",
+      "`write memory` is a long-standing alias for the same command. Both work; `write memory` is what most older documentation shows.",
+      "Read `show running-config` **before** copying. This one habit prevents most accidental permanent changes.",
+      "In Packet Tracer and in every lab, skipping the save is why a configuration mysteriously disappears between sessions."
+    ],
+    "example": [
+      "You configure a VLAN, ping successfully, then reboot during a break. After the reboot the VLAN is gone. You never saved."
+    ],
+    "verify": [
+      "show running-config | include ^hostname\nshow startup-config | include ^hostname"
+    ],
+    "errors": [
+      {
+        "message": "Destination filename [startup-config]?",
+        "means": "The copy command is asking for confirmation. Press Enter to accept the default.",
+        "fix": ""
+      }
+    ],
+    "sources": [
+      {
+        "title": "Cisco IOS Command Reference — copy",
+        "checked": "2026-10-10"
+      }
+    ],
+    "verification": "source-checked",
+    "tags": [
+      "cisco",
+      "configuration",
+      "save",
+      "startup-config",
+      "ccna"
+    ],
+    "objectives": [
+      {
+        "id": "CCNA-4.2",
+        "note": "Configuration management"
+      }
+    ]
+  }
+]

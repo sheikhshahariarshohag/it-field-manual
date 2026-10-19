@@ -72,7 +72,6 @@ const DATA = [
   "data/lessons/windows.json",
   "data/scenarios/index.json",
   "data/quizzes/index.json",
-  "data/quizzes/ccna.json",
   "data/projects/index.json",
   "data/exam-objectives.json",
   "data/knowledge-map.json",

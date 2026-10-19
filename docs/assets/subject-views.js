@@ -10,6 +10,7 @@ import * as search from "./search.js";
 import * as db from "./db.js";
 import { href } from "./router.js";
 import * as S from "./subjects.js";
+import * as V from "./views.js";
 import { chapterTitle } from "./titles.js";
 
 /* ------------------------------------------------------------------ home */
@@ -244,6 +245,17 @@ export function subjectView(params) {
     wrap.appendChild(box);
   }
 
+  /*
+   * The documents for this subject, if it has any.
+   *
+   * Placed before the lesson and command lists because for CCNA and RHEL the
+   * documents ARE the subject - they are what someone opens the subject for.
+   * A visitor should meet them before the ten supporting commands.
+   */
+  {
+    const docs = V.documentsFor(s.id);
+    if (docs) wrap.appendChild(docs);
+  }
   /* --- a peek at the actual content, not just counts ------------------ */
   const r = S.resourcesFor(s.id);
 
