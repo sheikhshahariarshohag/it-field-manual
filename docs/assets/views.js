@@ -1864,10 +1864,29 @@ function kmParagraphs(items, kind) {
   const BULLET = /^\s*[●•▪]\s*/;
 
   // A diagram is ASCII art. Wrapping it destroys it, so it stays monospaced.
+  //
+  // WHY THE ELEMENTS HAVE TO BE JOINED, NOT SPREAD
+  //
+  // This used to be `h("pre.pl-out", ...arr.map((t) => t))`. h() appends each
+  // child as a separate text node with NOTHING between them - it has no way to
+  // express a newline - so every element of the array was concatenated straight
+  // onto the previous one. A drawing collapsed into one run-on line:
+  //
+  //   Utility Power (AC) | UPS (...) | PDU (...) |+-----+-----+| |PSU 1 ...
+  //
+  // Only a single-element array rendered correctly, and exactly five sessions
+  // have one (km-001, 002, 003, 004, 007). The other 111 were broken, which is
+  // why it looked like the first diagram worked and none of the others did.
+  //
+  // A newline is the correct separator because the array elements ARE
+  // consecutive lines of the drawing. The exporter's looksLikeArt() is
+  // stateful, so it opens and closes art runs mid-drawing and leaves a few
+  // flattened prose rows in the array - joining restores the line structure
+  // regardless of how the run was segmented, and is what the source had.
   if (kind === "diagram") {
     box.appendChild(h("div.pl-box.pl-box--output",
       h("span.pl-box__tag", "diagram"),
-      h("div.pl-box__body", h("pre.pl-out", ...arr.map((t) => t)))));
+      h("div.pl-box__body", h("pre.pl-out", arr.join("\n")))));
     return box;
   }
 
