@@ -2086,8 +2086,7 @@ function buildSessionReader(s, data, km, label, query) {
       `This session's document does not contain ${missing.length === 1 ? "a section" : "sections"} for: ` +
       `${missing.join(", ")}. The contents list shows only the sections that have text.`);
     const column = node.querySelector(".rd-main");
-    const barEl = node.querySelector(".rd-bar");
-    if (column) column.insertBefore(note, barEl || null);
+    if (column) column.prepend(note);
     else node.appendChild(note);
   }
 
@@ -3137,6 +3136,10 @@ function notFound() {
 }
 
 export { resultRow, paraTokens, notFound };
+/* Dashboard pieces, exported so the home study dashboard (subject-views.js)
+   renders the same ring, course bars and activity grid the Progress page does
+   rather than a second, drifting copy of them. */
+export { ring, courseBreakdown, activityHeatmap, cardsAttempted, labChecklist };
 
 /* ================================================================ documents ==
    The .docx files, reproduced as they are.

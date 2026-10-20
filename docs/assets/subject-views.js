@@ -13,41 +13,87 @@ import * as S from "./subjects.js";
 import * as V from "./views.js";
 import { chapterTitle } from "./titles.js";
 
+/* ------------------------------------------------------- placeholder */
+
+/**
+ * The one placeholder every held subject and unwritten section uses.
+ *
+ * Written as a component so the wording is identical everywhere it appears -
+ * a reader who meets "Waiting for the files to write." on MikroTik's landing
+ * page meets the same sentence on its Commands page, not a second, differently
+ * worded apology. `heading` and `hint` let a caller add one specific line
+ * without forking the component.
+ */
+export function placeholder({ heading = "Not written yet", hint = "" } = {}) {
+  const box = h("div.note.note--risk");
+  box.appendChild(h("strong", heading));
+  box.appendChild(h("span", "Waiting for the files to write."));
+  if (hint) box.appendChild(h("span", hint));
+  return box;
+}
+
+
 /* ------------------------------------------------------------------ home */
 
 /**
- * The home page.
+ * The home page: a study dashboard.
  *
- * Designed around what a returning learner needs in the first two seconds:
- * where they left off, what to study next, and a way to reach a subject. It is
- * not a statistics dashboard - a first-time visitor with no saved data still
- * gets a complete page, because every block degrades to something useful.
+ * Ordered by what a returning learner needs first - where they left off, how
+ * far they have come, and what to open next - then by what is on the shelf.
+ * Every number is counted from real records; every block degrades to something
+ * useful for a first-time visitor with no saved data, because the page must
+ * never depend on storage to render.
  */
 export async function homeView() {
   const wrap = h("div");
   const subjects = S.populatedSubjects();
 
   wrap.appendChild(h("header.home-hero",
-    h("h1", "What do you need today?"),
+    h("h1", "Study dashboard"),
     h("p.home-hero__sub",
-      "A field manual for the six subjects below: find the command, understand the " +
-      "topic, practise it on a spare machine, and come back to revise it."),
+      "Where you left off, how far you have come, and what to open next. " +
+      "Everything below is counted from this device - nothing is uploaded."),
+  ));
+
+  /* --- read saved state, defensively -------------------------------- */
+  let prog = [];
+  let quizzes = [];
+  try {
+    [prog, quizzes] = await Promise.all([db.store.progress(), db.store.quizzes()]);
+  } catch (_) {
+    // Private browsing, or the store is not ready. The page still renders;
+    // the snapshot simply reports zero, which is true on a fresh device.
+  }
+  const unitProgress = prog.filter((p) => !V.isLabRecord(p));
+  const done = unitProgress.filter((p) => p.status === "done");
+
+  /* --- study snapshot: ring + headline figures ---------------------- */
+  const studyUnits = (search.CORPUS.study?.books || [])
+    .reduce((a, b) => a + (b.units || []).length, 0);
+  const trackable = studyUnits + search.CORPUS.lessons.length;
+  const pct = trackable ? Math.round((done.length / trackable) * 100) : 0;
+
+  wrap.appendChild(h("div.dash",
+    V.ring(pct, `${done.length} of ${trackable} complete`),
+    h("div.stat-row.stat-row--dash",
+      h("div.stat", h("div.stat__n", String(done.length)), h("div.stat__l", "marked complete")),
+      h("div.stat", h("div.stat__n", String(unitProgress.filter((p) => p.wrong).length)), h("div.stat__l", "weak spots")),
+      h("div.stat", h("div.stat__n", String(quizzes.filter((q) => q.score !== null && q.score !== undefined).length)), h("div.stat__l", "quizzes attempted")),
+      h("div.stat", h("div.stat__n", String(V.cardsAttempted(quizzes))), h("div.stat__l", "cards turned over")),
+    ),
   ));
 
   /* --- continue where you left off ---------------------------------- */
-  // Only shown when there is real saved state. Progress is read defensively:
-  // this block must never block the page if storage is unavailable.
   let recent = [];
   let inProgress = [];
   try {
-    const [marks, prog] = await Promise.all([db.store.bookmarks(), db.store.progress()]);
-    const doneIds = new Set((prog || []).map((p) => p.id));
-    inProgress = (prog || [])
+    const marks = await db.store.bookmarks();
+    const doneIds = new Set(prog.map((p) => p.id));
+    inProgress = prog
       .filter((p) => p.status && p.status !== "done")
       .slice(0, 4)
       .map((p) => resolveDoc(p.id))
       .filter(Boolean);
-    // Most recently bookmarked, not yet finished.
     const order = new Map((marks || []).map((m, i) => [m.id, i]));
     recent = (marks || [])
       .filter((m) => !doneIds.has(m.id))
@@ -55,9 +101,7 @@ export async function homeView() {
       .slice(0, 5)
       .map((m) => resolveDoc(m.id))
       .filter(Boolean);
-  } catch (_) {
-    // Private browsing, or the store is not ready. The rest of the page stands.
-  }
+  } catch (_) { /* the resume block is optional */ }
 
   if (inProgress.length || recent.length) {
     const box = h("section.home-continue");
@@ -76,15 +120,8 @@ export async function homeView() {
     wrap.appendChild(box);
   }
 
-  /* --- subjects ------------------------------------------------------ */
-  wrap.appendChild(h("h2.home-h", "Subjects"));
-  const grid = h("div.subject-grid");
-  for (const s of subjects) grid.appendChild(subjectCard(s));
-  wrap.appendChild(grid);
-
   /* --- next step ----------------------------------------------------- */
-  // One honest, useful suggestion rather than a wall of shortcuts.
-  const suggestion = nextStep(subjects);
+  const suggestion = nextStep(subjects, prog, done);
   if (suggestion) {
     wrap.appendChild(h("div.home-next",
       h("div.home-next__body",
@@ -95,14 +132,25 @@ export async function homeView() {
     ));
   }
 
-  /* --- practice shortcuts -------------------------------------------- */
+  /* --- progress by course ------------------------------------------- */
+  wrap.appendChild(V.courseBreakdown(prog, done));
+
+  /* --- subjects ------------------------------------------------------ */
+  wrap.appendChild(h("h2.home-h", "Subjects"));
+  const grid = h("div.subject-grid");
+  for (const s of subjects) grid.appendChild(subjectCard(s));
+  wrap.appendChild(grid);
+
+  /* --- activity + practice shortcuts --------------------------------- */
+  wrap.appendChild(V.activityHeatmap(unitProgress));
+
   wrap.appendChild(h("h2.home-h", "Practise and revise"));
   wrap.appendChild(h("div.home-tools",
     toolCard("Troubleshooting", "scenarios", "Investigate a symptom you are actually seeing."),
     toolCard("Quizzes", "quizzes", "Test what you have covered, by subject."),
     toolCard("Projects", "projects", "End-to-end builds rather than single commands."),
     toolCard("Study manuals", "study", "Chapters in reading order, with a contents list."),
-    toolCard("Certification", "guides", "Exam objectives and readiness."),
+    toolCard("Simple Notes", "notes", "Each RHEL chapter in plain English."),
     toolCard("Knowledge Map", "km", "See how the topics fit together."),
   ));
 
@@ -141,8 +189,47 @@ function contentHrefFor(d) {
   return href(`${seg}/${encodeURIComponent(d.id)}`);
 }
 
-/** One honest suggestion, chosen from what is actually there. */
-function nextStep(subjects) {
+/**
+ * One honest suggestion, chosen from what is actually there.
+ *
+ * Ordered by what is most useful given real progress, not by a fixed script:
+ *
+ *   1. a weak spot you already missed something on: retake that quiz
+ *   2. a course you have started but not finished: continue it
+ *   3. nothing started yet: the largest course
+ *
+ * Every branch points at a page that exists. If none of the three applies
+ * (no courses at all), there is simply no suggestion rather than an empty one.
+ */
+function nextStep(subjects, progress = [], done = []) {
+  const wrong = progress.find((p) => p.wrong);
+  if (wrong) {
+    const doc = resolveDoc(wrong.id);
+    if (doc) {
+      return {
+        text: `You have missed a question on "${doc.title}". Reread it, then retake the quiz - ` +
+              `a weak spot you close now is one you do not reopen in the exam.`,
+        href: contentHrefFor(doc),
+        cta: `Open ${doc.title}`,
+      };
+    }
+  }
+
+  const doneIds = new Set(done.map((d) => d.id));
+  for (const s of subjects) {
+    if (S.isHeld(s.id)) continue;
+    const started = s.counts.total > 0 && s.counts.studyUnits > 0;
+    if (!started) continue;
+    if (doneIds.size) {
+      return {
+        text: `Keep going with ${s.label} - you have material marked complete there already, ` +
+              `and the chapters build on each other in order.`,
+        href: `subjects/${s.id}/study`,
+        cta: `Open ${s.label}`,
+      };
+    }
+  }
+
   const rhel = subjects.find((s) => s.id === "rhel");
   if (rhel && rhel.counts.studyUnits > 0) {
     return {
@@ -205,6 +292,16 @@ export function subjectView(params) {
   const wrap = h("div");
   const s = S.subject(params.id);
   if (!s) return notFound("Subject", params.id);
+
+  if (S.isHeld(s.id)) {
+    wrap.appendChild(h("header.page-head",
+      h("h1", s.label),
+      h("p", s.blurb),
+      s.exam ? h("div.card__meta", h("span.badge", s.exam)) : null,
+    ));
+    wrap.appendChild(placeholder({ heading: `${s.label} is on hold` }));
+    return wrap;
+  }
 
   const sections = S.sectionsFor(s.id);
   const c = S.countsFor(s.id);
@@ -333,6 +430,11 @@ export function subjectSectionView(params) {
     ),
   ));
 
+  if (S.isHeld(s.id)) {
+    wrap.appendChild(placeholder({ heading: `${s.label} is on hold` }));
+    return wrap;
+  }
+
   const put = (arr, make) => {
     if (!arr || !arr.length) return;
     const box = h("div.res-list");
@@ -342,22 +444,7 @@ export function subjectSectionView(params) {
 
   switch (kind) {
     case "study":
-      if (!r.studyUnits.length) return emptyState(wrap, s, title);
-      wrap.appendChild(h("p.srcref", "Chapters in reading order. Each opens a reader with a contents list."));
-      for (const book of ["rh124", "rh134", "rh294"]) {
-        const units = r.studyUnits.filter((u) => u.book === book);
-        if (!units.length) continue;
-        wrap.appendChild(h("h2", units[0].bookTitle || book));
-        // chapterTitle(), not u.display. This page was showing the raw stored
-        // title - "Part 0 - BUILDING YOUR PRACTICE LAB", "Ch 1 - GETTING
-        // STARTED WITH RED HAT ENTERPRISE LINUX" - while the central Study
-        // Manual page showed the normalised one. Same data, two different
-        // headings on two different pages.
-        put(units, (u) => h("a.res-row", { href: href(`study/${u.id}`) },
-          h("span.res-row__t", chapterTitle(u.display || u.title)),
-          h("span.res-row__m", `${u.sections} sections`)));
-      }
-      break;
+      return studySectionView(wrap, s, title);
 
     case "notes":
       if (!r.notes.length) return emptyState(wrap, s, title);
@@ -412,23 +499,7 @@ export function subjectSectionView(params) {
         h("span.res-row__t", x.title)));
       break;
 
-    case "certification": {
-      if (!r.guides.length && !r.exams.length) return emptyState(wrap, s, title);
-      if (r.guides.length) {
-        wrap.appendChild(h("h2", "Certification guides"));
-        put(r.guides, (g) => h("a.res-row", { href: href(`library/${g.id}`) },
-          h("span.res-row__t", g.title),
-          h("span.res-row__m", g.full ? "Full text in the app" : "Chapter index")));
-      }
-      if (r.exams.length) {
-        wrap.appendChild(h("h2", "Exam objectives"));
-        put(r.exams, (e) => h("a.res-row", { href: href(`objectives#${e.code || e.id}`) },
-          h("span.res-row__t", e.code || e.id),
-          h("span.res-row__m", e.title || "")));
-      }
-      break;
-    }
-
+    case "certification":
     default:
       return notFound("Subject section", `${params.id}/${kind}`);
   }
@@ -436,11 +507,82 @@ export function subjectSectionView(params) {
   return wrap;
 }
 
+/**
+ * The Study Manual section of a subject page.
+ *
+ * TWO SOURCES, ON PURPOSE
+ *
+ * For CCNA and RHEL the chapters ARE the study manual: CCNA's 23 source
+ * documents, and RHEL's Administration I chapters. Those are listed from the
+ * subject's document set (`V.documentsFor`), which is the same list the subject
+ * landing page and /documents already show - one source, no copy.
+ *
+ * The older study books (rh134, rh294) are held: their bodies are being
+ * rewritten, so a reader who opens part of them meets the same placeholder a
+ * held subject shows. One unit is exempt - rh134-13, the Comprehensive Review -
+ * because the brief protects it by name. It stays listed and reachable.
+ */
+function studySectionView(wrap, s, title) {
+  const r = S.resourcesFor(s.id);
+  const docs = V.documentsFor(s.id);
+
+  if (!r.studyUnits.length && !docs) return emptyState(wrap, s, title);
+
+  wrap.appendChild(h("p.srcref",
+    "Chapters in reading order. Each opens a reader with a contents list."));
+
+  // The subject's own chapters, when the documents are the study manual.
+  if (docs) wrap.appendChild(docs);
+
+  // The older numbered study books. Held books collapse to one placeholder, so
+  // the section honestly says "not written yet" rather than listing chapters
+  // whose bodies are no longer the ones being taught.
+  const books = [...new Set(r.studyUnits.map((u) => u.book))];
+  for (const book of books) {
+    const units = r.studyUnits.filter((u) => u.book === book);
+    if (!units.length) continue;
+
+    if (S.isHeldBook(book)) {
+      wrap.appendChild(h("h2", units[0].bookTitle || book));
+      const preserved = units.filter((u) => S.isPreservedUnit(u.id));
+      if (preserved.length) {
+        const ul = h("ol.sessions");
+        for (const u of preserved) {
+          ul.appendChild(h("li.session",
+            h("a.session__link", { href: href(`study/${u.id}`) },
+              h("span.session__n", String(u.n)),
+              h("span.session__body",
+                h("span.session__title", chapterTitle(u.display || u.title)),
+                h("span.session__sum", `${u.sections} sections`)),
+            ),
+          ));
+        }
+        wrap.appendChild(ul);
+      }
+      wrap.appendChild(placeholder({ heading: `${units[0].bookTitle || book} is being rewritten` }));
+      continue;
+    }
+
+    wrap.appendChild(h("h2", units[0].bookTitle || book));
+    // chapterTitle(), not u.display. This page was showing the raw stored
+    // title - "Part 0 - BUILDING YOUR PRACTICE LAB", "Ch 1 - GETTING
+    // STARTED WITH RED HAT ENTERPRISE LINUX" - while the central Study
+    // Manual page showed the normalised one. Same data, two different
+    // headings on two different pages.
+    const ul = h("div.res-list");
+    for (const u of units) {
+      ul.appendChild(h("a.res-row", { href: href(`study/${u.id}`) },
+        h("span.res-row__t", chapterTitle(u.display || u.title)),
+        h("span.res-row__m", `${u.sections} sections`)));
+    }
+    wrap.appendChild(ul);
+  }
+
+  return wrap;
+}
+
 function emptyState(wrap, s, title) {
-  wrap.appendChild(h("div.note.note--risk",
-    h("strong", "Not written yet"),
-    h("span", `There is no ${title.toLowerCase()} material for ${s.label} yet. ` +
-              `The count stays at zero rather than showing filler.`)));
+  wrap.appendChild(placeholder({ heading: `${s.label} — ${title} is not written yet` }));
   return wrap;
 }
 

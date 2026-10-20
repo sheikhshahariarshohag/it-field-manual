@@ -89,8 +89,51 @@ const BOOK_SUBJECT = {
   rh294: "rhel",
 };
 
+/**
+ * Study books whose bodies are not being worked on yet.
+ *
+ * RHEL's Study Manual is now the Administration I chapters (the `rhel`
+ * documents), which run as the single source of RHEL 1 material. The two older
+ * guides - Administration II (rh134) and Ansible Automation (rh294) - are held
+ * behind one placeholder each while the material is rewritten, exactly like a
+ * held subject.
+ *
+ * One unit is exempt: rh134-13, the Comprehensive Review. The brief protects it
+ * by name, so it stays listed and reachable at its own route even though the
+ * rest of its book is held.
+ */
+export const HELD_STUDY_BOOKS = new Set(["rh134", "rh294"]);
+
+/** Units kept visible even while their book is held. */
+const PRESERVED_STUDY_UNITS = new Set(["rh134-13"]);
+
+/** Is this study book (rh134, rh294, ...) on hold? */
+export function isHeldBook(bookId) {
+  return HELD_STUDY_BOOKS.has(bookId);
+}
+
+/** May this unit be listed even when its book is held? */
+export function isPreservedUnit(unitId) {
+  return PRESERVED_STUDY_UNITS.has(unitId);
+}
+
 export const SUBJECT_BY_ID = new Map(SUBJECTS.map((s) => [s.id, s]));
 export const ALL_SUBJECT_IDS = SUBJECTS.map((s) => s.id);
+
+/**
+ * Subjects whose material is not being worked on yet.
+ *
+ * These stay visible - a reader looking for MikroTik should find the subject,
+ * not a 404 - but every page under them answers with one consistent placeholder
+ * instead of the thin, unwritten records currently in the corpus. RHEL and
+ * CCNA are the two subjects being written; the rest wait.
+ */
+export const HELD_SUBJECTS = new Set(["mikrotik", "win11", "winserver", "aplus"]);
+
+/** Is this subject on hold? */
+export function isHeld(tech) {
+  return HELD_SUBJECTS.has(tech);
+}
 
 /** The subject record, or null for an unknown id. */
 export function subject(id) {
@@ -262,7 +305,6 @@ export function sectionsFor(tech) {
     { key: "troubleshooting", label: "Troubleshooting", blurb: "Symptoms and investigations.", count: c.scenarios, href: `subjects/${tech}/troubleshooting` },
     { key: "quizzes", label: "Quizzes and review", blurb: "Test yourself.", count: c.quizzes, href: `subjects/${tech}/quizzes` },
     { key: "projects", label: "Projects", blurb: "Bigger end-to-end builds.", count: c.projects, href: `subjects/${tech}/projects` },
-    { key: "certification", label: "Certification preparation", blurb: "Exam objectives and readiness.", count: c.guides + c.exams, href: `subjects/${tech}/certification` },
   ];
 }
 

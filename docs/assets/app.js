@@ -160,7 +160,6 @@ function buildNav() {
 
   clear(navProject);
   navProject.appendChild(navLink("Simple Notes", "notes"));
-  navProject.appendChild(navLink("Certification guides", "guides"));
   navProject.appendChild(navLink("Library", "library"));
   navProject.appendChild(navLink("Assessment", "assessment"));
   navProject.appendChild(navLink("Exam objectives", "objectives"));

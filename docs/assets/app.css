@@ -276,7 +276,11 @@ svg { width: 1.25em; height: 1.25em; fill: none; stroke: currentColor; stroke-wi
       stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
 a { color: var(--accent); text-decoration: none; }
-a:hover { text-decoration: underline; }
+/* Hover feedback is a colour shift, never an underline: an underline reflows
+   nothing but reads as a link-state change mid-line, and on a page carrying
+   thousands of inline content links it turns the whole body into a moving
+   texture. Colour, border and background carry the hover instead. */
+a:hover { color: color-mix(in srgb, var(--accent) 78%, var(--text)); }
 
 :focus-visible {
   outline: 2px solid var(--accent);
@@ -464,6 +468,7 @@ body { top: 0 !important; }
   transition: background-color .2s ease, color .2s ease;
 }
 .navlink:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+.navlink:active { background: var(--accent-dim); }
 .navlink:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: var(--r-md); }
 .navlink[aria-current="page"] { background: var(--accent-dim); color: var(--accent); font-weight: 650; }
 .navlink__dot {
@@ -1888,77 +1893,55 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
    --pl-* tokens they already had. */
 
 .rd {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(264px, 320px);
-  grid-template-areas: "main side";
-  gap: 30px;
-  align-items: start;
+  display: block;
   position: relative;
 }
-.rd--with-rail { grid-template-columns: minmax(0, 1fr) minmax(264px, 340px); }
 
 .rd-main { grid-area: main; }
 
 /* --- the floating right panel --------------------------------------------
-   ONE panel, holding the contents list and the contextual material together.
+   ONE panel, holding the contents list and the contextual material together,
+   opened and closed by the compact floating button.
 
-   It was two side panels: the contents list on the left, the contextual rail
-   on the right. On a wide screen the visible Contents control belonged to the
-   panel on the opposite side from the list it opened, so clicking it looked
-   like it was opening the wrong thing.
+   It does NOT reserve a grid column. It used to: the contents list took a
+   third of the width permanently, which meant every chapter was read in a
+   narrower measure than it needed and the contents you asked for and the
+   contents you got were two different layout states. Now the reading column
+   always has the full width, and the panel floats over the right edge only
+   while it is open.
 
-   `.rd-side` is the sticky element and `.rd-toc__body` scrolls INSIDE it.
-   That distinction matters for long chapters: sticky on the grid item keeps a
-   57-entry contents list on screen for the whole read, where a contents panel
-   taller than the viewport would just run off the bottom. `min-height: 0` is
-   what lets the flex child actually shrink - without it a flex item refuses to
-   go below its content size and the internal scroll never engages. */
+   `.rd-toc__body` scrolls inside the panel, so a 57-entry contents list stays
+   reachable without running off the bottom of the viewport. */
 .rd-side {
-  grid-area: side;
-  position: sticky;
+  position: fixed;
   top: calc(var(--topbar-h) + 16px);
+  right: 16px;
+  z-index: 61;
+  width: min(340px, 88vw);
   max-height: calc(100vh - var(--topbar-h) - 32px);
-  /* ONE scroll region for the whole column.
-     It was two nested ones - the contents list scrolled inside the panel while
-     the panel scrolled inside the column - and it broke: the rail's
-     `max-height: 40%` resolved against a container whose height is `auto`, so
-     the percentage fell back to `none`, the rail refused to shrink below its
-     content, and the column overflowed its own box by 237px.
-
-     Measured on km/km-001 at 1440x900 before this change: the column was 808px
-     tall, the contents panel 998px, the rail 831px, and the rail's bottom sat
-     37px below the bottom of the panel that was supposed to contain it.
-
-     A single scroller has no percentage to resolve and no shrink fight. */
-  overflow-y: auto;
-  /* Not `overscroll-behavior: contain`: that would swallow the wheel at the end
-     of the column and leave a reader scrolling a panel that does not move.
-     The brief is that navigation must never trap the user. */
+  /* Closed by default: invisible, non-interactive, and shifted a little to the
+     right so opening it reads as sliding in rather than appearing. */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity .16s ease, transform .16s ease, visibility .16s;
   display: flex; flex-direction: column;
   gap: 14px;
   min-height: 0;
-  padding-right: 2px;
+  overflow-y: auto;
+  padding: 14px 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-2);
 }
-
-/* Collapsing gives the text the whole width. Applied by the reader and
-   remembered, so a learner who collapsed it once keeps it collapsed. */
-.rd.is-collapsed { grid-template-columns: minmax(0, 1fr); grid-template-areas: "main"; }
-.rd.is-collapsed .rd-side { display: none; }
+/* Open state, driven by the floating button. */
+.rd.is-toc-open .rd-side { visibility: visible; opacity: 1; transform: translateX(0); }
 
 /* --- reading column ------------------------------------------------------
-   A comfortable measure. The grid track can be wider than this on a large
-   screen, and the text stays readable rather than running the full width. */
-.rd-main { min-width: 0; max-width: 74ch; }
-
-/* Collapsing has to actually widen the text, or the control does nothing
-   visible. It widens the measure from 74ch to 88ch - both comfortable, but
-   noticeably different, and enough to see at a glance. */
-.rd.is-collapsed .rd-main { max-width: 88ch; }
-
-/* With a panel on the right the reading track is wide, so the measure is
-   capped in characters rather than allowed to follow the track. 82ch on the
-   study chapters, which carry long command lines, and 74ch everywhere else. */
-.rd--with-rail .rd-main { max-width: 82ch; }
+   A comfortable measure. The page can be wider on a large screen, and the text
+   stays readable rather than running the full width. */
+.rd-main { min-width: 0; max-width: 82ch; margin: 0 auto; }
 
 /* --- reading progress ----------------------------------------------------
    Measures real scroll position through the document. It is not a claim about
@@ -1977,9 +1960,8 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 }
 
 /* --- contents list -------------------------------------------------------
-   The panel itself is NOT sticky. `.rd-side` is the sticky element and this
-   is what scrolls inside it - a sticky panel taller than the viewport is
-   unusable, because the bottom of it can never be reached. */
+   The panel itself scrolls (see .rd-side above), so a list taller than the
+   viewport can still be fully reached. */
 
 .rd-toc {
   display: flex; flex-direction: column;
@@ -1992,15 +1974,14 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   letter-spacing: .1em; text-transform: uppercase;
   color: var(--text-faint);
 }
-/* Header row: the word and the collapse control, side by side. */
+/* Header row: the word, and nothing else now that the collapse control lives
+   on the floating button instead of inside the panel. */
 .rd-toc__top {
   display: flex; align-items: center; gap: 8px;
   flex: 0 0 auto;
 }
 .rd-toc__top > .rd-toc__hd { flex: 1 1 auto; min-width: 0; }
 
-/* Not a scroller here: `.rd-side` is. It is only made scrollable inside the
-   mobile drawer, where the panel has a fixed height of its own. */
 .rd-toc__body { flex: 0 0 auto; }
 
 .rd-toc__list, .rd-toc__sub { list-style: none; margin: 0; padding: 0; }
@@ -2031,109 +2012,65 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   background: var(--accent-dim);
 }
 
-/* Collapse control, inside the panel header. It used to be absolutely
-   positioned against the panel from inside the scrollable list, which meant
-   it was scrolled by the very list it was meant to control and clipped by the
-   scroll box. */
-.rd-toc__collapse {
-  flex: 0 0 auto;
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px;
-  border: 1px solid var(--line); border-radius: 50%;
-  background: var(--surface); color: var(--text-dim);
+/* --- the compact floating button -----------------------------------------
+   One small pill, fixed near the bottom-right corner, on every screen size.
+   It opens and closes the contents panel. Fixed rather than sticky so it is
+   reachable from anywhere in a long chapter without scrolling back to the top,
+   and placed away from the reading column so it never covers the text. */
+.rd-tocbtn {
+  position: fixed;
+  right: 20px; bottom: 20px;
+  z-index: 62;
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 10px 16px 10px 13px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: var(--surface); color: var(--text);
   font-family: var(--font);
-  font-size: .8rem; line-height: 1; cursor: pointer;
+  font-size: .87rem; font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-2);
+  transition: border-color .15s ease, color .15s ease, background-color .15s ease;
 }
-.rd-toc__collapse:hover { border-color: var(--accent); color: var(--accent); }
-.rd-toc__collapse:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.rd.is-collapsed .rd-toc__collapse { display: none; }
+.rd-tocbtn:hover { border-color: var(--accent); color: var(--accent); }
+.rd-tocbtn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rd-tocbtn__bars { display: grid; gap: 3px; }
+.rd-tocbtn__bars span { display: block; width: 15px; height: 2px; background: currentColor; border-radius: 2px; }
+/* While the panel is open the button reads as "close". */
+.rd.is-toc-open .rd-tocbtn { background: var(--accent-dim); border-color: var(--accent); color: var(--accent); }
 
-/* --- mobile drawer ------------------------------------------------------- */
-
-.rd-tocbtn { display: none; }
-
-.rd-toc__backdrop { display: none; }
+/* --- backdrop -----------------------------------------------------------
+   A click-catcher behind the open panel, so tapping anywhere else closes the
+   contents. Invisible and non-interactive while the panel is closed. */
+.rd-toc__backdrop {
+  display: none;
+  position: fixed; inset: 0; z-index: 60;
+  background: rgba(20, 16, 10, .32);
+  border: 0; padding: 0;
+  cursor: pointer;
+}
+.rd.is-toc-open .rd-toc__backdrop { display: block; }
 
 @media (max-width: 1000px) {
-  .rd, .rd--with-rail {
-    grid-template-columns: minmax(0, 1fr);
-    /* Both areas are still declared. `.rd-side` keeps `grid-area: side`, and an
-       area name with no matching row/column is not a harmless no-op: it makes
-       the item auto-placed into an IMPLICIT track. Measured at 1000px before
-       this, the grid resolved to `673px 0px 0px` - one explicit column and two
-       accidental empty ones. */
-    grid-template-areas: "main" "side";
-    gap: 0;
-  }
-  .rd.is-collapsed { grid-template-areas: "main"; }
-
-  /* The right panel stops being a column and becomes the drawer wrapper. It
-     stays in the grid but collapses to nothing: the drawer inside it is
-     position:fixed, so it takes no space in the flow, and the contextual rail
-     is hidden here anyway. */
+  /* On a narrow screen the panel is the full-height drawer from the right. */
   .rd-side {
-    position: static; max-height: none; min-height: 0;
-    display: block; padding: 0; overflow: visible;
-  }
-
-  /* The desktop list is not squeezed onto a phone. It becomes a drawer. */
-  .rd-toc {
-    position: fixed; inset: 0 auto 0 0;
-    z-index: 60;
-    width: min(320px, 86vw);
+    top: 0; right: 0; bottom: 0;
+    width: min(340px, 88vw);
+    max-height: none;
     height: 100%;
-    padding: 14px 16px 24px;
-    /* --bg-sunk, not --surface. The contents list is a panel of cards, and the
-       cards are --surface; when the drawer behind them was also --surface the
-       rows had nothing to sit on and merged into one field on a phone. */
-    background: var(--bg-sunk);
-    border-right: 1px solid var(--line);
     border-radius: 0;
-    box-shadow: var(--shadow-2);
-    transform: translateX(-102%);
-    transition: transform .18s ease;
-    visibility: hidden;
+    border-right: 0;
+    transform: translateX(102%);
+    transition: transform .18s ease, visibility .18s;
+    padding: 16px 16px 24px;
   }
-  /* Inside the drawer the panel has a fixed height of its own, so here - and
-     only here - the body is what scrolls. */
-  .rd-toc__body {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-  }
-  .rd-toc__body.is-open .rd-toc { transform: translateX(0); visibility: visible; }
-  .rd-toc__collapse { display: none !important; }
-
-  .rd-toc__body.is-open .rd-toc__backdrop {
-    display: block;
-    position: fixed; inset: 0; z-index: 59;
-    background: rgba(20, 16, 10, .42);
-    border: 0; padding: 0;
-    cursor: pointer;
-  }
-
-  .rd-tocbtn {
-    display: inline-flex; align-items: center; gap: 9px;
-    position: sticky; top: calc(var(--topbar-h) + 8px);
-    z-index: 6;
-    margin: 0 0 16px;
-    padding: 8px 14px 8px 11px;
-    border: 1px solid var(--line); border-radius: 999px;
-    background: var(--surface); color: var(--text);
-    font-size: .87rem; font-weight: 600;
-    cursor: pointer;
-    box-shadow: var(--shadow-1);
-  }
-  .rd-tocbtn:hover { border-color: var(--accent); }
-  .rd-tocbtn__bars { display: grid; gap: 3px; }
-  .rd-tocbtn__bars span { display: block; width: 15px; height: 2px; background: var(--text-dim); border-radius: 2px; }
+  .rd.is-toc-open .rd-side { transform: translateX(0); }
+  .rd-toc__body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
 
   .rd-rail { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rd-toc { transition: none; }
+  .rd-side, .rd-tocbtn { transition: none; }
   .rd-progress__bar { transition: none; }
 }
 
@@ -2339,31 +2276,6 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 }
 
 
-/* --- the always-available control bar ------------------------------------
-   Sits at the top of the reading column, left-aligned with the text, and
-   sticks below the header. It lives here rather than inside the contents
-   drawer so it stays reachable at every scroll position. */
-
-.rd-bar {
-  position: sticky; top: calc(var(--topbar-h) + 8px); z-index: 6;
-  display: flex; align-items: center; gap: 8px;
-  margin: 0 0 18px; padding: 6px;
-  border: 1px solid var(--line); border-radius: 999px;
-  background: var(--surface); box-shadow: var(--shadow-1);
-}
-.rd-bar__collapse {
-  margin-left: auto;
-  padding: 6px 12px;
-  border: 0; border-radius: 999px;
-  background: transparent; color: var(--text-faint);
-  font-family: var(--font); font-size: .8rem; font-weight: 600;
-  cursor: pointer;
-}
-.rd-bar__collapse:hover { color: var(--accent); background: var(--surface-2); }
-.rd-bar__collapse:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-/* Only useful when there is a sidebar to hide. */
-.rd.is-collapsed .rd-bar__collapse { display: none; }
-
 /* --- per-section folding ------------------------------------------------ */
 
 .rd-s__headrow { position: relative; }
@@ -2384,13 +2296,17 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 .rd-s.is-folded > .rd-s__headrow > .rd-h--2 { padding-top: 18px; margin-top: 18px; }
 
 /* --- contents list: real separation between sections ---------------------
-   The previous list used 5px padding with no rule or gap between entries, so
-   on a long chapter the sidebar read as one undifferentiated grey column.
-   Entries are now separated by a hairline, carry their own hover and active
-   treatment, and the active one is marked by a rule, a background AND a
-   marker - never colour alone. */
+   Entries are separated by a hairline and carry their own hover and active
+   treatment; the active one is marked by a rule, a background AND weight -
+   never colour alone.
 
-.rd-toc__list { counter-reset: toc; }
+   There is deliberately NO generated numbering column here. The source
+   headings used to carry an "N.N" decimal outline number, and the list added
+   its own sequential number on top - so a reader saw "7  2.10 Using
+   if/then/elif/then/else". The source number is stripped in reader.js
+   (tocLabel) and the generated number is gone entirely: the contents list
+   shows the heading's own words and nothing else. */
+
 .rd-toc__item {
   margin: 0;
   border-bottom: 1px solid var(--line-soft);
@@ -2409,18 +2325,6 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 }
 .rd-toc__link:hover { color: var(--text); background: var(--surface-2); }
 
-/* Numbered, so a long chapter can be navigated by position as well as by
-   name - and because "section 34" is easier to find than "34th row". */
-.rd-toc__list > .rd-toc__item { counter-increment: toc; }
-.rd-toc__list > .rd-toc__item > .rd-toc__link::before {
-  content: counter(toc);
-  display: inline-block;
-  min-width: 1.6em; margin-right: 6px;
-  color: var(--text-faint);
-  font-size: .74rem; font-variant-numeric: tabular-nums;
-  text-align: right;
-}
-
 .rd-toc__item[data-level="3"] > .rd-toc__link { font-size: .79rem; padding: 5px 10px 5px 8px; margin-left: -12px; }
 .rd-toc__item[data-level="4"] > .rd-toc__link { font-size: .75rem; color: var(--text-faint); padding: 4px 10px 4px 8px; margin-left: -12px; }
 
@@ -2430,7 +2334,6 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   border-left-color: var(--accent);
   background: var(--accent-dim);
 }
-.rd-toc__item.is-active > .rd-toc__link::before { color: var(--accent); }
 
 /* A folded section is dimmed in the list, and reopening it from the list
    works - see onTocClick. */
@@ -2442,34 +2345,8 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
 .rd-toc__sub { border-bottom: 0; }
 .rd-toc__sub .rd-toc__item:last-child { border-bottom: 0; }
 
-/* The bar replaces the old drawer-embedded button. */
-.rd-tocbtn { display: none; }
-
-/* --- button visibility, corrected ----------------------------------------
-   The rules above are appended after the reader's original media query, so
-   they would otherwise have overridden it. The intent:
-
-     wide screen   the contents list is a permanent sidebar, so the useful
-                   control is "Hide contents" - the drawer button is noise
-     narrow screen the contents list is a drawer, so the useful control is
-                   "Contents" - there is no sidebar to collapse
-     collapsed     "Show contents" must stay reachable, or folding the sidebar
-                   on a wide screen is a one-way trip with no way back */
-
-.rd-bar > .rd-tocbtn {
-  position: static; margin: 0; box-shadow: none;
-  border: 0; background: transparent; color: var(--text);
-  padding: 6px 12px; font-size: .88rem;
-}
-.rd-bar > .rd-tocbtn:hover { background: var(--surface-2); border-color: transparent; }
-.rd-tocbtn { display: none; }
-.rd.is-collapsed > .rd-main > .rd-bar > .rd-tocbtn { display: inline-flex; }
-
 @media (max-width: 1000px) {
-  .rd-bar > .rd-tocbtn { display: inline-flex; }
-  .rd-bar__collapse { display: none; }
-  .rd-bar { position: sticky; top: calc(var(--topbar-h) + 8px); }
-  /* No room for the collapse affordance next to the text on a phone. */
+  /* No room for the fold affordance next to the text on a phone. */
   .rd-s__fold { top: 20px; width: 24px; height: 24px; }
 }
 
@@ -2550,7 +2427,7 @@ ul.res-list > li > a { display: inline-block; padding: 7px 0; border-bottom: 1px
   font-size: .84rem; color: var(--text-faint);
 }
 .rd-crumb a { color: var(--text-dim); text-decoration: none; }
-.rd-crumb a:hover { color: var(--accent); text-decoration: underline; }
+.rd-crumb a:hover { color: var(--accent); }
 .rd-crumb a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 .rd-crumb__sep { color: var(--line); }
 
@@ -3021,7 +2898,7 @@ html[data-theme="dark"] .sidenav__block {
    word and chevron lighten, which reads as "this is the control" without
    making the whole block look like a button. */
 .sidenav__toggle:hover { background: transparent; color: var(--text-dim); }
-.sidenav__toggle:hover .sidenav__gname { text-decoration: underline; text-underline-offset: 3px; }
+.sidenav__toggle:hover .sidenav__gname { color: var(--text); }
 .sidenav__toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .sidenav__chev {
