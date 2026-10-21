@@ -230,6 +230,21 @@ export function resourcesFor(tech) {
     // Exam syllabi that cover this subject.
     exams: ((C.objectives && C.objectives.exams) || [])
       .filter((e) => examMatchesSubject(e, t)),
+
+    // The subject's source documents, if it has a set.
+    //
+    // For RHEL and CCNA these documents ARE the subject's lessons: the chapters
+    // reproduced from the .docx sources, listed one per chapter. This is the
+    // same set the subject landing page and /documents already show - a view,
+    // not a copy.
+    documents: (() => {
+      const idx = C.documents;
+      if (!idx || !idx.sets) return [];
+      for (const set of Object.values(idx.sets)) {
+        if (set.subject === t) return set.docs || [];
+      }
+      return [];
+    })(),
   };
 }
 
@@ -272,12 +287,13 @@ export function countsFor(tech) {
     quizzes: r.quizzes.length,
     projects: r.projects.length,
     studyUnits: r.studyUnits.length,
+    documents: r.documents.length,
     notes: r.notes.length,
     guides: r.guides.length,
     exams: r.exams.length,
     total: r.commands.length + r.lessons.length + r.services.length +
            r.scenarios.length + r.quizzes.length + r.projects.length +
-           r.studyUnits.length + r.notes.length + r.guides.length,
+           r.studyUnits.length + r.documents.length + r.notes.length + r.guides.length,
   };
 }
 
@@ -296,9 +312,16 @@ export function countsFor(tech) {
 export function sectionsFor(tech) {
   const c = countsFor(tech);
   return [
-    { key: "study", label: "Study Manual", blurb: "Chapters in reading order.", count: c.studyUnits, href: `subjects/${tech}/study` },
+    // "Lessons" IS the study manual: the subject's chapters in reading order.
+    //
+    // For RHEL and CCNA those chapters are the source documents reproduced as
+    // they are, so this section is named for what they are - lessons - rather
+    // than for the older "study manual" wrapper. The separate hand-written
+    // "Lessons" section that used to sit here has gone the same way: the
+    // documents are the lessons, and listing a second, thinner set beside them
+    // said the opposite.
+    { key: "study", label: "Lessons", blurb: "Chapters in reading order.", count: c.documents, href: `subjects/${tech}/study` },
     { key: "notes", label: "Simple Notes", blurb: "Quick revision, not the full chapter.", count: c.notes, href: `subjects/${tech}/notes` },
-    { key: "lessons", label: "Lessons", blurb: "Topics explained in depth.", count: c.lessons, href: `subjects/${tech}/lessons` },
     { key: "services", label: "Service Manual", blurb: "Reference profiles, one per service.", count: c.services, href: `subjects/${tech}/services` },
     { key: "commands", label: "Commands", blurb: "Command reference with syntax and risk.", count: c.commands, href: `subjects/${tech}/commands` },
     { key: "labs", label: "Labs and practice", blurb: "Things to do on a spare machine.", count: c.scenarios, href: `subjects/${tech}/practice` },

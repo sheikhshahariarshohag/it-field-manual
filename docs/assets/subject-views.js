@@ -149,7 +149,7 @@ export async function homeView() {
     toolCard("Troubleshooting", "scenarios", "Investigate a symptom you are actually seeing."),
     toolCard("Quizzes", "quizzes", "Test what you have covered, by subject."),
     toolCard("Projects", "projects", "End-to-end builds rather than single commands."),
-    toolCard("Study manuals", "study", "Chapters in reading order, with a contents list."),
+    toolCard("Lessons", "study", "Chapters in reading order, with a contents list."),
     toolCard("Simple Notes", "notes", "Each RHEL chapter in plain English."),
     toolCard("Knowledge Map", "km", "See how the topics fit together."),
   ));
@@ -233,10 +233,10 @@ function nextStep(subjects, progress = [], done = []) {
   const rhel = subjects.find((s) => s.id === "rhel");
   if (rhel && rhel.counts.studyUnits > 0) {
     return {
-      text: "Start with the RHEL study manual - it is the largest body of material here, " +
+      text: "Start with the RHEL lessons - it is the largest body of material here, " +
             "and the chapters are ordered so each one builds on the last.",
       href: "subjects/rhel/study",
-      cta: "Open the Study Manual",
+      cta: "Open the Lessons",
     };
   }
   return null;
@@ -253,8 +253,10 @@ function toolCard(label, seg, blurb) {
 export function subjectCard(s) {
   const c = s.counts;
   const bits = [];
-  if (c.studyUnits) bits.push(`${c.studyUnits} chapters`);
-  if (c.lessons) bits.push(`${c.lessons} lessons`);
+  // The documents ARE the lessons, so they are counted once. The old
+  // hand-written lesson count is gone from the card with the section.
+  if (c.documents) bits.push(`${c.documents} lessons`);
+  if (c.studyUnits) bits.push(`${c.studyUnits} study units`);
   if (c.commands) bits.push(`${c.commands} commands`);
   if (!bits.length) bits.push("Not written yet");
 
@@ -343,33 +345,27 @@ export function subjectView(params) {
   }
 
   /*
-   * The documents for this subject, if it has any.
+   * The lessons for this subject: its chapters, reproduced from the sources.
    *
-   * Placed before the lesson and command lists because for CCNA and RHEL the
-   * documents ARE the subject - they are what someone opens the subject for.
-   * A visitor should meet them before the ten supporting commands.
+   * Placed before the command lists because for CCNA and RHEL these chapters
+   * ARE the subject - they are what someone opens the subject for. A visitor
+   * should meet them before the ten supporting commands. Titled "Lessons"
+   * because that is what they are: there is no separate hand-written lesson set
+   * beside them any more.
    */
   {
-    const docs = V.documentsFor(s.id);
+    const docs = V.documentsFor(s.id, "Lessons");
     if (docs) wrap.appendChild(docs);
   }
   /* --- a peek at the actual content, not just counts ------------------ */
   const r = S.resourcesFor(s.id);
 
-  if (r.lessons.length) {
-    wrap.appendChild(h("h2", "Lessons in this subject"));
-    const ul = h("ul.res-list");
-    for (const l of r.lessons.slice(0, 8)) {
-      ul.appendChild(h("li",
-        h("a", { href: href(`lessons/${l.id}`) }, l.title),
-        l.time ? h("span.res-row__m", l.time) : null));
-    }
-    wrap.appendChild(ul);
-    if (r.lessons.length > 8) {
-      wrap.appendChild(h("p.srcref", `and ${r.lessons.length - 8} more in `,
-        h("a", { href: href(`subjects/${s.id}/lessons`) }, "all lessons")));
-    }
-  }
+  // The hand-written "Lessons in this subject" list has gone. For RHEL and
+  // CCNA the documents above ARE the lessons, so listing a second, thinner set
+  // of lessons underneath said the opposite of what is true. The lesson
+  // records themselves are untouched - the Knowledge Map and the study units
+  // still point at them by id - they are simply no longer listed as a second
+  // body of teaching material beside the chapters they duplicate.
 
   // Service profiles are listed as their own thing, with their own heading.
   // Listing them under "Lessons" is what made auditd and chronyd look like
@@ -508,14 +504,16 @@ export function subjectSectionView(params) {
 }
 
 /**
- * The Study Manual section of a subject page.
+ * The Lessons section of a subject page (the route is still `study`).
  *
  * TWO SOURCES, ON PURPOSE
  *
- * For CCNA and RHEL the chapters ARE the study manual: CCNA's 23 source
- * documents, and RHEL's Administration I chapters. Those are listed from the
- * subject's document set (`V.documentsFor`), which is the same list the subject
- * landing page and /documents already show - one source, no copy.
+ * For CCNA and RHEL the chapters ARE the lessons: CCNA's 23 source documents,
+ * and RHEL's Administration I chapters, reproduced from the .docx sources as
+ * they are. Those are listed from the subject's document set
+ * (`V.documentsFor`), which is the same list the subject landing page and
+ * /documents already show - one source, no copy. There is no longer a second,
+ * hand-written "Lessons" list beside them.
  *
  * The older study books (rh134, rh294) are held: their bodies are being
  * rewritten, so a reader who opens part of them meets the same placeholder a
@@ -524,14 +522,15 @@ export function subjectSectionView(params) {
  */
 function studySectionView(wrap, s, title) {
   const r = S.resourcesFor(s.id);
-  const docs = V.documentsFor(s.id);
+  const docs = V.documentsFor(s.id, s.label + " — Lessons");
 
   if (!r.studyUnits.length && !docs) return emptyState(wrap, s, title);
 
   wrap.appendChild(h("p.srcref",
     "Chapters in reading order. Each opens a reader with a contents list."));
 
-  // The subject's own chapters, when the documents are the study manual.
+  // The subject's own chapters: for RHEL and CCNA, the documents ARE the
+  // lessons.
   if (docs) wrap.appendChild(docs);
 
   // The older numbered study books. Held books collapse to one placeholder, so

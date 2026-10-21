@@ -3208,4 +3208,38 @@ a.doc-card:hover { border-color: var(--accent); background: var(--surface-2); }
 .doc-card__t { display: block; font-weight: 650; margin-bottom: 3px; }
 .doc-card__m { display: block; color: var(--text-dim); font-size: .8rem; }
 
+/* --- one open document: a contents rail beside the paper ------------------
+   The contents list is navigation, so it sits BESIDE the document rather than
+   on top of it: a text block above the first heading pushed the chapter off the
+   screen and read as though the chapter started with its own table of contents.
+
+   The paper no longer caps at 78ch. A reproduced document is a page, and the
+   widest useful measure is the reading column the app already provides - so the
+   rail takes a fixed column and the paper fills the rest. On a narrow screen
+   there is no room for a column, so the rail stacks above the paper and the
+   paper keeps the full width. */
+.doc-split {
+  display: grid;
+  grid-template-columns: minmax(180px, 240px) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.doc-rail {
+  position: sticky;
+  top: calc(var(--topbar-h, 56px) + 14px);
+  align-self: start;
+  max-height: calc(100vh - var(--topbar-h, 56px) - 28px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
+.doc-rail .rd-toc__list { margin: 0; }
+.doc-rail__l.lvl-2, .doc-rail__l.lvl-3, .doc-rail__l.lvl-4 { padding-left: 14px; }
+.doc-split .doc-paper { max-width: none; }
+
+@media (max-width: 900px) {
+  .doc-split { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .doc-rail { position: static; max-height: none; overflow: visible; }
+}
+
 

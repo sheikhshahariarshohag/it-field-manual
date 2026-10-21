@@ -15,7 +15,7 @@
  * progress live in IndexedDB, which the service worker never touches.
  */
 
-const VERSION = "v9";
+const VERSION = "v10";
 // The app lives at the scope root. A navigation to any OTHER in-scope path
 // must not be stored under the shell's "index.html" key, or it would overwrite
 // the real shell and break offline navigation for the app.

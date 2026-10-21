@@ -1924,11 +1924,22 @@ function kmParagraphs(items, kind) {
     }
 
     // Arrows and pipes mean a relationship, not a sentence.
+    //
+    // A flow is a run of steps, and the source wrote it as steps on a line
+    // separated by " | ". Rendered verbatim that is one long run-on line, which
+    // is what the reader saw: "Instruction in RAM | Fetch (CPU pulls the
+    // instruction) | Decode | Execute ..." all crowding a single row. The " | "
+    // IS the line break the source drew - the same convention the diagram
+    // branch restores with "\n" - so it is split back into one step per line
+    // here. Arrows alone ("a -> b") have no separator and stay as one line.
     if (/→|-->|<--|\s\|\s/.test(t)) {
       flush();
+      const flow = t.includes(" | ")
+        ? t.split(/\s+\|\s+/).map((s) => s.trim()).filter(Boolean).join("\n")
+        : t;
       box.appendChild(h("div.pl-box.pl-box--output",
         h("span.pl-box__tag", "flow"),
-        h("div.pl-box__body", h("pre.pl-out", t))));
+        h("div.pl-box__body", h("pre.pl-out", flow))));
       continue;
     }
 
@@ -2248,8 +2259,8 @@ export async function studyManualView() {
   const m = STUDY();
 
   wrap.appendChild(h("header.page-head",
-    h("h1", "Study Manual"),
-    h("p", m ? m.note : "The study manual has not been loaded."),
+    h("h1", "Lessons"),
+    h("p", m ? m.note : "The lessons have not been loaded."),
   ));
 
   if (!m || !m.books) {
@@ -2372,7 +2383,7 @@ export async function studyManualView() {
 export async function studyUnitView(params, query) {
   const wrap = h("div");
   const m = STUDY();
-  if (!m) return notFound("Study manual", params.id);
+  if (!m) return notFound("Lessons", params.id);
 
   let book = null, unit = null;
   for (const b of m.books) {
@@ -2396,7 +2407,7 @@ export async function studyUnitView(params, query) {
     h("nav.rd-crumb", { "aria-label": "Breadcrumb" },
       h("a", { href: href("subjects") }, "Subjects"),
       h("span.rd-crumb__sep", { "aria-hidden": "true" }, "/"),
-      h("a", { href: href(`subjects/${subjectForBook(book)}/study`) }, "Study Manual"),
+      h("a", { href: href(`subjects/${subjectForBook(book)}/study`) }, "Lessons"),
     ),
     h("h1", chapterTitle(unit.display)),
   ));
@@ -3201,7 +3212,14 @@ export async function docView(params) {
     ),
   ));
 
-  const tocBox = h("div");
+  // The contents list is a rail BESIDE the document, not a block above it.
+  //
+  // It used to sit full-width on top, pushing the first heading off the screen
+  // and reading as part of the document when it is navigation. It is now the
+  // same shape as the reader's contents: a rail on the left, sticky so it stays
+  // with you down a long chapter, collapsing to a stack above the text on a
+  // narrow screen where there is no room for a column.
+  const tocBox = h("nav.doc-rail", { "aria-label": "In this document" });
   const body = h("div.doc-paper");
 
   const loaded = await loadDocument(entry.id);
@@ -3218,7 +3236,8 @@ export async function docView(params) {
       tocBox.appendChild(h("p.rd-toc__hd", "In this document"));
       const ul = h("ul.rd-toc__list");
       for (const hd of heads) {
-        ul.appendChild(h("li", h("a", { href: `#${hd.id}` }, hd.text)));
+        ul.appendChild(h("li", { class: `doc-rail__l lvl-${hd.lvl || 1}` },
+          h("a", { href: `#${hd.id}` }, hd.text)));
       }
       tocBox.appendChild(ul);
     }

@@ -151,7 +151,7 @@ function buildNav() {
   clear(navPracticeList);
   navPracticeList.appendChild(navLink("Troubleshooting", "scenarios", { count: st.scenarios }));
   navPracticeList.appendChild(navLink("Commands", "commands", { count: st.commands }));
-  navPracticeList.appendChild(navLink("Study manuals", "study", {
+  navPracticeList.appendChild(navLink("Lessons", "study", {
     count: studyUnits, progressKey: "study",
   }));
   // Knowledge Map has no bar: session reading is not recorded anywhere, so a
